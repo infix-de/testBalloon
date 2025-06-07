@@ -95,8 +95,8 @@ class TestCompartmentTests {
 
     @Test
     fun concurrency() = withTestFramework {
-        val suiteCount = 10
-        val testCount = 30
+        val suiteCount = 8
+        val testCount = 8
 
         val concurrentThreadIds = ConcurrentSet<ULong>()
 

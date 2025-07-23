@@ -5,11 +5,11 @@ import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestExecutionReport
 import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.internal.printlnFixed
+import kotlinx.datetime.Instant
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.char
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 /**
  * A [TestExecutionReport] in JetBrains' TeamCity format on stdout or via an [outputEntry] function.
@@ -140,7 +140,7 @@ private val dateTimeFormat = DateTimeComponents.Format {
     char('-')
     monthNumber()
     char('-')
-    day()
+    dayOfMonth()
     char('T')
     hour()
     char(':')

@@ -59,7 +59,7 @@ io-kotest = "5.9.1"
 ##     ⬆ = "6.0.0"
 
 # https://github.com/JetBrains/kotlin/releases
-org-jetbrains-kotlin = "2.1.20"
+org-jetbrains-kotlin = "2.1.0"
 
 # https://github.com/Kotlin/dokka/releases
 org-jetbrains-kotlin-dokka = "2.0.0"
@@ -118,8 +118,7 @@ org-jetbrains-kotlinx-coroutines-debug = { module = "org.jetbrains.kotlinx:kotli
 org-jetbrains-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "org-jetbrains-kotlinx-coroutines" }
 
 # https://github.com/Kotlin/kotlinx-datetime/blob/master/CHANGELOG.md
-org-jetbrains-kotlinx-kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1"
-##                                                                           ⬆ :0.7.1-0.6.x-compat"
+org-jetbrains-kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.6.2"
 
 org-jmailen-kotlinter-gradle-plugin = { module = "org.jmailen.kotlinter:org.jmailen.kotlinter.gradle.plugin", version.ref = "org-jmailen-kotlinter" }
 

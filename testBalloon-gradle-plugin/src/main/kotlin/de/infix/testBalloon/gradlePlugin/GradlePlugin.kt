@@ -9,9 +9,9 @@ import buildConfig.BuildConfig.PROJECT_VERSION
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
-import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -36,7 +36,7 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
         val testRootSourceSetRegex = Regex(extension.testRootSourceSetRegex)
         val generatedCommonTestDir = layout.buildDirectory.dir("generated/testBalloon/src/commonTest")
 
-        extensions.configure<KotlinBaseExtension>("kotlin") {
+        extensions.configure<KotlinSourceSetContainer>("kotlin") {
             sourceSets.configureEach {
                 if (testRootSourceSetRegex.containsMatchIn(name)) {
                     kotlin.srcDir(generatedCommonTestDir)

@@ -2,6 +2,5 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <excludedPredefinedLibrary name="testBalloon/build/js/node_modules" />
-    <excludedPredefinedLibrary name="testBalloon/build/wasm/node_modules" />
   </component>
 </project>

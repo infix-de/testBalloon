@@ -21,15 +21,31 @@ io-kotest = "5.9.1"
 ##     ⬆ = "6.0.0.M3"
 ##     ⬆ = "6.0.0.M4"
 ##     ⬆ = "6.0.0.M5"
+##     ⬆ = "6.0.0.M6"
 
 # https://github.com/JetBrains/kotlin/releases
-org-jetbrains-kotlin = "2.2.20-Beta1"
-##                ⬆ = "2.2.20-Beta1-32"
-##                ⬆ = "2.2.20-Beta1-33"
-##                ⬆ = "2.2.20-Beta1-41"
-##                ⬆ = "2.2.20-Beta2-1"
-##                ⬆ = "2.2.20-Beta2-3"
-##                ⬆ = "2.2.20-Beta2-5"
+org-jetbrains-kotlin = "2.2.20-Beta2"
+##                ⬆ = "2.2.20-Beta2-23"
+##                ⬆ = "2.2.20-Beta2-39"
+##                ⬆ = "2.2.20-Beta2-56"
+##                ⬆ = "2.2.20-Beta2-65"
+##                ⬆ = "2.2.20-Beta2-86"
+##                ⬆ = "2.2.20-Beta2-105"
+##                ⬆ = "2.2.20-Beta2-115"
+##                ⬆ = "2.2.20-Beta2-137"
+##                ⬆ = "2.2.20-Beta2-172"
+##                ⬆ = "2.2.20-Beta2-175"
+##                ⬆ = "2.2.20-Beta2-176"
+##                ⬆ = "2.3.0-dev-200"
+##                ⬆ = "2.3.0-dev-423"
+##                ⬆ = "2.3.0-dev-662"
+##                ⬆ = "2.3.0-dev-797"
+##                ⬆ = "2.3.0-dev-811"
+##                ⬆ = "2.3.0-dev-993"
+##                ⬆ = "2.3.0-dev-1146"
+##                ⬆ = "2.3.0-dev-1330"
+##                ⬆ = "2.3.0-dev-1520"
+##                ⬆ = "2.3.0-dev-1707"
 
 # https://github.com/Kotlin/dokka/releases
 org-jetbrains-kotlin-dokka = "2.0.0"
@@ -45,7 +61,9 @@ org-jmailen-kotlinter = "5.0.2"
 
 # https://github.com/junit-team/junit5/releases
 org-junit-platform = "1.13.3"
+##              ⬆ = "1.13.4"
 ##              ⬆ = "6.0.0-M1"
+##              ⬆ = "6.0.0-M2"
 
 [libraries]
 

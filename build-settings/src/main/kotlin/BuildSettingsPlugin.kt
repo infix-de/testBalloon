@@ -1,7 +1,6 @@
 import org.gradle.api.Plugin
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.initialization.Settings
-import org.gradle.kotlin.dsl.refreshVersions
 import java.net.URI
 import kotlin.io.path.Path
 import kotlin.io.path.invariantSeparatorsPathString
@@ -9,7 +8,8 @@ import kotlin.io.path.invariantSeparatorsPathString
 @Suppress("unused")
 class BuildSettingsPlugin : Plugin<Settings> {
     override fun apply(target: Settings) = with(target) {
-        pluginManager.apply("de.fayard.refreshVersions")
+        // WORKAROUND Gradle 9 incompatibility – https://github.com/Splitties/refreshVersions/issues/735
+        // pluginManager.apply("de.fayard.refreshVersions")
         pluginManager.apply("org.gradle.toolchains.foojay-resolver-convention")
 
         dependencyResolutionManagement {
@@ -24,11 +24,12 @@ class BuildSettingsPlugin : Plugin<Settings> {
             }
         }
 
-        refreshVersions {
-            featureFlags {
-                enable(de.fayard.refreshVersions.core.FeatureFlag.LIBS)
-            }
-        }
+        // WORKAROUND Gradle 9 incompatibility – https://github.com/Splitties/refreshVersions/issues/735
+        // refreshVersions {
+        //     featureFlags {
+        //         enable(de.fayard.refreshVersions.core.FeatureFlag.LIBS)
+        //     }
+        // }
 
         enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
     }

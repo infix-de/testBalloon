@@ -5,7 +5,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/de.infix.testBalloon/testBalloon-framework-core)](https://central.sonatype.com/artifact/de.infix.testBalloon/testBalloon-framework-core/versions)
 [![IntelliJ IDEA plugin](https://img.shields.io/jetbrains/plugin/v/27749?label=IntelliJ%20IDEA%20plugin)](https://plugins.jetbrains.com/plugin/27749-testballoon)
-[![Slack channel](https://img.shields.io/badge/chat-slack-green.svg?logo=slack&label=kotlinlang)](https://kotlinlang.slack.com/messages/test/)
+[![Slack channel](https://img.shields.io/static/v1?logo=slack&color=green&label=kotlinlang&message=%23test)](https://kotlinlang.slack.com/messages/test/)
 [![GitHub License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
 TestBalloon is a **next generation Kotlin test framework**, built from the ground up for Kotlin Multiplatform and coroutines.

@@ -27,10 +27,18 @@ sealed class TestElement(parent: TestSuite?, name: String, displayName: String =
                 else -> "${testElementParent?.flattenedPath}$spacer${testElementName.spacesEscaped()}"
             }
 
-    private val spacer: Char get() = if (this is Test) '.' else MIDDLE_DOT
+    private val spacer: String get() = if (this is Test) "." else SUITE_NESTING_SPACER
 
     override var testElementIsEnabled: Boolean = true
         internal set
+
+    /** The most recent event observed by a reordering [TestExecutionReport]. */
+    internal var recentEvent: TestElementEvent? = null
+
+    /** The state of this element's reporting by a reordering [TestExecutionReport]. */
+    internal var reportingState: ReportingState = ReportingState.NOT_REPORTED
+
+    internal enum class ReportingState { NOT_REPORTED, START_REPORTED, FINISH_REPORTED }
 
     init {
         @Suppress("LeakingThis")
@@ -121,4 +129,4 @@ sealed class TestElement(parent: TestSuite?, name: String, displayName: String =
 internal fun String.spacesEscaped(): String = replace(' ', NON_BREAKING_SPACE)
 
 private const val NON_BREAKING_SPACE = '\u00a0'
-private const val MIDDLE_DOT = '\u00b7'
+private const val SUITE_NESTING_SPACER = "$NON_BREAKING_SPACE↘$NON_BREAKING_SPACE"

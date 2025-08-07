@@ -37,6 +37,17 @@ val SequentialVsConcurrent by testSuite(testConfig = TestConfig.testScope(isEnab
     ) {
         testSeries()
     }
+
+    testSuite(
+        "concurrent (nested)",
+        testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).statisticsReport()
+    ) {
+        for (suiteId in 1..10) {
+            testSuite("suite #$suiteId") {
+                testSeries()
+            }
+        }
+    }
 }
 
 // Define your own test series builder.

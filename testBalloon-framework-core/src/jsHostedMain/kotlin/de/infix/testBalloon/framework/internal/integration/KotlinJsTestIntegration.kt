@@ -40,7 +40,7 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
         }
 
         is TestSuite -> {
-            kotlinJsTestFramework.suite(testElementName.spacesEscaped(), ignored = !testElementIsEnabled) {
+            kotlinJsTestFramework.suite(flattenedPath.spacesEscaped(), ignored = !testElementIsEnabled) {
                 testElementChildren.forEach {
                     it.registerWithKotlinJsTestFramework()
                 }
@@ -48,7 +48,7 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
         }
 
         is Test -> {
-            kotlinJsTestFramework.test(testElementName.spacesEscaped(), ignored = !testElementIsEnabled) {
+            kotlinJsTestFramework.test(testElementDisplayName.spacesEscaped(), ignored = !testElementIsEnabled) {
                 TestSessionRelay.resultReceivingPromise(this)
             }
         }

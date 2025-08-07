@@ -3,7 +3,7 @@ package de.infix.testBalloon.framework.internal
 import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.InvokedByGeneratedCode
 import de.infix.testBalloon.framework.TestSession
-import de.infix.testBalloon.framework.internal.integration.IntellijLogTestExecutionReport
+import de.infix.testBalloon.framework.internal.integration.TeamCityTestExecutionReport
 import de.infix.testBalloon.framework.internal.integration.ThrowingTestConfigurationReport
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKString
@@ -27,7 +27,7 @@ internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestS
         )
     }.onSuccess {
         executeTestsWithExceptionHandling {
-            TestSession.global.execute(IntellijLogTestExecutionReport())
+            TestSession.global.execute(TeamCityTestExecutionReport())
         }
     }
 }

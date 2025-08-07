@@ -4,7 +4,7 @@ import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.InvokedByGeneratedCode
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestSession
-import de.infix.testBalloon.framework.internal.integration.IntellijLogTestExecutionReport
+import de.infix.testBalloon.framework.internal.integration.TeamCityTestExecutionReport
 import de.infix.testBalloon.framework.internal.integration.ThrowingTestConfigurationReport
 import de.infix.testBalloon.framework.internal.integration.kotlinJsTestFrameworkAvailable
 import de.infix.testBalloon.framework.internal.integration.processArguments
@@ -26,7 +26,7 @@ internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestS
             if (kotlinJsTestFrameworkAvailable()) {
                 TestSession.global.registerWithKotlinJsTestFramework()
             } else {
-                TestSession.global.execute(IntellijLogTestExecutionReport())
+                TestSession.global.execute(TeamCityTestExecutionReport())
             }
         }
     }

@@ -1,10 +1,13 @@
 package de.infix.testBalloon.framework
 
+import de.infix.testBalloon.framework.internal.GuardedBy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -101,7 +104,9 @@ open class TestSuite internal constructor(
     private var privateConfiguration: TestConfig = TestConfig.suiteLifecycleAction()
 
     /** Fixtures created while executing this suite, in reverse order of fixture creation. */
+    @GuardedBy("fixturesMutex") // for adding only
     private val fixtures = mutableListOf<Fixture<*>>()
+    private val fixturesMutex = Mutex()
 
     // region – We need these constructor variants only for top-level test suites declared as classes.
     //
@@ -382,16 +387,23 @@ open class TestSuite internal constructor(
         private val suite: TestSuite,
         private val newValue: suspend TestSuite.() -> Value
     ) {
+        @GuardedBy("valueMutex")
         private var value: Value? = null
+        private val valueMutex = Mutex()
+
         private var close: suspend Value.() -> Unit = { (this as? AutoCloseable)?.close() }
 
         /** Returns the fixture's value, instantiating it on first use. */
         suspend operator fun invoke(): Value {
-            if (value == null) {
-                value = suite.newValue()
-                suite.fixtures.add(0, this)
+            valueMutex.withLock {
+                if (value == null) {
+                    value = suite.newValue()
+                    suite.fixturesMutex.withLock {
+                        suite.fixtures.add(0, this)
+                    }
+                }
+                return value!!
             }
-            return value!!
         }
 
         /** Declares [action] to be called when this fixture's lifetime ends. */

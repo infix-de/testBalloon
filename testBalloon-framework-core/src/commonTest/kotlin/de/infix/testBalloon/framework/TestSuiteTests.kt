@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework
 
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
@@ -566,6 +567,21 @@ class TestSuiteTests {
                         "fixture closing failure missing suppressed exception:\n" +
                             fixtureClosingFailureStackTrace.prependIndent("\t")
                     )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testFixtureConcurrency() = assertSuccessfulSuite {
+        val instanceCount = atomic(0)
+
+        testSuite("suite1", testConfig = TestConfig.invocation(TestInvocation.CONCURRENT)) {
+            val fixture1 = testFixture { instanceCount.incrementAndGet() }
+
+            repeat(100) { index ->
+                test("test$index") {
+                    assertEquals(fixture1(), 1)
                 }
             }
         }

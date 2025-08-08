@@ -59,22 +59,7 @@ io-kotest = "5.9.1"
 ##     ⬆ = "6.0.0"
 
 # https://github.com/JetBrains/kotlin/releases
-org-jetbrains-kotlin = "2.2.20-RC"
-##                ⬆ = "2.2.20-RC-233"
-##                ⬆ = "2.2.20-RC-244"
-##                ⬆ = "2.2.20-RC-252"
-##                ⬆ = "2.2.20-RC-260"
-##                ⬆ = "2.2.20-RC-264"
-##                ⬆ = "2.2.20-RC-266"
-##                ⬆ = "2.2.20-RC-267"
-##                ⬆ = "2.2.20-RC-271"
-##                ⬆ = "2.3.0-dev-3220"
-##                ⬆ = "2.3.0-dev-3235"
-##                ⬆ = "2.3.0-dev-3358"
-##                ⬆ = "2.3.0-dev-3493"
-##                ⬆ = "2.3.0-dev-3616"
-##                ⬆ = "2.3.0-dev-3759"
-##                ⬆ = "2.3.0-dev-3850"
+org-jetbrains-kotlin = "2.2.0"
 
 # https://github.com/Kotlin/dokka/releases
 org-jetbrains-kotlin-dokka = "2.0.0"

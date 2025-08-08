@@ -34,7 +34,7 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 . Tag the release commit like `0.4.0-K2.2.0`.
 . Push commits to GitHub.
 
-==== Release on GitHub
+==== Prepare a release on GitHub
 
 . Wait for CI validation.
 . https://github.com/infix-de/testBalloon/releases/new[Create a new release], selecting
@@ -44,4 +44,12 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 . Adapt release notes.
 . Adapt the comparison link as necessary.
 . Check or clear _Set as a pre-release_ and _Set as the latest release_.
+. Save draft.
+
+==== Publish a release to MavenCentral
+
+NOTE: Publish releases in the order they should appear on MavenCentral (and release badges):
+Pre-release first, then regular releases in increasing version number order.
+
+. Wait for previous publications to finish.
 . Publish the release.

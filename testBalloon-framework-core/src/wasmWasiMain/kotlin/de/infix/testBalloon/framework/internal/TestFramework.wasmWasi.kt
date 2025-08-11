@@ -16,7 +16,7 @@ import kotlin.time.Duration
 internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestSuite>) {
     // `suites` is unused because test suites register themselves with `TestSession`.
 
-    // WORKAROUND Wasm/WASI: calling delay() silently exits wasmWasiNodeRun
+    // WORKAROUND Wasm/WASI with kotlinx.coroutines < 1.10.0: calling delay() silently exits wasmWasiNodeRun
     //     https://github.com/Kotlin/kotlinx.coroutines/issues/4239
     withContext(Dispatchers.Default) { }
 

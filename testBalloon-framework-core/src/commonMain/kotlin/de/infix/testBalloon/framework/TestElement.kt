@@ -16,9 +16,6 @@ sealed class TestElement(parent: TestSuite?, name: String, displayName: String =
 
     /**
      * The element's path in a "flattened" form, which external test infrastructure does not split into components.
-     * TODO: [flattenedPath] is currently unused. It is intended to be evaluated when producing test reports,
-     *     where the external test infrastructure would eagerly split an element's path into an assumed class/function
-     *     combination.
      */
     internal val flattenedPath: TestElementPath
         get() =

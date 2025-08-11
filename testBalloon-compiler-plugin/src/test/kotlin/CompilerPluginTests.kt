@@ -1,4 +1,4 @@
-import buildConfig.BuildConfig
+import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.PluginOption
@@ -37,7 +37,7 @@ private class CompilerPluginTests {
 
                     class TestSuiteTwo : TestSuite(content = {})
                 """,
-                debugEnabled = true
+                debugLevel = "DISCOVERY"
             ) {
                 val packageNameDot = if (packageName.isEmpty()) "" else "$packageName."
 
@@ -79,7 +79,7 @@ private class CompilerPluginTests {
                     println("$d{testElementPath}")
                 }
             """,
-            debugEnabled = true,
+            debugLevel = "DISCOVERY",
             executionEnabled = true
         ) { capturedStdout ->
 
@@ -120,7 +120,7 @@ private class CompilerPluginTests {
                 
                 val TestSuiteOne by testSuite {}
             """,
-            debugEnabled = true
+            debugLevel = "DISCOVERY"
         ) {
             assertTrue("[DEBUG] Found test discoverable 'TestSuiteOne'" in messages)
         }
@@ -134,7 +134,7 @@ private class CompilerPluginTests {
             """,
             isTestModule = false,
             classPathInheritanceEnabled = false,
-            debugEnabled = true
+            debugLevel = "BASIC"
         ) {
             assertTrue("[DEBUG] Disabling the plugin for module <module>: It is not a test module." in messages)
         }
@@ -147,7 +147,7 @@ private class CompilerPluginTests {
                 val foo = 1
             """,
             classPathInheritanceEnabled = false,
-            debugEnabled = true
+            debugLevel = "BASIC"
         ) {
             assertTrue(
                 "[DEBUG] Disabling the plugin for module <module_test>: It has no framework library dependency." in
@@ -176,7 +176,7 @@ private class CompilerPluginTests {
 private fun compilation(
     sourceCode: String,
     isTestModule: Boolean = true,
-    debugEnabled: Boolean = false,
+    debugLevel: String? = null,
     executionEnabled: Boolean = false,
     classPathInheritanceEnabled: Boolean = true,
     expectedExitCode: KotlinCompilation.ExitCode = KotlinCompilation.ExitCode.OK,
@@ -184,8 +184,7 @@ private fun compilation(
 ) {
     val compilation = KotlinCompilation()
 
-    fun option(name: String, value: String): PluginOption =
-        PluginOption(BuildConfig.PROJECT_COMPILER_PLUGIN_ID, name, value)
+    fun option(name: String, value: String): PluginOption = PluginOption(PROJECT_COMPILER_PLUGIN_ID, name, value)
 
     try {
         val entryPointPackageName = "de.infix.testBalloon.framework.internal.entryPoint"
@@ -207,7 +206,7 @@ private fun compilation(
             inheritClassPath = classPathInheritanceEnabled
             commandLineProcessors = listOf(CompilerPluginCommandLineProcessor())
             pluginOptions = listOfNotNull(
-                if (debugEnabled) option("debug", "true") else null,
+                if (debugLevel != null) option("debugLevel", debugLevel) else null,
                 if (executionEnabled) option("jvmStandalone", "true") else null
             )
             messageOutputStream = OutputStream.nullOutputStream()

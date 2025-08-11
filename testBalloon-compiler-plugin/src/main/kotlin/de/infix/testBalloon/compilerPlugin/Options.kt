@@ -3,15 +3,27 @@ package de.infix.testBalloon.compilerPlugin
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
 internal object Options {
-    val debug = Option(
-        optionName = "debug",
-        valueDescription = "boolean",
-        description = "Enable debugging",
-        defaultValue = false
+    enum class DebugLevel {
+        NONE,
+        BASIC,
+        DISCOVERY,
+        CODE
+    }
+
+    val debugLevel = Option(
+        optionName = "debugLevel",
+        valueDescription = "DebugLevel",
+        description = "Enable debug level (one of ${DebugLevel.entries})",
+        defaultValue = DebugLevel.NONE
     ) { stringValue ->
-        stringValue.toBooleanStrictOrNull() ?: throwValueError(stringValue)
+        try {
+            DebugLevel.valueOf(stringValue.toUpperCaseAsciiOnly())
+        } catch (_: IllegalArgumentException) {
+            throwValueError(stringValue)
+        }
     }
 
     val jvmStandalone = Option(
@@ -22,6 +34,13 @@ internal object Options {
     ) { stringValue ->
         stringValue.toBooleanStrictOrNull() ?: throwValueError(stringValue)
     }
+
+    val testModuleRegex = Option(
+        optionName = "testModuleRegex",
+        valueDescription = "string",
+        description = "Regular expression qualifying a test module name",
+        defaultValue = """(_test|Test)$"""
+    ) { it }
 
     val all = registeredOptions.toList()
 }

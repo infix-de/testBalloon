@@ -1,6 +1,6 @@
 package de.infix.testBalloon.compilerPlugin
 
-import buildConfig.BuildConfig
+import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import buildConfig.BuildConfig.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
@@ -99,8 +99,18 @@ class CompilerPluginIrGenerationExtension(private val compilerConfiguration: Com
         compilerConfiguration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+        val debugLevel = Options.debugLevel.value(compilerConfiguration)
+        val testModuleRegex = Options.testModuleRegex.value(compilerConfiguration)
+
+        if (debugLevel > Options.DebugLevel.NONE) {
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
+                "$PLUGIN_DISPLAY_NAME: [DEBUG] Plugin version $PROJECT_VERSION is processing module ${moduleFragment.name}."
+            )
+        }
+
         fun reportDisablingReason(detail: String) {
-            if (Options.debug.value(compilerConfiguration)) {
+            if (debugLevel > Options.DebugLevel.NONE) {
                 messageCollector.report(
                     CompilerMessageSeverity.WARNING,
                     "$PLUGIN_DISPLAY_NAME: [DEBUG] Disabling the plugin for module ${moduleFragment.name}: $detail"
@@ -112,9 +122,7 @@ class CompilerPluginIrGenerationExtension(private val compilerConfiguration: Com
         // Otherwise, we end up defining the discovery result property twice (one for the main module, another one
         // for the test module). If the test module picks up the main module's symbol, no suites will be considered
         // discovered.
-        // TODO: Relying on the module name ending in "_test" is probably not stable. An alternative way could be
-        //     to generate the test discovery result property only if at least one suite has been discovered.
-        if (!moduleFragment.name.asStringStripSpecialMarkers().endsWith("_test")) {
+        if (!Regex(testModuleRegex).containsMatchIn(moduleFragment.name.asStringStripSpecialMarkers())) {
             reportDisablingReason("It is not a test module.")
             return
         }
@@ -151,7 +159,7 @@ private class Configuration(compilerConfiguration: CompilerConfiguration, overri
     val internalPackageName = "de.infix.testBalloon.framework.internal"
     val entryPointPackageName = "de.infix.testBalloon.framework.internal.entryPoint"
 
-    val debugEnabled = Options.debug.value(compilerConfiguration)
+    val debugLevel = Options.debugLevel.value(compilerConfiguration)
     val jvmStandaloneEnabled = Options.jvmStandalone.value(compilerConfiguration)
     val lookupTracker = compilerConfiguration.lookupTracker
 
@@ -195,6 +203,11 @@ private class ModuleTransformer(
         val irFile = declaration
 
         sourceFileForReporting = irFile
+
+        if (configuration.debugLevel >= Options.DebugLevel.BASIC) {
+            reportDebug("Analyzing source file", irFile)
+        }
+
         return super.visitFileNew(irFile)
     }
 
@@ -208,7 +221,7 @@ private class ModuleTransformer(
 
             // Consider classes with a @TestDiscoverable superclass.
             if (irClass.superClass?.hasAnnotation(configuration.testDiscoverableAnnotationSymbol) == true) {
-                if (configuration.debugEnabled) {
+                if (configuration.debugLevel >= Options.DebugLevel.DISCOVERY) {
                     reportDebug("Found test discoverable '${irClass.fqName()}'", irClass)
                 }
 
@@ -247,7 +260,7 @@ private class ModuleTransformer(
             val initializerCallFunction = initializerCall.symbol.owner
 
             if (initializerCallFunction.hasAnnotation(configuration.testDiscoverableAnnotationSymbol)) {
-                if (configuration.debugEnabled) {
+                if (configuration.debugLevel >= Options.DebugLevel.DISCOVERY) {
                     reportDebug("Found test discoverable '${irProperty.fqNameWhenAvailable}'", irProperty)
                 }
 
@@ -280,7 +293,7 @@ private class ModuleTransformer(
             moduleFragment,
             "Could not generate entry point code in '${entryPointFile.nameWithPackage}'"
         ) {
-            if (configuration.debugEnabled) {
+            if (configuration.debugLevel >= Options.DebugLevel.CODE) {
                 reportDebug(
                     "Generating code in module '${moduleFragment.name}'," +
                         " file '${entryPointFile.nameWithPackage}'," +
@@ -313,7 +326,7 @@ private class ModuleTransformer(
             }
 
             entryPointFile.addChild(entryPoint)
-            if (configuration.debugEnabled) {
+            if (configuration.debugLevel >= Options.DebugLevel.CODE) {
                 reportDebug("Generated:\n${declaration.dump().prependIndent("\t")}")
             }
 
@@ -383,7 +396,7 @@ private class ModuleTransformer(
                             copyTypeAndValueArgumentsFrom(originalCall)
                             nameValueArgumentsToAdd.forEach { (index, value) ->
                                 arguments[index] = irString(value)
-                                if (configuration.debugEnabled) {
+                                if (configuration.debugLevel >= Options.DebugLevel.CODE) {
                                     reportDebug(
                                         "${irClass.fqName()}: Setting parameter '${valueParameters[index].name}'" +
                                             " to '$value'"
@@ -445,7 +458,7 @@ private class ModuleTransformer(
                             copyTypeAndValueArgumentsFrom(originalCall)
                             nameValueArgumentsToAdd.forEach { (index, value) ->
                                 arguments[index] = irString(value)
-                                if (configuration.debugEnabled) {
+                                if (configuration.debugLevel >= Options.DebugLevel.CODE) {
                                     reportDebug(
                                         "${irProperty.fqName()}: Setting parameter '${valueParameters[index].name}'" +
                                             " to '$value'"
@@ -756,4 +769,4 @@ private fun IrClass.fqName(): String = "${packageFqName.asQualificationPrefix()}
 
 private fun FqName?.asQualificationPrefix(): String = if (this == null || isRoot) "" else "$this."
 
-private const val PLUGIN_DISPLAY_NAME = "Plugin ${BuildConfig.PROJECT_COMPILER_PLUGIN_ID}"
+private const val PLUGIN_DISPLAY_NAME = "Plugin $PROJECT_COMPILER_PLUGIN_ID"

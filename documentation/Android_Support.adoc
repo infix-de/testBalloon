@@ -1,0 +1,37 @@
+:icons: font
+
+== Android Support
+
+=== Android Test Ecosystem
+
+==== Test types
+
+Android uses https://developer.android.com/training/testing/fundamentals[two types of tests]:
+
+1. *Local tests*, also called host-side tests, or (wrongly) unit tests: These execute on the development machine or a server.
+** Default source folder: `src/test`
+** Default dependency notation: `testImplementation(...)`
+** Default test module names: `++${baseModule}_debugUnitTest++`, `++${baseModule}_releaseUnitTest++`
+** Default compilations: `debugUnitTest`, `releaseUnitTest`
+2. *Instrumented tests*: These run on an Android device, either physical or emulated. (Some unit tests fall into this category.)
+** Default source folder: `src/androidTest`
+** Default dependency notation: `androidTestImplementation(...)`
+** Default test module names: `++${baseModule}_debugAndroidTest++`
+** Default compilations: `debugAndroidTest`
+
+==== Test frameworks
+
+Android uses *JUnit 4* as its test framework. Support for JUnit 5 https://issuetracker.google.com/issues/127100532[has long been requested], but https://issuetracker.google.com/issues/127100532#comment42[rejected as of Oct 24, 2024].
+
+NOTE: In April 2025, work on https://issuetracker.google.com/issues/127100532#comment55[Gradle test suite support] has been reported, but, contrary to initial interpretations, this does not imply any integration of alternative test frameworks.
+
+*Third party alternatives* exist:
+
+* *Android-JUnit 5*: https://github.com/mannodermaus/android-junit5[mannodermaus/android-junit5] (supports the JUnit Jupiter engine, not the JUnit Platform API, which would integrate other test engines).
+* *Kotest*: https://github.com/LeoColman/kotest-android[LeoColman/kotest-android]
+* *Kotest via `android-junit5`*: https://github.com/kotest/kotest/issues/189#issuecomment-1488075892[Android Instrumentation Tests · Issue #189 · kotest/kotest]
+
+==== Test support libraries
+
+* *Roboelectric*: A simulated Android environment that runs inside a JVM. Faster and less flaky than using an emulator, but does not support all features and APIs.
+* *Espresso*: A library for Android view tests.

@@ -8,7 +8,7 @@ addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.tes
 
 kotlin {
     compilerOptions {
-        // freeCompilerArgs.addAll("-P", "plugin:de.infix.testBalloon:debug=true")
+        // freeCompilerArgs.addAll("-P", "plugin:de.infix.testBalloon:debugLevel=DISCOVERY")
     }
 
     sourceSets {

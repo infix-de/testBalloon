@@ -38,11 +38,15 @@ _TestBalloon makes writing all kinds of Kotlin tests simple and fun, everywhere.
 
 2. Add a dependency for the TestBalloon framework core library:
 
-       commonTest {
-           dependencies {
-               implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
-           }
-       }
+    * For Kotlin Multiplatform, use:
+
+          commonTest {
+              dependencies {
+                  implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
+              }
+          }
+
+    * For Android instrumented tests, see the configuration examples in [examples/android] and [examples/android-multiplatform].
 
 3. Add a dependency for the assertion library of your choice.
 
@@ -204,6 +208,10 @@ Finally, there is a brief [introduction to development].
 [`aroundAll`]: examples/framework-core/src/commonTest/kotlin/com/example/UsingAroundAll.kt
 
 [`aroundEach`]: examples/framework-core/src/commonTest/kotlin/com/example/UsingAroundEach.kt
+
+[examples/android]: examples/android/build.gradle.kts
+
+[examples/android-multiplatform]: examples/android-multiplatform/build.gradle.kts
 
 [examples/framework-core]: examples/framework-core
 

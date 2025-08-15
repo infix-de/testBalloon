@@ -1,7 +1,7 @@
 import buildLogic.addTestBalloonPluginFromProject
 
 plugins {
-    id("buildLogic.multiplatform-all")
+    id("buildLogic.multiplatform-plus-android-library")
     id("buildLogic.publishing-multiplatform")
 }
 
@@ -10,6 +10,10 @@ description = "Library supporting blocking code detection with the TestBalloon f
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
 
 kotlin {
+    androidLibrary {
+        namespace = "de.infix.testBalloon.integration.blockingDetection"
+    }
+
     sourceSets {
         commonMain {
             dependencies {

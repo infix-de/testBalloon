@@ -1,7 +1,7 @@
 import buildLogic.addTestBalloonPluginFromProject
 
 plugins {
-    id("buildLogic.multiplatform-noWasmWasi")
+    id("buildLogic.multiplatform-excluding-wasm-wasi")
     id("buildLogic.publishing-multiplatform")
 }
 

@@ -1,9 +1,10 @@
 import buildLogic.addTestBalloonPluginFromProject
 
 plugins {
-    id("buildLogic.multiplatform-noWasmWasi")
+    id("buildLogic.multiplatform-excluding-wasm-wasi")
 }
 
+// The following invocation supplements the TestBalloon plugin declaration inside this project:
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
 
 kotlin {

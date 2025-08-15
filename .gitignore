@@ -9,6 +9,19 @@ build/
 .kotlin/
 
 ###
+### Android
+###
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+.idea/AndroidProjectSystem.xml
+.idea/androidTestResultsUserPreferences.xml
+.idea/deploymentTargetSelector.xml
+.idea/deviceManager.xml
+.idea/runConfigurations.xml
+
+###
 ### https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
 ###
 
@@ -77,6 +90,7 @@ atlassian-ide-plugin.xml
 
 # SonarLint plugin
 .idea/sonarlint/
+.idea/sonarlint.xml # see https://community.sonarsource.com/t/is-the-file-idea-idea-idea-sonarlint-xml-intended-to-be-under-source-control/121119
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
@@ -84,8 +98,8 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-# Editor-based Rest Client
+# Editor-based HTTP Client
 .idea/httpRequests
+http-client.private.env.json
 
-# Android studio 3.1+ serialized cache file
-.idea/caches/build_file_checksums.ser
+.idea/caches

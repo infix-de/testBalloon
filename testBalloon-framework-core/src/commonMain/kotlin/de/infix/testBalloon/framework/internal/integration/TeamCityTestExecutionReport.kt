@@ -1,14 +1,10 @@
 package de.infix.testBalloon.framework.internal.integration
 
 import de.infix.testBalloon.framework.Test
-import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestExecutionReport
 import de.infix.testBalloon.framework.TestSuite
-import de.infix.testBalloon.framework.internal.GuardedBy
 import de.infix.testBalloon.framework.internal.printlnFixed
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.char
@@ -18,114 +14,22 @@ import kotlin.time.Instant
 /**
  * A [TestExecutionReport] in JetBrains' TeamCity format on stdout or via an [outputEntry] function.
  *
- * Note: The TeamCity protocol supports a test element hierarchy, but it does not support concurrency.
- * Output elements must report start and finish in strict depth-first tree order:
- * - element starting
- *   - child starting
- *   - child finishing
- *   ...
- * - element finishing
- *
- * Since a [TestExecutionReport] must always supports concurrently incoming events, this report reorders events before
- * reporting them downstream via [outputEntry].
+ * This class is a [SequencingExecutionReport] because the TeamCity protocol does not support concurrency.
  */
 @OptIn(ExperimentalTime::class)
-internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = ::printlnFixed) : TestExecutionReport() {
-    private val reorderingMutex = Mutex()
-
-    /** The lowermost element that has started, but not finished yet. */
-    @GuardedBy("reorderingMutex")
-    private var elementInProgress: TestElement? = null
-
-    override suspend fun add(event: TestElementEvent) {
-        // Convert concurrently incoming events to a depth-first tree order for downstream reporting,
-        // storing events and picking them up as they become eligible for downstream acceptance.
-
-        reorderingMutex.withLock {
-            val element = event.element
-
-            when (event) {
-                is TestElementEvent.Starting -> {
-                    check(element.recentEvent == null) {
-                        "starting event for $element preceded by ${element.recentEvent}"
-                    }
-                    element.recentEvent = event
-
-                    // Report `Starting` events immediately for a test suite with a parent in progress.
-                    if (element.testElementParent == elementInProgress && element is TestSuite) {
-                        report(event)
-                    }
-                }
-
-                is TestElementEvent.Finished -> {
-                    check(element.recentEvent == event.startingEvent) {
-                        "finish event for $element preceded by ${element.recentEvent}"
-                    }
-                    element.recentEvent = event
-
-                    if (element == elementInProgress || element.testElementParent == elementInProgress) {
-                        // Report `Finished` events immediately for an element in progress, or for an element with a parent
-                        // in progress. In both cases, all children will be reported as well.
-                        reportFinish(event)
-
-                        // Report events for all siblings that have finished in the meantime.
-                        element.testElementParent?.reportFinishedChildren()
-                    }
-                }
-            }
-        }
-    }
+internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = ::printlnFixed) :
+    SequencingExecutionReport() {
 
     /**
-     * Reports a `Finished` event downstream after replaying any non-reported events that must precede it.
+     * Forwards an event downstream.
      */
-    private fun reportFinish(event: TestElementEvent.Finished) {
-        val element = event.element
-
-        // Report the element's `Starting` event if not already done.
-        if (element.reportingState == TestElement.ReportingState.NOT_REPORTED) {
-            report(event.startingEvent)
-        }
-
-        // Report `Starting` and `Finished` events of all children (recursively) if not already done.
-        if (element is TestSuite) {
-            element.reportFinishedChildren()
-        }
-
-        // Report the element's `Finished` event, closing its reporting tree.
-        report(event)
-    }
-
-    /**
-     * Reports events for all finished children that haven't been reported yet.
-     */
-    private fun TestSuite.reportFinishedChildren() {
-        for (childElement in testElementChildren) {
-            val childEvent = childElement.recentEvent
-            if (childEvent is TestElementEvent.Finished &&
-                childElement.reportingState != TestElement.ReportingState.FINISH_REPORTED
-            ) {
-                reportFinish(childEvent)
-            }
-        }
-    }
-
-    /**
-     * Reports an event downstream.
-     */
-    private fun report(event: TestElementEvent) {
+    override suspend fun forward(event: TestElementEvent) {
         val element = event.element
         val elementParent = element.testElementParent
         val isIgnoredTest = !element.testElementIsEnabled && element is Test
 
         when (event) {
             is TestElementEvent.Starting -> {
-                check(element.reportingState == TestElement.ReportingState.NOT_REPORTED) {
-                    "start report for $element preceded by ${element.reportingState}"
-                }
-                element.reportingState = TestElement.ReportingState.START_REPORTED
-                elementInProgress = element
-
                 if (isIgnoredTest) {
                     eventMessage(event, eventName = "Ignored")
                     // Note: TeamCity does not recognize an ignored suite, so all suites are reported normally.
@@ -140,12 +44,6 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
             }
 
             is TestElementEvent.Finished -> {
-                check(element.reportingState == TestElement.ReportingState.START_REPORTED) {
-                    "finish report for $element preceded by ${element.reportingState}"
-                }
-                element.reportingState = TestElement.ReportingState.FINISH_REPORTED
-                elementInProgress = element.testElementParent
-
                 if (!isIgnoredTest) {
                     if (element is TestSuite) {
                         message(messageName = "flowFinished") {

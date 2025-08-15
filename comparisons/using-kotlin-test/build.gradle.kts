@@ -1,5 +1,5 @@
 plugins {
-    id("buildLogic.multiplatform-all")
+    id("buildLogic.multiplatform")
 }
 
 kotlin {

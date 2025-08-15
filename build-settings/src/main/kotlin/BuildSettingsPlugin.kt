@@ -35,6 +35,14 @@ class BuildSettingsPlugin : Plugin<Settings> {
     }
 
     private fun RepositoryHandler.projectRepositories() {
+        google {
+            @Suppress("UnstableApiUsage")
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
         mavenCentral()
         System.getProperty("user.home")?.let { home ->
             maven(url = uri("$home/.m2/local-repository"))

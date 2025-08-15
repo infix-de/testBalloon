@@ -29,13 +29,13 @@ sealed class TestElement(parent: TestSuite?, name: String, displayName: String =
     override var testElementIsEnabled: Boolean = true
         internal set
 
-    /** The most recent event observed by a reordering [TestExecutionReport]. */
+    /** The most recent event observed by a `SequencingExecutionReport`. */
     internal var recentEvent: TestElementEvent? = null
 
-    /** The state of this element's reporting by a reordering [TestExecutionReport]. */
-    internal var reportingState: ReportingState = ReportingState.NOT_REPORTED
+    /** The state of this element's event forwarding by a `SequencingExecutionReport`. */
+    internal var forwardingState: ForwardingState = ForwardingState.NOT_FORWARDED
 
-    internal enum class ReportingState { NOT_REPORTED, START_REPORTED, FINISH_REPORTED }
+    internal enum class ForwardingState { NOT_FORWARDED, START_FORWARDED, FINISH_FORWARDED }
 
     init {
         @Suppress("LeakingThis")

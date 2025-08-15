@@ -1,35 +1,33 @@
+import buildLogic.applyHierarchy
+import buildLogic.jsTargets
+import buildLogic.nativeTargets
+import buildLogic.withCompatPatrouille
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 
 @Suppress("unused")
-class BuildLogicMultiplatformAllPlugin : Plugin<Project> {
+class BuildLogicMultiplatformPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
-        with(pluginManager) {
+        withCompatPatrouille {
             apply("buildLogic.multiplatform-base")
         }
 
         extensions.configure<KotlinMultiplatformExtension>("kotlin") {
+            jvm()
+            jsTargets()
+            nativeTargets()
+
             @OptIn(ExperimentalWasmDsl::class)
             wasmWasi {
                 nodejs()
             }
 
             @OptIn(ExperimentalKotlinGradlePluginApi::class)
-            applyHierarchyTemplate(KotlinHierarchyTemplate.default) {
-                group("common") {
-                    group("nonJvm") {
-                        group("jsHosted") {
-                            withJs()
-                            withWasmJs()
-                        }
-                        withWasmWasi()
-                        group("native")
-                    }
-                }
+            applyHierarchy {
+                withWasmWasi()
             }
         }
     }

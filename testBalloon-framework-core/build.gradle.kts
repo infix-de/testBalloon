@@ -1,5 +1,5 @@
 plugins {
-    id("buildLogic.multiplatform-all")
+    id("buildLogic.multiplatform-plus-android-library")
     id("buildLogic.publishing-multiplatform")
 }
 
@@ -12,6 +12,10 @@ kotlin {
         val kotlinTestTimeout = "10s"
         nodejs { testTask { useMocha { timeout = kotlinTestTimeout } } }
         browser { testTask { useMocha { timeout = kotlinTestTimeout } } }
+    }
+
+    androidLibrary {
+        namespace = "de.infix.testBalloon.framework.core"
     }
 
     sourceSets {
@@ -32,6 +36,13 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(libs.org.junit.platform.engine)
+            }
+        }
+
+        androidMain {
+            dependencies {
+                implementation(libs.androidx.test.core)
+                implementation(libs.junit.junit4)
             }
         }
 

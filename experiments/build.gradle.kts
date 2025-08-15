@@ -1,7 +1,7 @@
 import buildLogic.addTestBalloonPluginFromProject
 
 plugins {
-    id("buildLogic.multiplatform-all")
+    id("buildLogic.multiplatform")
 }
 
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)

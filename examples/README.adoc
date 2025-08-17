@@ -2,7 +2,7 @@
 
 === Using the Core Library
 
-The link:../examples/framework-core[examples/framework-core] directory is intended to provide source code samples for all TestBalloon features in link:../examples/framework-core/src/commonTest[commonTest].
+The link:../examples/general[examples/general] directory is intended to provide source code samples for all TestBalloon features in link:../examples/general/src/commonTest[commonTest].
 
 To run them all:
 
@@ -10,13 +10,13 @@ To run them all:
 
 As usual, you can run examples for a single target:
 
-* `gradlew --quiet :examples:framework-core:cleanAllTests :examples:framework-core:jvmTest`
-* `gradlew --quiet :examples:framework-core:cleanAllTests :examples:framework-core:jsNodeTest`
-* `gradlew --quiet :examples:framework-core:cleanAllTests :examples:framework-core:jsBrowserTest`
-* `gradlew --quiet :examples:framework-core:cleanAllTests :examples:framework-core:wasmJsNodeTest`
-* `gradlew --quiet :examples:framework-core:cleanAllTests :examples:framework-core:wasmJsBrowserTest`
-* `gradlew --quiet :examples:framework-core:cleanAllTests :examples:framework-core:wasmWasiNodeTest`
-* `gradlew --quiet :examples:framework-core:cleanAllTests :examples:framework-core:linuxX64Test`
+* `gradlew --quiet :examples:general:cleanAllTests :examples:general:jvmTest`
+* `gradlew --quiet :examples:general:cleanAllTests :examples:general:jsNodeTest`
+* `gradlew --quiet :examples:general:cleanAllTests :examples:general:jsBrowserTest`
+* `gradlew --quiet :examples:general:cleanAllTests :examples:general:wasmJsNodeTest`
+* `gradlew --quiet :examples:general:cleanAllTests :examples:general:wasmJsBrowserTest`
+* `gradlew --quiet :examples:general:cleanAllTests :examples:general:wasmWasiNodeTest`
+* `gradlew --quiet :examples:general:cleanAllTests :examples:general:linuxX64Test`
 
 
 === Using Integrations

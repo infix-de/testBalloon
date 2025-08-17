@@ -46,7 +46,37 @@ _TestBalloon makes writing all kinds of Kotlin tests simple and fun, everywhere.
               }
           }
 
-    * For Android instrumented tests, see the configuration examples in [examples/android] and [examples/android-multiplatform].
+    * For Kotlin Multiplatform with Android local tests, add:
+
+          androidUnitTest {
+              dependencies {
+                  implementation("de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion")
+              }
+          }
+
+    * For Kotlin Multiplatform with Android instrumented tests, add:
+
+          androidInstrumentedTest {
+              dependencies {
+                  implementation("androidx.test:runner:$androidxRunnerVersion")
+                  implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
+              }
+          }
+
+    * For Android-only local tests, use:
+
+          dependencies {
+              testImplementation("de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion")
+          }
+
+    * For Android-only instrumented tests, use:
+
+          dependencies {
+              androidTestImplementation("androidx.test:runner:$androidxRunnerVersion")
+              androidTestImplementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
+          }
+
+   See also the configuration examples in [examples/general], [examples/android] and [examples/multiplatform-with-android].
 
 3. Add a dependency for the assertion library of your choice.
 
@@ -189,7 +219,7 @@ To run some test suites in isolation, and/or provide them with special configura
 
 ## Examples and documentation
 
-Find examples demonstrating TestBalloon’s capabilities in [examples/framework-core], and an example showing how to use TestBalloon with Kotest assertions in [examples/integration-kotest-assertions].
+Find examples demonstrating TestBalloon’s capabilities in [examples/general], and an example showing how to use TestBalloon with Kotest assertions in [examples/with-kotest-assertions].
 
 The TestBalloon public API includes source code documentation.
 
@@ -203,19 +233,19 @@ Finally, there is a brief [introduction to development].
 
 [TestBalloon plugin for IntelliJ IDEA]: https://plugins.jetbrains.com/plugin/27749-testballoon
 
-[add a `@TestDiscoverable` annotation to your custom test]: examples/framework-core/src/commonTest/kotlin/com/example/testLibrary/TestVariants.kt
+[add a `@TestDiscoverable` annotation to your custom test]: examples/general/src/commonTest/kotlin/com/example/testLibrary/TestVariants.kt
 
-[`aroundAll`]: examples/framework-core/src/commonTest/kotlin/com/example/UsingAroundAll.kt
+[`aroundAll`]: examples/general/src/commonTest/kotlin/com/example/UsingAroundAll.kt
 
-[`aroundEach`]: examples/framework-core/src/commonTest/kotlin/com/example/UsingAroundEach.kt
+[`aroundEach`]: examples/general/src/commonTest/kotlin/com/example/UsingAroundEach.kt
 
 [examples/android]: examples/android/build.gradle.kts
 
-[examples/android-multiplatform]: examples/android-multiplatform/build.gradle.kts
+[examples/multiplatform-with-android]: examples/multiplatform-with-android/build.gradle.kts
 
-[examples/framework-core]: examples/framework-core
+[examples/general]: examples/general
 
-[examples/integration-kotest-assertions]: examples/integration-kotest-assertions
+[examples/with-kotest-assertions]: examples/with-kotest-assertions
 
 [background]: documentation/Background.adoc
 

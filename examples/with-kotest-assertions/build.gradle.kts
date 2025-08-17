@@ -11,7 +11,9 @@ kotlin {
     sourceSets {
         commonTest {
             dependencies {
-                // implementation(libs.de.infix.testBalloon.integration.kotest.assertions) // Use this outside this project
+                // required for TestBalloon outside this project:
+                //     implementation("de.infix.testBalloon:testBalloon-integration-kotest-assertions:${testBalloonVersion}")
+                // instead of this project-internal dependency:
                 implementation(projects.testBalloonIntegrationKotestAssertions)
             }
         }

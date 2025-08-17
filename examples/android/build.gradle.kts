@@ -20,7 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" // required for TestBalloon
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         @Suppress("UnstableApiUsage")
         testOptions {
@@ -60,7 +60,16 @@ android {
 }
 
 dependencies {
-    androidTestImplementation(libs.androidx.test.runner) // required for TestBalloon
-    androidTestImplementation(projects.testBalloonFrameworkCore) // required for TestBalloon
+    // required for local tests with TestBalloon outside this project:
+    //     implementation("de.infix.testBalloon:testBalloon-framework-core-jvm:${testBalloonVersion}")
+    // instead of this project-internal dependency:
+    testImplementation(project(projects.testBalloonFrameworkCore.path, "jvmRuntimeElements"))
+
+    // required for instrumented tests with TestBalloon outside this project:
+    //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
+    // instead of this project-internal dependency:
+    androidTestImplementation(projects.testBalloonFrameworkCore)
+    androidTestImplementation(libs.androidx.test.runner)
+
     androidTestImplementation(libs.org.jetbrains.kotlinx.atomicfu)
 }

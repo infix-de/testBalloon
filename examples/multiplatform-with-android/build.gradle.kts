@@ -3,7 +3,6 @@ import buildLogic.addTestBalloonPluginFromProject
 plugins {
     id("buildLogic.multiplatform-plus-android-application")
     // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
-    alias(libs.plugins.org.jetbrains.kotlin.atomicfu)
 }
 
 // The following invocation supplements the TestBalloon plugin declaration inside this project:
@@ -18,11 +17,22 @@ kotlin {
     jvm()
 
     sourceSets {
+        androidUnitTest {
+            dependencies {
+                // required for local tests with TestBalloon outside this project:
+                //     implementation("de.infix.testBalloon:testBalloon-framework-core-jvm:${testBalloonVersion}")
+                // instead of this project-internal dependency:
+                implementation(project(projects.testBalloonFrameworkCore.path, "jvmRuntimeElements"))
+            }
+        }
+
         androidInstrumentedTest {
             dependencies {
-                implementation(libs.androidx.test.runner) // required for TestBalloon
-                implementation(projects.testBalloonFrameworkCore) // required for TestBalloon
-                implementation(libs.org.jetbrains.kotlinx.atomicfu)
+                // required for instrumented tests with TestBalloon outside this project:
+                //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
+                // instead of this project-internal dependency:
+                implementation(projects.testBalloonFrameworkCore)
+                implementation(libs.androidx.test.runner)
             }
         }
     }
@@ -39,7 +49,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" // required for TestBalloon
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         @Suppress("UnstableApiUsage")
         testOptions {

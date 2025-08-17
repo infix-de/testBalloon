@@ -19,10 +19,10 @@ include(":integration-test")
 include(":testBalloon-integration-kotest-assertions")
 include(":testBalloon-integration-blocking-detection")
 
-include(":examples:framework-core")
-include(":examples:integration-kotest-assertions")
+include(":examples:general")
+include(":examples:with-kotest-assertions")
 include(":examples:android")
-include(":examples:android-multiplatform")
+include(":examples:multiplatform-with-android")
 
 include(":comparisons:using-kotlin-test")
 include(":comparisons:using-testBalloon")

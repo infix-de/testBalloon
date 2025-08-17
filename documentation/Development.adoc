@@ -112,9 +112,9 @@ TestBallon has a two-stage test process, built into the IDE run configuration `c
 1. Run the compiler plugin in-process with Gradle.
 +
 --
-To run the Gradle tasks `clean compileTestKotlinJvm` for the link:../examples/framework-core[examples/framework-core] project:
+To run the Gradle tasks `clean compileTestKotlinJvm` for the link:../examples/general[examples/general] project:
 
-* `gradlew -Dorg.gradle.debug=true -Pkotlin.compiler.execution.strategy=in-process :examples:framework-core:clean :examples:framework-core:compileTestKotlinJvm`
+* `gradlew -Dorg.gradle.debug=true -Pkotlin.compiler.execution.strategy=in-process :examples:general:clean :examples:general:compileTestKotlinJvm`
 --
 
 2. Attach the JVM debugger to port 5005. In IntelliJ IDEA, use the command _Run – Attach to Process_.

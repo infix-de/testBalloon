@@ -13,8 +13,11 @@ kotlin {
     sourceSets {
         commonTest {
             dependencies {
-                // implementation(libs.de.infix.testBalloon.framework.core) // Use this outside this project
+                // required for TestBalloon outside this project:
+                //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
+                // instead of this project-internal dependency:
                 implementation(projects.testBalloonFrameworkCore)
+
                 implementation(kotlin("test")) // for assertions only
                 implementation(libs.org.jetbrains.kotlinx.atomicfu)
             }

@@ -46,6 +46,7 @@ class BuildSettingsPlugin : Plugin<Settings> {
         System.getProperty("user.home")?.let { home ->
             maven(url = uri("$home/.m2/local-repository"))
         }
+        maven(url = uri("https://storage.googleapis.com/gradleup/m2"))
         maven(url = uri("https://redirector.kotlinlang.org/maven/dev"))
         gradlePluginPortal()
     }

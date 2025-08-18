@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     // https://github.com/Splitties/refreshVersions/releases
-    implementation("de.fayard.refreshVersions:de.fayard.refreshVersions.gradle.plugin:0.60.5")
+    implementation("de.fayard.refreshVersions:de.fayard.refreshVersions.gradle.plugin:0.60.6")
     // https://github.com/gradle/foojay-toolchains/blob/main/CHANGELOG.md
     implementation("org.gradle.toolchains:foojay-resolver:1.0.0")
 }

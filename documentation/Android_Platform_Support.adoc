@@ -1,6 +1,14 @@
 :icons: font
 
-== Android Support
+== Android Platform Support
+
+=== Status
+
+Starting with 0.6.0 releases, TestBalloon fully supports Android local tests and Android instrumented tests.
+
+All TestBalloon capabilities work on Android. In particular, TestBalloon supports nested, concurrent and parallel tests on the Android platform, even where the underlying test infrastructure does not.
+
+Existing tests based on JUnit 4 continue to function and run alongside TestBalloon tests.
 
 === Android Test Ecosystem
 

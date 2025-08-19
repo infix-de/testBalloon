@@ -9,7 +9,7 @@ import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.internal.ListsBasedElementSelection
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
-import de.infix.testBalloon.framework.internal.logInfo
+import de.infix.testBalloon.framework.internal.logDebug
 import de.infix.testBalloon.framework.withSingleThreadedDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -177,5 +177,5 @@ private val TestElement.platformDescription: Description
 private class TestBalloonInitializationError(message: String, cause: Throwable) : Error(message, cause)
 
 private fun log(message: () -> String) {
-    logInfo(message)
+    logDebug(message)
 }

@@ -3,7 +3,7 @@ package com.example
 import de.infix.testBalloon.framework.testSuite
 import org.junit.Assert
 
-val BasicInstrumentedTestsWithTestBalloon by testSuite {
+val TestsWithTestBalloon by testSuite {
     test("expected to pass") {
         Assert.assertEquals(4, 2 + 2)
     }

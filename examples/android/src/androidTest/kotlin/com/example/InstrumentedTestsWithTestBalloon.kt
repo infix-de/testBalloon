@@ -17,9 +17,19 @@ import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.locks.reentrantLock
 import kotlinx.atomicfu.locks.withLock
 import kotlinx.coroutines.delay
+import org.junit.Assert
 import kotlin.time.Duration.Companion.milliseconds
 
-val ConcurrentInstrumentedTestsWithTestBalloon by testSuite(testConfig = TestConfig.testScope(isEnabled = false)) {
+val TestsWithTestBalloon by testSuite(testConfig = TestConfig.testScope(isEnabled = false)) {
+    testSuite("basic") {
+        test("expected to pass") {
+            Assert.assertEquals(4, 2 + 2)
+        }
+
+        test("expected to fail") {
+            Assert.assertEquals(5, 2 + 2)
+        }
+    }
 
     testSuite(
         "sequential",
@@ -28,27 +38,29 @@ val ConcurrentInstrumentedTestsWithTestBalloon by testSuite(testConfig = TestCon
         testSeries()
     }
 
-    testSuite(
-        "concurrent, default",
-        testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).multithreadingReport()
-    ) {
-        testSeries()
-    }
+    testSuite("concurrent") {
+        testSuite(
+            "default",
+            testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).multithreadingReport()
+        ) {
+            testSeries()
+        }
 
-    testSuite(
-        "concurrent, single-threaded",
-        testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).singleThreaded().multithreadingReport()
-    ) {
-        testSeries()
-    }
+        testSuite(
+            "single-threaded",
+            testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).singleThreaded().multithreadingReport()
+        ) {
+            testSeries()
+        }
 
-    testSuite(
-        "concurrent, nested",
-        testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).multithreadingReport()
-    ) {
-        for (suiteId in 1..10) {
-            testSuite("suite #$suiteId") {
-                testSeries()
+        testSuite(
+            "nested",
+            testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).multithreadingReport()
+        ) {
+            for (suiteId in 1..10) {
+                testSuite("suite $suiteId") {
+                    testSeries()
+                }
             }
         }
     }
@@ -57,7 +69,7 @@ val ConcurrentInstrumentedTestsWithTestBalloon by testSuite(testConfig = TestCon
 // Define your own test series builder.
 private fun TestSuite.testSeries() {
     for (testId in 1..10) {
-        test("#$testId") {
+        test("test $testId") {
             delay(10.milliseconds)
         }
     }

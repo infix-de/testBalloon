@@ -3,7 +3,7 @@ package com.example
 import org.junit.Assert
 import org.junit.Test
 
-class InstrumentedTestsWithJUnit4 {
+class TestsWithJUnit4 {
     @Test
     fun expected_to_pass() {
         Assert.assertEquals(4, 2 + 2)

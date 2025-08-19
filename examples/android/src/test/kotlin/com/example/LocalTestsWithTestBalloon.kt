@@ -2,7 +2,7 @@ package com.example
 
 import de.infix.testBalloon.framework.testSuite
 
-val LocalTestsWithTestBalloon by testSuite {
+val TestsWithTestBalloon by testSuite {
     test("expected to pass") {
         check(4 == 2 + 2)
     }

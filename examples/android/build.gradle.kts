@@ -3,7 +3,7 @@ import buildLogic.addTestBalloonPluginFromProject
 plugins {
     id("buildLogic.android-application")
     // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
-    alias(libs.plugins.org.jetbrains.kotlin.atomicfu)
+    id("org.jetbrains.kotlin.atomicfu")
 }
 
 // The following invocation supplements the TestBalloon plugin declaration inside this project:

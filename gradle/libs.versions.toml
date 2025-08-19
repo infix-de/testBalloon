@@ -142,6 +142,8 @@ org-jmailen-kotlinter-gradle-plugin = { module = "org.jmailen.kotlinter:org.jmai
 org-junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "org-junit-platform" }
 org-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "org-junit-platform" }
 
+com-github-gmazzo-buildconfig = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.6.7"
+
 [plugins]
 
 com-android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
@@ -149,7 +151,6 @@ com-android-application = { id = "com.android.application", version.ref = "andro
 com-android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "android-gradle-plugin" }
 
 # https://github.com/gmazzo/gradle-buildconfig-plugin/releases
-com-github-gmazzo-buildconfig = "com.github.gmazzo.buildconfig:5.6.7"
 
 com-gradleup-compat-patrouille = { id = "com.gradleup.compat.patrouille", version.ref = "com-gradleup-compat-patrouille" }
 

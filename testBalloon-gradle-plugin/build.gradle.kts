@@ -3,9 +3,9 @@ import buildLogic.libraryFromCatalog
 plugins {
     id("buildLogic.jvm")
     id("buildLogic.publishing-jvm")
-    alias(libs.plugins.org.jetbrains.kotlin.sam.with.receiver)
-    alias(libs.plugins.org.jetbrains.kotlin.assignment)
-    alias(libs.plugins.com.github.gmazzo.buildconfig)
+    id("org.jetbrains.kotlin.sam.with.receiver")
+    id("org.jetbrains.kotlin.assignment")
+    id("com.github.gmazzo.buildconfig")
     `java-gradle-plugin`
 }
 

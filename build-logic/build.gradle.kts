@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.org.jetbrains.kotlinx.atomicfu)
     implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
     implementation(libs.com.gradleup.compat.patrouille.gradle.plugin)
+    implementation(libs.com.github.gmazzo.buildconfig)
 }
 
 samWithReceiver {

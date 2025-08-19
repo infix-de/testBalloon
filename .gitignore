@@ -19,6 +19,9 @@ local.properties
 .idea/androidTestResultsUserPreferences.xml
 .idea/deploymentTargetSelector.xml
 .idea/deviceManager.xml
+.idea/jsLibraryMappings.xml
+.idea/kotlinc.xml
+.idea/misc.xml
 .idea/runConfigurations.xml
 
 ###

@@ -24,6 +24,8 @@ _TestBalloon makes writing all kinds of Kotlin tests simple and fun, everywhere.
 
 ✅️ Be **Multiplatform first** and **coroutines first** with a single API for all platforms.
 
+✅️ Run **Android instrumented tests** and **Android local tests** without [legacy restrictions](documentation/Android_Platform_Support.adoc).
+
 ✅️ **Run and debug individual tests** from the editor with TestBalloon's IntelliJ IDEA plugin.
 
 ✅️ Use **new Kotlin releases** as they appear, while retaining **backward compatibility** with Kotlin 2.0.

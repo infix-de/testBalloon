@@ -141,8 +141,10 @@ org-jmailen-kotlinter-gradle-plugin = { module = "org.jmailen.kotlinter:org.jmai
 # https://github.com/junit-team/junit5/releases
 org-junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "org-junit-platform" }
 org-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "org-junit-platform" }
-
 com-github-gmazzo-buildconfig = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.6.7"
+org-jetbrains-kotlin-sam-with-receiver = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-assignment = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
+
 
 [plugins]
 
@@ -158,15 +160,12 @@ com-vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.re
 
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin" }
 
-org-jetbrains-kotlin-assignment = { id = "org.jetbrains.kotlin.plugin.assignment", version.ref = "org-jetbrains-kotlin" }
 
-org-jetbrains-kotlin-atomicfu = { id = "org.jetbrains.kotlin.plugin.atomicfu", version.ref = "org-jetbrains-kotlin" }
 
 org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin" }
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "org-jetbrains-kotlin" }
 
-org-jetbrains-kotlin-sam-with-receiver = { id = "org.jetbrains.kotlin.plugin.sam.with.receiver", version.ref = "org-jetbrains-kotlin" }
 
 # https://github.com/jeremymailen/kotlinter-gradle/releases
 org-jmailen-kotlinter = { id = "org.jmailen.kotlinter", version.ref = "org-jmailen-kotlinter" }

@@ -3,7 +3,7 @@ import buildLogic.addTestBalloonPluginFromProject
 plugins {
     id("buildLogic.multiplatform")
     // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
-    id("org.jetbrains.kotlin.atomicfu")
+    id("org.jetbrains.kotlin.plugin.atomicfu")
 }
 
 // The following invocation supplements the TestBalloon plugin declaration inside this project:

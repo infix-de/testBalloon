@@ -13,8 +13,12 @@ dependencies {
     implementation(libs.org.jetbrains.kotlin.dokka.gradle.plugin)
     implementation(libs.org.jetbrains.kotlinx.kover.gradle.plugin)
     implementation(libs.org.jmailen.kotlinter.gradle.plugin)
+    implementation(libs.org.jetbrains.kotlin.atomicfu.gradle.plugin)
     implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
     implementation(libs.com.gradleup.compat.patrouille.gradle.plugin)
+    implementation(libs.com.github.gmazzo.buildconfig)
+    implementation(libs.org.jetbrains.kotlin.sam.with.receiver)
+    implementation(libs.org.jetbrains.kotlin.assignment)
 }
 
 samWithReceiver {

@@ -1,7 +1,7 @@
 plugins {
     id("buildLogic.jvm")
     id("buildLogic.publishing-jvm")
-    alias(libs.plugins.com.github.gmazzo.buildconfig)
+    id("com.github.gmazzo.buildconfig")
 }
 
 description = "Compiler plugin for the TestBalloon framework"

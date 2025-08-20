@@ -32,7 +32,7 @@ android-targetSdk = "36"
 jdk = "11"
 
 # https://github.com/GradleUp/compat-patrouille/releases
-com-gradleup-compat-patrouille = "0.0.2-SNAPSHOT-5a525a4c71c0d15d5e60318d2fdbd6d6a0a34cb1"
+com-gradleup-compat-patrouille = "0.0.2"
 
 # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
 com-vanniktech-maven-publish = "0.34.0"

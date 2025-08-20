@@ -3,10 +3,10 @@ import buildLogic.libraryFromCatalog
 plugins {
     id("buildLogic.jvm")
     id("buildLogic.publishing-jvm")
-    alias(libs.plugins.org.jetbrains.kotlin.sam.with.receiver)
-    alias(libs.plugins.org.jetbrains.kotlin.assignment)
-    alias(libs.plugins.com.github.gmazzo.buildconfig)
-    `java-gradle-plugin`
+    id("org.jetbrains.kotlin.plugin.sam.with.receiver")
+    id("org.jetbrains.kotlin.plugin.assignment")
+    id("com.github.gmazzo.buildconfig")
+    id("java-gradle-plugin")
 }
 
 description = "Gradle plugin for the TestBalloon framework"

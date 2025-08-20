@@ -32,7 +32,7 @@ android-targetSdk = "36"
 jdk = "11"
 
 # https://github.com/GradleUp/compat-patrouille/releases
-com-gradleup-compat-patrouille = "0.0.1"
+com-gradleup-compat-patrouille = "0.0.2"
 
 # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
 com-vanniktech-maven-publish = "0.34.0"
@@ -101,6 +101,9 @@ androidx-test-runner = "androidx.test:runner:1.7.0"
 
 com-android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
 
+# https://github.com/gmazzo/gradle-buildconfig-plugin/releases
+com-github-gmazzo-buildconfig = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.6.7"
+
 com-gradleup-compat-patrouille-gradle-plugin = { module = "com.gradleup.compat.patrouille:compat-patrouille-gradle-plugin", version.ref = "com-gradleup-compat-patrouille" }
 
 com-vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "com-vanniktech-maven-publish" }
@@ -122,6 +125,8 @@ org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gra
 
 org-jetbrains-kotlin-atomicfu-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.atomicfu:org.jetbrains.kotlin.plugin.atomicfu.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "org-jetbrains-kotlin-dokka" }
+org-jetbrains-kotlin-sam-with-receiver = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-assignment = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlinx-kover-gradle-plugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "org-jetbrains-kotlinx-kover" }
 
 # https://github.com/Kotlin/kotlinx-atomicfu/releases
@@ -148,24 +153,15 @@ com-android-application = { id = "com.android.application", version.ref = "andro
 
 com-android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "android-gradle-plugin" }
 
-# https://github.com/gmazzo/gradle-buildconfig-plugin/releases
-com-github-gmazzo-buildconfig = "com.github.gmazzo.buildconfig:5.6.7"
-
 com-gradleup-compat-patrouille = { id = "com.gradleup.compat.patrouille", version.ref = "com-gradleup-compat-patrouille" }
 
 com-vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "com-vanniktech-maven-publish" }
 
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin" }
 
-org-jetbrains-kotlin-assignment = { id = "org.jetbrains.kotlin.plugin.assignment", version.ref = "org-jetbrains-kotlin" }
-
-org-jetbrains-kotlin-atomicfu = { id = "org.jetbrains.kotlin.plugin.atomicfu", version.ref = "org-jetbrains-kotlin" }
-
 org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin" }
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "org-jetbrains-kotlin" }
-
-org-jetbrains-kotlin-sam-with-receiver = { id = "org.jetbrains.kotlin.plugin.sam.with.receiver", version.ref = "org-jetbrains-kotlin" }
 
 # https://github.com/jeremymailen/kotlinter-gradle/releases
 org-jmailen-kotlinter = { id = "org.jmailen.kotlinter", version.ref = "org-jmailen-kotlinter" }

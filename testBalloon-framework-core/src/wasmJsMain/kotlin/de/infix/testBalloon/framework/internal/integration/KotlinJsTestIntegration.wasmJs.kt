@@ -54,10 +54,8 @@ internal actual fun processArguments(): Array<String>? {
 
 private fun nodeProcessArguments(): JsArray<JsString> = js("process.argv.slice(2)")
 
-@Suppress("unused")
 private fun jsThrow(jsException: JsAny): Nothing = js("{ throw jsException; }")
 
-@Suppress("unused")
 private fun throwableToJsError(message: String, stack: String): JsAny =
     js("{ const e = new Error(); e.message = message; e.stack = stack; return e; }")
 
@@ -65,7 +63,6 @@ private fun Throwable.toJsError(): JsAny = throwableToJsError(message ?: "", sta
 
 // Jasmine test framework functions
 
-@Suppress("unused")
 private fun describe(description: String, suiteFn: () -> Unit) {
     // Here we disable the default 2s timeout.
     // The strange invocation is necessary to avoid using a JS arrow function which would bind `this` to a
@@ -73,11 +70,8 @@ private fun describe(description: String, suiteFn: () -> Unit) {
     js("describe(description, function () { this.timeout(0); suiteFn(); })")
 }
 
-@Suppress("unused")
 private external fun xdescribe(name: String, testFn: () -> Unit)
 
-@Suppress("unused")
 private external fun it(name: String, testFn: () -> JsAny?)
 
-@Suppress("unused")
 private external fun xit(name: String, testFn: () -> JsAny?)

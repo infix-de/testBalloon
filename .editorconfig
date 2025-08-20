@@ -50,3 +50,9 @@ ktlint_standard_function-naming = disabled
 [*.{md,adoc,toml}]
 
 max_line_length = off
+
+# region – WORKAROUND https://github.com/jeremymailen/kotlinter-gradle/issues/474
+[**/build/generated/**/*.kt]
+
+ktlint = disabled
+# endregion

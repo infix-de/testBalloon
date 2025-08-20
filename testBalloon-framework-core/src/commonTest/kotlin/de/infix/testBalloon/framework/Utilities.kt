@@ -14,7 +14,7 @@ import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlin.test.assertContentEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 import kotlin.test.fail
 import kotlin.time.Duration.Companion.minutes
 
@@ -131,7 +131,7 @@ internal fun List<String>.assertContainsInOrder(expectedElements: List<String>, 
 }
 
 internal fun Throwable.assertMessageStartsWith(phrase: String) =
-    assertTrue(message?.startsWith(phrase) == true, "Exception message did not start with '$phrase', but is '$message'")
+    assertEquals(message?.startsWith(phrase), true, "Exception message did not start with '$phrase', but is '$message'")
 
 /** References a [TestSuite], resolving the lazy initialization for top-level suites. */
 internal fun TestSuite.reference() {

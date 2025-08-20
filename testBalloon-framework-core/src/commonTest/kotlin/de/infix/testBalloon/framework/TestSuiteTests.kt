@@ -515,7 +515,6 @@ class TestSuiteTests {
                 aroundAll { tests ->
                     trace.add("aroundAll $testElementPath failing intentionally")
                     fail("aroundAll $testElementPath failing intentionally")
-                    tests()
                 }
 
                 test("test2") {

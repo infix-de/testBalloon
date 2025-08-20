@@ -82,7 +82,6 @@ private class JasmineLikeAdapter : FrameworkAdapter {
 
 // Jasmine/Mocha/Jest test API
 
-@Suppress("unused")
 private fun describe(description: String, suiteFn: () -> Unit) {
     // Here we disable the default 2s timeout.
     // The strange invocation is necessary to avoid using a JS arrow function which would bind `this` to a
@@ -90,11 +89,8 @@ private fun describe(description: String, suiteFn: () -> Unit) {
     js("describe(description, function () { this.timeout(0); suiteFn(); })")
 }
 
-@Suppress("unused")
 private external fun xdescribe(name: String, testFn: () -> Unit)
 
-@Suppress("unused")
 private external fun it(name: String, testFn: () -> JsPromiseLike?)
 
-@Suppress("unused")
 private external fun xit(name: String, testFn: () -> JsPromiseLike?)

@@ -5,23 +5,6 @@
 # https://developer.android.com/build/releases/gradle-plugin
 # https://developer.android.com/studio/releases#android_gradle_plugin_and_android_studio_compatibility
 android-gradle-plugin = "8.11.1"
-##                 ⬆ = "8.12.0-alpha01"
-##                 ⬆ = "8.12.0-alpha02"
-##                 ⬆ = "8.12.0-alpha03"
-##                 ⬆ = "8.12.0-alpha04"
-##                 ⬆ = "8.12.0-alpha05"
-##                 ⬆ = "8.12.0-alpha06"
-##                 ⬆ = "8.12.0-alpha07"
-##                 ⬆ = "8.12.0-alpha08"
-##                 ⬆ = "8.12.0-alpha09"
-##                 ⬆ = "8.12.0-rc01"
-##                 ⬆ = "8.12.0"
-##                 ⬆ = "8.13.0-alpha01"
-##                 ⬆ = "8.13.0-alpha02"
-##                 ⬆ = "8.13.0-alpha03"
-##                 ⬆ = "8.13.0-alpha04"
-##                 ⬆ = "8.13.0-rc01"
-##                 ⬆ = "9.0.0-alpha01"
 
 # https://developer.android.com/build#android_sdk_settings
 android-compileSdk = "36"
@@ -39,42 +22,9 @@ com-vanniktech-maven-publish = "0.34.0"
 
 # https://github.com/kotest/kotest/releases
 io-kotest = "5.9.1"
-##     ⬆ = "6.0.0.M1"
-##     ⬆ = "6.0.0.M2"
-##     ⬆ = "6.0.0.M3"
-##     ⬆ = "6.0.0.M4"
-##     ⬆ = "6.0.0.M5"
-##     ⬆ = "6.0.0.M6"
-##     ⬆ = "6.0.0.M7"
-##     ⬆ = "6.0.0.M8"
-##     ⬆ = "6.0.0.M9"
-##     ⬆ = "6.0.0.M10"
-##     ⬆ = "6.0.0.M11"
-##     ⬆ = "6.0.0.M12"
-##     ⬆ = "6.0.0.M13"
-##     ⬆ = "6.0.0.M14"
-##     ⬆ = "6.0.0.M15"
-##     ⬆ = "6.0.0.M16"
-##     ⬆ = "6.0.0.M17"
-##     ⬆ = "6.0.0"
 
 # https://github.com/JetBrains/kotlin/releases
 org-jetbrains-kotlin = "2.2.20-RC"
-##                ⬆ = "2.2.20-RC-233"
-##                ⬆ = "2.2.20-RC-244"
-##                ⬆ = "2.2.20-RC-252"
-##                ⬆ = "2.2.20-RC-260"
-##                ⬆ = "2.2.20-RC-264"
-##                ⬆ = "2.2.20-RC-266"
-##                ⬆ = "2.2.20-RC-267"
-##                ⬆ = "2.2.20-RC-271"
-##                ⬆ = "2.3.0-dev-3220"
-##                ⬆ = "2.3.0-dev-3235"
-##                ⬆ = "2.3.0-dev-3358"
-##                ⬆ = "2.3.0-dev-3493"
-##                ⬆ = "2.3.0-dev-3616"
-##                ⬆ = "2.3.0-dev-3759"
-##                ⬆ = "2.3.0-dev-3850"
 
 # https://github.com/Kotlin/dokka/releases
 org-jetbrains-kotlin-dokka = "2.0.0"
@@ -90,8 +40,6 @@ org-jmailen-kotlinter = "5.2.0"
 
 # https://github.com/junit-team/junit5/releases
 org-junit-platform = "1.13.4"
-##              ⬆ = "6.0.0-M1"
-##              ⬆ = "6.0.0-M2"
 
 [libraries]
 
@@ -102,11 +50,14 @@ androidx-test-runner = "androidx.test:runner:1.7.0"
 com-android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
 
 # https://github.com/gmazzo/gradle-buildconfig-plugin/releases
-com-github-gmazzo-buildconfig = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.6.7"
+com-github-gmazzo-buildconfig-gradle-plugin = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.6.7"
 
 com-gradleup-compat-patrouille-gradle-plugin = { module = "com.gradleup.compat.patrouille:compat-patrouille-gradle-plugin", version.ref = "com-gradleup-compat-patrouille" }
 
 com-vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "com-vanniktech-maven-publish" }
+
+# https://github.com/Splitties/refreshVersions/releases
+de-fayard-refreshversions-gradle-plugin = "de.fayard.refreshVersions:de.fayard.refreshVersions.gradle.plugin:0.60.6"
 
 # https://github.com/ZacSweers/kotlin-compile-testing/releases
 dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.8.0"
@@ -120,14 +71,15 @@ io-projectreactor-tools-blockhound = "io.projectreactor.tools:blockhound:1.0.13.
 # https://github.com/junit-team/junit4
 junit-junit4 = "junit:junit:4.13.2"
 
-org-jetbrains-kotlin-android-plugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin" }
+# https://github.com/gradle/foojay-toolchains/blob/main/CHANGELOG.md
+org-gradle-toolchains-foojay-resolver = "org.gradle.toolchains:foojay-resolver:1.0.0"
 
+org-jetbrains-kotlin-android-gradle-plugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-assignment-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-atomicfu-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.atomicfu:org.jetbrains.kotlin.plugin.atomicfu.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "org-jetbrains-kotlin-dokka" }
-org-jetbrains-kotlin-sam-with-receiver = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-assignment = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlinx-kover-gradle-plugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "org-jetbrains-kotlinx-kover" }
+org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-sam-with-receiver-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 
 # https://github.com/Kotlin/kotlinx-atomicfu/releases
 org-jetbrains-kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.29.0"
@@ -139,7 +91,8 @@ org-jetbrains-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotli
 
 # https://github.com/Kotlin/kotlinx-datetime/blob/master/CHANGELOG.md
 org-jetbrains-kotlinx-kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1"
-##                                                                           ⬆ :0.7.1-0.6.x-compat"
+
+org-jetbrains-kotlinx-kover-gradle-plugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "org-jetbrains-kotlinx-kover" }
 
 org-jmailen-kotlinter-gradle-plugin = { module = "org.jmailen.kotlinter:org.jmailen.kotlinter.gradle.plugin", version.ref = "org-jmailen-kotlinter" }
 
@@ -163,5 +116,4 @@ org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "org-jetbrains-kotlin" }
 
-# https://github.com/jeremymailen/kotlinter-gradle/releases
 org-jmailen-kotlinter = { id = "org.jmailen.kotlinter", version.ref = "org-jmailen-kotlinter" }

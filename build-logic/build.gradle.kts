@@ -1,13 +1,19 @@
 plugins {
+    // These plugins compile code in build-logic. Their versions can be different from those
+    // used to compile the project's Kotlin code elsewhere.
     kotlin("jvm") version "2.2.0"
     kotlin("plugin.sam.with.receiver") version "2.2.0"
     kotlin("plugin.assignment") version "2.2.0"
-    `java-gradle-plugin`
+    id("java-gradle-plugin")
 }
 
 dependencies {
+    // These declarations load plugins into the root project, without applying them.
+    // Doing so avoids issues when loading the same plugins in different subprojects, which will use separate
+    // classloaders. In this case, plugins would not be able to communicate across projects via a shared build service.
+    // Cf. https://discuss.gradle.org/t/why-duplicate-plugins-in-top-level-build-scripts/49087
     implementation(libs.org.jetbrains.kotlin.gradle.plugin)
-    implementation(libs.org.jetbrains.kotlin.android.plugin)
+    implementation(libs.org.jetbrains.kotlin.android.gradle.plugin)
     implementation(libs.com.android.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.atomicfu.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.dokka.gradle.plugin)
@@ -16,9 +22,9 @@ dependencies {
     implementation(libs.org.jetbrains.kotlin.atomicfu.gradle.plugin)
     implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
     implementation(libs.com.gradleup.compat.patrouille.gradle.plugin)
-    implementation(libs.com.github.gmazzo.buildconfig)
-    implementation(libs.org.jetbrains.kotlin.sam.with.receiver)
-    implementation(libs.org.jetbrains.kotlin.assignment)
+    implementation(libs.com.github.gmazzo.buildconfig.gradle.plugin)
+    implementation(libs.org.jetbrains.kotlin.sam.with.receiver.gradle.plugin)
+    implementation(libs.org.jetbrains.kotlin.assignment.gradle.plugin)
 }
 
 samWithReceiver {

@@ -20,10 +20,58 @@ import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
+import kotlin.reflect.KProperty
 
 @Suppress("unused")
 class GradlePlugin : KotlinCompilerPluginSupportPlugin {
+    private class PluginProperties(val project: Project) {
+
+        /** Name pattern for the subset of Kotlin compilation tasks which test compilation tasks. */
+        val kotlinTestCompilationTaskRegex by regexProperty("""Test""")
+
+        /** Name pattern for test root source sets which will receive generated entry point code. */
+        val testRootSourceSetRegex by regexProperty(
+            """^(test$|commonTest$|androidTest|androidInstrumentedTest)"""
+        )
+
+        /**
+         * Name pattern for test compilations in which the compiler plugin will look up test suites and a test session.
+         *
+         * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
+         */
+        val testCompilationRegex by regexProperty("""(^test)|Test""")
+
+        /**
+         * Name pattern for tasks processing source code from test source sets, like those from KSP.
+         *
+         * The Gradle plugin will make these tasks depend on the TestBalloon task generating the entry point source file.
+         */
+        val testSourceCodeProcessingTaskRegex by regexProperty("""^kspTestKotlin""")
+
+        /**
+         * Name pattern for test modules in which the compiler plugin will look up test suites and a test session.
+         *
+         * The Compiler plugin will disable itself for modules not matching this pattern.
+         */
+        val testModuleRegex by stringProperty("""(_test|Test)$""")
+
+        @Suppress("SameParameterValue")
+        private fun stringProperty(default: String) = Delegate(default) { it }
+        private fun regexProperty(default: String) = Delegate(default) { Regex(it) }
+
+        inner class Delegate<Result>(val default: String, val conversion: (String) -> Result) {
+            operator fun getValue(thisRef: Any?, property: KProperty<*>): Result =
+                conversion(project.findProperty("testBalloon.${property.name}")?.toString() ?: default)
+        }
+    }
+
+    private lateinit var pluginProperties: PluginProperties
+
     override fun apply(target: Project): Unit = with(target) {
+        pluginProperties = PluginProperties(this)
+
+        extensions.create("testBalloon", GradleExtension::class.java)
+
         // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
         configurations.named("kotlinNativeCompilerPluginClasspath") {
             dependencies.add(
@@ -31,9 +79,7 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
             )
         }
 
-        val extension = extensions.create("testBalloon", GradleExtension::class.java)
-
-        val testRootSourceSetRegex = Regex(extension.testRootSourceSetRegex)
+        val testRootSourceSetRegex = pluginProperties.testRootSourceSetRegex
         val generatedCommonTestDir = layout.buildDirectory.dir("generated/testBalloon/src/commonTest")
 
         extensions.configure<KotlinBaseExtension>("kotlin") {
@@ -61,8 +107,18 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
+        // Make Kotlin compilation tasks aware of the generated source's origin.
+        val kotlinTestCompilationTaskRegex = pluginProperties.kotlinTestCompilationTaskRegex
         tasks.withType(KotlinCompilationTask::class.java) {
-            if (name.contains("Test")) {
+            if (kotlinTestCompilationTaskRegex.containsMatchIn(name)) {
+                dependsOn(generateTestBalloonInitializationTask)
+            }
+        }
+
+        // Make source code processing tasks (like KSP) aware of the generated source's origin.
+        val testSourceCodeProcessingTaskRegex = pluginProperties.testSourceCodeProcessingTaskRegex
+        tasks.configureEach {
+            if (testSourceCodeProcessingTaskRegex.containsMatchIn(name)) {
                 dependsOn(generateTestBalloonInitializationTask)
             }
         }
@@ -98,7 +154,7 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(GradleExtension::class.java)
-        return Regex(extension.testCompilationRegex).containsMatchIn(kotlinCompilation.name).also {
+        return pluginProperties.testCompilationRegex.containsMatchIn(kotlinCompilation.name).also {
             if (extension.debugLevel > DebugLevel.NONE) {
                 project.logger.warn(
                     "[DEBUG] $PLUGIN_DISPLAY_NAME is ${if (!it) "not " else ""}applicable" +
@@ -116,7 +172,7 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
             listOf(
                 SubpluginOption(key = "debugLevel", value = extension.debugLevel.toString()),
                 SubpluginOption(key = "jvmStandalone", value = extension.jvmStandalone.toString()),
-                SubpluginOption(key = "testModuleRegex", value = extension.testModuleRegex)
+                SubpluginOption(key = "testModuleRegex", value = pluginProperties.testModuleRegex)
             )
         }
     }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.test.TestScope
 /**
  * A test containing a test [action] which raises assertion errors on failure. The [action] may suspend.
  */
-class Test internal constructor(
+public class Test internal constructor(
     parent: TestSuite,
     name: String,
     testConfig: TestConfig,
@@ -31,6 +31,7 @@ class Test internal constructor(
     override suspend fun execute(report: TestExecutionReport) {
         executeReporting(report) {
             if (testElementIsEnabled) {
+                @Suppress("DEPRECATION")
                 testConfig.executeWrapped(this) {
                     val testScopeContext = TestScopeContext.current()
 
@@ -65,14 +66,14 @@ class Test internal constructor(
     }
 }
 
-class TestCoroutineScope internal constructor(
+public class TestCoroutineScope internal constructor(
     private val test: Test,
     scope: CoroutineScope,
     private val testScopeOrNull: TestScope?
 ) : AbstractTest by test,
     CoroutineScope by scope {
 
-    val testScope: TestScope
+    public val testScope: TestScope
         get() = testScopeOrNull
             ?: throw IllegalStateException("$test is not executing in a TestScope.")
 }
@@ -80,4 +81,4 @@ class TestCoroutineScope internal constructor(
 /**
  * A test's action: test logic which raises assertion errors on failure. The action may suspend.
  */
-typealias TestAction = suspend TestCoroutineScope.() -> Unit
+public typealias TestAction = suspend TestCoroutineScope.() -> Unit

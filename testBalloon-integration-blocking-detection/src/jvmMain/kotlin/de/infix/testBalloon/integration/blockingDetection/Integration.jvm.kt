@@ -10,7 +10,9 @@ import reactor.blockhound.BlockingOperationError
 import reactor.blockhound.integration.BlockHoundIntegration
 import kotlin.coroutines.CoroutineContext
 
-actual fun TestConfig.blockingDetection(mode: BlockingDetection): TestConfig = if (mode == BlockingDetection.DISABLED) {
+public actual fun TestConfig.blockingDetection(mode: BlockingDetection): TestConfig = if (mode ==
+    BlockingDetection.DISABLED
+) {
     coroutineContext(BlockHoundContextElement(mode))
 } else {
     testScope(isEnabled = false).coroutineContext(BlockHoundContextElement(mode))
@@ -24,7 +26,7 @@ actual fun TestConfig.blockingDetection(mode: BlockingDetection): TestConfig = i
  *     withBlockHoundMode(BlockingDetection.DISABLED) { someBlockingCall() }
  * ```
  */
-suspend fun <R> withBlockingDetection(mode: BlockingDetection, action: suspend () -> R): R =
+public suspend fun <R> withBlockingDetection(mode: BlockingDetection, action: suspend () -> R): R =
     withContext(BlockHoundContextElement(mode)) {
         action()
     }
@@ -67,7 +69,7 @@ private class BlockHoundContextElement(private val mode: BlockingDetection) : Th
     }
 }
 
-class TestBalloonBlockHoundIntegration : BlockHoundIntegration {
+public class TestBalloonBlockHoundIntegration : BlockHoundIntegration {
     override fun applyTo(builder: BlockHound.Builder): Unit = with(builder) {
         allowBlockingCallsInside("java.util.ServiceLoader${'$'}LazyClassPathLookupIterator", "parse")
 

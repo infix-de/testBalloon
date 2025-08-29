@@ -1,11 +1,13 @@
 package com.example
 
 import de.infix.testBalloon.framework.Test
+import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.TestConfig
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestExecutionTraversal
 import de.infix.testBalloon.framework.TestInvocation
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.printlnFixed
 import de.infix.testBalloon.framework.invocation
 import de.infix.testBalloon.framework.singleThreaded
@@ -46,6 +48,7 @@ val TestsWithTestBalloon by testSuite(testConfig = TestConfig.testScope(isEnable
             testSeries()
         }
 
+        @OptIn(TestBalloonExperimentalApi::class)
         testSuite(
             "single-threaded",
             testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).singleThreaded().multithreadingReport()
@@ -91,6 +94,7 @@ private class MultithreadingReport : TestExecutionTraversal {
 
         if (testElement is Test) {
             lock.withLock {
+                @OptIn(TestBalloonExperimentalApi::class)
                 threadIdsUsed.add(testPlatform.threadId())
                 testCount++
             }
@@ -99,7 +103,9 @@ private class MultithreadingReport : TestExecutionTraversal {
         testElement.elementAction()
 
         if (isReportRoot) {
+            @OptIn(TestBalloonInternalApi::class)
             printlnFixed(
+                @OptIn(TestBalloonExperimentalApi::class)
                 "${testElement.testElementPath}[${testPlatform.displayName}]: ran $testCount test(s)" +
                     " on ${threadIdsUsed.size} thread(s)"
             )

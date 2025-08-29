@@ -1,0 +1,54 @@
+:icons: font
+
+=== Evolution
+
+This document outlines the TestBalloon plans to evolve in terms of API stability and features.
+
+==== Current Status
+
+TestBalloon is ready for use in production. Of course, you are advised to always determine the product's fit with your use cases first.
+
+While TestBalloon's core structure is stable, some aspects of its public API may still change. So expect some migration issues.
+
+==== Next Steps
+
+* Provide complete documentation, showing common use cases for the entire API.
+* Determine common use cases and evolve the `TestConfig` builder to support them.
+* Extract the compiler/Gradle plugin combination into a separate project with its own versioning.
+* Extract existing extensions into separate projects with their own versioning.
+* Create additional extensions for common use cases.
+
+==== Stabilization (Release 1.0 and beyond)
+
+===== Compatibility
+
+TestBalloon aims to be
+
+* *functionally stable* – not changing behavior in incompatible or unexpected ways,
+* *source compatible* as far as reasonable, providing a migration path for necessary changes,
+* *binary compatible*, providing a stable binary API for extensions.
+
+For further details, see https://youtu.be/cCgXtpVPO-o[Leonid Startsev's talk on API evolution from KotlinConf 2023].
+
+===== Deprecation Cycles
+
+Starting with release 1.0, TestBalloon's API evolution will include deprecation cycles for changes.
+
+This means that an API change will
+
+* start with a deprecation `WARNING` for the old API in version `n`,
+* follow up with a deprecation `ERROR` in version `n+1`,
+* finalize with a removal in version `n+2`.
+
+For changes with source-compatible overloads, the old API will immediately receive a `HIDDEN` deprecation.
+
+==== Practices
+
+* Enable `abiValidation`, use `checkLegacyAbi`.
+* Enable `explicitApi`.
+* Enable `-Werror` or `warningsAsErrors`.
++
+NOTE: This is currently not possible. See WORKAROUND comments in build-logic.
+* Use `@TestBalloonInternalApi` for internal functions with technically public visibility.
+* Propagate the experimental status of an upstream API (like `@ExperimentalCoroutinesApi`), if that API is not a TestBalloon-internal implementation detail.
+* Introduce new experimental functionality with `@ExperimentalTestBalloonApi` (or a more specific annotation where applicable).

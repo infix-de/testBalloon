@@ -1,5 +1,6 @@
 package com.example
 
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.printlnFixed
 import de.infix.testBalloon.framework.testSuite
 import kotlinx.coroutines.delay
@@ -13,6 +14,7 @@ val UsingAroundAll by testSuite {
         measureTime {
             testSuiteAction() // Never forget to actually call the action executing the test suite.
         }.also {
+            @OptIn(TestBalloonInternalApi::class)
             printlnFixed("$testElementPath took $it") // This will show the execution time of the entire suite.
         }
     }

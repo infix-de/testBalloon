@@ -2,8 +2,10 @@ package com.example
 
 import com.example.testLibrary.statisticsReport
 import com.example.testLibrary.test
+import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.TestCompartment
 import de.infix.testBalloon.framework.TestConfig
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.printlnFixed
 import de.infix.testBalloon.framework.testPlatform
 import de.infix.testBalloon.framework.testScope
@@ -16,7 +18,7 @@ import kotlin.time.Duration.Companion.milliseconds
 // Declare a suite capable of running tests concurrently.
 // Compartments ensure that this does not interfere with tests requiring the default sequential execution.
 
-val concurrentSuite by testSuite(
+val ConcurrentSuite by testSuite(
     compartment = { TestCompartment.Concurrent },
     testConfig = TestConfig
         .testScope(isEnabled = false)
@@ -29,13 +31,15 @@ val concurrentSuite by testSuite(
 
 // Declare a suite for UI tests. This will combine sequential execution with the presence of a Main dispatcher.
 
-val uiSuite by testSuite(
+@OptIn(TestBalloonExperimentalApi::class)
+val UiSuite by testSuite(
     compartment = { TestCompartment.UI() },
     testConfig = TestConfig.statisticsReport()
 ) {
     test("On UI thread") {
         launch(Dispatchers.Main) {
             delay(10.milliseconds)
+            @OptIn(TestBalloonInternalApi::class)
             printlnFixed(testPlatform.threadDisplayName())
         }
     }

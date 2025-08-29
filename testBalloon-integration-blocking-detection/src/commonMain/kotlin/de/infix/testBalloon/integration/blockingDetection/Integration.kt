@@ -3,7 +3,7 @@ package de.infix.testBalloon.integration.blockingDetection
 import de.infix.testBalloon.framework.TestConfig
 import de.infix.testBalloon.framework.testScope
 
-enum class BlockingDetection {
+public enum class BlockingDetection {
     DISABLED,
     ERROR,
     PRINT
@@ -21,4 +21,4 @@ enum class BlockingDetection {
  *
  * Child elements inherit this setting's effect.
  */
-expect fun TestConfig.blockingDetection(mode: BlockingDetection = BlockingDetection.ERROR): TestConfig
+public expect fun TestConfig.blockingDetection(mode: BlockingDetection = BlockingDetection.ERROR): TestConfig

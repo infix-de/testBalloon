@@ -1,0 +1,21 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, wasmWasi, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <de.infix.testBalloon:testBalloon-integration-blocking-detection>
+final enum class de.infix.testBalloon.integration.blockingDetection/BlockingDetection : kotlin/Enum<de.infix.testBalloon.integration.blockingDetection/BlockingDetection> { // de.infix.testBalloon.integration.blockingDetection/BlockingDetection|null[0]
+    enum entry DISABLED // de.infix.testBalloon.integration.blockingDetection/BlockingDetection.DISABLED|null[0]
+    enum entry ERROR // de.infix.testBalloon.integration.blockingDetection/BlockingDetection.ERROR|null[0]
+    enum entry PRINT // de.infix.testBalloon.integration.blockingDetection/BlockingDetection.PRINT|null[0]
+
+    final val entries // de.infix.testBalloon.integration.blockingDetection/BlockingDetection.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.integration.blockingDetection/BlockingDetection> // de.infix.testBalloon.integration.blockingDetection/BlockingDetection.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): de.infix.testBalloon.integration.blockingDetection/BlockingDetection // de.infix.testBalloon.integration.blockingDetection/BlockingDetection.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<de.infix.testBalloon.integration.blockingDetection/BlockingDetection> // de.infix.testBalloon.integration.blockingDetection/BlockingDetection.values|values#static(){}[0]
+}
+
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.integration.blockingDetection/blockingDetection(de.infix.testBalloon.integration.blockingDetection/BlockingDetection = ...): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.integration.blockingDetection/blockingDetection|blockingDetection@de.infix.testBalloon.framework.TestConfig(de.infix.testBalloon.integration.blockingDetection.BlockingDetection){}[0]

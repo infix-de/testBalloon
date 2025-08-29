@@ -1,9 +1,11 @@
 package com.example.testLibrary
 
 import de.infix.testBalloon.framework.Test
+import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.TestConfig
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestExecutionTraversal
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.printlnFixed
 import de.infix.testBalloon.framework.testPlatform
 import de.infix.testBalloon.framework.traversal
@@ -56,6 +58,7 @@ private class StatisticsReport : TestExecutionTraversal {
                         slowestTestDuration = duration
                     }
 
+                    @OptIn(TestBalloonExperimentalApi::class)
                     threadIdsUsed.add(testPlatform.threadId())
                 }
             }
@@ -66,12 +69,15 @@ private class StatisticsReport : TestExecutionTraversal {
 
         if (isReportRootElement) {
             val elapsedTime = reportStart.value!!.elapsedNow()
+            @OptIn(TestBalloonInternalApi::class)
             printlnFixed(
+                @OptIn(TestBalloonExperimentalApi::class)
                 "${testElement.testElementPath}[${testPlatform.displayName}]: ran $testCount test(s)" +
                     " on ${threadIdsUsed.size} thread(s) in $elapsedTime," +
                     " cumulative test duration: $cumulativeTestDuration"
             )
             if (slowestTestDuration != Duration.ZERO) {
+                @OptIn(TestBalloonInternalApi::class)
                 printlnFixed(
                     "\tThe slowest test '$slowestTestPath' took $slowestTestDuration."
                 )

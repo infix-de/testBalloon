@@ -1,0 +1,296 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, wasmWasi, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Alias: native => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <de.infix.testBalloon:testBalloon-framework-core>
+open annotation class de.infix.testBalloon.framework/TestBalloonExperimentalApi : kotlin/Annotation { // de.infix.testBalloon.framework/TestBalloonExperimentalApi|null[0]
+    constructor <init>() // de.infix.testBalloon.framework/TestBalloonExperimentalApi.<init>|<init>(){}[0]
+}
+
+final enum class de.infix.testBalloon.framework.internal/LogLevel : kotlin/Enum<de.infix.testBalloon.framework.internal/LogLevel> { // de.infix.testBalloon.framework.internal/LogLevel|null[0]
+    enum entry DEBUG // de.infix.testBalloon.framework.internal/LogLevel.DEBUG|null[0]
+    enum entry ERROR // de.infix.testBalloon.framework.internal/LogLevel.ERROR|null[0]
+    enum entry INFO // de.infix.testBalloon.framework.internal/LogLevel.INFO|null[0]
+
+    final val entries // de.infix.testBalloon.framework.internal/LogLevel.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework.internal/LogLevel> // de.infix.testBalloon.framework.internal/LogLevel.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): de.infix.testBalloon.framework.internal/LogLevel // de.infix.testBalloon.framework.internal/LogLevel.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<de.infix.testBalloon.framework.internal/LogLevel> // de.infix.testBalloon.framework.internal/LogLevel.values|values#static(){}[0]
+}
+
+final enum class de.infix.testBalloon.framework/TestInvocation : kotlin/Enum<de.infix.testBalloon.framework/TestInvocation> { // de.infix.testBalloon.framework/TestInvocation|null[0]
+    enum entry CONCURRENT // de.infix.testBalloon.framework/TestInvocation.CONCURRENT|null[0]
+    enum entry SEQUENTIAL // de.infix.testBalloon.framework/TestInvocation.SEQUENTIAL|null[0]
+
+    final val entries // de.infix.testBalloon.framework/TestInvocation.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework/TestInvocation> // de.infix.testBalloon.framework/TestInvocation.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): de.infix.testBalloon.framework/TestInvocation // de.infix.testBalloon.framework/TestInvocation.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<de.infix.testBalloon.framework/TestInvocation> // de.infix.testBalloon.framework/TestInvocation.values|values#static(){}[0]
+}
+
+abstract interface de.infix.testBalloon.framework/TestExecutionTraversal { // de.infix.testBalloon.framework/TestExecutionTraversal|null[0]
+    abstract suspend fun aroundEach(de.infix.testBalloon.framework/TestElement, kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestElement, kotlin/Unit>) // de.infix.testBalloon.framework/TestExecutionTraversal.aroundEach|aroundEach(de.infix.testBalloon.framework.TestElement;kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestElement,kotlin.Unit>){}[0]
+}
+
+abstract interface de.infix.testBalloon.framework/TestPlatform { // de.infix.testBalloon.framework/TestPlatform|null[0]
+    abstract val displayName // de.infix.testBalloon.framework/TestPlatform.displayName|{}displayName[0]
+        abstract fun <get-displayName>(): kotlin/String // de.infix.testBalloon.framework/TestPlatform.displayName.<get-displayName>|<get-displayName>(){}[0]
+    abstract val parallelism // de.infix.testBalloon.framework/TestPlatform.parallelism|{}parallelism[0]
+        abstract fun <get-parallelism>(): kotlin/Int // de.infix.testBalloon.framework/TestPlatform.parallelism.<get-parallelism>|<get-parallelism>(){}[0]
+    abstract val type // de.infix.testBalloon.framework/TestPlatform.type|{}type[0]
+        abstract fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatform.type.<get-type>|<get-type>(){}[0]
+
+    abstract fun threadDisplayName(): kotlin/String // de.infix.testBalloon.framework/TestPlatform.threadDisplayName|threadDisplayName(){}[0]
+    abstract fun threadId(): kotlin/ULong // de.infix.testBalloon.framework/TestPlatform.threadId|threadId(){}[0]
+
+    final enum class Type : kotlin/Enum<de.infix.testBalloon.framework/TestPlatform.Type> { // de.infix.testBalloon.framework/TestPlatform.Type|null[0]
+        enum entry JS // de.infix.testBalloon.framework/TestPlatform.Type.JS|null[0]
+        enum entry JVM // de.infix.testBalloon.framework/TestPlatform.Type.JVM|null[0]
+        enum entry NATIVE // de.infix.testBalloon.framework/TestPlatform.Type.NATIVE|null[0]
+        enum entry WASM_JS // de.infix.testBalloon.framework/TestPlatform.Type.WASM_JS|null[0]
+        enum entry WASM_WASI // de.infix.testBalloon.framework/TestPlatform.Type.WASM_WASI|null[0]
+
+        final val entries // de.infix.testBalloon.framework/TestPlatform.Type.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework/TestPlatform.Type> // de.infix.testBalloon.framework/TestPlatform.Type.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatform.Type.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<de.infix.testBalloon.framework/TestPlatform.Type> // de.infix.testBalloon.framework/TestPlatform.Type.values|values#static(){}[0]
+    }
+}
+
+abstract class de.infix.testBalloon.framework/TestConfigurationReport { // de.infix.testBalloon.framework/TestConfigurationReport|null[0]
+    constructor <init>() // de.infix.testBalloon.framework/TestConfigurationReport.<init>|<init>(){}[0]
+
+    abstract fun add(de.infix.testBalloon.framework/TestElementEvent) // de.infix.testBalloon.framework/TestConfigurationReport.add|add(de.infix.testBalloon.framework.TestElementEvent){}[0]
+}
+
+abstract class de.infix.testBalloon.framework/TestExecutionReport { // de.infix.testBalloon.framework/TestExecutionReport|null[0]
+    constructor <init>() // de.infix.testBalloon.framework/TestExecutionReport.<init>|<init>(){}[0]
+
+    abstract suspend fun add(de.infix.testBalloon.framework/TestElementEvent) // de.infix.testBalloon.framework/TestExecutionReport.add|add(de.infix.testBalloon.framework.TestElementEvent){}[0]
+}
+
+final class de.infix.testBalloon.framework/Test : de.infix.testBalloon.framework/AbstractTest, de.infix.testBalloon.framework/TestElement // de.infix.testBalloon.framework/Test|null[0]
+
+final class de.infix.testBalloon.framework/TestCoroutineScope : de.infix.testBalloon.framework/AbstractTest, kotlinx.coroutines/CoroutineScope { // de.infix.testBalloon.framework/TestCoroutineScope|null[0]
+    final val coroutineContext // de.infix.testBalloon.framework/TestCoroutineScope.coroutineContext|{}coroutineContext[0]
+        final fun <get-coroutineContext>(): kotlin.coroutines/CoroutineContext // de.infix.testBalloon.framework/TestCoroutineScope.coroutineContext.<get-coroutineContext>|<get-coroutineContext>(){}[0]
+    final val testElementDisplayName // de.infix.testBalloon.framework/TestCoroutineScope.testElementDisplayName|{}testElementDisplayName[0]
+        final fun <get-testElementDisplayName>(): kotlin/String // de.infix.testBalloon.framework/TestCoroutineScope.testElementDisplayName.<get-testElementDisplayName>|<get-testElementDisplayName>(){}[0]
+    final val testElementIsEnabled // de.infix.testBalloon.framework/TestCoroutineScope.testElementIsEnabled|{}testElementIsEnabled[0]
+        final fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/TestCoroutineScope.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
+    final val testElementName // de.infix.testBalloon.framework/TestCoroutineScope.testElementName|{}testElementName[0]
+        final fun <get-testElementName>(): kotlin/String // de.infix.testBalloon.framework/TestCoroutineScope.testElementName.<get-testElementName>|<get-testElementName>(){}[0]
+    final val testElementParent // de.infix.testBalloon.framework/TestCoroutineScope.testElementParent|{}testElementParent[0]
+        final fun <get-testElementParent>(): de.infix.testBalloon.framework/AbstractTestSuite? // de.infix.testBalloon.framework/TestCoroutineScope.testElementParent.<get-testElementParent>|<get-testElementParent>(){}[0]
+    final val testElementPath // de.infix.testBalloon.framework/TestCoroutineScope.testElementPath|{}testElementPath[0]
+        final fun <get-testElementPath>(): kotlin/String // de.infix.testBalloon.framework/TestCoroutineScope.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+    final val testScope // de.infix.testBalloon.framework/TestCoroutineScope.testScope|{}testScope[0]
+        final fun <get-testScope>(): kotlinx.coroutines.test/TestScope // de.infix.testBalloon.framework/TestCoroutineScope.testScope.<get-testScope>|<get-testScope>(){}[0]
+}
+
+open class de.infix.testBalloon.framework/TestCompartment : de.infix.testBalloon.framework/TestSuite { // de.infix.testBalloon.framework/TestCompartment|null[0]
+    constructor <init>(kotlin/String, de.infix.testBalloon.framework/TestConfig) // de.infix.testBalloon.framework/TestCompartment.<init>|<init>(kotlin.String;de.infix.testBalloon.framework.TestConfig){}[0]
+
+    final object Companion { // de.infix.testBalloon.framework/TestCompartment.Companion|null[0]
+        final val Concurrent // de.infix.testBalloon.framework/TestCompartment.Companion.Concurrent|{}Concurrent[0]
+            final fun <get-Concurrent>(): de.infix.testBalloon.framework/TestCompartment // de.infix.testBalloon.framework/TestCompartment.Companion.Concurrent.<get-Concurrent>|<get-Concurrent>(){}[0]
+        final val Default // de.infix.testBalloon.framework/TestCompartment.Companion.Default|{}Default[0]
+            final fun <get-Default>(): de.infix.testBalloon.framework/TestCompartment // de.infix.testBalloon.framework/TestCompartment.Companion.Default.<get-Default>|<get-Default>(){}[0]
+        final val RealTime // de.infix.testBalloon.framework/TestCompartment.Companion.RealTime|{}RealTime[0]
+            final fun <get-RealTime>(): de.infix.testBalloon.framework/TestCompartment // de.infix.testBalloon.framework/TestCompartment.Companion.RealTime.<get-RealTime>|<get-RealTime>(){}[0]
+        final val Sequential // de.infix.testBalloon.framework/TestCompartment.Companion.Sequential|{}Sequential[0]
+            final fun <get-Sequential>(): de.infix.testBalloon.framework/TestCompartment // de.infix.testBalloon.framework/TestCompartment.Companion.Sequential.<get-Sequential>|<get-Sequential>(){}[0]
+
+        final fun UI(kotlinx.coroutines/CoroutineDispatcher? = ..., de.infix.testBalloon.framework/TestConfig = ...): de.infix.testBalloon.framework/TestCompartment // de.infix.testBalloon.framework/TestCompartment.Companion.UI|UI(kotlinx.coroutines.CoroutineDispatcher?;de.infix.testBalloon.framework.TestConfig){}[0]
+    }
+}
+
+open class de.infix.testBalloon.framework/TestConfig { // de.infix.testBalloon.framework/TestConfig|null[0]
+    final fun chainedWith(de.infix.testBalloon.framework/TestConfig): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/TestConfig.chainedWith|chainedWith(de.infix.testBalloon.framework.TestConfig){}[0]
+
+    final object Companion : de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/TestConfig.Companion|null[0]
+}
+
+open class de.infix.testBalloon.framework/TestSession : de.infix.testBalloon.framework/AbstractTestSession, de.infix.testBalloon.framework/TestSuite { // de.infix.testBalloon.framework/TestSession|null[0]
+    constructor <init>(de.infix.testBalloon.framework/TestConfig = ..., kotlin/Function0<de.infix.testBalloon.framework/TestCompartment> = ...) // de.infix.testBalloon.framework/TestSession.<init>|<init>(de.infix.testBalloon.framework.TestConfig;kotlin.Function0<de.infix.testBalloon.framework.TestCompartment>){}[0]
+
+    final object Companion { // de.infix.testBalloon.framework/TestSession.Companion|null[0]
+        final val DefaultConfiguration // de.infix.testBalloon.framework/TestSession.Companion.DefaultConfiguration|{}DefaultConfiguration[0]
+            final fun <get-DefaultConfiguration>(): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/TestSession.Companion.DefaultConfiguration.<get-DefaultConfiguration>|<get-DefaultConfiguration>(){}[0]
+    }
+}
+
+open class de.infix.testBalloon.framework/TestSuite : de.infix.testBalloon.framework/AbstractTestSuite, de.infix.testBalloon.framework/TestElement { // de.infix.testBalloon.framework/TestSuite|null[0]
+    constructor <init>(de.infix.testBalloon.framework/TestCompartment, de.infix.testBalloon.framework/TestConfig, kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ..., kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(de.infix.testBalloon.framework.TestCompartment;de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String;kotlin.String){}[0]
+    constructor <init>(de.infix.testBalloon.framework/TestCompartment, kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ..., kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(de.infix.testBalloon.framework.TestCompartment;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String;kotlin.String){}[0]
+    constructor <init>(de.infix.testBalloon.framework/TestConfig, kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ..., kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String;kotlin.String){}[0]
+    constructor <init>(kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ..., kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String;kotlin.String){}[0]
+    constructor <init>(kotlin/String, de.infix.testBalloon.framework/TestCompartment, de.infix.testBalloon.framework/TestConfig, kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(kotlin.String;de.infix.testBalloon.framework.TestCompartment;de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String){}[0]
+    constructor <init>(kotlin/String, de.infix.testBalloon.framework/TestCompartment, kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(kotlin.String;de.infix.testBalloon.framework.TestCompartment;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String){}[0]
+    constructor <init>(kotlin/String, de.infix.testBalloon.framework/TestConfig, kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(kotlin.String;de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String){}[0]
+
+    final val testSuiteScope // de.infix.testBalloon.framework/TestSuite.testSuiteScope|{}testSuiteScope[0]
+        final fun <get-testSuiteScope>(): kotlinx.coroutines/CoroutineScope // de.infix.testBalloon.framework/TestSuite.testSuiteScope.<get-testSuiteScope>|<get-testSuiteScope>(){}[0]
+    open val testElementChildren // de.infix.testBalloon.framework/TestSuite.testElementChildren|{}testElementChildren[0]
+        open fun <get-testElementChildren>(): kotlin.collections/Iterable<de.infix.testBalloon.framework/TestElement> // de.infix.testBalloon.framework/TestSuite.testElementChildren.<get-testElementChildren>|<get-testElementChildren>(){}[0]
+
+    final fun <#A1: kotlin/Any> testFixture(kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestSuite, #A1>): de.infix.testBalloon.framework/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework/TestSuite.testFixture|testFixture(kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestSuite,0:0>){0§<kotlin.Any>}[0]
+    final fun aroundAll(kotlin.coroutines/SuspendFunction1<kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/Unit>) // de.infix.testBalloon.framework/TestSuite.aroundAll|aroundAll(kotlin.coroutines.SuspendFunction1<kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>,kotlin.Unit>){}[0]
+    final fun test(kotlin/String, de.infix.testBalloon.framework/TestConfig = ..., kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestCoroutineScope, kotlin/Unit>) // de.infix.testBalloon.framework/TestSuite.test|test(kotlin.String;de.infix.testBalloon.framework.TestConfig;kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestCoroutineScope,kotlin.Unit>){}[0]
+    final fun testSuite(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework/TestConfig = ..., kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>) // de.infix.testBalloon.framework/TestSuite.testSuite|testSuite(kotlin.String;kotlin.String;de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>){}[0]
+
+    final class <#A1: kotlin/Any> Fixture { // de.infix.testBalloon.framework/TestSuite.Fixture|null[0]
+        final fun closeWith(kotlin.coroutines/SuspendFunction1<#A1, kotlin/Unit>): de.infix.testBalloon.framework/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework/TestSuite.Fixture.closeWith|closeWith(kotlin.coroutines.SuspendFunction1<1:0,kotlin.Unit>){}[0]
+        final suspend fun invoke(): #A1 // de.infix.testBalloon.framework/TestSuite.Fixture.invoke|invoke(){}[0]
+    }
+}
+
+sealed class de.infix.testBalloon.framework/TestElement : de.infix.testBalloon.framework/AbstractTestElement { // de.infix.testBalloon.framework/TestElement|null[0]
+    open val testElementDisplayName // de.infix.testBalloon.framework/TestElement.testElementDisplayName|{}testElementDisplayName[0]
+        open fun <get-testElementDisplayName>(): kotlin/String // de.infix.testBalloon.framework/TestElement.testElementDisplayName.<get-testElementDisplayName>|<get-testElementDisplayName>(){}[0]
+    open val testElementName // de.infix.testBalloon.framework/TestElement.testElementName|{}testElementName[0]
+        open fun <get-testElementName>(): kotlin/String // de.infix.testBalloon.framework/TestElement.testElementName.<get-testElementName>|<get-testElementName>(){}[0]
+    open val testElementParent // de.infix.testBalloon.framework/TestElement.testElementParent|{}testElementParent[0]
+        open fun <get-testElementParent>(): de.infix.testBalloon.framework/TestSuite? // de.infix.testBalloon.framework/TestElement.testElementParent.<get-testElementParent>|<get-testElementParent>(){}[0]
+    open val testElementPath // de.infix.testBalloon.framework/TestElement.testElementPath|{}testElementPath[0]
+        open fun <get-testElementPath>(): kotlin/String // de.infix.testBalloon.framework/TestElement.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+
+    final var testConfig // de.infix.testBalloon.framework/TestElement.testConfig|{}testConfig[0]
+        final fun <get-testConfig>(): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/TestElement.testConfig.<get-testConfig>|<get-testConfig>(){}[0]
+        final fun <set-testConfig>(de.infix.testBalloon.framework/TestConfig) // de.infix.testBalloon.framework/TestElement.testConfig.<set-testConfig>|<set-testConfig>(de.infix.testBalloon.framework.TestConfig){}[0]
+    open var testElementIsEnabled // de.infix.testBalloon.framework/TestElement.testElementIsEnabled|{}testElementIsEnabled[0]
+        open fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/TestElement.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
+
+    open fun toString(): kotlin/String // de.infix.testBalloon.framework/TestElement.toString|toString(){}[0]
+}
+
+sealed class de.infix.testBalloon.framework/TestElementEvent { // de.infix.testBalloon.framework/TestElementEvent|null[0]
+    final val element // de.infix.testBalloon.framework/TestElementEvent.element|{}element[0]
+        final fun <get-element>(): de.infix.testBalloon.framework/TestElement // de.infix.testBalloon.framework/TestElementEvent.element.<get-element>|<get-element>(){}[0]
+    final val instant // de.infix.testBalloon.framework/TestElementEvent.instant|{}instant[0]
+        final fun <get-instant>(): kotlin.time/Instant // de.infix.testBalloon.framework/TestElementEvent.instant.<get-instant>|<get-instant>(){}[0]
+
+    open fun toString(): kotlin/String // de.infix.testBalloon.framework/TestElementEvent.toString|toString(){}[0]
+
+    final class Finished : de.infix.testBalloon.framework/TestElementEvent { // de.infix.testBalloon.framework/TestElementEvent.Finished|null[0]
+        constructor <init>(de.infix.testBalloon.framework/TestElement, de.infix.testBalloon.framework/TestElementEvent.Starting, kotlin/Throwable? = ...) // de.infix.testBalloon.framework/TestElementEvent.Finished.<init>|<init>(de.infix.testBalloon.framework.TestElement;de.infix.testBalloon.framework.TestElementEvent.Starting;kotlin.Throwable?){}[0]
+
+        final val failed // de.infix.testBalloon.framework/TestElementEvent.Finished.failed|{}failed[0]
+            final fun <get-failed>(): kotlin/Boolean // de.infix.testBalloon.framework/TestElementEvent.Finished.failed.<get-failed>|<get-failed>(){}[0]
+        final val startingEvent // de.infix.testBalloon.framework/TestElementEvent.Finished.startingEvent|{}startingEvent[0]
+            final fun <get-startingEvent>(): de.infix.testBalloon.framework/TestElementEvent.Starting // de.infix.testBalloon.framework/TestElementEvent.Finished.startingEvent.<get-startingEvent>|<get-startingEvent>(){}[0]
+        final val succeeded // de.infix.testBalloon.framework/TestElementEvent.Finished.succeeded|{}succeeded[0]
+            final fun <get-succeeded>(): kotlin/Boolean // de.infix.testBalloon.framework/TestElementEvent.Finished.succeeded.<get-succeeded>|<get-succeeded>(){}[0]
+        final val throwable // de.infix.testBalloon.framework/TestElementEvent.Finished.throwable|{}throwable[0]
+            final fun <get-throwable>(): kotlin/Throwable? // de.infix.testBalloon.framework/TestElementEvent.Finished.throwable.<get-throwable>|<get-throwable>(){}[0]
+
+        final fun toString(): kotlin/String // de.infix.testBalloon.framework/TestElementEvent.Finished.toString|toString(){}[0]
+    }
+
+    final class Starting : de.infix.testBalloon.framework/TestElementEvent { // de.infix.testBalloon.framework/TestElementEvent.Starting|null[0]
+        constructor <init>(de.infix.testBalloon.framework/TestElement) // de.infix.testBalloon.framework/TestElementEvent.Starting.<init>|<init>(de.infix.testBalloon.framework.TestElement){}[0]
+    }
+}
+
+final val de.infix.testBalloon.framework/testPlatform // de.infix.testBalloon.framework/testPlatform|{}testPlatform[0]
+    final fun <get-testPlatform>(): de.infix.testBalloon.framework/TestPlatform // de.infix.testBalloon.framework/testPlatform.<get-testPlatform>|<get-testPlatform>(){}[0]
+
+final var de.infix.testBalloon.framework.internal/testFrameworkLogLevel // de.infix.testBalloon.framework.internal/testFrameworkLogLevel|{}testFrameworkLogLevel[0]
+    final fun <get-testFrameworkLogLevel>(): de.infix.testBalloon.framework.internal/LogLevel // de.infix.testBalloon.framework.internal/testFrameworkLogLevel.<get-testFrameworkLogLevel>|<get-testFrameworkLogLevel>(){}[0]
+    final fun <set-testFrameworkLogLevel>(de.infix.testBalloon.framework.internal/LogLevel) // de.infix.testBalloon.framework.internal/testFrameworkLogLevel.<set-testFrameworkLogLevel>|<set-testFrameworkLogLevel>(de.infix.testBalloon.framework.internal.LogLevel){}[0]
+
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/aroundAll(kotlin.coroutines/SuspendFunction2<de.infix.testBalloon.framework/TestElement, kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestElement, kotlin/Unit>, kotlin/Unit>): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/aroundAll|aroundAll@de.infix.testBalloon.framework.TestConfig(kotlin.coroutines.SuspendFunction2<de.infix.testBalloon.framework.TestElement,kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestElement,kotlin.Unit>,kotlin.Unit>){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/aroundEach(kotlin.coroutines/SuspendFunction2<de.infix.testBalloon.framework/TestElement, kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestElement, kotlin/Unit>, kotlin/Unit>): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/aroundEach|aroundEach@de.infix.testBalloon.framework.TestConfig(kotlin.coroutines.SuspendFunction2<de.infix.testBalloon.framework.TestElement,kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestElement,kotlin.Unit>,kotlin.Unit>){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/coroutineContext(kotlin.coroutines/CoroutineContext): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/coroutineContext|coroutineContext@de.infix.testBalloon.framework.TestConfig(kotlin.coroutines.CoroutineContext){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/disable(): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/disable|disable@de.infix.testBalloon.framework.TestConfig(){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/failFast(kotlin/Int): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/failFast|failFast@de.infix.testBalloon.framework.TestConfig(kotlin.Int){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/invocation(de.infix.testBalloon.framework/TestInvocation): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/invocation|invocation@de.infix.testBalloon.framework.TestConfig(de.infix.testBalloon.framework.TestInvocation){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/mainDispatcher(kotlinx.coroutines/CoroutineDispatcher? = ...): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/mainDispatcher|mainDispatcher@de.infix.testBalloon.framework.TestConfig(kotlinx.coroutines.CoroutineDispatcher?){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/report(de.infix.testBalloon.framework/TestExecutionReport): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/report|report@de.infix.testBalloon.framework.TestConfig(de.infix.testBalloon.framework.TestExecutionReport){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/singleThreaded(): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/singleThreaded|singleThreaded@de.infix.testBalloon.framework.TestConfig(){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/testScope(kotlin/Boolean, kotlin.time/Duration = ...): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/testScope|testScope@de.infix.testBalloon.framework.TestConfig(kotlin.Boolean;kotlin.time.Duration){}[0]
+final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.framework/traversal(de.infix.testBalloon.framework/TestExecutionTraversal): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/traversal|traversal@de.infix.testBalloon.framework.TestConfig(de.infix.testBalloon.framework.TestExecutionTraversal){}[0]
+final fun de.infix.testBalloon.framework.internal/printlnFixed(kotlin/Any?) // de.infix.testBalloon.framework.internal/printlnFixed|printlnFixed(kotlin.Any?){}[0]
+final fun de.infix.testBalloon.framework/dispatcherWithParallelism(kotlin/Int): kotlinx.coroutines/CoroutineDispatcher // de.infix.testBalloon.framework/dispatcherWithParallelism|dispatcherWithParallelism(kotlin.Int){}[0]
+final fun de.infix.testBalloon.framework/testSuite(kotlin/String = ..., kotlin/String = ..., de.infix.testBalloon.framework/TestConfig = ..., kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>): kotlin/Lazy<de.infix.testBalloon.framework/TestSuite> // de.infix.testBalloon.framework/testSuite|testSuite(kotlin.String;kotlin.String;de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>){}[0]
+final fun de.infix.testBalloon.framework/testSuite(kotlin/String = ..., kotlin/String = ..., kotlin/Function0<de.infix.testBalloon.framework/TestCompartment>, de.infix.testBalloon.framework/TestConfig = ..., kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>): kotlin/Lazy<de.infix.testBalloon.framework/TestSuite> // de.infix.testBalloon.framework/testSuite|testSuite(kotlin.String;kotlin.String;kotlin.Function0<de.infix.testBalloon.framework.TestCompartment>;de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>){}[0]
+final suspend fun de.infix.testBalloon.framework/withMainDispatcher(kotlinx.coroutines/CoroutineDispatcher? = ..., kotlin.coroutines/SuspendFunction0<kotlin/Unit>) // de.infix.testBalloon.framework/withMainDispatcher|withMainDispatcher(kotlinx.coroutines.CoroutineDispatcher?;kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0]
+final suspend fun de.infix.testBalloon.framework/withSingleThreadedDispatcher(kotlin.coroutines/SuspendFunction1<kotlinx.coroutines/CoroutineDispatcher, kotlin/Unit>) // de.infix.testBalloon.framework/withSingleThreadedDispatcher|withSingleThreadedDispatcher(kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineDispatcher,kotlin.Unit>){}[0]
+
+// Targets: [native]
+final object de.infix.testBalloon.framework/TestPlatformNative : de.infix.testBalloon.framework/TestPlatform { // de.infix.testBalloon.framework/TestPlatformNative|null[0]
+    final val displayName // de.infix.testBalloon.framework/TestPlatformNative.displayName|{}displayName[0]
+        final fun <get-displayName>(): kotlin/String // de.infix.testBalloon.framework/TestPlatformNative.displayName.<get-displayName>|<get-displayName>(){}[0]
+    final val parallelism // de.infix.testBalloon.framework/TestPlatformNative.parallelism|{}parallelism[0]
+        final fun <get-parallelism>(): kotlin/Int // de.infix.testBalloon.framework/TestPlatformNative.parallelism.<get-parallelism>|<get-parallelism>(){}[0]
+    final val type // de.infix.testBalloon.framework/TestPlatformNative.type|{}type[0]
+        final fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatformNative.type.<get-type>|<get-type>(){}[0]
+
+    final fun threadDisplayName(): kotlin/String // de.infix.testBalloon.framework/TestPlatformNative.threadDisplayName|threadDisplayName(){}[0]
+    final fun threadId(): kotlin/ULong // de.infix.testBalloon.framework/TestPlatformNative.threadId|threadId(){}[0]
+}
+
+// Targets: [js, wasmJs]
+abstract interface de.infix.testBalloon.framework/TestPlatformJsHosted : de.infix.testBalloon.framework/TestPlatform { // de.infix.testBalloon.framework/TestPlatformJsHosted|null[0]
+    abstract val runtime // de.infix.testBalloon.framework/TestPlatformJsHosted.runtime|{}runtime[0]
+        abstract fun <get-runtime>(): de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime // de.infix.testBalloon.framework/TestPlatformJsHosted.runtime.<get-runtime>|<get-runtime>(){}[0]
+    open val parallelism // de.infix.testBalloon.framework/TestPlatformJsHosted.parallelism|{}parallelism[0]
+        open fun <get-parallelism>(): kotlin/Int // de.infix.testBalloon.framework/TestPlatformJsHosted.parallelism.<get-parallelism>|<get-parallelism>(){}[0]
+
+    open fun threadDisplayName(): kotlin/String // de.infix.testBalloon.framework/TestPlatformJsHosted.threadDisplayName|threadDisplayName(){}[0]
+    open fun threadId(): kotlin/ULong // de.infix.testBalloon.framework/TestPlatformJsHosted.threadId|threadId(){}[0]
+
+    final enum class Runtime : kotlin/Enum<de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime> { // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime|null[0]
+        enum entry BROWSER // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime.BROWSER|null[0]
+        enum entry NODE // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime.NODE|null[0]
+
+        final val displayName // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime.displayName|{}displayName[0]
+            final fun <get-displayName>(): kotlin/String // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime.displayName.<get-displayName>|<get-displayName>(){}[0]
+        final val entries // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime> // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun toString(): kotlin/String // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime.toString|toString(){}[0]
+        final fun valueOf(kotlin/String): de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime> // de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime.values|values#static(){}[0]
+    }
+}
+
+// Targets: [js]
+final object de.infix.testBalloon.framework/TestPlatformJs : de.infix.testBalloon.framework/TestPlatformJsHosted { // de.infix.testBalloon.framework/TestPlatformJs|null[0]
+    final val displayName // de.infix.testBalloon.framework/TestPlatformJs.displayName|{}displayName[0]
+        final fun <get-displayName>(): kotlin/String // de.infix.testBalloon.framework/TestPlatformJs.displayName.<get-displayName>|<get-displayName>(){}[0]
+    final val runtime // de.infix.testBalloon.framework/TestPlatformJs.runtime|{}runtime[0]
+        final fun <get-runtime>(): de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime // de.infix.testBalloon.framework/TestPlatformJs.runtime.<get-runtime>|<get-runtime>(){}[0]
+    final val type // de.infix.testBalloon.framework/TestPlatformJs.type|{}type[0]
+        final fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatformJs.type.<get-type>|<get-type>(){}[0]
+}
+
+// Targets: [wasmJs]
+final object de.infix.testBalloon.framework/TestPlatformWasmJs : de.infix.testBalloon.framework/TestPlatformJsHosted { // de.infix.testBalloon.framework/TestPlatformWasmJs|null[0]
+    final val displayName // de.infix.testBalloon.framework/TestPlatformWasmJs.displayName|{}displayName[0]
+        final fun <get-displayName>(): kotlin/String // de.infix.testBalloon.framework/TestPlatformWasmJs.displayName.<get-displayName>|<get-displayName>(){}[0]
+    final val runtime // de.infix.testBalloon.framework/TestPlatformWasmJs.runtime|{}runtime[0]
+        final fun <get-runtime>(): de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime // de.infix.testBalloon.framework/TestPlatformWasmJs.runtime.<get-runtime>|<get-runtime>(){}[0]
+    final val type // de.infix.testBalloon.framework/TestPlatformWasmJs.type|{}type[0]
+        final fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatformWasmJs.type.<get-type>|<get-type>(){}[0]
+}
+
+// Targets: [wasmWasi]
+final object de.infix.testBalloon.framework/TestPlatformWasmWasi : de.infix.testBalloon.framework/TestPlatform { // de.infix.testBalloon.framework/TestPlatformWasmWasi|null[0]
+    final val displayName // de.infix.testBalloon.framework/TestPlatformWasmWasi.displayName|{}displayName[0]
+        final fun <get-displayName>(): kotlin/String // de.infix.testBalloon.framework/TestPlatformWasmWasi.displayName.<get-displayName>|<get-displayName>(){}[0]
+    final val parallelism // de.infix.testBalloon.framework/TestPlatformWasmWasi.parallelism|{}parallelism[0]
+        final fun <get-parallelism>(): kotlin/Int // de.infix.testBalloon.framework/TestPlatformWasmWasi.parallelism.<get-parallelism>|<get-parallelism>(){}[0]
+    final val type // de.infix.testBalloon.framework/TestPlatformWasmWasi.type|{}type[0]
+        final fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatformWasmWasi.type.<get-type>|<get-type>(){}[0]
+
+    final fun threadDisplayName(): kotlin/String // de.infix.testBalloon.framework/TestPlatformWasmWasi.threadDisplayName|threadDisplayName(){}[0]
+    final fun threadId(): kotlin/ULong // de.infix.testBalloon.framework/TestPlatformWasmWasi.threadId|threadId(){}[0]
+}

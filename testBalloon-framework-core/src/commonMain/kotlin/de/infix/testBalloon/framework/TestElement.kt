@@ -1,7 +1,18 @@
 package de.infix.testBalloon.framework
 
-sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, var testConfig: TestConfig) :
+public sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, testConfig: TestConfig) :
     AbstractTestElement {
+
+    /**
+     * The element's test configuration.
+     *
+     * Note: Using `testSuite(...) { testConfig = ... }` is unsafe and will be removed in the next minor release(s).
+     */
+    @Suppress("CanBePrimaryConstructorProperty")
+    @Deprecated(
+        "Use 'testSuite(..., testConfig = ...)' instead. Scheduled for becoming an 'internal val' in TestBalloon 0.8."
+    )
+    public var testConfig: TestConfig = testConfig
 
     override val testElementParent: TestSuite? = parent
     override val testElementName: String = parent?.registerUniqueChildElementName(name) ?: name
@@ -58,6 +69,7 @@ sealed class TestElement(parent: TestSuite?, name: String, displayName: String =
         testElementParent?.let { parent ->
             if (!parent.testElementIsEnabled) testElementIsEnabled = false // Inherit a 'disabled' state
         }
+        @Suppress("DEPRECATION")
         testConfig.parameterize(this)
     }
 
@@ -89,6 +101,7 @@ sealed class TestElement(parent: TestSuite?, name: String, displayName: String =
      * Executes [action], reporting its [TestElementEvent]s to the [report].
      */
     internal suspend fun executeReporting(report: TestExecutionReport, action: suspend () -> Unit) {
+        @Suppress("DEPRECATION")
         testConfig.withExecutionReportSetup(this) { additionalReports ->
             suspend fun TestElementEvent.Finished.addToReports() {
                 // address reports in reverse order for finish events

@@ -4,3 +4,11 @@ plugins {
 }
 
 description = "Shared abstractions for the TestBalloon framework"
+
+kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+    }
+    explicitApi()
+}

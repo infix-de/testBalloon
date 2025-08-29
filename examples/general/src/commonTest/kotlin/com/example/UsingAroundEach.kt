@@ -12,7 +12,7 @@ import kotlin.time.measureTime
 // Make tests exceeding a time limit fail.
 // `TestConfig.aroundEach` applies to each test of this suite (and tests in suites below it if there were any).
 
-val UsingAroundEach by testSuite {
+val UsingAroundEach by testSuite(
     testConfig = TestConfig
         .testScope(isEnabled = false) // Disable the coroutines `TestScope` to use real time
         .aroundEach { elementAction ->
@@ -28,7 +28,7 @@ val UsingAroundEach by testSuite {
                 elementAction() // Executes a non-Test element (a TestSuite and its derivatives).
             }
         }
-
+) {
     test("10 milliseconds") {
         delay(10.milliseconds)
     }

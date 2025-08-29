@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
  * ```
  */
 @TestDiscoverable
-open class TestSession protected constructor(
+public open class TestSession protected constructor(
     testConfig: TestConfig = DefaultConfiguration,
     defaultCompartment: (() -> TestCompartment) = { TestCompartment.Default }
 ) : TestSuite(
@@ -44,14 +44,14 @@ open class TestSession protected constructor(
 
     internal constructor() : this(testConfig = DefaultConfiguration)
 
-    companion object {
+    public companion object {
         /**
          * The default session configuration.
          *
          * Executing elements sequentially on [Dispatchers.Default], using [kotlinx.coroutines.test.TestScope]
          * inside tests.
          */
-        val DefaultConfiguration: TestConfig =
+        public val DefaultConfiguration: TestConfig =
             TestConfig.invocation(TestInvocation.SEQUENTIAL)
                 .coroutineContext(Dispatchers.Default)
                 .testScope(true)

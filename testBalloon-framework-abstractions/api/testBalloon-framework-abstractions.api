@@ -1,0 +1,41 @@
+public abstract interface class de/infix/testBalloon/framework/AbstractTest : de/infix/testBalloon/framework/AbstractTestElement {
+}
+
+public abstract interface class de/infix/testBalloon/framework/AbstractTestElement {
+	public abstract fun getTestElementDisplayName ()Ljava/lang/String;
+	public abstract fun getTestElementIsEnabled ()Z
+	public abstract fun getTestElementName ()Ljava/lang/String;
+	public abstract fun getTestElementParent ()Lde/infix/testBalloon/framework/AbstractTestSuite;
+	public abstract fun getTestElementPath ()Ljava/lang/String;
+}
+
+public abstract interface class de/infix/testBalloon/framework/AbstractTestSession : de/infix/testBalloon/framework/AbstractTestSuite {
+}
+
+public abstract interface class de/infix/testBalloon/framework/AbstractTestSuite : de/infix/testBalloon/framework/AbstractTestElement {
+	public abstract fun getTestElementChildren ()Ljava/lang/Iterable;
+}
+
+public abstract interface annotation class de/infix/testBalloon/framework/InvokedByGeneratedCode : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class de/infix/testBalloon/framework/TestDiscoverable : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class de/infix/testBalloon/framework/TestDisplayName : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class de/infix/testBalloon/framework/TestElementDsl : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class de/infix/testBalloon/framework/TestElementName : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class de/infix/testBalloon/framework/internal/TestBalloonInternalApi : java/lang/annotation/Annotation {
+}
+
+public final class de/infix/testBalloon/framework/internal/TestFrameworkDiscoveryResult {
+	public fun <init> ([Lde/infix/testBalloon/framework/AbstractTestSuite;)V
+	public final fun getTopLevelTestSuites ()[Lde/infix/testBalloon/framework/AbstractTestSuite;
+}
+

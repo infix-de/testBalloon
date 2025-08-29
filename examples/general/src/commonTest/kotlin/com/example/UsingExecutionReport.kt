@@ -6,6 +6,7 @@ import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestExecutionReport
 import de.infix.testBalloon.framework.disable
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.printlnFixed
 import de.infix.testBalloon.framework.report
 import de.infix.testBalloon.framework.testSuite
@@ -50,6 +51,7 @@ private class DisabledTestsExecutionReport : TestExecutionReport() {
         }
 
         if (element == rootElement.value && disabledTestPaths.isNotEmpty()) {
+            @OptIn(TestBalloonInternalApi::class)
             printlnFixed(
                 "WARNING: ${disabledTestPaths.size} disabled test(s) in ${rootElement.value?.testElementPath}:\n\t" +
                     disabledTestPaths.joinToString("\n\t")

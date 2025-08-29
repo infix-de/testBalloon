@@ -5,36 +5,38 @@ import kotlinx.coroutines.CoroutineDispatcher
 /**
  * The platform executing tests.
  */
-interface TestPlatform {
-    enum class Type { JVM, NATIVE, JS, WASM_JS, WASM_WASI }
+@TestBalloonExperimentalApi
+public interface TestPlatform {
+    public enum class Type { JVM, NATIVE, JS, WASM_JS, WASM_WASI }
 
     /** The platform's type. */
-    val type: Type
+    public val type: Type
 
     /** The platform's human-readable name. NOTE: Consider it unstable, use [type] for conditional code. */
-    val displayName: String
+    public val displayName: String
 
     /** The platform's default parallelism. */
-    val parallelism: Int
+    public val parallelism: Int
 
     /** The ID of the current thread. NOTE: For debugging purposes only, do not make assumptions about its value. */
-    fun threadId(): ULong
+    public fun threadId(): ULong
 
     /** The display name of the current thread. NOTE: For debugging purposes only, do not make assumptions about it. */
-    fun threadDisplayName(): String
+    public fun threadDisplayName(): String
 }
 
 /**
  * The [TestPlatform] currently used to execute tests.
  */
-expect val testPlatform: TestPlatform
+@TestBalloonExperimentalApi
+public expect val testPlatform: TestPlatform
 
 /**
  * Returns a [CoroutineDispatcher] providing a maximum amount of [parallelism], limited by the platform's capabilities.
  *
  * Use this utility function for testing special cases.
  */
-expect fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher
+public expect fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher
 
 /**
  * Executes [action], providing it with a single-threaded [CoroutineDispatcher].
@@ -44,4 +46,5 @@ expect fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher
  *
  * Use this utility function for testing special cases.
  */
-expect suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit)
+@TestBalloonExperimentalApi
+public expect suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit)

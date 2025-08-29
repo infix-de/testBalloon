@@ -12,6 +12,7 @@ import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import de.infix.testBalloon.framework.internal.logDebug
 import de.infix.testBalloon.framework.withSingleThreadedDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -77,6 +78,7 @@ internal class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) 
         // Why are we running on Dispatchers.Default? Because otherwise, a nested runBlocking could hang the entire
         // system due to thread starvation. See https://github.com/Kotlin/kotlinx.coroutines/issues/3983
 
+        @OptIn(ExperimentalCoroutinesApi::class)
         withSingleThreadedDispatcher { notificationDispatcher ->
 
             // Android's `TraceRunListener`, which is invoked by `RunNotifier`, requires each event's start and

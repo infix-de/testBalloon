@@ -2,6 +2,7 @@ package de.infix.testBalloon.framework
 
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * A report containing a sequence of test events, each of which will be [add]ed during configuration.
@@ -9,8 +10,8 @@ import kotlin.time.ExperimentalTime
  * During configuration, a report is expected to contain [TestElementEvent.Starting] and [TestElementEvent.Finished] for
  * every element in the element hierarchy. This includes events for disabled elements.
  */
-abstract class TestConfigurationReport {
-    abstract fun add(event: TestElementEvent)
+public abstract class TestConfigurationReport {
+    public abstract fun add(event: TestElementEvent)
 }
 
 /**
@@ -19,24 +20,27 @@ abstract class TestConfigurationReport {
  * During execution, a report is expected to contain [TestElementEvent.Starting] and [TestElementEvent.Finished] for
  * every element in the element hierarchy. This includes events for disabled elements.
  */
-abstract class TestExecutionReport {
-    abstract suspend fun add(event: TestElementEvent)
+public abstract class TestExecutionReport {
+    public abstract suspend fun add(event: TestElementEvent)
 }
 
 /**
  * An event occurring as part of a test element's execution.
  */
-sealed class TestElementEvent(val element: TestElement) {
-    @OptIn(ExperimentalTime::class)
-    val instant = Clock.System.now()
+public sealed class TestElementEvent(public val element: TestElement) {
+    @ExperimentalTime
+    public val instant: Instant = Clock.System.now()
 
-    class Starting(element: TestElement) : TestElementEvent(element)
+    public class Starting(element: TestElement) : TestElementEvent(element)
 
-    class Finished(element: TestElement, val startingEvent: Starting, val throwable: Throwable? = null) :
-        TestElementEvent(element) {
+    public class Finished(
+        element: TestElement,
+        public val startingEvent: Starting,
+        public val throwable: Throwable? = null
+    ) : TestElementEvent(element) {
 
-        val succeeded: Boolean get() = throwable == null
-        val failed: Boolean get() = throwable != null
+        public val succeeded: Boolean get() = throwable == null
+        public val failed: Boolean get() = throwable != null
 
         override fun toString(): String = "${super.toString()} – throwable=$throwable"
     }

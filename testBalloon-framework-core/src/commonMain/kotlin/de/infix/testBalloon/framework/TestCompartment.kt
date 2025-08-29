@@ -1,21 +1,21 @@
 package de.infix.testBalloon.framework
 
+import de.infix.testBalloon.framework.TestCompartment.Companion.Default
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
  * A compartment isolating a number of tests from those belonging to other compartments.
  *
  * Compartments make sure that tests with special runtime requirements, like UI tests, can execute in isolation.
  */
-open class TestCompartment(name: String, testConfig: TestConfig) :
+public open class TestCompartment(name: String, testConfig: TestConfig) :
     TestSuite(parent = TestSession.global, name = "@$name", testConfig = testConfig) {
 
-    companion object {
+    public companion object {
         /**
          * The default compartment, which inherits its entire configuration from the [TestSession].
          */
-        val Default
+        public val Default: TestCompartment
             get() = default ?: TestCompartment(name = "Default", testConfig = TestConfig).also { default = it }
 
         private var default: TestCompartment? = null
@@ -23,7 +23,7 @@ open class TestCompartment(name: String, testConfig: TestConfig) :
         /**
          * A compartment executing its tests concurrently.
          */
-        val Concurrent
+        public val Concurrent: TestCompartment
             get() = concurrent ?: TestCompartment(
                 name = "Concurrent",
                 testConfig = TestConfig.invocation(TestInvocation.CONCURRENT)
@@ -39,7 +39,7 @@ open class TestCompartment(name: String, testConfig: TestConfig) :
          * - if the session's configuration was changed, or
          * - to signal an explicit choice.
          */
-        val Sequential
+        public val Sequential: TestCompartment
             get() = sequential ?: TestCompartment(
                 name = "Sequential",
                 testConfig = TestConfig.invocation(TestInvocation.SEQUENTIAL)
@@ -52,7 +52,7 @@ open class TestCompartment(name: String, testConfig: TestConfig) :
          *
          * This disables [TestConfig.testScope], which is otherwise enabled by default.
          */
-        val RealTime
+        public val RealTime: TestCompartment
             get() = realTime ?: TestCompartment(
                 name = "RealTime",
                 testConfig = TestConfig.invocation(TestInvocation.SEQUENTIAL).testScope(isEnabled = false)
@@ -67,15 +67,17 @@ open class TestCompartment(name: String, testConfig: TestConfig) :
          * [testConfig] overrides the compartment's default configuration.
          */
         @Suppress("FunctionName")
-        @OptIn(ExperimentalCoroutinesApi::class)
-        fun UI(mainDispatcher: CoroutineDispatcher? = null, testConfig: TestConfig = TestConfig): TestCompartment =
-            TestCompartment(
-                name = "UI",
-                testConfig = TestConfig
-                    .invocation(TestInvocation.SEQUENTIAL)
-                    .mainDispatcher(mainDispatcher)
-                    .chainedWith(testConfig)
-            )
+        @TestBalloonExperimentalApi
+        public fun UI(
+            mainDispatcher: CoroutineDispatcher? = null,
+            testConfig: TestConfig = TestConfig
+        ): TestCompartment = TestCompartment(
+            name = "UI",
+            testConfig = TestConfig
+                .invocation(TestInvocation.SEQUENTIAL)
+                .mainDispatcher(mainDispatcher)
+                .chainedWith(testConfig)
+        )
 
         /** Resets global state, enabling the execution of multiple test sessions in one process. */
         internal fun resetState() {

@@ -3,6 +3,7 @@ package de.infix.testBalloon.framework
 import de.infix.testBalloon.framework.internal.TestFramework
 import de.infix.testBalloon.framework.internal.initializeTestFramework
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
@@ -14,6 +15,7 @@ import kotlin.test.assertNotEquals
 class TestConfigTestsJvm {
     @Test
     fun singleThreadedDispatcher() = withTestFramework {
+        @OptIn(ExperimentalCoroutinesApi::class)
         withSingleThreadedDispatcher { defaultDispatcher ->
             val testSuite by testSuite("testSuite", testConfig = TestConfig.coroutineContext(defaultDispatcher)) {}
 
@@ -47,6 +49,7 @@ class TestConfigTestsJvm {
             // Using the platform's main dispatcher.
             val platformMainThreadId = withContext(Dispatchers.Main) { testPlatform.threadId() }
 
+            @OptIn(ExperimentalCoroutinesApi::class)
             withSingleThreadedDispatcher { alternativeMainDispatcher ->
                 val alternativeMainThreadId = withContext(alternativeMainDispatcher) { testPlatform.threadId() }
 
@@ -90,6 +93,7 @@ class TestConfigTestsJvm {
     fun mainDispatcherSetMoreThanOnce() = withTestFramework {
         val testSuite by testSuite("testSuite") {}
 
+        @OptIn(ExperimentalCoroutinesApi::class)
         withSingleThreadedDispatcher { alternativeMainDispatcher ->
             TestConfig.mainDispatcher(alternativeMainDispatcher).executeWrapped(testSuite) {
                 assertFailsWith<IllegalArgumentException> {

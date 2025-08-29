@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     id("buildLogic.multiplatform-plus-android-library")
     id("buildLogic.publishing-multiplatform")
@@ -6,12 +8,32 @@ plugins {
 description = "Core library for the TestBalloon framework"
 
 kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+    }
+    explicitApi()
+
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-opt-in=de.infix.testBalloon.framework.internal.TestBalloonInternalApi",
+            "-opt-in=de.infix.testBalloon.framework.TestBalloonExperimentalApi"
+        )
+    }
+
     js {
         // The core library tests use kotlin-test, which comes with a default timeout of 2 seconds on JS.
         // This may be too restrictive on slow CI runners, so we are increasing it.
         val kotlinTestTimeout = "10s"
         nodejs { testTask { useMocha { timeout = kotlinTestTimeout } } }
         browser { testTask { useMocha { timeout = kotlinTestTimeout } } }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        compilerOptions {
+            freeCompilerArgs.add("-opt-in=kotlin.js.ExperimentalWasmJsInterop")
+        }
     }
 
     androidLibrary {

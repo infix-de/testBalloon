@@ -19,9 +19,15 @@ class BuildLogicMultiplatformBasePlugin : Plugin<Project> {
 
         val kotlin = extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
-        fun Task.kotlinSourceSets(name: String, predicate: (sourceSet: KotlinSourceSet) -> Boolean) {
+        kotlin.compilerOptions {
+            // WORKAROUND: Disable until KLIB resolver warnings can be suppressed or no longer appear.
+            //     See also: https://youtrack.jetbrains.com/issue/KT-78277
+            // freeCompilerArgs.addAll("-Werror")
+        }
+
+        fun Task.kotlinSourceSetsDiagram(name: String, predicate: (sourceSet: KotlinSourceSet) -> Boolean) {
             group = "help"
-            description = "Prints Mermaid diagram code displaying the Kotlin $name source set hierarchy."
+            description = "Prints a Mermaid diagram code displaying the Kotlin $name source set hierarchy."
             notCompatibleWithConfigurationCache("This task references source sets by its nature.")
 
             doLast {
@@ -39,12 +45,12 @@ class BuildLogicMultiplatformBasePlugin : Plugin<Project> {
             }
         }
 
-        tasks.register("kotlinMainSourceSets") {
-            kotlinSourceSets("main") { !Regex("[tT]est").containsMatchIn(it.name) }
+        tasks.register("kotlinMainSourceSetsDiagram") {
+            kotlinSourceSetsDiagram("main") { !Regex("[tT]est").containsMatchIn(it.name) }
         }
 
-        tasks.register("kotlinTestSourceSets") {
-            kotlinSourceSets("test") { Regex("[tT]est").containsMatchIn(it.name) }
+        tasks.register("kotlinTestSourceSetsDiagram") {
+            kotlinSourceSetsDiagram("test") { Regex("[tT]est").containsMatchIn(it.name) }
         }
     }
 }

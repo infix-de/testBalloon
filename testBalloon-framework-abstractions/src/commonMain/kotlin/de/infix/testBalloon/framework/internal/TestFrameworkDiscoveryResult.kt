@@ -6,4 +6,7 @@ import de.infix.testBalloon.framework.InvokedByGeneratedCode
 /**
  * The result of a compilation module's test discovery, used internally by framework-generated code.
  */
-class TestFrameworkDiscoveryResult @InvokedByGeneratedCode constructor(val topLevelTestSuites: Array<AbstractTestSuite>)
+@TestBalloonInternalApi
+public class TestFrameworkDiscoveryResult @InvokedByGeneratedCode constructor(
+    public val topLevelTestSuites: Array<AbstractTestSuite>
+)

@@ -12,7 +12,7 @@ package de.infix.testBalloon.framework
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class TestDiscoverable
+public annotation class TestDiscoverable
 
 /**
  * Makes a String parameter receive the fully qualified name of its function's or constructor's caller.
@@ -25,7 +25,7 @@ annotation class TestDiscoverable
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
-annotation class TestElementName
+public annotation class TestElementName
 
 /**
  * Makes a String parameter receive the simple name of its function's or constructor's caller.
@@ -36,17 +36,17 @@ annotation class TestElementName
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
-annotation class TestDisplayName
+public annotation class TestDisplayName
 
 /**
  * Makes the annotated class part of the test element DSL. See the Kotlin docs on [DslMarker] for details.
  */
 @DslMarker
-annotation class TestElementDsl
+public annotation class TestElementDsl
 
 /**
  * Indicates that the function or constructor is invoked by framework-generated code.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
-annotation class InvokedByGeneratedCode
+public annotation class InvokedByGeneratedCode

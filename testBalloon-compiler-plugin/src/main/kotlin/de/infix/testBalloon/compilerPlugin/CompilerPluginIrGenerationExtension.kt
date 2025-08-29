@@ -9,6 +9,7 @@ import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.TestDiscoverable
 import de.infix.testBalloon.framework.TestDisplayName
 import de.infix.testBalloon.framework.TestElementName
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -168,6 +169,8 @@ private class Configuration(compilerConfiguration: CompilerConfiguration, overri
     val testDiscoverableAnnotationSymbol = irClassSymbol(TestDiscoverable::class)
     val testElementNameAnnotationSymbol = irClassSymbol(TestElementName::class)
     val testDisplayNameAnnotationSymbol = irClassSymbol(TestDisplayName::class)
+
+    @OptIn(TestBalloonInternalApi::class)
     val testFrameworkDiscoveryResultSymbol = irClassSymbol(TestFrameworkDiscoveryResult::class)
 
     val initializeTestFrameworkFunctionSymbol = irFunctionSymbol(internalPackageName, "initializeTestFramework")

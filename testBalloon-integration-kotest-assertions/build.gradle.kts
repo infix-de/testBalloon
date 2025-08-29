@@ -10,6 +10,12 @@ description = "Library supporting Kotest Assertions with the TestBalloon framewo
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
 
 kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+    }
+    explicitApi()
+
     sourceSets {
         commonMain {
             dependencies {

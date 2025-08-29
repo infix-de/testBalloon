@@ -10,6 +10,12 @@ description = "Library supporting blocking code detection with the TestBalloon f
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
 
 kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+    }
+    explicitApi()
+
     androidLibrary {
         namespace = "de.infix.testBalloon.integration.blockingDetection"
     }

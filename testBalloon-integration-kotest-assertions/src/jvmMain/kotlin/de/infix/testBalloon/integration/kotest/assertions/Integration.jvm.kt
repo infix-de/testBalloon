@@ -4,4 +4,4 @@ import de.infix.testBalloon.framework.TestConfig
 import de.infix.testBalloon.framework.coroutineContext
 import io.kotest.assertions.errorCollectorContextElement
 
-actual fun TestConfig.kotestAssertionsSupport(): TestConfig = coroutineContext(errorCollectorContextElement)
+public actual fun TestConfig.kotestAssertionsSupport(): TestConfig = coroutineContext(errorCollectorContextElement)

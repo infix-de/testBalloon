@@ -76,7 +76,6 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
         val entry = StringBuilder()
         Message(entry).content()
         val message = "##teamcity[$messageName$entry]"
-        // printlnFixed(message.replaceFirst("##", "§§"))
         outputEntry(message)
     }
 

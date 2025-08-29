@@ -18,7 +18,7 @@ package de.infix.testBalloon.framework.internal
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.LOCAL_VARIABLE)
 @Retention(AnnotationRetention.SOURCE)
-annotation class GuardedBy(
+internal annotation class GuardedBy(
     /** The name of the object guarding the target.  */
     vararg val locks: String
 )

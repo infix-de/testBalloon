@@ -1,5 +1,6 @@
 package de.infix.testBalloon.integration.kotest.assertions
 
+import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.TestConfig
 import de.infix.testBalloon.framework.TestPlatform
 import de.infix.testBalloon.framework.testPlatform
@@ -12,6 +13,7 @@ import io.kotest.matchers.string.shouldNotEndWith
 
 val IntegrationTest by testSuite {
     test("assertSoftly", testConfig = TestConfig.kotestAssertionsSupport()) {
+        @OptIn(TestBalloonExperimentalApi::class)
         if (testPlatform.type == TestPlatform.Type.NATIVE) return@test // TODO: Add Native support in Kotest
         shouldThrow<MultiAssertionError> {
             assertSoftly {

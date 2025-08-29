@@ -11,13 +11,10 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
-typealias TestSuiteExecutionAction = suspend TestSuite.() -> Unit
-typealias TestSuiteExecutionWrappingAction = suspend (suiteAction: TestSuiteExecutionAction) -> Unit
-
 /**
- * Declares a test suite with a number of child test elements (tests and/or suites). A suite may not contain test logic.
+ * Declares a top-level [TestSuite].
  *
- * [compartment] is the optional [TestCompartment]
+ * [compartment] is the optional [TestCompartment] the test suite belongs to.
  *
  * Usage:
  * ```
@@ -27,7 +24,7 @@ typealias TestSuiteExecutionWrappingAction = suspend (suiteAction: TestSuiteExec
  * ```
  */
 @TestDiscoverable
-fun testSuite(
+public fun testSuite(
     @TestElementName name: String = "",
     @TestDisplayName displayName: String = name,
     compartment: () -> TestCompartment,
@@ -44,7 +41,7 @@ fun testSuite(
 }
 
 /**
- * Declares a test suite with a number of child test elements (tests and/or suites). A suite may not contain test logic.
+ * Declares a top-level [TestSuite].
  *
  * Usage:
  * ```
@@ -54,7 +51,7 @@ fun testSuite(
  * ```
  */
 @TestDiscoverable
-fun testSuite(
+public fun testSuite(
     @TestElementName name: String = "",
     @TestDisplayName displayName: String = name,
     testConfig: TestConfig = TestConfig,
@@ -70,10 +67,10 @@ fun testSuite(
 }
 
 /**
- * A test suite declaring a number of child test elements (tests and/or suites). A suite may not contain test logic.
+ * A test suite containing child [TestElement]s (tests and/or suites). A suite may not contain test logic.
  */
 @TestDiscoverable
-open class TestSuite internal constructor(
+public open class TestSuite internal constructor(
     parent: TestSuite?,
     name: String,
     displayName: String = name,
@@ -91,10 +88,11 @@ open class TestSuite internal constructor(
     /**
      * The test suite's [CoroutineScope], valid only during the suite's execution.
      *
-     * It can be used to launch coroutines in test fixtures. Such coroutines should complete or be cancelled
-     * explicitly when their fixture closes.
+     * Use [testSuiteScope] to launch coroutines in test fixtures. Such coroutines must complete or be cancelled
+     * explicitly when their fixture closes. The test suite execution will wait for coroutines in [testSuiteScope]
+     * before completing.
      */
-    val testSuiteScope: CoroutineScope
+    public val testSuiteScope: CoroutineScope
         get() = executionContext?.let { CoroutineScope(it) }
             ?: throw IllegalStateException("$testElementPath: testSuiteScope is only available during execution")
 
@@ -245,10 +243,17 @@ open class TestSuite internal constructor(
     }
 
     /**
-     * Declares an [executionWrappingAction] wrapping the actions of this test suite.
+     * Declares an [executionWrappingAction] which wraps the execution actions of this test suite.
      *
-     * The wrapping action will be invoked only if at least one child element is enabled.
-     * See also [TestExecutionWrappingAction] for requirements.
+     * [executionWrappingAction] wraps around the [TestElement]'s primary `testSuiteAction`, which accumulates
+     * the execution actions of its children.
+     * The wrapping action will be invoked only if at least one (direct or indirect) child [Test] executes.
+     * See also [TestElementExecutionWrappingAction] for requirements.
+     *
+     * Note: [TestSuite.aroundAll] will not wrap around fixtures declared for its [TestSuite]. Fixtures (which are
+     * lazily created on their first invocation) will close _after_ any [aroundAll] actions declared inside their
+     * [TestSuite]. Use the suite's `testConfig` parameter with `TestConfig.aroundAll` to declare an action which
+     * also wraps around the suite's fixtures.
      *
      * Usage:
      * ```
@@ -259,17 +264,17 @@ open class TestSuite internal constructor(
      *     }
      * ```
      */
-    fun aroundAll(executionWrappingAction: TestSuiteExecutionWrappingAction) {
+    public fun aroundAll(executionWrappingAction: TestSuiteExecutionWrappingAction) {
         privateConfiguration = privateConfiguration.aroundAll { elementAction ->
             executionWrappingAction { elementAction() }
         }
     }
 
     /**
-     * Declares a test suite with child test elements (tests and/or suites). A suite may not contain test logic.
+     * Declares a [TestSuite] as a child of this test suite.
      */
     @TestDiscoverable
-    fun testSuite(
+    public fun testSuite(
         @TestElementName name: String,
         @TestDisplayName displayName: String = name,
         testConfig: TestConfig = TestConfig,
@@ -279,10 +284,10 @@ open class TestSuite internal constructor(
     }
 
     /**
-     * Declares a test with an [action] containing test logic.
+     * Declares a [Test] as a child of this test suite.
      */
     @TestDiscoverable
-    fun test(@TestElementName name: String, testConfig: TestConfig = TestConfig, action: TestAction) {
+    public fun test(@TestElementName name: String, testConfig: TestConfig = TestConfig, action: TestAction) {
         Test(this, name, testConfig = testConfig, action)
     }
 
@@ -307,6 +312,7 @@ open class TestSuite internal constructor(
     override suspend fun execute(report: TestExecutionReport) {
         executeReporting(report) {
             if (testElementIsEnabled) {
+                @Suppress("DEPRECATION")
                 testConfig.chainedWith(privateConfiguration).executeWrapped(this) {
                     val invocation = if (testElementParent == null) {
                         // A TestSession (no parent) must always execute its compartments sequentially.
@@ -339,12 +345,12 @@ open class TestSuite internal constructor(
         }
     }
 
-    companion object {
+    private companion object {
         /** A stack of suites in configuration scope, innermost scope first */
         private val suitesInConfigurationScope = mutableListOf<TestSuite>()
 
         /** Executes [action] in the configuration scope of [this] suite. */
-        fun TestSuite.inConfigurationScope(action: () -> Unit) {
+        private fun TestSuite.inConfigurationScope(action: () -> Unit) {
             suitesInConfigurationScope.add(0, this)
             try {
                 action()
@@ -375,7 +381,7 @@ open class TestSuite internal constructor(
      * repository().getScore(...)
      * ```
      */
-    fun <Value : Any> testFixture(value: suspend TestSuite.() -> Value): Fixture<Value> = Fixture(this, value)
+    public fun <Value : Any> testFixture(value: suspend TestSuite.() -> Value): Fixture<Value> = Fixture(this, value)
 
     /**
      * A fixture is a state holder for a lazily initialized [Value] with a lifetime of the test suite declaring it.
@@ -383,7 +389,7 @@ open class TestSuite internal constructor(
      * If [Value] is an [AutoCloseable], the fixture will call [close] at the end of its lifetime, otherwise
      * [closeWith] can declare a specific action to be called on close.
      */
-    class Fixture<Value : Any> internal constructor(
+    public class Fixture<Value : Any> internal constructor(
         private val suite: TestSuite,
         private val newValue: suspend TestSuite.() -> Value
     ) {
@@ -394,7 +400,7 @@ open class TestSuite internal constructor(
         private var close: suspend Value.() -> Unit = { (this as? AutoCloseable)?.close() }
 
         /** Returns the fixture's value, instantiating it on first use. */
-        suspend operator fun invoke(): Value {
+        public suspend operator fun invoke(): Value {
             valueMutex.withLock {
                 if (value == null) {
                     value = suite.newValue()
@@ -407,7 +413,7 @@ open class TestSuite internal constructor(
         }
 
         /** Declares [action] to be called when this fixture's lifetime ends. */
-        infix fun closeWith(action: suspend Value.() -> Unit): Fixture<Value> {
+        public infix fun closeWith(action: suspend Value.() -> Unit): Fixture<Value> {
             close = action
             return this
         }
@@ -452,3 +458,10 @@ open class TestSuite internal constructor(
         }
     }
 }
+
+/**
+ * An action wrapping the actions of a [TestSuite].
+ *
+ * See also [TestElementExecutionWrappingAction] for requirements.
+ */
+public typealias TestSuiteExecutionWrappingAction = suspend (testSuiteAction: suspend TestSuite.() -> Unit) -> Unit

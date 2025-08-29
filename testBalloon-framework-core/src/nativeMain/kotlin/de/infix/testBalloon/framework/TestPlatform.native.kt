@@ -10,26 +10,29 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.ObsoleteWorkersApi
 import kotlin.native.concurrent.Worker
 
-actual val testPlatform: TestPlatform = TestPlatformNative
+@TestBalloonExperimentalApi
+public actual val testPlatform: TestPlatform = TestPlatformNative
 
-object TestPlatformNative : TestPlatform {
+@TestBalloonExperimentalApi
+public object TestPlatformNative : TestPlatform {
     override val type: TestPlatform.Type = TestPlatform.Type.NATIVE
 
     @OptIn(ExperimentalNativeApi::class)
-    override val displayName = "Native/${Platform.cpuArchitecture.name}/${Platform.osFamily.name}"
+    override val displayName: String = "Native/${Platform.cpuArchitecture.name}/${Platform.osFamily.name}"
 
     @OptIn(ExperimentalNativeApi::class)
-    override val parallelism = Platform.getAvailableProcessors()
+    override val parallelism: Int = Platform.getAvailableProcessors()
 
     @OptIn(ExperimentalStdlibApi::class, ObsoleteWorkersApi::class)
     override fun threadId(): ULong = Worker.current.platformThreadId
-    override fun threadDisplayName() = threadId().toString()
+    override fun threadDisplayName(): String = threadId().toString()
 }
 
-actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =
+public actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =
     Dispatchers.IO.limitedParallelism(parallelism)
 
-actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {
+@TestBalloonExperimentalApi
+public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {
     @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     val dispatcher = newSingleThreadContext("single-threading")
     AutoCloseable { dispatcher.close() }.use {

@@ -1,0 +1,20 @@
+public final class de/infix/testBalloon/integration/blockingDetection/BlockingDetection : java/lang/Enum {
+	public static final field DISABLED Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;
+	public static final field ERROR Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;
+	public static final field PRINT Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;
+	public static fun values ()[Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;
+}
+
+public final class de/infix/testBalloon/integration/blockingDetection/Integration_jvmKt {
+	public static final fun blockingDetection (Lde/infix/testBalloon/framework/TestConfig;Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;)Lde/infix/testBalloon/framework/TestConfig;
+	public static synthetic fun blockingDetection$default (Lde/infix/testBalloon/framework/TestConfig;Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;ILjava/lang/Object;)Lde/infix/testBalloon/framework/TestConfig;
+	public static final fun withBlockingDetection (Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class de/infix/testBalloon/integration/blockingDetection/TestBalloonBlockHoundIntegration : reactor/blockhound/integration/BlockHoundIntegration {
+	public fun <init> ()V
+	public fun applyTo (Lreactor/blockhound/BlockHound$Builder;)V
+}
+

@@ -6,21 +6,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 
-actual val testPlatform: TestPlatform = TestPlatformAndroid
+@TestBalloonExperimentalApi
+public actual val testPlatform: TestPlatform = TestPlatformAndroid
 
-object TestPlatformAndroid : TestPlatform {
+@TestBalloonExperimentalApi
+public object TestPlatformAndroid : TestPlatform {
     override val type: TestPlatform.Type = TestPlatform.Type.JVM
-    override val displayName = "Android"
-    override val parallelism = Runtime.getRuntime().availableProcessors()
-    override fun threadId() = Thread.currentThread().id.toULong()
-    override fun threadDisplayName() = Thread.currentThread().name ?: "(thread ${threadId()})"
+    override val displayName: String = "Android"
+    override val parallelism: Int = Runtime.getRuntime().availableProcessors()
+
+    @Suppress("DEPRECATION")
+    override fun threadId(): ULong = Thread.currentThread().id.toULong()
+    override fun threadDisplayName(): String = Thread.currentThread().name ?: "(thread ${threadId()})"
 }
 
-actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =
+public actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =
     Dispatchers.IO.limitedParallelism(parallelism)
 
-actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {
-    @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
+@ExperimentalCoroutinesApi
+public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {
+    @OptIn(DelicateCoroutinesApi::class)
     newSingleThreadContext("single-threading").use { dispatcher ->
         action(dispatcher)
     }

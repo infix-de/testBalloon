@@ -1,12 +1,15 @@
 package de.infix.testBalloon.framework.internal
 
+import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.testPlatform
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-enum class LogLevel { DEBUG, INFO, ERROR }
+@TestBalloonExperimentalApi
+public enum class LogLevel { DEBUG, INFO, ERROR }
 
-var testFrameworkLogLevel = LogLevel.INFO
+@TestBalloonExperimentalApi
+public var testFrameworkLogLevel: LogLevel = LogLevel.INFO
 
 internal fun logDebug(message: () -> String) {
     log(LogLevel.DEBUG) { "DEBUG: ${message()}" }
@@ -42,7 +45,8 @@ internal inline fun <Result> withLog(messageLevel: LogLevel, message: String, ac
 /**
  * WORKAROUND https://youtrack.jetbrains.com/issue/KT-48292 – KJS / IR: `println` doesn't move to a new line in tests
  */
-expect fun printlnFixed(message: Any?)
+@TestBalloonInternalApi
+public expect fun printlnFixed(message: Any?)
 
 internal fun Throwable.logErrorWithStacktrace(headline: String, includeStacktrace: Boolean = true) {
     logError {

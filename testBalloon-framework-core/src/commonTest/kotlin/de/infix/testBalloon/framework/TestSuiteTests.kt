@@ -321,6 +321,59 @@ class TestSuiteTests {
                 testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
                     { trace.add("$testElementPath fixture closing") }
 
+            test("test1") {
+                outerFixture().add(testElementPath)
+            }
+
+            testSuite("innerSuite") {
+                test("test1") {
+                    outerFixture().add(testElementPath)
+                }
+            }
+        }
+
+        val suite2 by testSuite("suite2") {
+            val outerFixture =
+                testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
+                    { trace.add("$testElementPath fixture closing") }
+
+            test("test1") {
+                trace.add(testElementPath)
+            }
+
+            testSuite("innerSuite") {
+                test("test1") {
+                    outerFixture().add(testElementPath)
+                }
+            }
+        }
+
+        withTestReport(suite1, suite2) {
+            assertContentEquals(
+                listOf(
+                    "suite1 fixture creating",
+                    "suite1.test1",
+                    "suite1.innerSuite.test1",
+                    "suite1 fixture closing",
+                    "suite2.test1",
+                    "suite2 fixture creating",
+                    "suite2.innerSuite.test1",
+                    "suite2 fixture closing"
+                ),
+                trace.elements()
+            )
+        }
+    }
+
+    @Test
+    fun testFixtureWithTestSuiteAroundAll() = withTestFramework {
+        val trace = ConcurrentList<String>()
+
+        val suite1 by testSuite("suite1") {
+            val outerFixture =
+                testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
+                    { trace.add("$testElementPath fixture closing") }
+
             aroundAll { tests ->
                 outerFixture().add("$testElementPath aroundAll begin")
                 tests()
@@ -347,6 +400,48 @@ class TestSuiteTests {
                     "suite1.innerSuite.test1",
                     "suite1 aroundAll end",
                     "suite1 fixture closing"
+                ),
+                trace.elements()
+            )
+        }
+    }
+
+    @Test
+    fun testFixtureWithTestConfigAroundAll() = withTestFramework {
+        val trace = ConcurrentList<String>()
+
+        val suite1 by testSuite(
+            "suite1",
+            testConfig = TestConfig.aroundAll { tests ->
+                trace.add("$testElementPath aroundAll begin")
+                tests()
+                trace.add("$testElementPath aroundAll end")
+            }
+        ) {
+            val outerFixture =
+                testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
+                    { trace.add("$testElementPath fixture closing") }
+
+            test("test1") {
+                outerFixture().add(testElementPath)
+            }
+
+            testSuite("innerSuite") {
+                test("test1") {
+                    outerFixture().add(testElementPath)
+                }
+            }
+        }
+
+        withTestReport(suite1) {
+            assertContentEquals(
+                listOf(
+                    "suite1 aroundAll begin",
+                    "suite1 fixture creating",
+                    "suite1.test1",
+                    "suite1.innerSuite.test1",
+                    "suite1 fixture closing",
+                    "suite1 aroundAll end"
                 ),
                 trace.elements()
             )
@@ -512,7 +607,7 @@ class TestSuiteTests {
             }
 
             testSuite("inner") {
-                aroundAll { tests ->
+                aroundAll {
                     trace.add("aroundAll $testElementPath failing intentionally")
                     fail("aroundAll $testElementPath failing intentionally")
                 }
@@ -595,9 +690,7 @@ class TestSuiteTests {
         test("test2") {
         }
 
-        testSuite("middleSuite") {
-            testConfig = TestConfig.disable()
-
+        testSuite("middleSuite", testConfig = TestConfig.disable()) {
             test("test1") {
                 fail("test '$testElementPath' should be disabled")
             }
@@ -706,9 +799,7 @@ class TestSuiteTests {
                     throw IntentionalFailure()
                 }
 
-                testSuite("innerSuite1") {
-                    testConfig = testConfig.disable()
-
+                testSuite("innerSuite1", testConfig = TestConfig.disable()) {
                     test("test1") {
                     }
                 }

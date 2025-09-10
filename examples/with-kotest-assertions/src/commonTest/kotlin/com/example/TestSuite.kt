@@ -11,20 +11,20 @@ import io.kotest.matchers.string.shouldNotEndWith
 class MyTestSession : TestSession(testConfig = DefaultConfiguration.kotestAssertionsSupport())
 
 val TestSuite by testSuite {
-    log("configuring $testElementName (displayName=$testElementDisplayName)")
+    log("configuring $testElementPath")
 
     test("test1") {
-        log("in $testElementName, coroutineContext=$coroutineContext")
+        log("in $testElementPath, coroutineContext=$coroutineContext")
         "This test should fail?" shouldBeEqual "This test should fail!"
     }
 
     testSuite("inner suite") {
         test("test2") {
-            log("in $testElementName")
+            log("in $testElementPath")
         }
 
         test("test3") {
-            log("in $testElementName")
+            log("in $testElementPath")
             assertSoftly {
                 "Expect failure 1!" shouldNotEndWith "!"
                 "Expect failure 2!" shouldNotEndWith "!"

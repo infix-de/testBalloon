@@ -7,10 +7,10 @@ import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestExecutionReport
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.internal.externalId
 import de.infix.testBalloon.framework.internal.integration.TestSessionRelay.resultChannel
 import de.infix.testBalloon.framework.internal.logError
 import de.infix.testBalloon.framework.internal.logInfo
-import de.infix.testBalloon.framework.spacesEscaped
 import de.infix.testBalloon.framework.testPlatform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -41,7 +41,7 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
         }
 
         is TestSuite -> {
-            kotlinJsTestFramework.suite(flattenedPath.spacesEscaped(), ignored = !testElementIsEnabled) {
+            kotlinJsTestFramework.suite(testElementPath.externalId, ignored = !testElementIsEnabled) {
                 testElementChildren.forEach {
                     it.registerWithKotlinJsTestFramework()
                 }
@@ -49,7 +49,7 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
         }
 
         is Test -> {
-            kotlinJsTestFramework.test(testElementDisplayName.spacesEscaped(), ignored = !testElementIsEnabled) {
+            kotlinJsTestFramework.test(testElementName.externalId(), ignored = !testElementIsEnabled) {
                 TestSessionRelay.resultReceivingPromise(this)
             }
         }
@@ -121,7 +121,8 @@ private object TestSessionRelay {
         try {
             TestSession.global.execute(
                 report = object : TestExecutionReport() {
-                    // A TestExecutionReport relaying test results to the corresponding test elements' result channel(s).
+                    // A TestExecutionReport relaying test results to the corresponding test elements'
+                    // result channel(s).
 
                     override suspend fun add(event: TestElementEvent) {
                         if (event.element.testElementIsEnabled && event is TestElementEvent.Finished) {

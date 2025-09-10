@@ -84,10 +84,14 @@ class TestCompartmentTests {
 
                 // Tests in each compartment must be processed consecutively.
                 assertElementPathsContainInOrder(
-                    map { it.element.testElementPath }.filter { it.startsWith("suite1") || it.startsWith("suite3") }
+                    map {
+                        it.element.testElementPath.internalId
+                    }.filter { it.startsWith("suite1|") || it.startsWith("suite3|") }
                 )
                 assertElementPathsContainInOrder(
-                    map { it.element.testElementPath }.filter { it.startsWith("suite2") || it.startsWith("suite4") }
+                    map {
+                        it.element.testElementPath.internalId
+                    }.filter { it.startsWith("suite2|") || it.startsWith("suite4|") }
                 )
             }
         }
@@ -151,13 +155,13 @@ class TestCompartmentTests {
                 // Tests in each compartment must be processed consecutively.
                 assertElementPathsContainInOrder(
                     map {
-                        it.element.testElementPath
-                    }.filter { it.startsWith("topSuite1") }
+                        it.element.testElementPath.internalId
+                    }.filter { it.startsWith("topSuite1|") }
                 )
                 assertElementPathsContainInOrder(
                     map {
-                        it.element.testElementPath
-                    }.filter { it.startsWith("topSuite2") }
+                        it.element.testElementPath.internalId
+                    }.filter { it.startsWith("topSuite2|") }
                 )
             }
         }

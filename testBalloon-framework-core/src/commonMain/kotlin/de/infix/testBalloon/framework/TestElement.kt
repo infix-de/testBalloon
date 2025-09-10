@@ -1,5 +1,8 @@
 package de.infix.testBalloon.framework
 
+import de.infix.testBalloon.framework.internal.PATH_SEGMENT_SEPARATOR
+import de.infix.testBalloon.framework.internal.externalId
+
 public sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, testConfig: TestConfig) :
     AbstractTestElement {
 
@@ -14,31 +17,45 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     )
     public var testConfig: TestConfig = testConfig
 
-    override val testElementParent: TestSuite? = parent
-    override val testElementName: String = parent?.registerUniqueChildElementName(name) ?: name
-    override val testElementDisplayName: String = displayName
-
-    override val testElementPath: TestElementPath
-        get() =
-            when (testElementParent) {
-                null, is TestCompartment, is TestSession -> testElementName
-                else -> "${testElementParent?.testElementPath}.$testElementName"
-            }
+    internal val testElementParent: TestSuite? = parent
+    internal val testElementName: String = parent?.registerUniqueChildElementName(name) ?: name
+    internal val testElementDisplayName: String = displayName
 
     /**
-     * The element's path in a "flattened" form, which external test infrastructure does not split into components.
+     * A path uniquely identifying a test element in its test hierarchy.
      */
-    internal val flattenedPath: TestElementPath
-        get() =
-            when (testElementParent) {
-                null, is TestCompartment, is TestSession -> testElementName.spacesEscaped()
-                else -> "${testElementParent?.flattenedPath}$spacer${testElementName.spacesEscaped()}"
-            }
+    public class Path internal constructor(private val element: TestElement) : AbstractTestElement.Path {
+        override fun toString(): String = "«$externalId»"
 
-    private val spacer: String get() = if (this is Test) "." else SUITE_NESTING_SPACER
+        /**
+         * This path's internal ID, which is only stable inside a single TestSession.
+         */
+        internal val internalId: String by lazy { flattened("|") { testElementName } }
+
+        /**
+         * This path's external ID, which is stable and copyable outside a single TestSession.
+         */
+        internal val externalId: String by lazy { flattened { testElementName.externalId() } }
+
+        /**
+         * This path's human-readable string of display name segments.
+         */
+        internal val displayNameSegments: String get() = flattened { testElementDisplayName }
+
+        private fun flattened(separator: String = PATH_SEGMENT_SEPARATOR, segment: TestElement.() -> String): String =
+            when (element.testElementParent) {
+                null, is TestCompartment, is TestSession -> element.segment()
+                else -> buildString {
+                    append(element.testElementParent.testElementPath.flattened(separator, segment))
+                    append(separator)
+                    append(segment(element))
+                }
+            }
+    }
+
+    override val testElementPath: Path = Path(this)
 
     override var testElementIsEnabled: Boolean = true
-        internal set
 
     /** The most recent event observed by a `SequencingExecutionReport`. */
     internal var recentEvent: TestElementEvent? = null
@@ -135,8 +152,3 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
         }
     }
 }
-
-internal fun String.spacesEscaped(): String = replace(' ', NON_BREAKING_SPACE)
-
-private const val NON_BREAKING_SPACE = '\u00a0'
-private const val SUITE_NESTING_SPACER = "$NON_BREAKING_SPACE↘$NON_BREAKING_SPACE"

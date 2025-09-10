@@ -33,24 +33,19 @@ open annotation class de.infix.testBalloon.framework/TestElementName : kotlin/An
 abstract interface de.infix.testBalloon.framework/AbstractTest : de.infix.testBalloon.framework/AbstractTestElement // de.infix.testBalloon.framework/AbstractTest|null[0]
 
 abstract interface de.infix.testBalloon.framework/AbstractTestElement { // de.infix.testBalloon.framework/AbstractTestElement|null[0]
-    abstract val testElementDisplayName // de.infix.testBalloon.framework/AbstractTestElement.testElementDisplayName|{}testElementDisplayName[0]
-        abstract fun <get-testElementDisplayName>(): kotlin/String // de.infix.testBalloon.framework/AbstractTestElement.testElementDisplayName.<get-testElementDisplayName>|<get-testElementDisplayName>(){}[0]
     abstract val testElementIsEnabled // de.infix.testBalloon.framework/AbstractTestElement.testElementIsEnabled|{}testElementIsEnabled[0]
         abstract fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/AbstractTestElement.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
-    abstract val testElementName // de.infix.testBalloon.framework/AbstractTestElement.testElementName|{}testElementName[0]
-        abstract fun <get-testElementName>(): kotlin/String // de.infix.testBalloon.framework/AbstractTestElement.testElementName.<get-testElementName>|<get-testElementName>(){}[0]
-    abstract val testElementParent // de.infix.testBalloon.framework/AbstractTestElement.testElementParent|{}testElementParent[0]
-        abstract fun <get-testElementParent>(): de.infix.testBalloon.framework/AbstractTestSuite? // de.infix.testBalloon.framework/AbstractTestElement.testElementParent.<get-testElementParent>|<get-testElementParent>(){}[0]
     abstract val testElementPath // de.infix.testBalloon.framework/AbstractTestElement.testElementPath|{}testElementPath[0]
-        abstract fun <get-testElementPath>(): kotlin/String // de.infix.testBalloon.framework/AbstractTestElement.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+        abstract fun <get-testElementPath>(): de.infix.testBalloon.framework/AbstractTestElement.Path // de.infix.testBalloon.framework/AbstractTestElement.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+
+    abstract interface Path { // de.infix.testBalloon.framework/AbstractTestElement.Path|null[0]
+        abstract fun toString(): kotlin/String // de.infix.testBalloon.framework/AbstractTestElement.Path.toString|toString(){}[0]
+    }
 }
 
 abstract interface de.infix.testBalloon.framework/AbstractTestSession : de.infix.testBalloon.framework/AbstractTestSuite // de.infix.testBalloon.framework/AbstractTestSession|null[0]
 
-abstract interface de.infix.testBalloon.framework/AbstractTestSuite : de.infix.testBalloon.framework/AbstractTestElement { // de.infix.testBalloon.framework/AbstractTestSuite|null[0]
-    abstract val testElementChildren // de.infix.testBalloon.framework/AbstractTestSuite.testElementChildren|{}testElementChildren[0]
-        abstract fun <get-testElementChildren>(): kotlin.collections/Iterable<de.infix.testBalloon.framework/AbstractTestElement> // de.infix.testBalloon.framework/AbstractTestSuite.testElementChildren.<get-testElementChildren>|<get-testElementChildren>(){}[0]
-}
+abstract interface de.infix.testBalloon.framework/AbstractTestSuite : de.infix.testBalloon.framework/AbstractTestElement // de.infix.testBalloon.framework/AbstractTestSuite|null[0]
 
 final class de.infix.testBalloon.framework.internal/TestFrameworkDiscoveryResult { // de.infix.testBalloon.framework.internal/TestFrameworkDiscoveryResult|null[0]
     constructor <init>(kotlin/Array<de.infix.testBalloon.framework/AbstractTestSuite>) // de.infix.testBalloon.framework.internal/TestFrameworkDiscoveryResult.<init>|<init>(kotlin.Array<de.infix.testBalloon.framework.AbstractTestSuite>){}[0]
@@ -58,3 +53,8 @@ final class de.infix.testBalloon.framework.internal/TestFrameworkDiscoveryResult
     final val topLevelTestSuites // de.infix.testBalloon.framework.internal/TestFrameworkDiscoveryResult.topLevelTestSuites|{}topLevelTestSuites[0]
         final fun <get-topLevelTestSuites>(): kotlin/Array<de.infix.testBalloon.framework/AbstractTestSuite> // de.infix.testBalloon.framework.internal/TestFrameworkDiscoveryResult.topLevelTestSuites.<get-topLevelTestSuites>|<get-topLevelTestSuites>(){}[0]
 }
+
+final const val de.infix.testBalloon.framework.internal/PATH_SEGMENT_SEPARATOR // de.infix.testBalloon.framework.internal/PATH_SEGMENT_SEPARATOR|{}PATH_SEGMENT_SEPARATOR[0]
+    final fun <get-PATH_SEGMENT_SEPARATOR>(): kotlin/String // de.infix.testBalloon.framework.internal/PATH_SEGMENT_SEPARATOR.<get-PATH_SEGMENT_SEPARATOR>|<get-PATH_SEGMENT_SEPARATOR>(){}[0]
+
+final fun (kotlin/String).de.infix.testBalloon.framework.internal/externalId(): kotlin/String // de.infix.testBalloon.framework.internal/externalId|externalId@kotlin.String(){}[0]

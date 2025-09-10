@@ -157,7 +157,7 @@ private class InstrumentationArgumentsBasedElementSelection :
 
 private fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
-        Description.createSuiteDescription(flattenedPath, testElementPath).apply {
+        Description.createSuiteDescription(testElementPath.externalId, testElementPath.externalId).apply {
             testElementChildren.forEach {
                 addChild(it.newPlatformDescription())
             }
@@ -165,9 +165,9 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
     }
 
     is Test -> Description.createTestDescription(
-        testElementParent!!.flattenedPath,
+        testElementParent!!.testElementPath.externalId,
         testElementDisplayName,
-        testElementPath
+        testElementPath.externalId
     )
 }.also {
     testElementDescriptions[this] = it

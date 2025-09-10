@@ -81,16 +81,10 @@ final class de.infix.testBalloon.framework/Test : de.infix.testBalloon.framework
 final class de.infix.testBalloon.framework/TestCoroutineScope : de.infix.testBalloon.framework/AbstractTest, kotlinx.coroutines/CoroutineScope { // de.infix.testBalloon.framework/TestCoroutineScope|null[0]
     final val coroutineContext // de.infix.testBalloon.framework/TestCoroutineScope.coroutineContext|{}coroutineContext[0]
         final fun <get-coroutineContext>(): kotlin.coroutines/CoroutineContext // de.infix.testBalloon.framework/TestCoroutineScope.coroutineContext.<get-coroutineContext>|<get-coroutineContext>(){}[0]
-    final val testElementDisplayName // de.infix.testBalloon.framework/TestCoroutineScope.testElementDisplayName|{}testElementDisplayName[0]
-        final fun <get-testElementDisplayName>(): kotlin/String // de.infix.testBalloon.framework/TestCoroutineScope.testElementDisplayName.<get-testElementDisplayName>|<get-testElementDisplayName>(){}[0]
     final val testElementIsEnabled // de.infix.testBalloon.framework/TestCoroutineScope.testElementIsEnabled|{}testElementIsEnabled[0]
         final fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/TestCoroutineScope.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
-    final val testElementName // de.infix.testBalloon.framework/TestCoroutineScope.testElementName|{}testElementName[0]
-        final fun <get-testElementName>(): kotlin/String // de.infix.testBalloon.framework/TestCoroutineScope.testElementName.<get-testElementName>|<get-testElementName>(){}[0]
-    final val testElementParent // de.infix.testBalloon.framework/TestCoroutineScope.testElementParent|{}testElementParent[0]
-        final fun <get-testElementParent>(): de.infix.testBalloon.framework/AbstractTestSuite? // de.infix.testBalloon.framework/TestCoroutineScope.testElementParent.<get-testElementParent>|<get-testElementParent>(){}[0]
     final val testElementPath // de.infix.testBalloon.framework/TestCoroutineScope.testElementPath|{}testElementPath[0]
-        final fun <get-testElementPath>(): kotlin/String // de.infix.testBalloon.framework/TestCoroutineScope.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+        final fun <get-testElementPath>(): de.infix.testBalloon.framework/AbstractTestElement.Path // de.infix.testBalloon.framework/TestCoroutineScope.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
     final val testScope // de.infix.testBalloon.framework/TestCoroutineScope.testScope|{}testScope[0]
         final fun <get-testScope>(): kotlinx.coroutines.test/TestScope // de.infix.testBalloon.framework/TestCoroutineScope.testScope.<get-testScope>|<get-testScope>(){}[0]
 }
@@ -138,8 +132,6 @@ open class de.infix.testBalloon.framework/TestSuite : de.infix.testBalloon.frame
 
     final val testSuiteScope // de.infix.testBalloon.framework/TestSuite.testSuiteScope|{}testSuiteScope[0]
         final fun <get-testSuiteScope>(): kotlinx.coroutines/CoroutineScope // de.infix.testBalloon.framework/TestSuite.testSuiteScope.<get-testSuiteScope>|<get-testSuiteScope>(){}[0]
-    open val testElementChildren // de.infix.testBalloon.framework/TestSuite.testElementChildren|{}testElementChildren[0]
-        open fun <get-testElementChildren>(): kotlin.collections/Iterable<de.infix.testBalloon.framework/TestElement> // de.infix.testBalloon.framework/TestSuite.testElementChildren.<get-testElementChildren>|<get-testElementChildren>(){}[0]
 
     final fun <#A1: kotlin/Any> testFixture(kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestSuite, #A1>): de.infix.testBalloon.framework/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework/TestSuite.testFixture|testFixture(kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestSuite,0:0>){0§<kotlin.Any>}[0]
     final fun aroundAll(kotlin.coroutines/SuspendFunction1<kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/Unit>) // de.infix.testBalloon.framework/TestSuite.aroundAll|aroundAll(kotlin.coroutines.SuspendFunction1<kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>,kotlin.Unit>){}[0]
@@ -153,22 +145,21 @@ open class de.infix.testBalloon.framework/TestSuite : de.infix.testBalloon.frame
 }
 
 sealed class de.infix.testBalloon.framework/TestElement : de.infix.testBalloon.framework/AbstractTestElement { // de.infix.testBalloon.framework/TestElement|null[0]
-    open val testElementDisplayName // de.infix.testBalloon.framework/TestElement.testElementDisplayName|{}testElementDisplayName[0]
-        open fun <get-testElementDisplayName>(): kotlin/String // de.infix.testBalloon.framework/TestElement.testElementDisplayName.<get-testElementDisplayName>|<get-testElementDisplayName>(){}[0]
-    open val testElementName // de.infix.testBalloon.framework/TestElement.testElementName|{}testElementName[0]
-        open fun <get-testElementName>(): kotlin/String // de.infix.testBalloon.framework/TestElement.testElementName.<get-testElementName>|<get-testElementName>(){}[0]
-    open val testElementParent // de.infix.testBalloon.framework/TestElement.testElementParent|{}testElementParent[0]
-        open fun <get-testElementParent>(): de.infix.testBalloon.framework/TestSuite? // de.infix.testBalloon.framework/TestElement.testElementParent.<get-testElementParent>|<get-testElementParent>(){}[0]
     open val testElementPath // de.infix.testBalloon.framework/TestElement.testElementPath|{}testElementPath[0]
-        open fun <get-testElementPath>(): kotlin/String // de.infix.testBalloon.framework/TestElement.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+        open fun <get-testElementPath>(): de.infix.testBalloon.framework/TestElement.Path // de.infix.testBalloon.framework/TestElement.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
 
     final var testConfig // de.infix.testBalloon.framework/TestElement.testConfig|{}testConfig[0]
         final fun <get-testConfig>(): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/TestElement.testConfig.<get-testConfig>|<get-testConfig>(){}[0]
         final fun <set-testConfig>(de.infix.testBalloon.framework/TestConfig) // de.infix.testBalloon.framework/TestElement.testConfig.<set-testConfig>|<set-testConfig>(de.infix.testBalloon.framework.TestConfig){}[0]
     open var testElementIsEnabled // de.infix.testBalloon.framework/TestElement.testElementIsEnabled|{}testElementIsEnabled[0]
         open fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/TestElement.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
+        open fun <set-testElementIsEnabled>(kotlin/Boolean) // de.infix.testBalloon.framework/TestElement.testElementIsEnabled.<set-testElementIsEnabled>|<set-testElementIsEnabled>(kotlin.Boolean){}[0]
 
     open fun toString(): kotlin/String // de.infix.testBalloon.framework/TestElement.toString|toString(){}[0]
+
+    final class Path : de.infix.testBalloon.framework/AbstractTestElement.Path { // de.infix.testBalloon.framework/TestElement.Path|null[0]
+        final fun toString(): kotlin/String // de.infix.testBalloon.framework/TestElement.Path.toString|toString(){}[0]
+    }
 }
 
 sealed class de.infix.testBalloon.framework/TestElementEvent { // de.infix.testBalloon.framework/TestElementEvent|null[0]

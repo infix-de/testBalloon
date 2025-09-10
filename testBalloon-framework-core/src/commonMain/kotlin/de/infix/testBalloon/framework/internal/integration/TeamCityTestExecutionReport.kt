@@ -37,7 +37,10 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
                     eventMessage(event, eventName = "Started")
                     if (element is TestSuite) {
                         message(messageName = "flowStarted") {
-                            flowId(flowId = element.testElementPath, parentId = elementParent?.testElementPath)
+                            flowId(
+                                flowId = element.testElementPath.internalId,
+                                parentId = elementParent?.testElementPath?.externalId
+                            )
                         }
                     }
                 }
@@ -47,7 +50,7 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
                 if (!isIgnoredTest) {
                     if (element is TestSuite) {
                         message(messageName = "flowFinished") {
-                            flowId(flowId = element.testElementPath)
+                            flowId(flowId = element.testElementPath.internalId)
                         }
                     }
                     event.throwable?.let { throwable ->
@@ -66,7 +69,13 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
     private fun eventMessage(event: TestElementEvent, eventName: String, content: Message.() -> Unit = {}) {
         val elementName = if (event.element is Test) "test" else "testSuite"
         message("$elementName$eventName") {
-            name(if (event.element is Test) event.element.testElementDisplayName else event.element.flattenedPath)
+            name(
+                with(event.element) {
+                    // Using a complete path for suites ensures proper nesting display in IntelliJ IDEA, but
+                    // duplicates path segments in XML reports. TODO: This could be made conditional, e.g. for CI.
+                    if (this is Test) testElementDisplayName else testElementPath.displayNameSegments
+                }
+            )
             timestamp(event.instant)
             content()
         }

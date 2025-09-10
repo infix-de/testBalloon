@@ -117,7 +117,7 @@ internal class InMemoryTestExecutionReport : TestExecutionReport() {
         expectedPaths: List<String>,
         exhaustive: Boolean = false
     ) {
-        map { it.element.testElementPath }.assertContainsInOrder(expectedPaths, exhaustive)
+        map { it.element.testElementPath.internalId }.assertContainsInOrder(expectedPaths, exhaustive)
     }
 }
 

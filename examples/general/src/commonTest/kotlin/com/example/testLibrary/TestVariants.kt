@@ -29,7 +29,7 @@ fun TestSuite.test(name: String, timeout: Duration, action: TestAction) =
  */
 fun TestSuite.test(name: String, iterations: Int, action: TestAction) {
     for (iteration in 1..iterations) {
-        test("$name#$iteration") {
+        test("$name $iteration") {
             action()
         }
     }

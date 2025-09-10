@@ -15,14 +15,12 @@ fun testSuite(@TestElementName name: String = "", content: TestSuite.() -> Unit)
 
 @TestDiscoverable
 open class TestSuite(@TestElementName name: String = "", content: TestSuite.() -> Unit = {}) :
-    TestElement(null, name),
+    TestElement(name),
     AbstractTestSuite {
+
+    override var testElementIsEnabled: Boolean = true
 
     init {
         content()
     }
-
-    override val testElementChildren: MutableList<TestElement> = mutableListOf()
-
-    override var testElementIsEnabled = true
 }

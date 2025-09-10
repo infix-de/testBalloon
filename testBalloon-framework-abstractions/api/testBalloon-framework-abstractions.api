@@ -2,18 +2,18 @@ public abstract interface class de/infix/testBalloon/framework/AbstractTest : de
 }
 
 public abstract interface class de/infix/testBalloon/framework/AbstractTestElement {
-	public abstract fun getTestElementDisplayName ()Ljava/lang/String;
 	public abstract fun getTestElementIsEnabled ()Z
-	public abstract fun getTestElementName ()Ljava/lang/String;
-	public abstract fun getTestElementParent ()Lde/infix/testBalloon/framework/AbstractTestSuite;
-	public abstract fun getTestElementPath ()Ljava/lang/String;
+	public abstract fun getTestElementPath ()Lde/infix/testBalloon/framework/AbstractTestElement$Path;
+}
+
+public abstract interface class de/infix/testBalloon/framework/AbstractTestElement$Path {
+	public abstract fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class de/infix/testBalloon/framework/AbstractTestSession : de/infix/testBalloon/framework/AbstractTestSuite {
 }
 
 public abstract interface class de/infix/testBalloon/framework/AbstractTestSuite : de/infix/testBalloon/framework/AbstractTestElement {
-	public abstract fun getTestElementChildren ()Ljava/lang/Iterable;
 }
 
 public abstract interface annotation class de/infix/testBalloon/framework/InvokedByGeneratedCode : java/lang/annotation/Annotation {
@@ -29,6 +29,11 @@ public abstract interface annotation class de/infix/testBalloon/framework/TestEl
 }
 
 public abstract interface annotation class de/infix/testBalloon/framework/TestElementName : java/lang/annotation/Annotation {
+}
+
+public final class de/infix/testBalloon/framework/internal/AbstractTestElementPathKt {
+	public static final field PATH_SEGMENT_SEPARATOR Ljava/lang/String;
+	public static final fun externalId (Ljava/lang/String;)Ljava/lang/String;
 }
 
 public abstract interface annotation class de/infix/testBalloon/framework/internal/TestBalloonInternalApi : java/lang/annotation/Annotation {

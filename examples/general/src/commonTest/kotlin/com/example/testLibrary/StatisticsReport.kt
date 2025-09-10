@@ -33,7 +33,7 @@ private class StatisticsReport : TestExecutionTraversal {
     private var testFailureCount = 0
     private var cumulativeTestDuration = 0.seconds
     private var slowestTestDuration: Duration = Duration.ZERO
-    private var slowestTestPath = "(none)"
+    private var slowestTestPath: TestElement.Path? = null
     private val threadIdsUsed = mutableSetOf<ULong>()
 
     override suspend fun aroundEach(testElement: TestElement, elementAction: suspend TestElement.() -> Unit) {
@@ -79,7 +79,7 @@ private class StatisticsReport : TestExecutionTraversal {
             if (slowestTestDuration != Duration.ZERO) {
                 @OptIn(TestBalloonInternalApi::class)
                 printlnFixed(
-                    "\tThe slowest test '$slowestTestPath' took $slowestTestDuration."
+                    "\tThe slowest test $slowestTestPath took $slowestTestDuration."
                 )
             }
         }

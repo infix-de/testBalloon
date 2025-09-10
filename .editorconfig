@@ -47,7 +47,7 @@ ktlint_standard_value-parameter-comment = disabled
 # noinspection EditorConfigKeyCorrectness
 ktlint_standard_function-naming = disabled
 
-[*.{md,adoc,toml}]
+[*.{md,adoc,toml,api}]
 
 max_line_length = off
 

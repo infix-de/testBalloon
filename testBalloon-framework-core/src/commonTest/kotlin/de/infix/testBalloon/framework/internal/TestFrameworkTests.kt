@@ -22,23 +22,23 @@ class TestFrameworkTests {
 
     @Test
     fun elementSelectionByArguments() = verifyElementSelection(
-        ArgumentsBasedElementSelection(arrayOf("--include", "suite2.*")),
+        ArgumentsBasedElementSelection(arrayOf("--include", "suite2${PATH_SEGMENT_SEPARATOR}*")),
         listOf(
-            Pair("suite1.test1", false),
-            Pair("suite1.test2", false),
-            Pair("suite2.test1", true),
-            Pair("suite2.test2", true)
+            Pair("«suite1${PATH_SEGMENT_SEPARATOR}test1»", false),
+            Pair("«suite1${PATH_SEGMENT_SEPARATOR}test2»", false),
+            Pair("«suite2${PATH_SEGMENT_SEPARATOR}test1»", true),
+            Pair("«suite2${PATH_SEGMENT_SEPARATOR}test2»", true)
         )
     )
 
     @Test
     fun elementSelectionByEnvironment() = verifyElementSelection(
-        EnvironmentBasedElementSelection(includePatterns = "suite1.*", excludePatterns = null),
+        EnvironmentBasedElementSelection(includePatterns = "suite1${PATH_SEGMENT_SEPARATOR}*", excludePatterns = null),
         listOf(
-            Pair("suite1.test1", true),
-            Pair("suite1.test2", true),
-            Pair("suite2.test1", false),
-            Pair("suite2.test2", false)
+            Pair("«suite1${PATH_SEGMENT_SEPARATOR}test1»", true),
+            Pair("«suite1${PATH_SEGMENT_SEPARATOR}test2»", true),
+            Pair("«suite2${PATH_SEGMENT_SEPARATOR}test1»", false),
+            Pair("«suite2${PATH_SEGMENT_SEPARATOR}test2»", false)
         )
     )
 
@@ -60,7 +60,7 @@ class TestFrameworkTests {
             with(finishedTestEvents()) {
                 assertContentEquals(
                     expectedResult,
-                    map { Pair(it.element.testElementPath, it.element.testElementIsEnabled) }
+                    map { Pair("${it.element.testElementPath}", it.element.testElementIsEnabled) }
                 )
             }
         }

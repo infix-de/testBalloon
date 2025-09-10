@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.seconds
 
 // Use a test report to print information about disabled tests.
 
-val UsingReport by testSuite(testConfig = TestConfig.report(DisabledTestsExecutionReport())) {
+val UsingExecutionReport by testSuite(testConfig = TestConfig.report(DisabledTestsExecutionReport())) {
     test("test1") {
         delay(1.seconds)
     }
@@ -37,7 +37,7 @@ val UsingReport by testSuite(testConfig = TestConfig.report(DisabledTestsExecuti
 private class DisabledTestsExecutionReport : TestExecutionReport() {
     private val rootElement = atomic<TestElement?>(null)
     private val lock = reentrantLock()
-    private val disabledTestPaths = mutableListOf<String>() // guarded by lock
+    private val disabledTestPaths = mutableListOf<TestElement.Path>() // guarded by lock
 
     override suspend fun add(event: TestElementEvent) {
         rootElement.compareAndSet(null, event.element)
@@ -54,7 +54,7 @@ private class DisabledTestsExecutionReport : TestExecutionReport() {
             @OptIn(TestBalloonInternalApi::class)
             printlnFixed(
                 "WARNING: ${disabledTestPaths.size} disabled test(s) in ${rootElement.value?.testElementPath}:\n\t" +
-                    disabledTestPaths.joinToString("\n\t")
+                    disabledTestPaths.joinToString("\n\t") { "$it" }
             )
         }
     }

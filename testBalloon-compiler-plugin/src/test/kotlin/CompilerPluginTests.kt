@@ -1,3 +1,5 @@
+@file:OptIn(TestBalloonInternalApi::class)
+
 import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
@@ -5,6 +7,8 @@ import com.tschuchort.compiletesting.PluginOption
 import com.tschuchort.compiletesting.SourceFile
 import de.infix.testBalloon.compilerPlugin.CompilerPluginCommandLineProcessor
 import de.infix.testBalloon.compilerPlugin.CompilerPluginRegistrar
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.internal.externalId
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
@@ -14,6 +18,7 @@ import java.io.OutputStream
 import java.io.PrintStream
 import kotlin.coroutines.Continuation
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -83,14 +88,14 @@ private class CompilerPluginTests {
             executionEnabled = true
         ) { capturedStdout ->
 
-            assertTrue(
+            assertContains(
+                capturedStdout,
                 """
                     $packageName.MyTestSession
-                    $packageName.TestSuiteOne
-                    $packageName.TestSuiteTwo
-                    my test suite three
-                """.trimIndent() in capturedStdout,
-                capturedStdout
+                    ${("$packageName.TestSuiteOne").externalId()}
+                    ${("$packageName.TestSuiteTwo").externalId()}
+                    ${("my test suite three").externalId()}
+                """.trimIndent()
             )
         }
     }

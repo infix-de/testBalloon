@@ -5,26 +5,14 @@ package de.infix.testBalloon.framework
  */
 @TestElementDsl
 public interface AbstractTestElement {
-    public val testElementParent: AbstractTestSuite?
-
     /**
-     * A path uniquely identifying the element in its test hierarchy.
-     *
-     * The element's path must be identical across multiple test sessions.
-     * Element paths must form a hierarchy: Each element's path must be prefixed with that of its parent element.
+     * A path uniquely identifying a test element in its test hierarchy.
      */
-    public val testElementPath: TestElementPath
+    public interface Path {
+        public override fun toString(): String
+    }
 
-    /**
-     * The element's name, uniquely identifying it within its suite or the top level.
-     */
-    public val testElementName: String
-
-    /**
-     * A shortened variant of the element's name.
-     */
-    public val testElementDisplayName: String
-
+    public val testElementPath: Path
     public val testElementIsEnabled: Boolean
 }
 
@@ -36,9 +24,7 @@ public interface AbstractTest : AbstractTestElement
 /**
  * A test suite declaring a number of children (tests and/or suites).  A suite may not contain test logic.
  */
-public interface AbstractTestSuite : AbstractTestElement {
-    public val testElementChildren: Iterable<AbstractTestElement>
-}
+public interface AbstractTestSuite : AbstractTestElement
 
 /**
  * A compilation module's root test suite, typically holding the module-wide default configuration.
@@ -46,8 +32,3 @@ public interface AbstractTestSuite : AbstractTestElement {
  * A compilation module may declare at most one test session. It is the root of the test element hierarchy.
  */
 public interface AbstractTestSession : AbstractTestSuite
-
-/**
- * A path uniquely identifying a test element in its test hierarchy.
- */
-public typealias TestElementPath = String

@@ -1,4 +1,5 @@
 import de.infix.testBalloon.framework.AbstractTestElement
+import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.TestConfig
 import de.infix.testBalloon.framework.TestDiscoverable
 import de.infix.testBalloon.framework.TestSuite
@@ -150,7 +151,7 @@ private class TestScenario(private val parentTestSuite: TestSuite, private val p
                             "\tActual: ${actualResults}\n" + taskExecution.stdoutStderr()
                     )
                 }
-                println("$testElementDisplayName: $taskName – OK")
+                println("$testElementPath: $taskName – OK")
             }
 
             val fileIndex = 0
@@ -242,6 +243,6 @@ private fun log(message: String) {
         logFile.appendText("\n––– Session Starting –––\n")
     }
 
-    @OptIn(ExperimentalTime::class)
+    @OptIn(TestBalloonExperimentalApi::class, ExperimentalTime::class)
     logFile.appendText("${Clock.System.now()} [${testPlatform.threadId()}] $message\n")
 }

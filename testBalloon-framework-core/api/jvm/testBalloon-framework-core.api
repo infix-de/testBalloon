@@ -51,11 +51,8 @@ public abstract class de/infix/testBalloon/framework/TestConfigurationReport {
 
 public final class de/infix/testBalloon/framework/TestCoroutineScope : de/infix/testBalloon/framework/AbstractTest, kotlinx/coroutines/CoroutineScope {
 	public fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
-	public fun getTestElementDisplayName ()Ljava/lang/String;
 	public fun getTestElementIsEnabled ()Z
-	public fun getTestElementName ()Ljava/lang/String;
-	public fun getTestElementParent ()Lde/infix/testBalloon/framework/AbstractTestSuite;
-	public fun getTestElementPath ()Ljava/lang/String;
+	public fun getTestElementPath ()Lde/infix/testBalloon/framework/AbstractTestElement$Path;
 	public final fun getTestScope ()Lkotlinx/coroutines/test/TestScope;
 }
 
@@ -63,13 +60,15 @@ public abstract class de/infix/testBalloon/framework/TestElement : de/infix/test
 	public synthetic fun <init> (Lde/infix/testBalloon/framework/TestSuite;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/TestConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lde/infix/testBalloon/framework/TestSuite;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getTestConfig ()Lde/infix/testBalloon/framework/TestConfig;
-	public fun getTestElementDisplayName ()Ljava/lang/String;
 	public fun getTestElementIsEnabled ()Z
-	public fun getTestElementName ()Ljava/lang/String;
-	public synthetic fun getTestElementParent ()Lde/infix/testBalloon/framework/AbstractTestSuite;
-	public fun getTestElementParent ()Lde/infix/testBalloon/framework/TestSuite;
-	public fun getTestElementPath ()Ljava/lang/String;
+	public synthetic fun getTestElementPath ()Lde/infix/testBalloon/framework/AbstractTestElement$Path;
+	public fun getTestElementPath ()Lde/infix/testBalloon/framework/TestElement$Path;
 	public final fun setTestConfig (Lde/infix/testBalloon/framework/TestConfig;)V
+	public fun setTestElementIsEnabled (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class de/infix/testBalloon/framework/TestElement$Path : de/infix/testBalloon/framework/AbstractTestElement$Path {
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -171,7 +170,6 @@ public class de/infix/testBalloon/framework/TestSuite : de/infix/testBalloon/fra
 	protected fun <init> (Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun aroundAll (Lkotlin/jvm/functions/Function2;)V
-	public fun getTestElementChildren ()Ljava/lang/Iterable;
 	public final fun getTestSuiteScope ()Lkotlinx/coroutines/CoroutineScope;
 	public final fun test (Ljava/lang/String;Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function2;)V
 	public static synthetic fun test$default (Lde/infix/testBalloon/framework/TestSuite;Ljava/lang/String;Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V

@@ -79,7 +79,7 @@ public open class TestSuite internal constructor(
 ) : TestElement(parent, name = name, displayName = displayName, testConfig),
     AbstractTestSuite {
 
-    override val testElementChildren: Iterable<TestElement> by ::children
+    internal val testElementChildren: Iterable<TestElement> by ::children
 
     private val children: MutableList<TestElement> = mutableListOf()
 

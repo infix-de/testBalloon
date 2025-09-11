@@ -26,9 +26,6 @@ import kotlin.reflect.KProperty
 class GradlePlugin : KotlinCompilerPluginSupportPlugin {
     private class PluginProperties(val project: Project) {
 
-        /** Name pattern for the subset of Kotlin compilation tasks which test compilation tasks. */
-        val kotlinTestCompilationTaskRegex by regexProperty("""Test""")
-
         /** Name pattern for test root source sets which will receive generated entry point code. */
         val testRootSourceSetRegex by regexProperty(
             """^(test$|commonTest$|androidTest|androidInstrumentedTest)"""
@@ -40,13 +37,6 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
          * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
          */
         val testCompilationRegex by regexProperty("""(^test)|Test""")
-
-        /**
-         * Name pattern for tasks processing source code from test source sets, like those from KSP.
-         *
-         * The Gradle plugin will make these tasks depend on the TestBalloon task generating the entry point source file.
-         */
-        val testSourceCodeProcessingTaskRegex by regexProperty("""^kspTestKotlin""")
 
         /**
          * Name pattern for test modules in which the compiler plugin will look up test suites and a test session.
@@ -79,18 +69,8 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
             )
         }
 
-        val testRootSourceSetRegex = pluginProperties.testRootSourceSetRegex
-        val generatedCommonTestDir = layout.buildDirectory.dir("generated/testBalloon/src/commonTest")
-
-        extensions.configure<KotlinBaseExtension>("kotlin") {
-            sourceSets.configureEach {
-                if (testRootSourceSetRegex.containsMatchIn(name)) {
-                    kotlin.srcDir(generatedCommonTestDir)
-                }
-            }
-        }
-
         val generateTestBalloonInitializationTask = tasks.register("generateTestBalloonInitialization") {
+            val generatedCommonTestDir = layout.buildDirectory.dir("generated/testBalloon/src/commonTest")
             outputs.dir(generatedCommonTestDir)
             doLast {
                 val directory = Path("${generatedCommonTestDir.get()}/kotlin")
@@ -107,19 +87,12 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
-        // Make Kotlin compilation tasks aware of the generated source's origin.
-        val kotlinTestCompilationTaskRegex = pluginProperties.kotlinTestCompilationTaskRegex
-        tasks.withType(KotlinCompilationTask::class.java) {
-            if (kotlinTestCompilationTaskRegex.containsMatchIn(name)) {
-                dependsOn(generateTestBalloonInitializationTask)
-            }
-        }
-
-        // Make source code processing tasks (like KSP) aware of the generated source's origin.
-        val testSourceCodeProcessingTaskRegex = pluginProperties.testSourceCodeProcessingTaskRegex
-        tasks.configureEach {
-            if (testSourceCodeProcessingTaskRegex.containsMatchIn(name)) {
-                dependsOn(generateTestBalloonInitializationTask)
+        extensions.configure<KotlinBaseExtension>("kotlin") {
+            val testRootSourceSetRegex = pluginProperties.testRootSourceSetRegex
+            sourceSets.configureEach {
+                if (testRootSourceSetRegex.containsMatchIn(name)) {
+                    kotlin.srcDir(generateTestBalloonInitializationTask)
+                }
             }
         }
 

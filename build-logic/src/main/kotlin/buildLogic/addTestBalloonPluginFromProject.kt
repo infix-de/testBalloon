@@ -25,18 +25,8 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
         add(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, abstractionsDependency)
     }
 
-    val testRootSourceSetRegex = Regex("""^(test${'$'}|commonTest${'$'}|androidTest|androidInstrumentedTest)""")
-    val generatedCommonTestDir = layout.buildDirectory.dir("generated/testBalloon/src/commonTest")
-
-    extensions.configure<KotlinBaseExtension>("kotlin") {
-        sourceSets.configureEach {
-            if (testRootSourceSetRegex.containsMatchIn(name)) {
-                kotlin.srcDir(generatedCommonTestDir)
-            }
-        }
-    }
-
     val generateTestBalloonInitializationTask = tasks.register("generateTestBalloonInitialization") {
+        val generatedCommonTestDir = layout.buildDirectory.dir("generated/testBalloon/src/commonTest")
         outputs.dir(generatedCommonTestDir)
         doLast {
             val directory = Path("${generatedCommonTestDir.get()}/kotlin")
@@ -53,9 +43,12 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
         }
     }
 
-    tasks.withType(KotlinCompilationTask::class.java) {
-        if (name.contains("Test")) {
-            dependsOn(generateTestBalloonInitializationTask)
+    extensions.configure<KotlinBaseExtension>("kotlin") {
+        val testRootSourceSetRegex = Regex("""^(test${'$'}|commonTest${'$'}|androidTest|androidInstrumentedTest)""")
+        sourceSets.configureEach {
+            if (testRootSourceSetRegex.containsMatchIn(name)) {
+                kotlin.srcDir(generateTestBalloonInitializationTask)
+            }
         }
     }
 

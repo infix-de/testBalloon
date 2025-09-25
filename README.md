@@ -221,7 +221,12 @@ To run some test suites in isolation, and/or provide them with special configura
 
 ## Examples and documentation
 
-Find examples demonstrating TestBalloon’s capabilities in [examples/general], and an example showing how to use TestBalloon with Kotest assertions in [examples/with-kotest-assertions].
+A testing guide is in the works. In the meantime, these examples cover typical use cases:
+
+* [examples/general]: TestBalloon’s capabilities in general.
+* [examples/with-kotest-assertions]: Using TestBalloon with Kotest assertions.
+* [examples/android]: Configuring TestBalloon for Android Local (Unit) and Instrumented tests, working with JUnit 4 rules, and a [Compose UI test] ([for Kotlin Multiplatform, use `runComposeUiTest()`](https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-test.html), which is available for all Compose target platforms).
+* [examples/multiplatform-with-android]: Configuring TestBalloon for Multiplatform _plus_ Android, with Local (Unit) and Instrumented tests.
 
 The TestBalloon public API includes source code documentation.
 
@@ -240,6 +245,8 @@ Finally, there is a brief [introduction to development].
 [`aroundAll`]: examples/general/src/commonTest/kotlin/com/example/UsingAroundAll.kt
 
 [`aroundEach`]: examples/general/src/commonTest/kotlin/com/example/UsingAroundEach.kt
+
+[Compose UI test]: examples/android/src/androidTest/kotlin/com/example/InstrumentedComposeTestsWithTestBalloon.kt
 
 [examples/android]: examples/android/build.gradle.kts
 

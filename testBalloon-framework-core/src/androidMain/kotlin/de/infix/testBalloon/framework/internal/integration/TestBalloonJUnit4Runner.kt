@@ -173,7 +173,7 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
     testElementDescriptions[this] = it
 }
 
-private val TestElement.platformDescription: Description
+internal val TestElement.platformDescription: Description
     get() = checkNotNull(testElementDescriptions[this]) { "$this is missing its test description" }
 
 private class TestBalloonInitializationError(message: String, cause: Throwable) : Error(message, cause)

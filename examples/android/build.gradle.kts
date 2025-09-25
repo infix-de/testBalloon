@@ -4,6 +4,7 @@ plugins {
     id("buildLogic.android-application")
     // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
     id("org.jetbrains.kotlin.plugin.atomicfu")
+    alias(libs.plugins.org.jetbrains.kotlin.plugin.compose)
 }
 
 // The following invocation supplements the TestBalloon plugin declaration inside this project:
@@ -12,6 +13,10 @@ addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.tes
 android {
     namespace = "org.example.android"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+    buildFeatures {
+        compose = true
+    }
 
     defaultConfig {
         applicationId = "org.example.android"
@@ -60,8 +65,17 @@ android {
 }
 
 dependencies {
+    // Specify the Compose BOM with a version definition
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    testImplementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // Material Design 3
+    implementation("androidx.compose.material3:material3")
+
     // required for local tests with TestBalloon outside this project:
-    //     implementation("de.infix.testBalloon:testBalloon-framework-core-jvm:${testBalloonVersion}")
+    //     testImplementation("de.infix.testBalloon:testBalloon-framework-core-jvm:${testBalloonVersion}")
     // instead of this project-internal dependency:
     testImplementation(project(projects.testBalloonFrameworkCore.path, "jvmRuntimeElements"))
 
@@ -72,4 +86,9 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
 
     androidTestImplementation(libs.org.jetbrains.kotlinx.atomicfu)
+
+    // Test rules and transitive dependencies:
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    // Needed for createComposeRule(), but not for createAndroidComposeRule<YourActivity>():
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

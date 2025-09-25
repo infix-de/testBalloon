@@ -43,6 +43,9 @@ org-junit-platform = "1.13.4"
 
 [libraries]
 
+# https://developer.android.com/develop/ui/compose/bom/bom-mapping
+androidx-compose-bom = "androidx.compose:compose-bom:2025.09.00"
+
 androidx-test-core = "androidx.test:core:1.7.0"
 
 androidx-test-runner = "androidx.test:runner:1.7.0"
@@ -115,5 +118,7 @@ org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.re
 org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin" }
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "org-jetbrains-kotlin" }
+
+org-jetbrains-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "org-jetbrains-kotlin" }
 
 org-jmailen-kotlinter = { id = "org.jmailen.kotlinter", version.ref = "org-jmailen-kotlinter" }

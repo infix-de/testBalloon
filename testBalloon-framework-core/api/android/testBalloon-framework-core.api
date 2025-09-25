@@ -190,6 +190,14 @@ public final class de/infix/testBalloon/framework/TestSuiteKt {
 	public static synthetic fun testSuite$default (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/Lazy;
 }
 
+public final class de/infix/testBalloon/framework/TestSuite_androidKt {
+	public static final fun testWithJUnit4Rule (Lde/infix/testBalloon/framework/TestSuite;Ljava/lang/String;Lorg/junit/rules/TestRule;Lkotlin/jvm/functions/Function2;)V
+}
+
+public final class de/infix/testBalloon/framework/Test_androidKt {
+	public static final fun getJUnit4Description (Lde/infix/testBalloon/framework/TestExecutionScope;)Lorg/junit/runner/Description;
+}
+
 public final class de/infix/testBalloon/framework/internal/LogLevel : java/lang/Enum {
 	public static final field DEBUG Lde/infix/testBalloon/framework/internal/LogLevel;
 	public static final field ERROR Lde/infix/testBalloon/framework/internal/LogLevel;

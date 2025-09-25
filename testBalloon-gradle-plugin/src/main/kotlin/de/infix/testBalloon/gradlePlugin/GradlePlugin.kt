@@ -87,11 +87,16 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
-        extensions.configure<KotlinBaseExtension>("kotlin") {
-            val testRootSourceSetRegex = pluginProperties.testRootSourceSetRegex
-            sourceSets.configureEach {
-                if (testRootSourceSetRegex.containsMatchIn(name)) {
-                    kotlin.srcDir(generateTestBalloonInitializationTask)
+        afterEvaluate {
+            // Why use afterEvaluate at this point?
+            // In order to reliably detect all top-level source sets, we must be sure that the source set hierarchy
+            // has been completely set up. Otherwise, `dependsOn.isEmpty()` would detect false positives.
+            extensions.configure<KotlinBaseExtension>("kotlin") {
+                val testRootSourceSetRegex = pluginProperties.testRootSourceSetRegex
+                sourceSets.configureEach {
+                    if (testRootSourceSetRegex.containsMatchIn(name) && dependsOn.isEmpty()) {
+                        kotlin.srcDir(generateTestBalloonInitializationTask)
+                    }
                 }
             }
         }
@@ -127,10 +132,10 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(GradleExtension::class.java)
-        return pluginProperties.testCompilationRegex.containsMatchIn(kotlinCompilation.name).also {
+        return pluginProperties.testCompilationRegex.containsMatchIn(kotlinCompilation.name).also { applies ->
             if (extension.debugLevel > DebugLevel.NONE) {
                 project.logger.warn(
-                    "[DEBUG] $PLUGIN_DISPLAY_NAME is ${if (!it) "not " else ""}applicable" +
+                    "[DEBUG] $PLUGIN_DISPLAY_NAME is ${if (applies) "" else "not "}applicable" +
                         " for Kotlin compilation '${kotlinCompilation.name}'"
                 )
             }

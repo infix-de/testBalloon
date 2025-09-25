@@ -4,7 +4,7 @@
 
 # https://developer.android.com/build/releases/gradle-plugin
 # https://developer.android.com/studio/releases#android_gradle_plugin_and_android_studio_compatibility
-android-gradle-plugin = "8.11.1"
+android-gradle-plugin = "8.11.2"
 
 # https://developer.android.com/build#android_sdk_settings
 android-compileSdk = "36"
@@ -24,7 +24,7 @@ com-vanniktech-maven-publish = "0.34.0"
 io-kotest = "5.9.1"
 
 # https://github.com/JetBrains/kotlin/releases
-org-jetbrains-kotlin = "2.2.20-RC"
+org-jetbrains-kotlin = "2.2.20"
 
 # https://github.com/Kotlin/dokka/releases
 org-jetbrains-kotlin-dokka = "2.0.0"
@@ -33,7 +33,7 @@ org-jetbrains-kotlin-dokka = "2.0.0"
 org-jetbrains-kotlinx-coroutines = "1.10.2"
 
 # https://github.com/Kotlin/kotlinx-kover/releases
-org-jetbrains-kotlinx-kover = "0.9.1"
+org-jetbrains-kotlinx-kover = "0.9.2"
 
 # https://github.com/jeremymailen/kotlinter-gradle/releases
 org-jmailen-kotlinter = "5.2.0"
@@ -44,7 +44,7 @@ org-junit-platform = "1.13.4"
 [libraries]
 
 # https://developer.android.com/develop/ui/compose/bom/bom-mapping
-androidx-compose-bom = "androidx.compose:compose-bom:2025.09.00"
+androidx-compose-bom = "androidx.compose:compose-bom:2025.09.01"
 
 androidx-test-core = "androidx.test:core:1.7.0"
 
@@ -63,13 +63,13 @@ com-vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech:gradle-m
 de-fayard-refreshversions-gradle-plugin = "de.fayard.refreshVersions:de.fayard.refreshVersions.gradle.plugin:0.60.6"
 
 # https://github.com/ZacSweers/kotlin-compile-testing/releases
-dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.8.0"
+dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.9.0"
 
 # https://github.com/kotest/kotest/releases
 io-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest" }
 
 # https://github.com/reactor/BlockHound/releases
-io-projectreactor-tools-blockhound = "io.projectreactor.tools:blockhound:1.0.13.RELEASE"
+io-projectreactor-tools-blockhound = "io.projectreactor.tools:blockhound:1.0.14.RELEASE"
 
 # https://github.com/junit-team/junit4
 junit-junit4 = "junit:junit:4.13.2"
@@ -86,6 +86,7 @@ org-jetbrains-kotlin-sam-with-receiver-gradle-plugin = { module = "org.jetbrains
 
 # https://github.com/Kotlin/kotlinx-atomicfu/releases
 org-jetbrains-kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.29.0"
+##                                                           ⬆ :0.30.0-beta"
 
 org-jetbrains-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "org-jetbrains-kotlinx-coroutines" }
 org-jetbrains-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "org-jetbrains-kotlinx-coroutines" }
@@ -94,6 +95,7 @@ org-jetbrains-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotli
 
 # https://github.com/Kotlin/kotlinx-datetime/blob/master/CHANGELOG.md
 org-jetbrains-kotlinx-kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1"
+##                                                                           ⬆ :0.7.1-0.6.x-compat"
 
 org-jetbrains-kotlinx-kover-gradle-plugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "org-jetbrains-kotlinx-kover" }
 

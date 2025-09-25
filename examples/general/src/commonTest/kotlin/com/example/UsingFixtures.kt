@@ -1,5 +1,6 @@
 package com.example
 
+import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.testSuite
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -21,7 +22,7 @@ val UsingFixtures by testSuite {
     }
 
     testSuite("actual users") {
-        val userRepository = testFixture { UserRepository(testSuiteScope) }
+        val userRepository = userRepository()
 
         test("alina") {
             assertEquals(4, starRepository().userStars("alina"))
@@ -43,6 +44,14 @@ val UsingFixtures by testSuite {
     }
 }
 
+private class StarRepository {
+    suspend fun userStars(user: String): Int = mapOf("alina" to 4, "peter" to 3)[user] ?: 0
+
+    suspend fun disconnect() {} // Called via closeWith, so it can suspend.
+}
+
+private fun TestSuite.userRepository() = testFixture { UserRepository(testSuiteScope) }
+
 private class UserRepository(scope: CoroutineScope) : AutoCloseable {
     val clientJob = scope.launch {
         // Could be running infinitely like with
@@ -55,10 +64,4 @@ private class UserRepository(scope: CoroutineScope) : AutoCloseable {
     override fun close() { // The standard (non-suspending) close function.
         clientJob.cancel()
     }
-}
-
-private class StarRepository {
-    suspend fun userStars(user: String): Int = mapOf("alina" to 4, "peter" to 3)[user] ?: 0
-
-    suspend fun disconnect() {} // Called via closeWith, so it can suspend.
 }

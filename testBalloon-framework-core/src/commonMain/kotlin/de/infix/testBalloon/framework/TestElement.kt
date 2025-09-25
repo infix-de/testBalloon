@@ -13,7 +13,7 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
      */
     @Suppress("CanBePrimaryConstructorProperty")
     @Deprecated(
-        "Use 'testSuite(..., testConfig = ...)' instead. Scheduled for becoming an 'internal val' in TestBalloon 0.8."
+        "Use 'testSuite(..., testConfig = ...)' instead. Scheduled for removal in TestBalloon 0.8."
     )
     public var testConfig: TestConfig = testConfig
 

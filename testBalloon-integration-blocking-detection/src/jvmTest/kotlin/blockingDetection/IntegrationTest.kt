@@ -43,6 +43,7 @@ private suspend fun blockInNonBlockingContext() {
     // b) the required 'kotlinx-coroutines-debug' dependency is present.
     withContext(Dispatchers.Default) {
         // Use a non-blocking dispatcher
+        @Suppress("BlockingMethodInNonBlockingContext")
         Thread.sleep(2)
     }
 }

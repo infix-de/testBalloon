@@ -50,7 +50,7 @@ val ComposeTestsWithTestBalloon by testSuite {
 }
 
 /**
- * Declares a [Test] with a [ComposeTestContext] providing a basic `composeTestRule`.
+ * Declares a `Test` with a [ComposeTestContext] providing a basic `composeTestRule`.
  */
 @TestDiscoverable
 fun TestSuite.composeTest(
@@ -64,7 +64,7 @@ fun TestSuite.composeTest(
 class ComposeTestContext<Rule>(val composeTestRule: Rule)
 
 /**
- * Declares a [Test] with a [ComposeTestContext] providing an Activity-based `composeTestRule`.
+ * Declares a `Test` with a [ComposeTestContext] providing an Activity-based `composeTestRule`.
  */
 @TestDiscoverable
 inline fun <reified A : ComponentActivity> TestSuite.androidComposeTest(

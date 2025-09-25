@@ -29,12 +29,10 @@ internal actual fun handleFrameworkLevelError(throwable: Throwable) {
     }
 }
 
-@Suppress("unused")
 private fun printStderr(message: String) {
     js("process.stderr.write(message)")
 }
 
-@Suppress("unused")
 private fun exitProcess(status: Int) {
     js("process.exit(status)")
 }

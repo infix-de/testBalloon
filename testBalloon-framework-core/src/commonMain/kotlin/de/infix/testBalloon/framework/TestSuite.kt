@@ -88,7 +88,7 @@ public open class TestSuite internal constructor(
     /**
      * The test suite's [CoroutineScope], valid only during the suite's execution.
      *
-     * Use [testSuiteScope] to launch coroutines in test fixtures. Such coroutines must complete or be cancelled
+     * Use [testSuiteScope] to launch coroutines in test fixtures. Such coroutines must complete or be canceled
      * explicitly when their fixture closes. The test suite execution will wait for coroutines in [testSuiteScope]
      * before completing.
      */

@@ -6,7 +6,6 @@ import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.plugin.NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.io.path.exists
@@ -44,7 +43,7 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
     }
 
     extensions.configure<KotlinBaseExtension>("kotlin") {
-        val testRootSourceSetRegex = Regex("""^(test${'$'}|commonTest${'$'}|androidTest|androidInstrumentedTest)""")
+        val testRootSourceSetRegex = Regex("""^(test$|commonTest$|androidTest|androidInstrumentedTest)""")
         sourceSets.configureEach {
             if (testRootSourceSetRegex.containsMatchIn(name)) {
                 kotlin.srcDir(generateTestBalloonInitializationTask)

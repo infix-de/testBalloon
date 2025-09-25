@@ -356,7 +356,7 @@ private class ModuleTransformer(
         val irClass = this
         val primaryConstructor = irClass.primaryConstructor ?: return
         val superClassConstructorCall =
-            primaryConstructor.body?.statements?.firstOrNull() as IrDelegatingConstructorCall? ?: return
+            primaryConstructor.body?.statements?.firstOrNull() as? IrDelegatingConstructorCall? ?: return
         val valueParameters = superClassConstructorCall.symbol.owner.parameters
         val valueArguments = superClassConstructorCall.arguments
 

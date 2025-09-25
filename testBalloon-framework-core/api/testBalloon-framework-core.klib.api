@@ -78,15 +78,15 @@ abstract class de.infix.testBalloon.framework/TestExecutionReport { // de.infix.
 
 final class de.infix.testBalloon.framework/Test : de.infix.testBalloon.framework/AbstractTest, de.infix.testBalloon.framework/TestElement // de.infix.testBalloon.framework/Test|null[0]
 
-final class de.infix.testBalloon.framework/TestCoroutineScope : de.infix.testBalloon.framework/AbstractTest, kotlinx.coroutines/CoroutineScope { // de.infix.testBalloon.framework/TestCoroutineScope|null[0]
-    final val coroutineContext // de.infix.testBalloon.framework/TestCoroutineScope.coroutineContext|{}coroutineContext[0]
-        final fun <get-coroutineContext>(): kotlin.coroutines/CoroutineContext // de.infix.testBalloon.framework/TestCoroutineScope.coroutineContext.<get-coroutineContext>|<get-coroutineContext>(){}[0]
-    final val testElementIsEnabled // de.infix.testBalloon.framework/TestCoroutineScope.testElementIsEnabled|{}testElementIsEnabled[0]
-        final fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/TestCoroutineScope.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
-    final val testElementPath // de.infix.testBalloon.framework/TestCoroutineScope.testElementPath|{}testElementPath[0]
-        final fun <get-testElementPath>(): de.infix.testBalloon.framework/AbstractTestElement.Path // de.infix.testBalloon.framework/TestCoroutineScope.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
-    final val testScope // de.infix.testBalloon.framework/TestCoroutineScope.testScope|{}testScope[0]
-        final fun <get-testScope>(): kotlinx.coroutines.test/TestScope // de.infix.testBalloon.framework/TestCoroutineScope.testScope.<get-testScope>|<get-testScope>(){}[0]
+final class de.infix.testBalloon.framework/TestExecutionScope : de.infix.testBalloon.framework/AbstractTest, kotlinx.coroutines/CoroutineScope { // de.infix.testBalloon.framework/TestExecutionScope|null[0]
+    final val coroutineContext // de.infix.testBalloon.framework/TestExecutionScope.coroutineContext|{}coroutineContext[0]
+        final fun <get-coroutineContext>(): kotlin.coroutines/CoroutineContext // de.infix.testBalloon.framework/TestExecutionScope.coroutineContext.<get-coroutineContext>|<get-coroutineContext>(){}[0]
+    final val testElementIsEnabled // de.infix.testBalloon.framework/TestExecutionScope.testElementIsEnabled|{}testElementIsEnabled[0]
+        final fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/TestExecutionScope.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
+    final val testElementPath // de.infix.testBalloon.framework/TestExecutionScope.testElementPath|{}testElementPath[0]
+        final fun <get-testElementPath>(): de.infix.testBalloon.framework/AbstractTestElement.Path // de.infix.testBalloon.framework/TestExecutionScope.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+    final val testScope // de.infix.testBalloon.framework/TestExecutionScope.testScope|{}testScope[0]
+        final fun <get-testScope>(): kotlinx.coroutines.test/TestScope // de.infix.testBalloon.framework/TestExecutionScope.testScope.<get-testScope>|<get-testScope>(){}[0]
 }
 
 open class de.infix.testBalloon.framework/TestCompartment : de.infix.testBalloon.framework/TestSuite { // de.infix.testBalloon.framework/TestCompartment|null[0]
@@ -135,7 +135,7 @@ open class de.infix.testBalloon.framework/TestSuite : de.infix.testBalloon.frame
 
     final fun <#A1: kotlin/Any> testFixture(kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestSuite, #A1>): de.infix.testBalloon.framework/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework/TestSuite.testFixture|testFixture(kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestSuite,0:0>){0§<kotlin.Any>}[0]
     final fun aroundAll(kotlin.coroutines/SuspendFunction1<kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/Unit>) // de.infix.testBalloon.framework/TestSuite.aroundAll|aroundAll(kotlin.coroutines.SuspendFunction1<kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>,kotlin.Unit>){}[0]
-    final fun test(kotlin/String, de.infix.testBalloon.framework/TestConfig = ..., kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestCoroutineScope, kotlin/Unit>) // de.infix.testBalloon.framework/TestSuite.test|test(kotlin.String;de.infix.testBalloon.framework.TestConfig;kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestCoroutineScope,kotlin.Unit>){}[0]
+    final fun test(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework/TestConfig = ..., kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework/TestExecutionScope, kotlin/Unit>) // de.infix.testBalloon.framework/TestSuite.test|test(kotlin.String;kotlin.String;de.infix.testBalloon.framework.TestConfig;kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.TestExecutionScope,kotlin.Unit>){}[0]
     final fun testSuite(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework/TestConfig = ..., kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>) // de.infix.testBalloon.framework/TestSuite.testSuite|testSuite(kotlin.String;kotlin.String;de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>){}[0]
 
     final class <#A1: kotlin/Any> Fixture { // de.infix.testBalloon.framework/TestSuite.Fixture|null[0]

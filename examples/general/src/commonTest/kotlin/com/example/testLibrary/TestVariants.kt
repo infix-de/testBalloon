@@ -1,8 +1,8 @@
 package com.example.testLibrary
 
-import de.infix.testBalloon.framework.TestAction
 import de.infix.testBalloon.framework.TestConfig
 import de.infix.testBalloon.framework.TestDiscoverable
+import de.infix.testBalloon.framework.TestExecutionScope
 import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.testScope
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +13,7 @@ import kotlin.time.Duration
 /**
  * Declares a test with a [timeout] as defined in kotlinx.coroutines [withTimeout].
  */
-fun TestSuite.test(name: String, timeout: Duration, action: TestAction) =
+fun TestSuite.test(name: String, timeout: Duration, action: suspend TestExecutionScope.() -> Unit) =
     test(name, testConfig = TestConfig.testScope(isEnabled = false)) {
         try {
             withTimeout(timeout) {
@@ -27,7 +27,7 @@ fun TestSuite.test(name: String, timeout: Duration, action: TestAction) =
 /**
  * Declares a test series with a number of [iterations].
  */
-fun TestSuite.test(name: String, iterations: Int, action: TestAction) {
+fun TestSuite.test(name: String, iterations: Int, action: suspend TestExecutionScope.() -> Unit) {
     for (iteration in 1..iterations) {
         test("$name $iteration") {
             action()

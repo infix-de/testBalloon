@@ -15,9 +15,10 @@ import kotlinx.coroutines.test.TestScope
 public class Test internal constructor(
     parent: TestSuite,
     name: String,
+    displayName: String = name,
     testConfig: TestConfig,
-    private val action: TestAction
-) : TestElement(parent, name = name, testConfig = testConfig),
+    private val action: suspend TestExecutionScope.() -> Unit
+) : TestElement(parent, name = name, displayName = displayName, testConfig = testConfig),
     AbstractTest {
 
     override fun parameterize(selection: Selection, report: TestConfigurationReport) {
@@ -39,7 +40,7 @@ public class Test internal constructor(
                         executeInTestScope(testScopeContext)
                     } else {
                         coroutineScope {
-                            TestCoroutineScope(this@Test, this, null).action()
+                            TestExecutionScope(this@Test, this, null).action()
                         }
                     }
                 }
@@ -57,7 +58,7 @@ public class Test internal constructor(
         }
         TestScope(inheritableContext)
             .runTestAwaitingCompletion(timeout = testScopeContext.timeout) TestScope@{
-                TestCoroutineScope(
+                TestExecutionScope(
                     this@Test,
                     CoroutineScope(currentCoroutineContext()),
                     this@TestScope
@@ -66,8 +67,8 @@ public class Test internal constructor(
     }
 }
 
-public class TestCoroutineScope internal constructor(
-    private val test: Test,
+public class TestExecutionScope internal constructor(
+    internal val test: Test,
     scope: CoroutineScope,
     private val testScopeOrNull: TestScope?
 ) : AbstractTest by test,
@@ -77,8 +78,3 @@ public class TestCoroutineScope internal constructor(
         get() = testScopeOrNull
             ?: throw IllegalStateException("$test is not executing in a TestScope.")
 }
-
-/**
- * A test's action: test logic which raises assertion errors on failure. The action may suspend.
- */
-public typealias TestAction = suspend TestCoroutineScope.() -> Unit

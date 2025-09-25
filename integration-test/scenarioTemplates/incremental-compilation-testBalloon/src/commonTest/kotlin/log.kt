@@ -1,6 +1,6 @@
-import de.infix.testBalloon.framework.TestCoroutineScope
+import de.infix.testBalloon.framework.TestExecutionScope
 import de.infix.testBalloon.framework.testPlatform
 
-fun TestCoroutineScope.log(message: String) {
+fun TestExecutionScope.log(message: String) {
     println("##LOG(${testPlatform.displayName} – $testElementPath: $message)LOG##")
 }

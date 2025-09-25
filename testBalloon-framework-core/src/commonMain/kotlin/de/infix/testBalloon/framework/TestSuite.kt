@@ -287,8 +287,13 @@ public open class TestSuite internal constructor(
      * Declares a [Test] as a child of this test suite.
      */
     @TestDiscoverable
-    public fun test(@TestElementName name: String, testConfig: TestConfig = TestConfig, action: TestAction) {
-        Test(this, name, testConfig = testConfig, action)
+    public fun test(
+        @TestElementName name: String,
+        @TestDisplayName displayName: String = name,
+        testConfig: TestConfig = TestConfig,
+        action: suspend TestExecutionScope.() -> Unit
+    ) {
+        Test(this, name = name, displayName = displayName, testConfig = testConfig, action)
     }
 
     override fun parameterize(selection: Selection, report: TestConfigurationReport) {

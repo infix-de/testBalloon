@@ -177,7 +177,7 @@ Use test fixtures for efficient, scoped shared state:
 
 Use idiomatic Kotlin to define your own types of tests and test suites, like this test variant with an `iterations` parameter:
 
-    fun TestSuite.test(name: String, iterations: Int, action: TestAction) {
+    fun TestSuite.test(name: String, iterations: Int, action: suspend TestExecutionScope.() -> Unit) {
         for (iteration in 1..iterations) {
             test("$name#$iteration") {
                 action()

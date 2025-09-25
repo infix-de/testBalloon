@@ -599,7 +599,7 @@ class TestSuiteTests {
                 }
             )
 
-            suspend fun TestCoroutineScope.traceWithFixtureAccess() {
+            suspend fun TestExecutionScope.traceWithFixtureAccess() {
                 trace.add("$testElementPath begin")
                 fixtures.forEach { it() }
                 trace.add("$testElementPath end")

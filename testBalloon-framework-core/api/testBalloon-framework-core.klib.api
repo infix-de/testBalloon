@@ -46,6 +46,7 @@ abstract interface de.infix.testBalloon.framework/TestPlatform { // de.infix.tes
     abstract val type // de.infix.testBalloon.framework/TestPlatform.type|{}type[0]
         abstract fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatform.type.<get-type>|<get-type>(){}[0]
 
+    abstract fun environment(kotlin/String): kotlin/String? // de.infix.testBalloon.framework/TestPlatform.environment|environment(kotlin.String){}[0]
     abstract fun threadDisplayName(): kotlin/String // de.infix.testBalloon.framework/TestPlatform.threadDisplayName|threadDisplayName(){}[0]
     abstract fun threadId(): kotlin/ULong // de.infix.testBalloon.framework/TestPlatform.threadId|threadId(){}[0]
 
@@ -113,7 +114,7 @@ open class de.infix.testBalloon.framework/TestConfig { // de.infix.testBalloon.f
 }
 
 open class de.infix.testBalloon.framework/TestSession : de.infix.testBalloon.framework/AbstractTestSession, de.infix.testBalloon.framework/TestSuite { // de.infix.testBalloon.framework/TestSession|null[0]
-    constructor <init>(de.infix.testBalloon.framework/TestConfig = ..., kotlin/Function0<de.infix.testBalloon.framework/TestCompartment> = ...) // de.infix.testBalloon.framework/TestSession.<init>|<init>(de.infix.testBalloon.framework.TestConfig;kotlin.Function0<de.infix.testBalloon.framework.TestCompartment>){}[0]
+    constructor <init>(de.infix.testBalloon.framework/TestConfig = ..., kotlin/Function0<de.infix.testBalloon.framework/TestCompartment> = ..., de.infix.testBalloon.framework.internal/TestReportingMode? = ...) // de.infix.testBalloon.framework/TestSession.<init>|<init>(de.infix.testBalloon.framework.TestConfig;kotlin.Function0<de.infix.testBalloon.framework.TestCompartment>;de.infix.testBalloon.framework.internal.TestReportingMode?){}[0]
 
     final object Companion { // de.infix.testBalloon.framework/TestSession.Companion|null[0]
         final val DefaultConfiguration // de.infix.testBalloon.framework/TestSession.Companion.DefaultConfiguration|{}DefaultConfiguration[0]
@@ -224,6 +225,7 @@ final object de.infix.testBalloon.framework/TestPlatformNative : de.infix.testBa
     final val type // de.infix.testBalloon.framework/TestPlatformNative.type|{}type[0]
         final fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatformNative.type.<get-type>|<get-type>(){}[0]
 
+    final fun environment(kotlin/String): kotlin/String? // de.infix.testBalloon.framework/TestPlatformNative.environment|environment(kotlin.String){}[0]
     final fun threadDisplayName(): kotlin/String // de.infix.testBalloon.framework/TestPlatformNative.threadDisplayName|threadDisplayName(){}[0]
     final fun threadId(): kotlin/ULong // de.infix.testBalloon.framework/TestPlatformNative.threadId|threadId(){}[0]
 }
@@ -261,6 +263,8 @@ final object de.infix.testBalloon.framework/TestPlatformJs : de.infix.testBalloo
         final fun <get-runtime>(): de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime // de.infix.testBalloon.framework/TestPlatformJs.runtime.<get-runtime>|<get-runtime>(){}[0]
     final val type // de.infix.testBalloon.framework/TestPlatformJs.type|{}type[0]
         final fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatformJs.type.<get-type>|<get-type>(){}[0]
+
+    final fun environment(kotlin/String): kotlin/String? // de.infix.testBalloon.framework/TestPlatformJs.environment|environment(kotlin.String){}[0]
 }
 
 // Targets: [wasmJs]
@@ -271,6 +275,8 @@ final object de.infix.testBalloon.framework/TestPlatformWasmJs : de.infix.testBa
         final fun <get-runtime>(): de.infix.testBalloon.framework/TestPlatformJsHosted.Runtime // de.infix.testBalloon.framework/TestPlatformWasmJs.runtime.<get-runtime>|<get-runtime>(){}[0]
     final val type // de.infix.testBalloon.framework/TestPlatformWasmJs.type|{}type[0]
         final fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatformWasmJs.type.<get-type>|<get-type>(){}[0]
+
+    final fun environment(kotlin/String): kotlin/String? // de.infix.testBalloon.framework/TestPlatformWasmJs.environment|environment(kotlin.String){}[0]
 }
 
 // Targets: [wasmWasi]
@@ -282,6 +288,7 @@ final object de.infix.testBalloon.framework/TestPlatformWasmWasi : de.infix.test
     final val type // de.infix.testBalloon.framework/TestPlatformWasmWasi.type|{}type[0]
         final fun <get-type>(): de.infix.testBalloon.framework/TestPlatform.Type // de.infix.testBalloon.framework/TestPlatformWasmWasi.type.<get-type>|<get-type>(){}[0]
 
+    final fun environment(kotlin/String): kotlin/String? // de.infix.testBalloon.framework/TestPlatformWasmWasi.environment|environment(kotlin.String){}[0]
     final fun threadDisplayName(): kotlin/String // de.infix.testBalloon.framework/TestPlatformWasmWasi.threadDisplayName|threadDisplayName(){}[0]
     final fun threadId(): kotlin/ULong // de.infix.testBalloon.framework/TestPlatformWasmWasi.threadId|threadId(){}[0]
 }

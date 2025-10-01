@@ -1,6 +1,7 @@
 package de.infix.testBalloon.framework
 
 import de.infix.testBalloon.framework.internal.PATH_SEGMENT_SEPARATOR
+import de.infix.testBalloon.framework.internal.TestReportingMode
 import de.infix.testBalloon.framework.internal.externalId
 
 public sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, testConfig: TestConfig) :
@@ -38,9 +39,22 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
         internal val externalId: String by lazy { flattened { testElementName.externalId() } }
 
         /**
-         * This path's human-readable string of display name segments.
+         * This path's reporting name, depending on the reporting mode.
          */
-        internal val displayNameSegments: String get() = flattened { testElementDisplayName }
+        internal val reportingName: String by lazy {
+            when (TestSession.global.reportingMode) {
+                TestReportingMode.INTELLIJ_IDEA -> {
+                    // Using a complete path for suites ensures proper nesting display in IntelliJ IDEA, but
+                    // duplicates path segments in XML and HTML file reports.
+                    if (element is Test) element.testElementName.externalId() else externalId
+                }
+
+                TestReportingMode.FILES -> {
+                    // Simple element names work for file reports.
+                    element.testElementName.externalId()
+                }
+            }
+        }
 
         private fun flattened(separator: String = PATH_SEGMENT_SEPARATOR, segment: TestElement.() -> String): String =
             when (element.testElementParent) {

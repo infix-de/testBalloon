@@ -18,6 +18,8 @@ public object TestPlatformAndroid : TestPlatform {
     @Suppress("DEPRECATION")
     override fun threadId(): ULong = Thread.currentThread().id.toULong()
     override fun threadDisplayName(): String = Thread.currentThread().name ?: "(thread ${threadId()})"
+
+    override fun environment(variableName: String): String? = System.getenv(variableName)
 }
 
 public actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =

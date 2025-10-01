@@ -7,7 +7,6 @@ import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestExecutionReport
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
-import de.infix.testBalloon.framework.internal.externalId
 import de.infix.testBalloon.framework.internal.integration.TestSessionRelay.resultChannel
 import de.infix.testBalloon.framework.internal.logError
 import de.infix.testBalloon.framework.internal.logInfo
@@ -41,7 +40,7 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
         }
 
         is TestSuite -> {
-            kotlinJsTestFramework.suite(testElementPath.externalId, ignored = !testElementIsEnabled) {
+            kotlinJsTestFramework.suite(testElementPath.reportingName, ignored = !testElementIsEnabled) {
                 testElementChildren.forEach {
                     it.registerWithKotlinJsTestFramework()
                 }
@@ -49,7 +48,7 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
         }
 
         is Test -> {
-            kotlinJsTestFramework.test(testElementName.externalId(), ignored = !testElementIsEnabled) {
+            kotlinJsTestFramework.test(testElementPath.reportingName, ignored = !testElementIsEnabled) {
                 TestSessionRelay.resultReceivingPromise(this)
             }
         }

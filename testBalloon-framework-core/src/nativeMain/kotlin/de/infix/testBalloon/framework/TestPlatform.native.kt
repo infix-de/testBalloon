@@ -1,11 +1,14 @@
 package de.infix.testBalloon.framework
 
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.toKString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.newSingleThreadContext
+import platform.posix.getenv
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.ObsoleteWorkersApi
 import kotlin.native.concurrent.Worker
@@ -26,6 +29,9 @@ public object TestPlatformNative : TestPlatform {
     @OptIn(ExperimentalStdlibApi::class, ObsoleteWorkersApi::class)
     override fun threadId(): ULong = Worker.current.platformThreadId
     override fun threadDisplayName(): String = threadId().toString()
+
+    @OptIn(ExperimentalForeignApi::class)
+    override fun environment(variableName: String): String? = getenv(variableName)?.toKString()
 }
 
 public actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =

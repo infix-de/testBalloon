@@ -21,63 +21,71 @@ class TeamCityTestExecutionReportTests {
     private val detailsRegex = Regex("""details='[^:]+Error:[^']*'""")
 
     @Test
-    fun basicOutput() = withTestFramework {
-        val suite by testSuite("topSuite") {
-            test("test1") {}
-
-            test("test2") { fail("intentionally") }
-
-            testSuite("subSuite1") {
-                test("test1") {}
-            }
-
-            test("test3") {}
-
-            testSuite("subSuite2") {
-                test("test1") { fail("intentionally") }
-            }
-        }
-
-        withTestReport(suite) {
-            val output = ConcurrentList<String>()
-            val report = TeamCityTestExecutionReport { output.add(it) }
-            allEvents().forEach { report.add(it) }
-
-            output.comparableElements()
-                .assertContainsInOrder(
-                    listOf(
-                        "##teamcity[testSuiteStarted name='topSuite' timestamp='...']",
-                        "##teamcity[flowStarted flowId='topSuite' parent='@Default']",
-                        "##teamcity[testStarted name='test1' timestamp='...']",
-                        "##teamcity[testFinished name='test1' timestamp='...']",
-                        "##teamcity[testStarted name='test2' timestamp='...']",
-                        "##teamcity[testFailed name='test2' timestamp='...' message='intentionally' details='AssertionError']",
-                        "##teamcity[testFinished name='test2' timestamp='...']",
-                        "##teamcity[testSuiteStarted name='topSuite|0x00a0|0x2198|0x00a0subSuite1' timestamp='...']",
-                        "##teamcity[flowStarted flowId='topSuite||subSuite1' parent='topSuite']",
-                        "##teamcity[testStarted name='test1' timestamp='...']",
-                        "##teamcity[testFinished name='test1' timestamp='...']",
-                        "##teamcity[flowFinished flowId='topSuite||subSuite1']",
-                        "##teamcity[testSuiteFinished name='topSuite|0x00a0|0x2198|0x00a0subSuite1' timestamp='...']",
-                        "##teamcity[testStarted name='test3' timestamp='...']",
-                        "##teamcity[testFinished name='test3' timestamp='...']",
-                        "##teamcity[testSuiteStarted name='topSuite|0x00a0|0x2198|0x00a0subSuite2' timestamp='...']",
-                        "##teamcity[flowStarted flowId='topSuite||subSuite2' parent='topSuite']",
-                        "##teamcity[testStarted name='test1' timestamp='...']",
-                        "##teamcity[testFailed name='test1' timestamp='...' message='intentionally' details='AssertionError']",
-                        "##teamcity[testFinished name='test1' timestamp='...']",
-                        "##teamcity[flowFinished flowId='topSuite||subSuite2']",
-                        "##teamcity[testSuiteFinished name='topSuite|0x00a0|0x2198|0x00a0subSuite2' timestamp='...']",
-                        "##teamcity[flowFinished flowId='topSuite']",
-                        "##teamcity[testSuiteFinished name='topSuite' timestamp='...']"
-                    ),
-                    exhaustive = true
-                )
-        }
-    }
+    fun basicOutputIntelliJ() = basicOutputTest(TestReportingMode.INTELLIJ_IDEA, "topSuite|0x00a0|0x2198|0x00a0")
 
     @Test
-    fun concurrentOutput() = withTestFramework {
+    fun basicOutputFiles() = basicOutputTest(TestReportingMode.FILES, "")
+
+    private fun basicOutputTest(reportingMode: TestReportingMode, extraPath: String) =
+        withTestFramework(TestSession(reportingMode = reportingMode)) {
+            val suite by testSuite("topSuite") {
+                test("test1") {}
+
+                test("test2") { fail("intentionally") }
+
+                testSuite("subSuite1") {
+                    test("test1") {}
+                }
+
+                test("test3") {}
+
+                testSuite("subSuite2") {
+                    test("test1") { fail("intentionally") }
+                }
+            }
+
+            withTestReport(suite) {
+                val output = ConcurrentList<String>()
+                val report = TeamCityTestExecutionReport { output.add(it) }
+                allEvents().forEach { report.add(it) }
+
+                output.comparableElements()
+                    .assertContainsInOrder(
+                        listOf(
+                            "##teamcity[testSuiteStarted name='topSuite' timestamp='...']",
+                            "##teamcity[flowStarted flowId='topSuite' parent='@Default']",
+                            "##teamcity[testStarted name='test1' timestamp='...']",
+                            "##teamcity[testFinished name='test1' timestamp='...']",
+                            "##teamcity[testStarted name='test2' timestamp='...']",
+                            "##teamcity[testFailed name='test2' timestamp='...' message='intentionally'" +
+                                " details='AssertionError']",
+                            "##teamcity[testFinished name='test2' timestamp='...']",
+                            "##teamcity[testSuiteStarted name='${extraPath}subSuite1' timestamp='...']",
+                            "##teamcity[flowStarted flowId='topSuite||subSuite1' parent='topSuite']",
+                            "##teamcity[testStarted name='test1' timestamp='...']",
+                            "##teamcity[testFinished name='test1' timestamp='...']",
+                            "##teamcity[flowFinished flowId='topSuite||subSuite1']",
+                            "##teamcity[testSuiteFinished name='${extraPath}subSuite1' timestamp='...']",
+                            "##teamcity[testStarted name='test3' timestamp='...']",
+                            "##teamcity[testFinished name='test3' timestamp='...']",
+                            "##teamcity[testSuiteStarted name='${extraPath}subSuite2' timestamp='...']",
+                            "##teamcity[flowStarted flowId='topSuite||subSuite2' parent='topSuite']",
+                            "##teamcity[testStarted name='test1' timestamp='...']",
+                            "##teamcity[testFailed name='test1' timestamp='...' message='intentionally'" +
+                                " details='AssertionError']",
+                            "##teamcity[testFinished name='test1' timestamp='...']",
+                            "##teamcity[flowFinished flowId='topSuite||subSuite2']",
+                            "##teamcity[testSuiteFinished name='${extraPath}subSuite2' timestamp='...']",
+                            "##teamcity[flowFinished flowId='topSuite']",
+                            "##teamcity[testSuiteFinished name='topSuite' timestamp='...']"
+                        ),
+                        exhaustive = true
+                    )
+            }
+        }
+
+    @Test
+    fun concurrentOutput() = withTestFramework(TestSession(reportingMode = TestReportingMode.FILES)) {
         val suite by testSuite("concurrent") {
             test("test1") {}
             test("test2") {}
@@ -143,22 +151,22 @@ class TeamCityTestExecutionReportTests {
             listOf(
                 "##teamcity[testSuiteStarted name='concurrent' timestamp='...']",
                 "##teamcity[flowStarted flowId='concurrent' parent='@Default']",
-                "##teamcity[testSuiteStarted name='concurrent|0x00a0|0x2198|0x00a0suite-1' timestamp='...']",
+                "##teamcity[testSuiteStarted name='suite-1' timestamp='...']",
                 "##teamcity[flowStarted flowId='concurrent||suite-1' parent='concurrent']",
                 "##teamcity[testStarted name='suite-1-test2' timestamp='...']",
                 "##teamcity[testFinished name='suite-1-test2' timestamp='...']",
                 "##teamcity[testStarted name='suite-1-test1' timestamp='...']",
                 "##teamcity[testFinished name='suite-1-test1' timestamp='...']",
                 "##teamcity[flowFinished flowId='concurrent||suite-1']",
-                "##teamcity[testSuiteFinished name='concurrent|0x00a0|0x2198|0x00a0suite-1' timestamp='...']",
-                "##teamcity[testSuiteStarted name='concurrent|0x00a0|0x2198|0x00a0suite-2' timestamp='...']",
+                "##teamcity[testSuiteFinished name='suite-1' timestamp='...']",
+                "##teamcity[testSuiteStarted name='suite-2' timestamp='...']",
                 "##teamcity[flowStarted flowId='concurrent||suite-2' parent='concurrent']",
                 "##teamcity[testStarted name='suite-2-test1' timestamp='...']",
                 "##teamcity[testFinished name='suite-2-test1' timestamp='...']",
                 "##teamcity[testStarted name='suite-2-test2' timestamp='...']",
                 "##teamcity[testFinished name='suite-2-test2' timestamp='...']",
                 "##teamcity[flowFinished flowId='concurrent||suite-2']",
-                "##teamcity[testSuiteFinished name='concurrent|0x00a0|0x2198|0x00a0suite-2' timestamp='...']",
+                "##teamcity[testSuiteFinished name='suite-2' timestamp='...']",
                 "##teamcity[testStarted name='test2' timestamp='...']",
                 "##teamcity[testFinished name='test2' timestamp='...']",
                 "##teamcity[testStarted name='test1' timestamp='...']",

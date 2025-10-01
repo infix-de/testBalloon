@@ -10,7 +10,6 @@ import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestExecutionReport
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
-import de.infix.testBalloon.framework.internal.EnvironmentBasedElementSelection
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import de.infix.testBalloon.framework.internal.logDebug
 import kotlinx.coroutines.Dispatchers
@@ -90,7 +89,6 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
             topLevelTestSuites = frameworkDiscoveryResult.topLevelTestSuites.toSet()
 
             TestSession.global.parameterize(
-                EnvironmentBasedElementSelection(System.getenv("TEST_INCLUDE"), System.getenv("TEST_EXCLUDE")),
                 report = object : TestConfigurationReport() {
                     override fun add(event: TestElementEvent) {
                         if (event is TestElementEvent.Finished && event.throwable != null) {

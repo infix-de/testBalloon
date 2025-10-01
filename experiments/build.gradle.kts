@@ -20,3 +20,8 @@ kotlin {
         }
     }
 }
+
+tasks.withType(AbstractTestTask::class.java).configureEach {
+    // filter.includePatterns.add("*DisplayNames*suite*1*test*1*")
+    // filter.excludePatterns.add("exclude pattern")
+}

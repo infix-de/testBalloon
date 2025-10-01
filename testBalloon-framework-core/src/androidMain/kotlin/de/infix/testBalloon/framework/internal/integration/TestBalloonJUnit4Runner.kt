@@ -7,6 +7,7 @@ import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.internal.ListsBasedElementSelection
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import de.infix.testBalloon.framework.internal.logDebug
@@ -150,14 +151,14 @@ private class InstrumentationArgumentsBasedElementSelection :
     companion object {
         private val instrumentationArguments = InstrumentationRegistry.getArguments()
 
-        private val includePatterns = instrumentationArguments.getString("TEST_INCLUDE")
-        private val excludePatterns = instrumentationArguments.getString("TEST_EXCLUDE")
+        private val includePatterns = instrumentationArguments.getString(EnvironmentVariable.TESTBALLOON_INCLUDE.name)
+        private val excludePatterns = instrumentationArguments.getString(EnvironmentVariable.TESTBALLOON_EXCLUDE.name)
     }
 }
 
 private fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
-        Description.createSuiteDescription(testElementPath.externalId, testElementPath.externalId).apply {
+        Description.createSuiteDescription(testElementPath.reportingName, testElementPath.externalId).apply {
             testElementChildren.forEach {
                 addChild(it.newPlatformDescription())
             }

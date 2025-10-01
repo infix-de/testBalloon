@@ -1,5 +1,10 @@
 package de.infix.testBalloon.framework
 
+import de.infix.testBalloon.framework.internal.EnvironmentBasedElementSelection
+import de.infix.testBalloon.framework.internal.EnvironmentVariable
+import de.infix.testBalloon.framework.internal.TestReportingMode
+import de.infix.testBalloon.framework.internal.argumentsBasedElementSelection
+import de.infix.testBalloon.framework.internal.value
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -21,7 +26,8 @@ import kotlinx.coroutines.Dispatchers
 @TestDiscoverable
 public open class TestSession protected constructor(
     testConfig: TestConfig = DefaultConfiguration,
-    defaultCompartment: (() -> TestCompartment) = { TestCompartment.Default }
+    defaultCompartment: (() -> TestCompartment) = { TestCompartment.Default },
+    reportingMode: TestReportingMode? = null
 ) : TestSuite(
     parent = null,
     name = "${testPlatform.displayName} session",
@@ -30,6 +36,21 @@ public open class TestSession protected constructor(
     AbstractTestSession {
 
     internal val defaultCompartment: TestCompartment by lazy { defaultCompartment() }
+
+    internal val reportingMode: TestReportingMode =
+        reportingMode
+            ?: EnvironmentVariable.TESTBALLOON_REPORTING.value()?.let {
+                try {
+                    TestReportingMode.valueOf(it)
+                } catch (_: IllegalArgumentException) {
+                    throw IllegalArgumentException(
+                        "The environment variable '${EnvironmentVariable.TESTBALLOON_REPORTING}'" +
+                            " contains the value '$it', which is unsupported.\n" +
+                            "\tPlease choose one of ${TestReportingMode.entries}."
+                    )
+                }
+            }
+            ?: TestReportingMode.FILES
 
     init {
         if (singleton != null) {
@@ -42,7 +63,26 @@ public open class TestSession protected constructor(
         singleton = this
     }
 
-    internal constructor() : this(testConfig = DefaultConfiguration)
+    internal constructor(reportingMode: TestReportingMode? = null) : this(
+        testConfig = DefaultConfiguration,
+        reportingMode = reportingMode
+    )
+
+    /**
+     * Parameterizes the session with a default selection, prioritizing [EnvironmentVariable.TESTBALLOON_INCLUDE].
+     */
+    internal fun parameterize(report: TestConfigurationReport) {
+        val includePatternsFromEnvironment = EnvironmentVariable.TESTBALLOON_INCLUDE.value()
+        val selection = if (includePatternsFromEnvironment != null) {
+            EnvironmentBasedElementSelection(
+                includePatternsFromEnvironment,
+                EnvironmentVariable.TESTBALLOON_EXCLUDE.value()
+            )
+        } else {
+            argumentsBasedElementSelection ?: AllInSelection
+        }
+        parameterize(selection, report)
+    }
 
     public companion object {
         /**

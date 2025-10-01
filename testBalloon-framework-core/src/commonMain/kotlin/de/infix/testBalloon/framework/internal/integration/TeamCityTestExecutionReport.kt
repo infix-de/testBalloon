@@ -39,7 +39,7 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
                         message(messageName = "flowStarted") {
                             flowId(
                                 flowId = element.testElementPath.internalId,
-                                parentId = elementParent?.testElementPath?.externalId
+                                parentId = elementParent?.testElementPath?.internalId
                             )
                         }
                     }
@@ -67,15 +67,9 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
     }
 
     private fun eventMessage(event: TestElementEvent, eventName: String, content: Message.() -> Unit = {}) {
-        val elementName = if (event.element is Test) "test" else "testSuite"
-        message("$elementName$eventName") {
-            name(
-                with(event.element) {
-                    // Using a complete path for suites ensures proper nesting display in IntelliJ IDEA, but
-                    // duplicates path segments in XML reports. TODO: This could be made conditional, e.g. for CI.
-                    if (this is Test) testElementDisplayName else testElementPath.displayNameSegments
-                }
-            )
+        val elementTypeName = if (event.element is Test) "test" else "testSuite"
+        message("$elementTypeName$eventName") {
+            name(event.element.testElementPath.reportingName)
             timestamp(event.instant)
             content()
         }

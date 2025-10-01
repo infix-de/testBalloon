@@ -23,6 +23,9 @@ public interface TestPlatform {
 
     /** The display name of the current thread. NOTE: For debugging purposes only, do not make assumptions about it. */
     public fun threadDisplayName(): String
+
+    /** Returns the value of the environment [variableName] if it exists, or null. */
+    public fun environment(variableName: String): String?
 }
 
 /**

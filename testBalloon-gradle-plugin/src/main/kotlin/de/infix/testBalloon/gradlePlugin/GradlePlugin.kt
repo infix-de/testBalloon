@@ -1,3 +1,5 @@
+@file:OptIn(TestBalloonInternalApi::class)
+
 package de.infix.testBalloon.gradlePlugin
 
 import buildConfig.BuildConfig.PROJECT_ABSTRACTIONS_ARTIFACT_ID
@@ -6,16 +8,28 @@ import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
 import buildConfig.BuildConfig.PROJECT_VERSION
+import de.infix.testBalloon.framework.internal.EnvironmentVariable
+import de.infix.testBalloon.framework.internal.PATH_PATTERN_SEPARATOR
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.internal.TestReportingMode
 import org.gradle.api.Project
+import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
+import org.jetbrains.kotlin.gradle.plugin.NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import kotlin.collections.iterator
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
+import java.nio.file.DirectoryNotEmptyException
 import kotlin.io.path.Path
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.div
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
@@ -38,15 +52,44 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
         val testCompilationRegex by regexProperty("""(^test)|Test""")
 
         /**
+         * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.
+         */
+        val testRuntimeOnlyConfigurationRegex by regexProperty("""^(test|jvmTest)RuntimeOnly$""")
+
+        /**
          * Name pattern for test modules in which the compiler plugin will look up test suites and a test session.
          *
          * The Compiler plugin will disable itself for modules not matching this pattern.
          */
         val testModuleRegex by stringProperty("""(_test|Test)$""")
 
+        /**
+         * Test reporting mode. One of `auto` (default), `intellij`, `files`.
+         *
+         * The mode `intellij` supplies full test element paths to the reporting infrastructure, supporting proper
+         * hierarchy display in IntelliJ's test run window.
+         *
+         * The mode `files` supplies test element names instead of full paths, supporting proper XML and HTML report
+         * files, avoiding duplicate path segments leading to `file name too long' errors.
+         *
+         * `auto` detects whether tests run under IntelliJ IDEA and chooses the mode accordingly.
+         */
+        val reportingMode by stringProperty("auto")
+
+        /**
+         * Setting to enable or disable file-based reports. One of `auto` (default), `true`, `false`.
+         *
+         * The `auto` setting disables reports if tests run under IntelliJ or the [reportingMode] is `intellij`.
+         */
+        val reportsEnabled by booleanProperty("auto")
+
         @Suppress("SameParameterValue")
         private fun stringProperty(default: String) = Delegate(default) { it }
+
         private fun regexProperty(default: String) = Delegate(default) { Regex(it) }
+
+        @Suppress("SameParameterValue")
+        private fun booleanProperty(default: String) = Delegate(default) { it.toBooleanStrictOrNull() }
 
         inner class Delegate<Result>(val default: String, val conversion: (String) -> Result) {
             operator fun getValue(thisRef: Any?, property: KProperty<*>): Result =
@@ -62,7 +105,7 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
         extensions.create("testBalloon", GradleExtension::class.java)
 
         // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
-        configurations.named("kotlinNativeCompilerPluginClasspath") {
+        configurations.named(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME) {
             dependencies.add(
                 project.dependencies.create("$PROJECT_GROUP_ID:$PROJECT_ABSTRACTIONS_ARTIFACT_ID:$PROJECT_VERSION")
             )
@@ -100,6 +143,28 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
+        val reportingMode = when (pluginProperties.reportingMode) {
+            "intellij" -> TestReportingMode.INTELLIJ_IDEA
+            "files" -> TestReportingMode.FILES
+            else -> if (providers.systemProperty("idea.active").isPresent) {
+                TestReportingMode.INTELLIJ_IDEA
+            } else {
+                TestReportingMode.FILES
+            }
+        }
+
+        val reportsEnabled = pluginProperties.reportsEnabled ?: (reportingMode == TestReportingMode.FILES)
+
+        if (!reportsEnabled) {
+            tasks.withType(AbstractTestTask::class.java).configureEach {
+                reports.html.required.set(false)
+                reports.junitXml.required.set(false)
+            }
+            tasks.withType(KotlinTestReport::class.java).configureEach {
+                enabled = false
+            }
+        }
+
         tasks.withType(Test::class.java) {
             // https://docs.gradle.org/current/userguide/java_testing.html
             useJUnitPlatform()
@@ -107,23 +172,120 @@ class GradlePlugin : KotlinCompilerPluginSupportPlugin {
             // Ask Gradle to skip scanning for test classes. We don't need it as our compiler plugin already
             // knows. Does this make a difference? I don't know.
             isScanForTestClasses = false
+        }
 
-            // Pass TEST_* environment variables from the Gradle invocation to the test JVM.
-            for ((name, value) in providers.environmentVariablesPrefixedBy("TEST_").get()) {
-                environment(name, value)
-            }
+        val testRuntimeOnlyConfigurationRegex = pluginProperties.testRuntimeOnlyConfigurationRegex
 
-            // Pass TEST_* system properties as environment variables. NOTE: Doesn't help with K/Native.
-            for ((name, value) in providers.systemPropertiesPrefixedBy("TEST_").get()) {
-                environment(name, value)
+        configurations.configureEach {
+            if (testRuntimeOnlyConfigurationRegex.containsMatchIn(name)) {
+                dependencies.add(project.dependencies.create(PROJECT_JUNIT_PLATFORM_LAUNCHER))
             }
         }
 
-        val testRuntimeOnlyConfigurations = setOf("testRuntimeOnly", "jvmTestRuntimeOnly")
+        afterEvaluate {
+            tasks.withType(AbstractTestTask::class.java).configureEach {
+                fun KotlinJsTest.configureKarmaEnvironment() {
+                    val directory = Path("${layout.projectDirectory}") / "karma.config.d"
+                    val parameterConfigFile = directory / "testBalloonParameters.js"
 
-        configurations.configureEach {
-            if (name in testRuntimeOnlyConfigurations) {
-                dependencies.add(project.dependencies.create(PROJECT_JUNIT_PLATFORM_LAUNCHER))
+                    /** Returns the prioritized patterns as a JS source string. */
+                    fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
+                        val patterns = primary.firstNotNullOfOrNull {
+                            project.providers.environmentVariable(it.name).orNull?.ifEmpty { null }
+                                ?.split("$PATH_PATTERN_SEPARATOR")
+                        } ?: secondary
+
+                        return patterns.joinToString("$PATH_PATTERN_SEPARATOR", prefix = "\"", postfix = "\"") {
+                            it.replace("\"", "\\\"")
+                        }
+                    }
+
+                    val includePatternsJs = prioritizedPatterns(
+                        EnvironmentVariable.TESTBALLOON_INCLUDE,
+                        EnvironmentVariable.TEST_INCLUDE,
+                        secondary = filter.includePatterns +
+                            (filter as DefaultTestFilter).commandLineIncludePatterns
+                    )
+                    val excludePatternsJs = prioritizedPatterns(
+                        EnvironmentVariable.TESTBALLOON_EXCLUDE,
+                        secondary = filter.excludePatterns
+                    )
+
+                    doFirst {
+                        @Suppress("NewApi")
+                        check(directory.exists() || directory.toFile().mkdirs()) {
+                            "Could not create directory '$directory'"
+                        }
+
+                        parameterConfigFile.writeText(
+                            """
+                                config.client = config.client || {};
+                                config.client.env = {
+                                    ${EnvironmentVariable.TESTBALLOON_INCLUDE.name}: $includePatternsJs,
+                                    ${EnvironmentVariable.TESTBALLOON_EXCLUDE.name}: $excludePatternsJs,
+                                    ${EnvironmentVariable.TESTBALLOON_REPORTING.name}: "$reportingMode"
+                                }
+                            """.trimIndent()
+                        )
+                    }
+
+                    doLast {
+                        @Suppress("NewApi")
+                        if (parameterConfigFile.deleteIfExists()) {
+                            try {
+                                directory.deleteIfExists()
+                            } catch (_: DirectoryNotEmptyException) {
+                            }
+                        }
+                    }
+                }
+
+                fun configureEnvironment(setTestEnvironment: (variable: EnvironmentVariable, value: String) -> Unit) {
+                    fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String =
+                        primary.firstNotNullOfOrNull {
+                            project.providers.environmentVariable(it.name).orNull?.ifEmpty { null }
+                        }
+                            ?: secondary.joinToString("$PATH_PATTERN_SEPARATOR")
+
+                    setTestEnvironment(
+                        EnvironmentVariable.TESTBALLOON_INCLUDE,
+                        prioritizedPatterns(
+                            EnvironmentVariable.TESTBALLOON_INCLUDE,
+                            EnvironmentVariable.TEST_INCLUDE,
+                            secondary = filter.includePatterns +
+                                (filter as DefaultTestFilter).commandLineIncludePatterns
+                        )
+                    )
+                    setTestEnvironment(
+                        EnvironmentVariable.TESTBALLOON_EXCLUDE,
+                        prioritizedPatterns(EnvironmentVariable.TESTBALLOON_EXCLUDE, secondary = filter.excludePatterns)
+                    )
+                    setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING, reportingMode.name)
+                }
+
+                when (this) {
+                    is KotlinNativeTest -> {
+                        configureEnvironment { variable, value ->
+                            environment(variable.name, value, false)
+                        }
+                    }
+
+                    is KotlinJsTest -> {
+                        if (testFramework is KotlinKarma) {
+                            configureKarmaEnvironment()
+                        } else {
+                            configureEnvironment { variable, value ->
+                                environment(variable.name, value)
+                            }
+                        }
+                    }
+
+                    is Test -> {
+                        configureEnvironment { variable, value ->
+                            environment(variable.name, value)
+                        }
+                    }
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package de.infix.testBalloon.framework.internal
 
 import de.infix.testBalloon.framework.TestElement
+import de.infix.testBalloon.framework.testPlatform
 
 /**
  * A [TestElement.Selection] based on lists of [includePatterns] and [excludePatterns].
@@ -16,7 +17,7 @@ internal open class ListsBasedElementSelection protected constructor(
 
     override fun includes(testElement: TestElement): Boolean {
         if (!used) {
-            logInfo { "Tests selected via $this" }
+            logInfo { "${testPlatform.displayName}: Tests selected via $this" }
             used = true
         }
 
@@ -33,7 +34,7 @@ internal open class ListsBasedElementSelection protected constructor(
         /**
          * Returns a list of regular expressions from a string of comma-separated patterns with `*` wildcards.
          */
-        private fun String?.toRegexList(): List<Regex> = this?.split(',')?.map {
+        private fun String?.toRegexList(): List<Regex> = this?.ifEmpty { null }?.split(PATH_PATTERN_SEPARATOR)?.map {
             try {
                 buildString {
                     for (character in it) {

@@ -30,6 +30,30 @@ open annotation class de.infix.testBalloon.framework/TestElementName : kotlin/An
     constructor <init>() // de.infix.testBalloon.framework/TestElementName.<init>|<init>(){}[0]
 }
 
+final enum class de.infix.testBalloon.framework.internal/EnvironmentVariable : kotlin/Enum<de.infix.testBalloon.framework.internal/EnvironmentVariable> { // de.infix.testBalloon.framework.internal/EnvironmentVariable|null[0]
+    enum entry TESTBALLOON_EXCLUDE // de.infix.testBalloon.framework.internal/EnvironmentVariable.TESTBALLOON_EXCLUDE|null[0]
+    enum entry TESTBALLOON_INCLUDE // de.infix.testBalloon.framework.internal/EnvironmentVariable.TESTBALLOON_INCLUDE|null[0]
+    enum entry TESTBALLOON_REPORTING // de.infix.testBalloon.framework.internal/EnvironmentVariable.TESTBALLOON_REPORTING|null[0]
+    enum entry TEST_INCLUDE // de.infix.testBalloon.framework.internal/EnvironmentVariable.TEST_INCLUDE|null[0]
+
+    final val entries // de.infix.testBalloon.framework.internal/EnvironmentVariable.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework.internal/EnvironmentVariable> // de.infix.testBalloon.framework.internal/EnvironmentVariable.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): de.infix.testBalloon.framework.internal/EnvironmentVariable // de.infix.testBalloon.framework.internal/EnvironmentVariable.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<de.infix.testBalloon.framework.internal/EnvironmentVariable> // de.infix.testBalloon.framework.internal/EnvironmentVariable.values|values#static(){}[0]
+}
+
+final enum class de.infix.testBalloon.framework.internal/TestReportingMode : kotlin/Enum<de.infix.testBalloon.framework.internal/TestReportingMode> { // de.infix.testBalloon.framework.internal/TestReportingMode|null[0]
+    enum entry FILES // de.infix.testBalloon.framework.internal/TestReportingMode.FILES|null[0]
+    enum entry INTELLIJ_IDEA // de.infix.testBalloon.framework.internal/TestReportingMode.INTELLIJ_IDEA|null[0]
+
+    final val entries // de.infix.testBalloon.framework.internal/TestReportingMode.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework.internal/TestReportingMode> // de.infix.testBalloon.framework.internal/TestReportingMode.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): de.infix.testBalloon.framework.internal/TestReportingMode // de.infix.testBalloon.framework.internal/TestReportingMode.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<de.infix.testBalloon.framework.internal/TestReportingMode> // de.infix.testBalloon.framework.internal/TestReportingMode.values|values#static(){}[0]
+}
+
 abstract interface de.infix.testBalloon.framework/AbstractTest : de.infix.testBalloon.framework/AbstractTestElement // de.infix.testBalloon.framework/AbstractTest|null[0]
 
 abstract interface de.infix.testBalloon.framework/AbstractTestElement { // de.infix.testBalloon.framework/AbstractTestElement|null[0]
@@ -54,6 +78,8 @@ final class de.infix.testBalloon.framework.internal/TestFrameworkDiscoveryResult
         final fun <get-topLevelTestSuites>(): kotlin/Array<de.infix.testBalloon.framework/AbstractTestSuite> // de.infix.testBalloon.framework.internal/TestFrameworkDiscoveryResult.topLevelTestSuites.<get-topLevelTestSuites>|<get-topLevelTestSuites>(){}[0]
 }
 
+final const val de.infix.testBalloon.framework.internal/PATH_PATTERN_SEPARATOR // de.infix.testBalloon.framework.internal/PATH_PATTERN_SEPARATOR|{}PATH_PATTERN_SEPARATOR[0]
+    final fun <get-PATH_PATTERN_SEPARATOR>(): kotlin/Char // de.infix.testBalloon.framework.internal/PATH_PATTERN_SEPARATOR.<get-PATH_PATTERN_SEPARATOR>|<get-PATH_PATTERN_SEPARATOR>(){}[0]
 final const val de.infix.testBalloon.framework.internal/PATH_SEGMENT_SEPARATOR // de.infix.testBalloon.framework.internal/PATH_SEGMENT_SEPARATOR|{}PATH_SEGMENT_SEPARATOR[0]
     final fun <get-PATH_SEGMENT_SEPARATOR>(): kotlin/String // de.infix.testBalloon.framework.internal/PATH_SEGMENT_SEPARATOR.<get-PATH_SEGMENT_SEPARATOR>|<get-PATH_SEGMENT_SEPARATOR>(){}[0]
 

@@ -5,13 +5,10 @@ import de.infix.testBalloon.framework.InvokedByGeneratedCode
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.internal.integration.TeamCityTestExecutionReport
 import de.infix.testBalloon.framework.internal.integration.ThrowingTestConfigurationReport
-import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.toKString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import platform.posix.getenv
 import kotlin.system.exitProcess
 import kotlin.time.Duration
 
@@ -20,11 +17,7 @@ internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestS
     // `suites` is unused because test suites register themselves with `TestSession`.
 
     configureTestsWithExceptionHandling {
-        @OptIn(ExperimentalForeignApi::class)
-        TestSession.global.parameterize(
-            EnvironmentBasedElementSelection(getenv("TEST_INCLUDE")?.toKString(), getenv("TEST_EXCLUDE")?.toKString()),
-            ThrowingTestConfigurationReport()
-        )
+        TestSession.global.parameterize(ThrowingTestConfigurationReport())
     }.onSuccess {
         executeTestsWithExceptionHandling {
             TestSession.global.execute(TeamCityTestExecutionReport())

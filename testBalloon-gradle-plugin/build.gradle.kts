@@ -12,7 +12,8 @@ plugins {
 description = "Gradle plugin for the TestBalloon framework"
 
 dependencies {
-    implementation(kotlin("gradle-plugin-api"))
+    implementation(libs.org.jetbrains.kotlin.gradle.plugin)
+    implementation(projects.testBalloonFrameworkAbstractions)
 }
 
 samWithReceiver {

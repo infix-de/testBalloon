@@ -2,97 +2,99 @@
 
 == IDE and Build Tool Interoperability
 
+=== Kotlin Gradle Plugin (KGP)
+
+The https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin[Kotlin Gradle plugin (KGP)] is the artifact containing the https://kotlinlang.org/docs/gradle-configure-project.html#targeting-multiple-platforms[Kotlin Multiplatform Gradle plugin] and the https://kotlinlang.org/docs/gradle-configure-project.html#targeting-the-jvm[Kotlin JVM plugin]. It also interacts with the https://developer.android.com/build/releases/gradle-plugin[Android Gradle Plugin (AGP)] and the https://developer.android.com/kotlin/multiplatform/plugin[Android Gradle Library Plugin for KMP].
+
+==== Multiplatform Tests
+
+KGP sets up different test tasks for the platforms it supports. All test tasks use Gradle's https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.AbstractTestTask.html[`AbstractTestTask`] API.
+
+A Gradle test task's primary responsibility is to create a `TestExecuter` and a `TestExecutionSpec`. They basically execute a test run and provide results to a `TestResultProcessor`.
+
+KGP's test tasks are structured as follows:
+
+* `AbstractTestTask` (Gradle)
+** `Test` (Gradle) – invokes test frameworks like JUnit 4, JUnit Platform
+*** https://github.com/JetBrains/kotlin/blob/b5da7ecd937518adc7859c62be855727560f0b44/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/jvm/tasks/KotlinJvmTest.kt[`KotlinJvmTest`] – uses Gradle ``Test``'s invocation and reporting, but appends `[$targetName]` to a test's display name and replaces `$` signs with `.` in class names
+** https://github.com/JetBrains/kotlin/blob/8b9a990587b1afeb938a77ab096602bcb56848a6/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/tasks/KotlinTest.kt[`KotlinTest`]
+*** https://github.com/JetBrains/kotlin/blob/8b9a990587b1afeb938a77ab096602bcb56848a6/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest.kt[`KotlinJsTest`] – runs JS and Wasm tests locally via an engine like Node.js, or remotely via https://karma-runner.github.io/6.4/intro/how-it-works.html[Karma]
+*** https://github.com/JetBrains/kotlin/blob/8b9a990587b1afeb938a77ab096602bcb56848a6/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeTest.kt[`KotlinNativeTest`]
+**** `KotlinNativeHostTest` – runs Native tests locally via a Kotlin-internal runner
+**** `KotlinNativeSimulatorTest` – invokes iOS `simctl` to run Native tests locally via a Kotlin-internal runner
+
+`KotlinJsTest` delegates to a `KotlinJsTestFramework`, one of
+
+* `KotlinWasmD8` – invokes the V8 browser engine to run Wasm tests locally via a Kotlin-internal runner
+* `KotlinWasmNode` – invokes Node.js to run Wasm tests locally via a Kotlin-internal runner
+* `KotlinKarma` – invokes a Web browser, runs JS tests there via https://mochajs.org/[Mocha]
+* `KotlinMocha` – runs JS tests on Node.js via Mocha
+
+==== Test Reporting
+
+KGP reports test events to a Gradle https://github.com/gradle/gradle/blob/da5d03163550e25b694557f93d0d2c678a7fe34c/platforms/software/testing-base-infrastructure/src/main/java/org/gradle/api/internal/tasks/testing/TestResultProcessor.java[TestResultProcessor].
+
+* On the JVM, the reporting is done by the underlying JVM test framework like JUnit 4, JUnit Platform.
+* On non-JVM targets, KGP's https://github.com/JetBrains/kotlin/blob/3d735016d48fb7efcbcddac9e1882d5dfd7c619d/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesClient.kt[TCServiceMessagesClient] interprets service messages in the TeamCity format and produces Gradle test events.
+
+Additionally, KGP's https://github.com/JetBrains/kotlin/blob/fcc442fec24ea8f2d622a39a6afcb73d376b5105/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/testing/internal/KotlinTestReport.kt[KotlinTestReport] produces aggregate test reports (e.g. for `allTests`, or `jsTests`).
+
+=== Gradle
+
+==== Running Tests
+
+Gradle's https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html[Test] task invokes an underlying JVM test framework (JUnit 4, JUnit Platform), providing it with test parameters, like filtering options.
+
+==== Test Reporting
+
+Gradle receives test events from the underlying framework and produces https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/TestTaskReports.html[reports in HTML and/or JUnit XML formats].
+
 === JUnit Platform
 
 ==== General
 
-https://junit.org/junit5/docs/current/user-guide/#test-engines[Test
-Engines] must
+https://junit.org/junit5/docs/current/user-guide/#test-engines[Test Engines] must
 
-* discover tests from an
-https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/EngineDiscoveryRequest.html[`EngineDiscoveryRequest`],
-yielding a hierarchy of test descriptors, and
-* execute tests according to an
-https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/ExecutionRequest.html[`ExecutionRequest`],
-starting at the root test descriptor and observing tests events via a
-listener (which also observes the discovery of new tests, if these are
-dynamically registered during execution).
+* discover tests from an https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/EngineDiscoveryRequest.html[`EngineDiscoveryRequest`], yielding a hierarchy of test descriptors, and
+* execute tests according to an https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/ExecutionRequest.html[`ExecutionRequest`], starting at the root test descriptor and observing tests events via a listener (which also observes the discovery of new tests, if these are dynamically registered during execution).
 
-A
-https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/TestDescriptor.html[test
-descriptor] describes a node in the test hierarchy (a suite or a test). Each
-node has a
-https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/UniqueId.html[unique
-identifier], comprised of a list of type/value segments. Segment type
-and value are non-empty strings. Typical segment types are ``test``,
-``class``, ``engine``, but there appears to be no defined scheme and
-``engine`` https://github.com/junit-team/junit5/discussions/3551[seems
-to be the only stable name].
+A https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/TestDescriptor.html[test descriptor] describes a node in the test hierarchy (a suite or a test). Each node has a https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/UniqueId.html[unique identifier], comprised of a list of type/value segments. Segment type and value are non-empty strings. Typical segment types are ``test``,``class``, ``engine``, but there appears to be no defined scheme and``engine`` https://github.com/junit-team/junit5/discussions/3551[seems to be the only stable name].
 
 ==== Test Discovery
 
-An
-https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/EngineDiscoveryRequest.html[`EngineDiscoveryRequest`]
+An https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/EngineDiscoveryRequest.html[`EngineDiscoveryRequest`]
 
 * selects test nodes via
 ** `ClassSelector`: named class,
 ** `MethodSelector`: named method (plus optional signature),
 ** `UniqueIdSelector`: unique identifier,
-** https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/DiscoverySelector.html[others,
-e.g.]: classpath, directory, file, module, package, URI, and
+** https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/DiscoverySelector.html[others, e.g.]: classpath, directory, file, module, package, URI, and
 * filters test nodes via
-** `ClassNameFilter`: list of class name RE patterns to include and/or
-exclude,
-** `PackageNameFilter`: list of package name RE patterns to include
-and/or exclude.
+** `ClassNameFilter`: list of class name RE patterns to include and/or exclude,
+** `PackageNameFilter`: list of package name RE patterns to include and/or exclude.
 
-The https://docs.gradle.org/current/userguide/java_testing.html[Gradle
-test task] uses
+The https://docs.gradle.org/current/userguide/java_testing.html[Gradle test task] uses
 
 * the selectors
-** `ClassSelector` (Gradle passes a selector for every class it finds,
-not knowing which ones are test classes),
-** `UniqueIdSelector` (Gradle Enterprise: distribute tests across
-processes), and
+** `ClassSelector` (Gradle passes a selector for every class it finds, not knowing which ones are test classes),
+** `UniqueIdSelector` (Gradle Enterprise: distribute tests across processes), and
 * the filter
-** `ClassNameFilter` (if
-https://docs.gradle.org/current/userguide/java_testing.html#test_filtering[test
-filtering] is used).
-
-Kotest supports
-
-* the selectors
-** `PackageSelector`,
-** `ClassSelector`,
-** `UniqueIdSelector` (added by a Gradle member to support distributing
-tests across processes in Gradle Enterprise), and
-* the filters
-** `ClassNameFilter`,
-** `PackageNameFilter`.
-
-==== Source Code Test Discovery (IDE Support)
-
-https://junit.org/junit5/docs/current/api/org.junit.platform.commons/org/junit/platform/commons/annotation/Testable.html[The
-Testable annotation] exists to make IDEs aware of elements which can be
-executed as a test or test container. It is intended for use cases where
-full discovery via compiled code is unavailable. (IntelliJ IDEA
-https://github.com/JetBrains/intellij-community/blob/65cf881f35eea8a594b9375651a7a03823f09723/java/execution/impl/src/com/intellij/execution/junit/JUnitUtil.java#L42[contains
-some support] for it. Is this is actually used for Kotlin?)
+** `ClassNameFilter` (if https://docs.gradle.org/current/userguide/java_testing.html#test_filtering[test filtering] is used).
 
 === IntelliJ IDEA
 
+==== Running Tests
+
 The IDE runs tests via regular Gradle invocations.
 
-When selecting a single test in the run window, the IDE runs it via a
-`--tests` filter, e.g. `--tests "com.example.TestSuite2"`, if
+When selecting a single test via an editor window's gutter icon, or in the run window, the IDE runs it via a `--tests` filter, e.g. `--tests "com.example.TestSuite2"`
 
-* the test ran via JUnit Platform, or
-* the IntelliJ XML log contains a `descriptor` tag with a `classname`
-attribute supplying a fully qualified class name _and_ the test run
-respects the `--tests` filter.
+The IDE https://github.com/JetBrains/intellij-community/blob/8032aef848d1edf5771e442cb749e047b885876c/plugins/gradle/java/src/action/GradleRerunFailedTestsAction.kt[re-runs failed tests] by analyzing the test files’ source code and https://github.com/JetBrains/intellij-community/blob/8032aef848d1edf5771e442cb749e047b885876c/plugins/gradle/java/src/execution/test/runner/TestGradleConfigurationProducerUtil.kt#L15[creating a Gradle invocation with filters].
 
-The IDE
-https://github.com/JetBrains/intellij-community/blob/8032aef848d1edf5771e442cb749e047b885876c/plugins/gradle/java/src/action/GradleRerunFailedTestsAction.kt[re-runs
-failed tests] by analyzing the test files’ source code and
-https://github.com/JetBrains/intellij-community/blob/8032aef848d1edf5771e442cb749e047b885876c/plugins/gradle/java/src/execution/test/runner/TestGradleConfigurationProducerUtil.kt#L15[creating
-a Gradle invocation with filters].
+==== Displaying Test Results
+
+For each test run, the IDE injects a Gradle init script, which registers a https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/TestListener.html[TestListener]. The information then flows as follows:
+
+. Gradle receives test events from the underlying JVM framework (JUnit 4, JUnit Platform).
+. Gradle calls the test listener's methods,
+. The IDE updates its test run tree window.

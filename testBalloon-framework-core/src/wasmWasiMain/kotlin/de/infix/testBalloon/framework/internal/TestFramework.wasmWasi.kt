@@ -2,7 +2,6 @@ package de.infix.testBalloon.framework.internal
 
 import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.InvokedByGeneratedCode
-import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.internal.integration.TeamCityTestExecutionReport
 import de.infix.testBalloon.framework.internal.integration.ThrowingTestConfigurationReport
@@ -21,10 +20,7 @@ internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestS
     withContext(Dispatchers.Default) { }
 
     configureTestsWithExceptionHandling {
-        TestSession.global.parameterize(
-            argumentsBasedElementSelection ?: TestElement.AllInSelection,
-            ThrowingTestConfigurationReport()
-        )
+        TestSession.global.parameterize(ThrowingTestConfigurationReport())
     }.onSuccess {
         executeTestsWithExceptionHandling {
             TestSession.global.execute(TeamCityTestExecutionReport())

@@ -22,6 +22,7 @@ include(":testBalloon-integration-blocking-detection")
 include(":examples:general")
 include(":examples:with-kotest-assertions")
 include(":examples:android")
+include(":examples:multiplatform-library-with-android")
 include(":examples:multiplatform-with-android")
 
 include(":comparisons:using-kotlin-test")

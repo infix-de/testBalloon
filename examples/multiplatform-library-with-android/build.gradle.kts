@@ -42,12 +42,10 @@ kotlin {
         }
 
         compilations.configureEach {
-            compileTaskProvider.configure {
-                compilerOptions {
-                    jvmTarget.set(
-                        org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(versionFromCatalog("jdk"))
-                    )
-                }
+            compilerOptions.configure {
+                jvmTarget.set(
+                    org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(versionFromCatalog("jdk"))
+                )
             }
         }
     }

@@ -50,6 +50,7 @@ private class StarRepository {
     suspend fun disconnect() {} // Called via closeWith, so it can suspend.
 }
 
+// A fixture can be defined outside a particular test suite for re-use.
 private fun TestSuite.userRepository() = testFixture { UserRepository(testSuiteScope) }
 
 private class UserRepository(scope: CoroutineScope) : AutoCloseable {

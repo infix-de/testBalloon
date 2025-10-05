@@ -59,3 +59,27 @@ gradlePlugin {
         }
     }
 }
+
+val syncSharedTestBalloonSources by tasks.registering(Sync::class) {
+    into(layout.buildDirectory.dir("generated/sharedTestBalloon/src/main"))
+    from(
+        layout.projectDirectory.dir(
+            "../testBalloon-framework-abstractions/src/commonMain/kotlin/de/infix/testBalloon/framework/internal"
+        )
+    ) {
+        include("AbstractTestElementPath.kt", "TestBalloonInternalApi.kt")
+    }
+    from(
+        layout.projectDirectory.dir(
+            "../testBalloon-gradle-plugin/src/main/kotlin/de/infix/testBalloon/gradlePlugin/shared"
+        )
+    )
+}
+
+kotlin {
+    sourceSets {
+        main {
+            kotlin.srcDir(syncSharedTestBalloonSources)
+        }
+    }
+}

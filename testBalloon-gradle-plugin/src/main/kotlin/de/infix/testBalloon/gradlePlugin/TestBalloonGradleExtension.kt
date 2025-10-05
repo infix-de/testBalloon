@@ -1,6 +1,6 @@
 package de.infix.testBalloon.gradlePlugin
 
-open class GradleExtension {
+open class TestBalloonGradleExtension {
     var debugLevel: DebugLevel = DebugLevel.NONE
 
     /**

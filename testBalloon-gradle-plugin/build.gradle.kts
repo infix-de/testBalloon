@@ -54,7 +54,7 @@ gradlePlugin {
             id = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}"
             displayName = "TestBalloon compiler plugin for multiplatform test discovery and invocation"
             description = displayName
-            implementationClass = "${project.group}.gradlePlugin.GradlePlugin"
+            implementationClass = "${project.group}.gradlePlugin.TestBalloonGradlePlugin"
         }
     }
 }

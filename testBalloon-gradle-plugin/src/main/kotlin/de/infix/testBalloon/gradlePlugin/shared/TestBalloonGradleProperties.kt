@@ -1,5 +1,9 @@
+@file:OptIn(TestBalloonInternalApi::class)
+
 package de.infix.testBalloon.gradlePlugin.shared
 
+import de.infix.testBalloon.framework.internal.Constants
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import org.gradle.api.Project
 import kotlin.reflect.KProperty
 
@@ -58,7 +62,8 @@ internal class TestBalloonGradleProperties(val project: Project) {
     private fun booleanProperty(default: String) = Delegate(default) { it.toBooleanStrictOrNull() }
 
     inner class Delegate<Result>(val default: String, val conversion: (String) -> Result) {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): Result =
-            conversion(project.findProperty("testBalloon.${property.name}")?.toString() ?: default)
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): Result = conversion(
+            project.findProperty("${Constants.GRADLE_PROPERTY_PREFIX}.${property.name}")?.toString() ?: default
+        )
     }
 }

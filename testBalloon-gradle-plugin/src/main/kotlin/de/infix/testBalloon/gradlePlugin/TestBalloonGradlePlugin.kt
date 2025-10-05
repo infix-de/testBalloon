@@ -8,6 +8,7 @@ import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
 import buildConfig.BuildConfig.PROJECT_VERSION
+import de.infix.testBalloon.framework.internal.Constants
 import de.infix.testBalloon.framework.internal.DebugLevel
 import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleProperties
@@ -43,7 +44,7 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
-        extensions.create("testBalloon", TestBalloonGradleExtension::class.java)
+        extensions.create(Constants.GRADLE_EXTENSION_NAME, TestBalloonGradleExtension::class.java)
 
         configureWithTestBalloon(testBalloonProperties)
     }

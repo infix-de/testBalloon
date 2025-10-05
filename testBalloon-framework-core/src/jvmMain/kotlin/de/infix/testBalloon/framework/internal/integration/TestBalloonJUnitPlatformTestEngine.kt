@@ -10,6 +10,7 @@ import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestExecutionReport
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.internal.Constants
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import de.infix.testBalloon.framework.internal.logDebug
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +38,7 @@ private val testElementDescriptors = ConcurrentHashMap<TestElement, AbstractTest
  * JUnit Platform will instantiate it and invoke its methods.
  */
 internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
-    override fun getId(): String = "de.infix.testBalloon"
+    override fun getId(): String = Constants.JUNIT_ENGINE_NAME
 
     override fun discover(discoveryRequest: EngineDiscoveryRequest, uniqueId: UniqueId): TestDescriptor {
         // We use the framework's compiler plugin to discover tests. That means we are ignoring the
@@ -47,7 +48,7 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
 
         // Find the generated file-level class for `EntryPointAnchor.kt`.
         val frameworkDiscoveryResultFileClass = try {
-            Class.forName("de.infix.testBalloon.framework.internal.entryPoint.EntryPointAnchorKt")
+            Class.forName(Constants.ENTRY_POINT_ANCHOR_CLASS_NAME)
         } catch (_: ClassNotFoundException) {
             // Do not initialize the test framework if the entry point anchor file class is not on the classpath.
             return EngineDescriptor(engineUniqueId, "${this::class.qualifiedName}")
@@ -74,7 +75,7 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
         // Trigger the framework's initialization by invoking the `testFrameworkDiscoveryResult` property getter
         // in the generated file-level class for `EntryPointAnchor.kt`.
         val frameworkDiscoveryResult = try {
-            frameworkDiscoveryResultFileClass.getMethod("getTestFrameworkDiscoveryResult").invoke(null)
+            frameworkDiscoveryResultFileClass.getMethod(Constants.JVM_DISCOVERY_RESULT_PROPERTY_GETTER).invoke(null)
                 as TestFrameworkDiscoveryResult
         } catch (throwable: Throwable) {
             reportDiscoveryIssue(

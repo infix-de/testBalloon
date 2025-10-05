@@ -11,6 +11,7 @@ import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.TestDiscoverable
 import de.infix.testBalloon.framework.TestDisplayName
 import de.infix.testBalloon.framework.TestElementName
+import de.infix.testBalloon.framework.internal.Constants
 import de.infix.testBalloon.framework.internal.DebugLevel
 import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
@@ -161,8 +162,8 @@ private class ModuleProbe(override val pluginContext: IrPluginContext) : IrPlugi
 private class Configuration(compilerConfiguration: CompilerConfiguration, override val pluginContext: IrPluginContext) :
     IrPluginContextOwner {
 
-    val internalPackageName = "de.infix.testBalloon.framework.internal"
-    val entryPointPackageName = "de.infix.testBalloon.framework.internal.entryPoint"
+    val internalPackageName = Constants.CORE_INTERNAL_PACKAGE_NAME
+    val entryPointPackageName = Constants.ENTRY_POINT_PACKAGE_NAME
 
     val debugLevel = Options.debugLevel.value(compilerConfiguration)
     val jvmStandaloneEnabled = Options.jvmStandalone.value(compilerConfiguration)
@@ -183,8 +184,7 @@ private class Configuration(compilerConfiguration: CompilerConfiguration, overri
         irFunctionSymbol(internalPackageName, "configureAndExecuteTestsBlocking")
     }
 
-    val testFrameworkDiscoveryResultPropertyName =
-        Name.identifier("testFrameworkDiscoveryResult") // getter: getTestFrameworkDiscoveryResult
+    val testFrameworkDiscoveryResultPropertyName = Name.identifier(Constants.JVM_DISCOVERY_RESULT_PROPERTY)
 }
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)

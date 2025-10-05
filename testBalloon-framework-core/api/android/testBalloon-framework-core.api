@@ -149,8 +149,8 @@ public final class de/infix/testBalloon/framework/TestPlatform_androidKt {
 public class de/infix/testBalloon/framework/TestSession : de/infix/testBalloon/framework/TestSuite, de/infix/testBalloon/framework/AbstractTestSession {
 	public static final field Companion Lde/infix/testBalloon/framework/TestSession$Companion;
 	protected fun <init> ()V
-	protected fun <init> (Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/internal/TestReportingMode;)V
-	public synthetic fun <init> (Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/internal/TestReportingMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun <init> (Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/internal/ReportingMode;)V
+	public synthetic fun <init> (Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/internal/ReportingMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class de/infix/testBalloon/framework/TestSession$Companion {

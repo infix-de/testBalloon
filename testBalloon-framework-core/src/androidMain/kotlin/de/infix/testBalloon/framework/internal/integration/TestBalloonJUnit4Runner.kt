@@ -7,6 +7,7 @@ import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.internal.Constants
 import de.infix.testBalloon.framework.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.internal.ListsBasedElementSelection
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
@@ -45,8 +46,8 @@ internal class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) 
         // We don't need the actual result here.
         try {
             Class
-                .forName("de.infix.testBalloon.framework.internal.entryPoint.EntryPointAnchorKt")
-                .getMethod("getTestFrameworkDiscoveryResult").invoke(null)
+                .forName(Constants.ENTRY_POINT_ANCHOR_CLASS_NAME)
+                .getMethod(Constants.JVM_DISCOVERY_RESULT_PROPERTY_GETTER).invoke(null)
                 as TestFrameworkDiscoveryResult
         } catch (throwable: Throwable) {
             throw TestBalloonInitializationError(

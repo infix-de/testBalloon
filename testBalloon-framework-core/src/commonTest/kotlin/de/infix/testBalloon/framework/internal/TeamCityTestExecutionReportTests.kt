@@ -21,12 +21,12 @@ class TeamCityTestExecutionReportTests {
     private val detailsRegex = Regex("""details='[^:]+Error:[^']*'""")
 
     @Test
-    fun basicOutputIntelliJ() = basicOutputTest(TestReportingMode.INTELLIJ_IDEA, "topSuite|0x00a0|0x2198|0x00a0")
+    fun basicOutputIntelliJ() = basicOutputTest(ReportingMode.INTELLIJ_IDEA, "topSuite|0x00a0|0x2198|0x00a0")
 
     @Test
-    fun basicOutputFiles() = basicOutputTest(TestReportingMode.FILES, "")
+    fun basicOutputFiles() = basicOutputTest(ReportingMode.FILES, "")
 
-    private fun basicOutputTest(reportingMode: TestReportingMode, extraPath: String) =
+    private fun basicOutputTest(reportingMode: ReportingMode, extraPath: String) =
         withTestFramework(TestSession(reportingMode = reportingMode)) {
             val suite by testSuite("topSuite") {
                 test("test1") {}
@@ -85,7 +85,7 @@ class TeamCityTestExecutionReportTests {
         }
 
     @Test
-    fun concurrentOutput() = withTestFramework(TestSession(reportingMode = TestReportingMode.FILES)) {
+    fun concurrentOutput() = withTestFramework(TestSession(reportingMode = ReportingMode.FILES)) {
         val suite by testSuite("concurrent") {
             test("test1") {}
             test("test2") {}

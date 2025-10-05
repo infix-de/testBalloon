@@ -1,4 +1,8 @@
+@file:OptIn(TestBalloonInternalApi::class)
+
 import buildLogic.enableAbiValidation
+import de.infix.testBalloon.framework.internal.Constants
+import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -13,8 +17,8 @@ kotlin {
 
     compilerOptions {
         freeCompilerArgs.addAll(
-            "-opt-in=de.infix.testBalloon.framework.internal.TestBalloonInternalApi",
-            "-opt-in=de.infix.testBalloon.framework.TestBalloonExperimentalApi"
+            "-opt-in=${TestBalloonInternalApi::class.qualifiedName!!}",
+            "-opt-in=${Constants.CORE_PACKAGE_NAME}.TestBalloonExperimentalApi"
         )
     }
 
@@ -34,7 +38,7 @@ kotlin {
     }
 
     androidLibrary {
-        namespace = "de.infix.testBalloon.framework.core"
+        namespace = Constants.CORE_PACKAGE_NAME
     }
 
     sourceSets {
@@ -78,6 +82,6 @@ kotlin {
 tasks.withType<Test>().configureEach {
     // https://docs.gradle.org/current/userguide/java_testing.html
     useJUnitPlatform {
-        excludeEngines("de.infix.testBalloon")
+        excludeEngines(Constants.JUNIT_ENGINE_NAME)
     }
 }

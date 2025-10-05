@@ -1,6 +1,10 @@
 package de.infix.testBalloon.framework.internal
 
 /**
+ * This file contains parameters shared across framework components.
+ */
+
+/**
  * A path segment's name as an external ID, which will not be broken up by platform-specific tooling.
  *
  * Specific characters are replaced with counterparts of similar appearance, because
@@ -28,16 +32,16 @@ public const val PATH_SEGMENT_SEPARATOR: String = "$NON_BREAKING_SPACE↘$NON_BR
 public const val PATH_PATTERN_SEPARATOR: Char = '⬥'
 
 /**
- * The framework's test reporting mode.
+ * The framework-internal test reporting mode.
  */
 @TestBalloonInternalApi
-public enum class TestReportingMode {
+public enum class ReportingMode {
     INTELLIJ_IDEA,
     FILES
 }
 
 /**
- * A framework environment variable.
+ * A framework-internal environment variable.
  */
 @TestBalloonInternalApi
 public enum class EnvironmentVariable {
@@ -50,7 +54,7 @@ public enum class EnvironmentVariable {
 }
 
 /**
- * The unified debug level for Gradle plugin, compiler plugin and framework.
+ * The framework-internal debug level.
  */
 @TestBalloonInternalApi
 public enum class DebugLevel {
@@ -67,3 +71,26 @@ public enum class DebugLevel {
 @Retention(AnnotationRetention.SOURCE)
 @TestBalloonInternalApi
 public annotation class InvokedByGeneratedCode
+
+/**
+ * Framework-internal constants.
+ */
+@TestBalloonInternalApi
+public object Constants {
+    public const val ABSTRACTIONS_PACKAGE_NAME: String = "de.infix.testBalloon.framework"
+
+    public const val CORE_PACKAGE_NAME: String = "de.infix.testBalloon.framework"
+    public const val CORE_INTERNAL_PACKAGE_NAME: String = "$CORE_PACKAGE_NAME.internal"
+
+    public const val ENTRY_POINT_PACKAGE_NAME: String = "$CORE_INTERNAL_PACKAGE_NAME.entryPoint"
+    public const val ENTRY_POINT_ANCHOR_FILE_NAME: String = "EntryPointAnchor.kt"
+    public const val ENTRY_POINT_ANCHOR_CLASS_NAME: String = "$ENTRY_POINT_PACKAGE_NAME.EntryPointAnchorKt"
+
+    public const val JVM_DISCOVERY_RESULT_PROPERTY: String = "testFrameworkDiscoveryResult"
+    public const val JVM_DISCOVERY_RESULT_PROPERTY_GETTER: String = "getTestFrameworkDiscoveryResult"
+
+    public const val JUNIT_ENGINE_NAME: String = "de.infix.testBalloon"
+
+    public const val GRADLE_EXTENSION_NAME: String = "testBalloon"
+    public const val GRADLE_PROPERTY_PREFIX: String = "testBalloon"
+}

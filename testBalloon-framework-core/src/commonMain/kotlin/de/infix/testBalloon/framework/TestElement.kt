@@ -1,7 +1,7 @@
 package de.infix.testBalloon.framework
 
 import de.infix.testBalloon.framework.internal.PATH_SEGMENT_SEPARATOR
-import de.infix.testBalloon.framework.internal.TestReportingMode
+import de.infix.testBalloon.framework.internal.ReportingMode
 import de.infix.testBalloon.framework.internal.externalId
 
 public sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, testConfig: TestConfig) :
@@ -43,13 +43,13 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
          */
         internal val reportingName: String by lazy {
             when (TestSession.global.reportingMode) {
-                TestReportingMode.INTELLIJ_IDEA -> {
+                ReportingMode.INTELLIJ_IDEA -> {
                     // Using a complete path for suites ensures proper nesting display in IntelliJ IDEA, but
                     // duplicates path segments in XML and HTML file reports.
                     if (element is Test) element.testElementName.externalId() else externalId
                 }
 
-                TestReportingMode.FILES -> {
+                ReportingMode.FILES -> {
                     // Simple element names work for file reports.
                     element.testElementName.externalId()
                 }

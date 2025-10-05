@@ -67,7 +67,7 @@ val syncSharedTestBalloonSources by tasks.registering(Sync::class) {
             "../testBalloon-framework-abstractions/src/commonMain/kotlin/de/infix/testBalloon/framework/internal"
         )
     ) {
-        include("AbstractTestElementPath.kt", "TestBalloonInternalApi.kt")
+        include("SharedParameters.kt", "TestBalloonInternalApi.kt")
     }
     from(
         layout.projectDirectory.dir(

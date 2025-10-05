@@ -2,7 +2,7 @@ package de.infix.testBalloon.framework
 
 import de.infix.testBalloon.framework.internal.EnvironmentBasedElementSelection
 import de.infix.testBalloon.framework.internal.EnvironmentVariable
-import de.infix.testBalloon.framework.internal.TestReportingMode
+import de.infix.testBalloon.framework.internal.ReportingMode
 import de.infix.testBalloon.framework.internal.argumentsBasedElementSelection
 import de.infix.testBalloon.framework.internal.value
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 public open class TestSession protected constructor(
     testConfig: TestConfig = DefaultConfiguration,
     defaultCompartment: (() -> TestCompartment) = { TestCompartment.Default },
-    reportingMode: TestReportingMode? = null
+    reportingMode: ReportingMode? = null
 ) : TestSuite(
     parent = null,
     name = "${testPlatform.displayName} session",
@@ -37,20 +37,20 @@ public open class TestSession protected constructor(
 
     internal val defaultCompartment: TestCompartment by lazy { defaultCompartment() }
 
-    internal val reportingMode: TestReportingMode =
+    internal val reportingMode: ReportingMode =
         reportingMode
             ?: EnvironmentVariable.TESTBALLOON_REPORTING.value()?.let {
                 try {
-                    TestReportingMode.valueOf(it)
+                    ReportingMode.valueOf(it)
                 } catch (_: IllegalArgumentException) {
                     throw IllegalArgumentException(
                         "The environment variable '${EnvironmentVariable.TESTBALLOON_REPORTING}'" +
                             " contains the value '$it', which is unsupported.\n" +
-                            "\tPlease choose one of ${TestReportingMode.entries}."
+                            "\tPlease choose one of ${ReportingMode.entries}."
                     )
                 }
             }
-            ?: TestReportingMode.FILES
+            ?: ReportingMode.FILES
 
     init {
         if (singleton != null) {
@@ -63,7 +63,7 @@ public open class TestSession protected constructor(
         singleton = this
     }
 
-    internal constructor(reportingMode: TestReportingMode? = null) : this(
+    internal constructor(reportingMode: ReportingMode? = null) : this(
         testConfig = DefaultConfiguration,
         reportingMode = reportingMode
     )

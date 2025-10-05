@@ -1,4 +1,5 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.enableAbiValidation
 
 plugins {
     id("buildLogic.multiplatform-excluding-wasm-wasi")
@@ -10,11 +11,7 @@ description = "Library supporting Kotest Assertions with the TestBalloon framewo
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
 
 kotlin {
-    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    abiValidation {
-        enabled = true
-    }
-    explicitApi()
+    enableAbiValidation()
 
     sourceSets {
         commonMain {

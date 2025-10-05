@@ -48,3 +48,22 @@ public enum class EnvironmentVariable {
     TESTBALLOON_EXCLUDE,
     TESTBALLOON_REPORTING
 }
+
+/**
+ * The unified debug level for Gradle plugin, compiler plugin and framework.
+ */
+@TestBalloonInternalApi
+public enum class DebugLevel {
+    NONE,
+    BASIC,
+    DISCOVERY,
+    CODE
+}
+
+/**
+ * Indicates that the function or constructor is invoked by framework-generated code.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.SOURCE)
+@TestBalloonInternalApi
+public annotation class InvokedByGeneratedCode

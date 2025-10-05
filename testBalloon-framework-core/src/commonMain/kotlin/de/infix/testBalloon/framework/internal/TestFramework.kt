@@ -2,7 +2,6 @@ package de.infix.testBalloon.framework.internal
 
 import de.infix.testBalloon.framework.AbstractTestSession
 import de.infix.testBalloon.framework.AbstractTestSuite
-import de.infix.testBalloon.framework.InvokedByGeneratedCode
 import de.infix.testBalloon.framework.TestCompartment
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestSession

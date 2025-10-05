@@ -1,4 +1,5 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.enableAbiValidation
 
 plugins {
     id("buildLogic.multiplatform-plus-android-library")
@@ -10,11 +11,7 @@ description = "Library supporting blocking code detection with the TestBalloon f
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
 
 kotlin {
-    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    abiValidation {
-        enabled = true
-    }
-    explicitApi()
+    enableAbiValidation()
 
     androidLibrary {
         namespace = "de.infix.testBalloon.integration.blockingDetection"

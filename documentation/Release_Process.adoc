@@ -25,6 +25,7 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 ----
 ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
 ----
+. Run `./gradlew updateLegacyAbi`
 . Run CI tests via the IntelliJ IDEA run configuration `ciTests`.
 . Check in the integration test project that no newer Kotlin artifacts sneak in, using a Terminal:
 ** `++(cd integration-test/build/scenarioProjects/incremental-compilation-testBalloon; ./gradlew dependencies) | awk '/kotlin-stdlib:/ { gsub(/.*kotlin-stdlib:/, ""); gsub(/.* -> /, ""); gsub(/ \(.\)$/, ""); print }' | sort -u++`

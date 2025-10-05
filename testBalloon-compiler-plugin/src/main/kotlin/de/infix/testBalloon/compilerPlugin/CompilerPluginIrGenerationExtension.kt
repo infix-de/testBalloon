@@ -1,3 +1,5 @@
+@file:OptIn(TestBalloonInternalApi::class)
+
 package de.infix.testBalloon.compilerPlugin
 
 import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
@@ -9,6 +11,7 @@ import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.TestDiscoverable
 import de.infix.testBalloon.framework.TestDisplayName
 import de.infix.testBalloon.framework.TestElementName
+import de.infix.testBalloon.framework.internal.DebugLevel
 import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
@@ -103,15 +106,16 @@ class CompilerPluginIrGenerationExtension(private val compilerConfiguration: Com
         val debugLevel = Options.debugLevel.value(compilerConfiguration)
         val testModuleRegex = Options.testModuleRegex.value(compilerConfiguration)
 
-        if (debugLevel > Options.DebugLevel.NONE) {
+        if (debugLevel > DebugLevel.NONE) {
             messageCollector.report(
                 CompilerMessageSeverity.WARNING,
-                "$PLUGIN_DISPLAY_NAME: [DEBUG] Plugin version $PROJECT_VERSION is processing module ${moduleFragment.name}."
+                "$PLUGIN_DISPLAY_NAME: [DEBUG] Plugin version $PROJECT_VERSION is processing" +
+                    " module ${moduleFragment.name}."
             )
         }
 
         fun reportDisablingReason(detail: String) {
-            if (debugLevel > Options.DebugLevel.NONE) {
+            if (debugLevel > DebugLevel.NONE) {
                 messageCollector.report(
                     CompilerMessageSeverity.WARNING,
                     "$PLUGIN_DISPLAY_NAME: [DEBUG] Disabling the plugin for module ${moduleFragment.name}: $detail"
@@ -207,7 +211,7 @@ private class ModuleTransformer(
 
         sourceFileForReporting = irFile
 
-        if (configuration.debugLevel >= Options.DebugLevel.BASIC) {
+        if (configuration.debugLevel >= DebugLevel.BASIC) {
             reportDebug("Analyzing source file", irFile)
         }
 
@@ -224,7 +228,7 @@ private class ModuleTransformer(
 
             // Consider classes with a @TestDiscoverable superclass.
             if (irClass.superClass?.hasAnnotation(configuration.testDiscoverableAnnotationSymbol) == true) {
-                if (configuration.debugLevel >= Options.DebugLevel.DISCOVERY) {
+                if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
                     reportDebug("Found test discoverable '${irClass.fqName()}'", irClass)
                 }
 
@@ -263,7 +267,7 @@ private class ModuleTransformer(
             val initializerCallFunction = initializerCall.symbol.owner
 
             if (initializerCallFunction.hasAnnotation(configuration.testDiscoverableAnnotationSymbol)) {
-                if (configuration.debugLevel >= Options.DebugLevel.DISCOVERY) {
+                if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
                     reportDebug("Found test discoverable '${irProperty.fqNameWhenAvailable}'", irProperty)
                 }
 
@@ -296,7 +300,7 @@ private class ModuleTransformer(
             moduleFragment,
             "Could not generate entry point code in '${entryPointFile.nameWithPackage}'"
         ) {
-            if (configuration.debugLevel >= Options.DebugLevel.CODE) {
+            if (configuration.debugLevel >= DebugLevel.CODE) {
                 reportDebug(
                     "Generating code in module '${moduleFragment.name}'," +
                         " file '${entryPointFile.nameWithPackage}'," +
@@ -329,7 +333,7 @@ private class ModuleTransformer(
             }
 
             entryPointFile.addChild(entryPoint)
-            if (configuration.debugLevel >= Options.DebugLevel.CODE) {
+            if (configuration.debugLevel >= DebugLevel.CODE) {
                 reportDebug("Generated:\n${declaration.dump().prependIndent("\t")}")
             }
 
@@ -399,7 +403,7 @@ private class ModuleTransformer(
                             copyTypeAndValueArgumentsFrom(originalCall)
                             nameValueArgumentsToAdd.forEach { (index, value) ->
                                 arguments[index] = irString(value)
-                                if (configuration.debugLevel >= Options.DebugLevel.CODE) {
+                                if (configuration.debugLevel >= DebugLevel.CODE) {
                                     reportDebug(
                                         "${irClass.fqName()}: Setting parameter '${valueParameters[index].name}'" +
                                             " to '$value'"
@@ -461,7 +465,7 @@ private class ModuleTransformer(
                             copyTypeAndValueArgumentsFrom(originalCall)
                             nameValueArgumentsToAdd.forEach { (index, value) ->
                                 arguments[index] = irString(value)
-                                if (configuration.debugLevel >= Options.DebugLevel.CODE) {
+                                if (configuration.debugLevel >= DebugLevel.CODE) {
                                     reportDebug(
                                         "${irProperty.fqName()}: Setting parameter '${valueParameters[index].name}'" +
                                             " to '$value'"

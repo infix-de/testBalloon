@@ -1,3 +1,4 @@
+import buildLogic.enableAbiValidation
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -8,11 +9,7 @@ plugins {
 description = "Core library for the TestBalloon framework"
 
 kotlin {
-    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    abiValidation {
-        enabled = true
-    }
-    explicitApi()
+    enableAbiValidation()
 
     compilerOptions {
         freeCompilerArgs.addAll(

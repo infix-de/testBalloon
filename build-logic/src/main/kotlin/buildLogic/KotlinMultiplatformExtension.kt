@@ -3,6 +3,7 @@ package buildLogic
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 
@@ -61,4 +62,19 @@ fun KotlinMultiplatformExtension.applyHierarchy(nonJvm: KotlinHierarchyBuilder.(
             }
         }
     }
+}
+
+fun KotlinMultiplatformExtension.enableAbiValidation() {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    extensions.configure<AbiValidationMultiplatformExtension>("abiValidation") {
+        enabled.set(true)
+        filters {
+            excluded {
+                byNames.add("de.infix.testBalloon.framework.internal.TestBalloonInternalApi")
+                annotatedWith.add("de.infix.testBalloon.framework.internal.TestBalloonInternalApi")
+            }
+        }
+    }
+
+    explicitApi()
 }

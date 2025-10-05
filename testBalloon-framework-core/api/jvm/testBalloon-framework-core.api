@@ -207,7 +207,3 @@ public final class de/infix/testBalloon/framework/internal/LoggingKt {
 	public static final fun setTestFrameworkLogLevel (Lde/infix/testBalloon/framework/internal/LogLevel;)V
 }
 
-public final class de/infix/testBalloon/framework/internal/Logging_jvmKt {
-	public static final fun printlnFixed (Ljava/lang/Object;)V
-}
-

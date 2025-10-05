@@ -43,10 +43,3 @@ public annotation class TestDisplayName
  */
 @DslMarker
 public annotation class TestElementDsl
-
-/**
- * Indicates that the function or constructor is invoked by framework-generated code.
- */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
-@Retention(AnnotationRetention.SOURCE)
-public annotation class InvokedByGeneratedCode

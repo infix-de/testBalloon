@@ -9,7 +9,6 @@ import de.infix.testBalloon.compilerPlugin.CompilerPluginCommandLineProcessor
 import de.infix.testBalloon.compilerPlugin.CompilerPluginRegistrar
 import de.infix.testBalloon.framework.internal.Constants
 import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
-import de.infix.testBalloon.framework.internal.externalId
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
@@ -93,9 +92,9 @@ private class CompilerPluginTests {
                 capturedStdout,
                 """
                     $packageName.MyTestSession
-                    ${("$packageName.TestSuiteOne").externalId()}
-                    ${("$packageName.TestSuiteTwo").externalId()}
-                    ${("my test suite three").externalId()}
+                    $packageName.TestSuiteOne
+                    $packageName.TestSuiteTwo
+                    my test suite three
                 """.trimIndent()
             )
         }

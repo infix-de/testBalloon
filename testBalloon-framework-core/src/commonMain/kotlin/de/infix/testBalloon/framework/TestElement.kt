@@ -1,8 +1,8 @@
 package de.infix.testBalloon.framework
 
-import de.infix.testBalloon.framework.internal.PATH_SEGMENT_SEPARATOR
+import de.infix.testBalloon.framework.internal.INTERNAL_PATH_SEGMENT_SEPARATOR
 import de.infix.testBalloon.framework.internal.ReportingMode
-import de.infix.testBalloon.framework.internal.externalId
+import de.infix.testBalloon.framework.internal.reportingPathLimit
 
 public sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, testConfig: TestConfig) :
     AbstractTestElement {
@@ -19,55 +19,87 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     public var testConfig: TestConfig = testConfig
 
     internal val testElementParent: TestSuite? = parent
-    internal val testElementName: String = parent?.registerUniqueChildElementName(name) ?: name
-    internal val testElementDisplayName: String = displayName
+    internal val testElementName: String = parent?.uniqueChildName(name, TestSuite.ChildNameType.ELEMENT) ?: name
+    internal val testElementDisplayName: String =
+        parent?.uniqueChildName(displayName.lengthLimited(), TestSuite.ChildNameType.DISPLAY)
+            ?: displayName.lengthLimited()
 
     /**
      * A path uniquely identifying a test element in its test hierarchy.
      */
     public class Path internal constructor(private val element: TestElement) : AbstractTestElement.Path {
-        override fun toString(): String = "«$externalId»"
+        override fun toString(): String = "«$internalId»"
 
         /**
-         * This path's internal ID, which is only stable inside a single TestSession.
+         * This path's internal ID, directly derived from element names.
          */
-        internal val internalId: String by lazy { flattened("|") { testElementName } }
+        internal val internalId: String by lazy { flattened(INTERNAL_PATH_SEGMENT_SEPARATOR) { testElementName } }
 
         /**
-         * This path's external ID, which is stable and copyable outside a single TestSession.
+         * This path's qualified reporting name.
          */
-        internal val externalId: String by lazy { flattened { testElementName.externalId() } }
+        internal val qualifiedReportingName: String by lazy { flattened(REPORTING_SEPARATOR) { externalizedName() } }
 
         /**
-         * This path's reporting name, depending on the reporting mode.
+         * This path's simple reporting name.
          */
-        internal val reportingName: String by lazy {
+        internal val simpleReportingName: String by lazy { element.externalizedName() }
+
+        /**
+         * This path's reporting name, simple or qualified, depending on the reporting mode.
+         */
+        internal val modeDependentReportingName: String by lazy {
             when (TestSession.global.reportingMode) {
                 ReportingMode.INTELLIJ_IDEA -> {
-                    // Using a complete path for suites ensures proper nesting display in IntelliJ IDEA, but
+                    // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA, but
                     // duplicates path segments in XML and HTML file reports.
-                    if (element is Test) element.testElementName.externalId() else externalId
+                    if (element is Test) simpleReportingName else qualifiedReportingName
                 }
 
                 ReportingMode.FILES -> {
                     // Simple element names work for file reports.
-                    element.testElementName.externalId()
+                    simpleReportingName
                 }
             }
         }
 
-        private fun flattened(separator: String = PATH_SEGMENT_SEPARATOR, segment: TestElement.() -> String): String =
-            when (element.testElementParent) {
-                null, is TestCompartment, is TestSession -> element.segment()
-                else -> buildString {
+        private fun TestElement.externalizedName(): String = if (isTopLevelSuite) {
+            when (TestSession.global.reportingMode) {
+                ReportingMode.INTELLIJ_IDEA -> testElementName // TODO: replace with `testElementDisplayName` if selection uses internalId
+                ReportingMode.FILES -> testElementName // file reports assume that a package name is present
+            }
+        } else {
+            if (this is Test) {
+                testElementDisplayName.replace(".", MIDDLE_DOT)
+            } else {
+                // lower-level suite
+                testElementDisplayName.replace(' ', NON_BREAKING_SPACE).replace(".", MIDDLE_DOT)
+            }
+        }
+
+        private fun flattened(separator: String, segment: TestElement.() -> String): String =
+            if (element.testElementParent == null || element.isTopLevelSuite) {
+                element.segment()
+            } else {
+                buildString {
                     append(element.testElementParent.testElementPath.flattened(separator, segment))
                     append(separator)
                     append(segment(element))
                 }
             }
+
+        private companion object {
+            private const val NON_BREAKING_SPACE = '\u00a0'
+            private const val MIDDLE_DOT = "·"
+            private const val REPORTING_SEPARATOR: String = "$NON_BREAKING_SPACE↘$NON_BREAKING_SPACE"
+        }
     }
 
     override val testElementPath: Path = Path(this)
+
+    internal val isSessionOrCompartment: Boolean = parent == null || this is TestCompartment
+
+    internal val isTopLevelSuite: Boolean = parent is TestCompartment
 
     override var testElementIsEnabled: Boolean = true
 
@@ -153,6 +185,19 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
                 if (throwable is FailFastException) throw throwable
             }
         }
+    }
+
+    private fun String.lengthLimited(): String {
+        val originalPathLength = (testElementParent?.testElementPath?.qualifiedReportingName?.length ?: 0) + length
+        if (originalPathLength <= reportingPathLimit) return this
+        val newLength = originalPathLength - reportingPathLimit - TestSuite.UNIQUE_APPENDIX_LENGTH_LIMIT - 1
+        require(newLength >= 0) {
+            "Could not produce a test element name observing the length limit" +
+                " of $reportingPathLimit for its element path.\n" +
+                "\tParent path: ${testElementParent?.testElementPath}\n" +
+                "\tElement name: '$this'"
+        }
+        return this.dropLast(originalPathLength - reportingPathLimit - 1) + "…"
     }
 
     override fun toString(): String = "${this::class.simpleName}($testElementPath)"

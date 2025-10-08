@@ -1,7 +1,6 @@
 package de.infix.testBalloon.framework.internal.integration
 
 import de.infix.testBalloon.framework.Test
-import de.infix.testBalloon.framework.TestCompartment
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestExecutionReport
@@ -27,28 +26,31 @@ internal typealias JsPromiseLike = Any
  */
 internal fun TestElement.registerWithKotlinJsTestFramework() {
     when (this) {
-        is TestSession, is TestCompartment -> {
-            // Skip registering session and compartments, so that there is no pseudo-suite appearing above our
-            // real top-level suites. This is required for test filtering expressions to work without wildcards.
-            // Example: `TestSuite1.test1` can be found this way, otherwise we'd need to use `*TestSuite1.test1`,
-            // which can be ambiguous.
-            if (testElementIsEnabled) {
-                testElementChildren.forEach {
-                    it.registerWithKotlinJsTestFramework()
-                }
-            }
-        }
-
         is TestSuite -> {
-            kotlinJsTestFramework.suite(testElementPath.reportingName, ignored = !testElementIsEnabled) {
-                testElementChildren.forEach {
-                    it.registerWithKotlinJsTestFramework()
+            if (isSessionOrCompartment) {
+                // Skip registering session and compartments, so that there is no pseudo-suite appearing above our
+                // real top-level suites. This is required for test filtering expressions to work without wildcards.
+                // Example: `TestSuite1.test1` can be found this way, otherwise we'd need to use `*TestSuite1.test1`,
+                // which can be ambiguous.
+                if (testElementIsEnabled) {
+                    testElementChildren.forEach {
+                        it.registerWithKotlinJsTestFramework()
+                    }
+                }
+            } else {
+                kotlinJsTestFramework.suite(
+                    testElementPath.modeDependentReportingName,
+                    ignored = !testElementIsEnabled
+                ) {
+                    testElementChildren.forEach {
+                        it.registerWithKotlinJsTestFramework()
+                    }
                 }
             }
         }
 
         is Test -> {
-            kotlinJsTestFramework.test(testElementPath.reportingName, ignored = !testElementIsEnabled) {
+            kotlinJsTestFramework.test(testElementPath.modeDependentReportingName, ignored = !testElementIsEnabled) {
                 TestSessionRelay.resultReceivingPromise(this)
             }
         }

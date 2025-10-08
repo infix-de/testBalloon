@@ -1,6 +1,5 @@
 package de.infix.testBalloon.framework
 
-import de.infix.testBalloon.framework.internal.PATH_SEGMENT_SEPARATOR
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
@@ -138,10 +137,10 @@ class TestSuiteTests {
             assertContentEquals(
                 listOf(
                     "«suite2» aroundAll begin",
-                    "«suite2${PATH_SEGMENT_SEPARATOR}test2»",
+                    "«suite2|test2»",
                     "«suite2» aroundAll end",
                     "«suite3» aroundAll begin",
-                    "«suite3${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test2»",
+                    "«suite3|innerSuite|test2»",
                     "«suite3» aroundAll end"
                 ),
                 trace.elements()
@@ -181,8 +180,8 @@ class TestSuiteTests {
             assertContentEquals(
                 listOf(
                     "«suite1» aroundAll begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1»",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test2»",
+                    "«suite1|test1»",
+                    "«suite1|test2»",
                     "«suite1» aroundAll end"
                 ),
                 trace.elements()
@@ -217,8 +216,8 @@ class TestSuiteTests {
             assertContentEquals(
                 listOf(
                     "«suite1» aroundAll begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1»",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1»",
+                    "«suite1|test1»",
+                    "«suite1|innerSuite|test1»",
                     "«suite1» aroundAll end"
                 ),
                 trace.elements()
@@ -265,24 +264,24 @@ class TestSuiteTests {
                 listOf(
                     "«suite1» aroundEach1.1 begin",
                     "«suite1» aroundEach1.2 begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1» aroundEach1.1 begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1» aroundEach1.2 begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1»",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1» aroundEach1.2 end",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1» aroundEach1.1 end",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite» aroundEach1.1 begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite» aroundEach1.2 begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite» aroundEach2 begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1» aroundEach1.1 begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1» aroundEach1.2 begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1» aroundEach2 begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1»",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1» aroundEach2 end",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1» aroundEach1.2 end",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1» aroundEach1.1 end",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite» aroundEach2 end",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite» aroundEach1.2 end",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite» aroundEach1.1 end",
+                    "«suite1|test1» aroundEach1.1 begin",
+                    "«suite1|test1» aroundEach1.2 begin",
+                    "«suite1|test1»",
+                    "«suite1|test1» aroundEach1.2 end",
+                    "«suite1|test1» aroundEach1.1 end",
+                    "«suite1|innerSuite» aroundEach1.1 begin",
+                    "«suite1|innerSuite» aroundEach1.2 begin",
+                    "«suite1|innerSuite» aroundEach2 begin",
+                    "«suite1|innerSuite|test1» aroundEach1.1 begin",
+                    "«suite1|innerSuite|test1» aroundEach1.2 begin",
+                    "«suite1|innerSuite|test1» aroundEach2 begin",
+                    "«suite1|innerSuite|test1»",
+                    "«suite1|innerSuite|test1» aroundEach2 end",
+                    "«suite1|innerSuite|test1» aroundEach1.2 end",
+                    "«suite1|innerSuite|test1» aroundEach1.1 end",
+                    "«suite1|innerSuite» aroundEach2 end",
+                    "«suite1|innerSuite» aroundEach1.2 end",
+                    "«suite1|innerSuite» aroundEach1.1 end",
                     "«suite1» aroundEach1.2 end",
                     "«suite1» aroundEach1.1 end"
                 ),
@@ -355,12 +354,12 @@ class TestSuiteTests {
             assertContentEquals(
                 listOf(
                     "«suite1» fixture creating",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1»",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1»",
+                    "«suite1|test1»",
+                    "«suite1|innerSuite|test1»",
                     "«suite1» fixture closing",
-                    "«suite2${PATH_SEGMENT_SEPARATOR}test1»",
+                    "«suite2|test1»",
                     "«suite2» fixture creating",
-                    "«suite2${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1»",
+                    "«suite2|innerSuite|test1»",
                     "«suite2» fixture closing"
                 ),
                 trace.elements()
@@ -399,8 +398,8 @@ class TestSuiteTests {
                 listOf(
                     "«suite1» fixture creating",
                     "«suite1» aroundAll begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1»",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1»",
+                    "«suite1|test1»",
+                    "«suite1|innerSuite|test1»",
                     "«suite1» aroundAll end",
                     "«suite1» fixture closing"
                 ),
@@ -441,8 +440,8 @@ class TestSuiteTests {
                 listOf(
                     "«suite1» aroundAll begin",
                     "«suite1» fixture creating",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1»",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test1»",
+                    "«suite1|test1»",
+                    "«suite1|innerSuite|test1»",
                     "«suite1» fixture closing",
                     "«suite1» aroundAll end"
                 ),
@@ -502,10 +501,10 @@ class TestSuiteTests {
             assertContentEquals(
                 listOf(
                     "«suite2» fixture creating",
-                    "«suite2${PATH_SEGMENT_SEPARATOR}test2»",
+                    "«suite2|test2»",
                     "«suite2» fixture closing",
                     "«suite3» fixture creating",
-                    "«suite3${PATH_SEGMENT_SEPARATOR}innerSuite${PATH_SEGMENT_SEPARATOR}test2»",
+                    "«suite3|innerSuite|test2»",
                     "«suite3» fixture closing"
                 ),
                 trace.elements()
@@ -541,8 +540,8 @@ class TestSuiteTests {
             assertContentEquals(
                 listOf(
                     "«suite1» fixture creating",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1»",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test2»",
+                    "«suite1|test1»",
+                    "«suite1|test2»",
                     "«suite1» fixture closing"
                 ),
                 trace.elements()
@@ -628,14 +627,14 @@ class TestSuiteTests {
         withTestReport(suite1) {
             assertContentEquals(
                 listOf(
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1» begin",
+                    "«suite1|test1» begin",
                     "«suite1» fixture1 creating",
                     "«suite1» fixture2 creating",
                     "«suite1» fixture3 creating",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test1» end",
-                    "aroundAll «suite1${PATH_SEGMENT_SEPARATOR}inner» failing intentionally",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test2» begin",
-                    "«suite1${PATH_SEGMENT_SEPARATOR}test2» end",
+                    "«suite1|test1» end",
+                    "aroundAll «suite1|inner» failing intentionally",
+                    "«suite1|test2» begin",
+                    "«suite1|test2» end",
                     "«suite1» fixture3 failing intentionally on close",
                     "«suite1» fixture2 failing intentionally on close",
                     "«suite1» fixture1 closing"
@@ -647,7 +646,7 @@ class TestSuiteTests {
                 val failures = mapNotNull { it.throwable }
                 assertContentEquals(
                     listOf(
-                        "aroundAll «suite1${PATH_SEGMENT_SEPARATOR}inner» failing intentionally",
+                        "aroundAll «suite1|inner» failing intentionally",
                         "«suite1» fixture3 failing intentionally on close"
                     ),
                     failures.map {
@@ -819,26 +818,26 @@ class TestSuiteTests {
             assertContentEquals(
                 listOf(
                     "A: TestSuite(«suite1»): Starting",
-                    "A: Test(«suite1${PATH_SEGMENT_SEPARATOR}test1»): Starting [*]",
-                    "A: Test(«suite1${PATH_SEGMENT_SEPARATOR}test1»): Finished – throwable=null [*]",
-                    "A: Test(«suite1${PATH_SEGMENT_SEPARATOR}test2»): Starting",
-                    "A: Test(«suite1${PATH_SEGMENT_SEPARATOR}test2»): Finished – throwable=null",
-                    "A: TestSuite(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite»): Starting",
-                    "B: TestSuite(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite»): Starting",
-                    "A: Test(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}test1»): Starting",
-                    "B: Test(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}test1»): Starting",
-                    "B: Test(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}test1»): Finished – throwable=IntentionalFailure()",
-                    "A: Test(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}test1»): Finished – throwable=IntentionalFailure()",
-                    "A: TestSuite(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}innerSuite1»): Starting [*]",
-                    "B: TestSuite(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}innerSuite1»): Starting [*]",
-                    "A: Test(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}innerSuite1${PATH_SEGMENT_SEPARATOR}test1»): Starting [*]",
-                    "B: Test(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}innerSuite1${PATH_SEGMENT_SEPARATOR}test1»): Starting [*]",
-                    "B: Test(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}innerSuite1${PATH_SEGMENT_SEPARATOR}test1»): Finished – throwable=null [*]",
-                    "A: Test(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}innerSuite1${PATH_SEGMENT_SEPARATOR}test1»): Finished – throwable=null [*]",
-                    "B: TestSuite(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}innerSuite1»): Finished – throwable=null [*]",
-                    "A: TestSuite(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite${PATH_SEGMENT_SEPARATOR}innerSuite1»): Finished – throwable=null [*]",
-                    "B: TestSuite(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite»): Finished – throwable=null",
-                    "A: TestSuite(«suite1${PATH_SEGMENT_SEPARATOR}middleSuite»): Finished – throwable=null",
+                    "A: Test(«suite1|test1»): Starting [*]",
+                    "A: Test(«suite1|test1»): Finished – throwable=null [*]",
+                    "A: Test(«suite1|test2»): Starting",
+                    "A: Test(«suite1|test2»): Finished – throwable=null",
+                    "A: TestSuite(«suite1|middleSuite»): Starting",
+                    "B: TestSuite(«suite1|middleSuite»): Starting",
+                    "A: Test(«suite1|middleSuite|test1»): Starting",
+                    "B: Test(«suite1|middleSuite|test1»): Starting",
+                    "B: Test(«suite1|middleSuite|test1»): Finished – throwable=IntentionalFailure()",
+                    "A: Test(«suite1|middleSuite|test1»): Finished – throwable=IntentionalFailure()",
+                    "A: TestSuite(«suite1|middleSuite|innerSuite1»): Starting [*]",
+                    "B: TestSuite(«suite1|middleSuite|innerSuite1»): Starting [*]",
+                    "A: Test(«suite1|middleSuite|innerSuite1|test1»): Starting [*]",
+                    "B: Test(«suite1|middleSuite|innerSuite1|test1»): Starting [*]",
+                    "B: Test(«suite1|middleSuite|innerSuite1|test1»): Finished – throwable=null [*]",
+                    "A: Test(«suite1|middleSuite|innerSuite1|test1»): Finished – throwable=null [*]",
+                    "B: TestSuite(«suite1|middleSuite|innerSuite1»): Finished – throwable=null [*]",
+                    "A: TestSuite(«suite1|middleSuite|innerSuite1»): Finished – throwable=null [*]",
+                    "B: TestSuite(«suite1|middleSuite»): Finished – throwable=null",
+                    "A: TestSuite(«suite1|middleSuite»): Finished – throwable=null",
                     "A: TestSuite(«suite1»): Finished – throwable=null"
                 ),
                 eventLog
@@ -912,9 +911,9 @@ class TestSuiteTests {
                 assertElementPathsContainInOrder(
                     listOf(
                         "|(1)test1",
-                        "(2)|(2)test1",
-                        "(3)|(3)test1",
-                        "(4)|(4)test1",
+                        " 〈2〉|(2)test1",
+                        " 〈3〉|(3)test1",
+                        " 〈4〉|(4)test1",
                         "Suite5|test1",
                         "Suite6|test1",
                         "Suite7|test1"

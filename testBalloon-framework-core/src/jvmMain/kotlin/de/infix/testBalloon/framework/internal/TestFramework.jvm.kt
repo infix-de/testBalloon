@@ -36,3 +36,5 @@ internal actual suspend fun TestScope.runTestAwaitingCompletion(
 internal actual fun handleFrameworkLevelError(throwable: Throwable) {
     exitProcess(3)
 }
+
+internal actual val defaultReportingPathLimit: Int? = null

@@ -22,8 +22,8 @@ internal open class ListsBasedElementSelection protected constructor(
         }
 
         return with(testElement) {
-            (includePatterns.isEmpty() || includePatterns.any { it.matches(testElementPath.externalId) }) &&
-                excludePatterns.none { it.matches(testElementPath.externalId) }
+            (includePatterns.isEmpty() || includePatterns.any { it.matches(testElementPath.internalId) }) &&
+                excludePatterns.none { it.matches(testElementPath.internalId) }
         }
     }
 
@@ -73,5 +73,7 @@ internal class ArgumentsBasedElementSelection(arguments: Array<String>) :
 /**
  * A [TestElement.Selection] created from environment variables which define [includePatterns] and [excludePatterns].
  */
-internal class EnvironmentBasedElementSelection(includePatterns: String?, excludePatterns: String?) :
-    ListsBasedElementSelection(includePatterns, excludePatterns)
+internal class EnvironmentBasedElementSelection(
+    includePatterns: String? = EnvironmentVariable.TESTBALLOON_INCLUDE.value(),
+    excludePatterns: String? = EnvironmentVariable.TESTBALLOON_EXCLUDE.value()
+) : ListsBasedElementSelection(includePatterns, excludePatterns)

@@ -36,3 +36,9 @@ internal actual suspend fun TestScope.runTestAwaitingCompletion(
 internal actual fun handleFrameworkLevelError(throwable: Throwable) {
     exitProcess(3)
 }
+
+// Test element paths exceeding a certain length crash Android Device Tests.
+// The exact length depends on the number of elements in the path (hierarchical depth). It is around 242
+// characters for a hierarchy of depth 3, reduced by 4 characters per extra hierarchy level.
+// Not knowing the hierarchy depth here, we try to be safe and stay well below the maximum possible number.
+internal actual val defaultReportingPathLimit: Int? = 200

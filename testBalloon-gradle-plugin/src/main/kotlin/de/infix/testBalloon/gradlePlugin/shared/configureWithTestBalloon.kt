@@ -14,7 +14,6 @@ import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import java.nio.file.DirectoryNotEmptyException
@@ -88,6 +87,14 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
         isScanForTestClasses = false
     }
 
+    val browserTestTaskRegex = testBalloonProperties.browserTestTaskRegex
+
+    val reportingPathLimit =
+        providers.environmentVariable(EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name).orNull?.ifEmpty {
+            null
+        }
+            ?: testBalloonProperties.reportingPathLimit?.toString()
+
     afterEvaluate {
         tasks.withType(AbstractTestTask::class.java).configureEach {
             fun KotlinJsTest.configureKarmaEnvironment() {
@@ -98,10 +105,10 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                 fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
                     val patterns = primary.firstNotNullOfOrNull {
                         providers.environmentVariable(it.name).orNull?.ifEmpty { null }
-                            ?.split("${PATH_PATTERN_SEPARATOR}")
+                            ?.split("$PATH_PATTERN_SEPARATOR")
                     } ?: secondary
 
-                    return patterns.joinToString("${PATH_PATTERN_SEPARATOR}", prefix = "\"", postfix = "\"") {
+                    return patterns.joinToString("$PATH_PATTERN_SEPARATOR", prefix = "\"", postfix = "\"") {
                         it.replace("\"", "\\\"")
                     }
                 }
@@ -123,15 +130,22 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                         "Could not create directory '$directory'"
                     }
 
+                    val clientEnvLines = listOfNotNull(
+                        """${EnvironmentVariable.TESTBALLOON_INCLUDE.name}: $includePatternsJs""",
+                        """${EnvironmentVariable.TESTBALLOON_EXCLUDE.name}: $excludePatternsJs""",
+                        """${EnvironmentVariable.TESTBALLOON_REPORTING.name}: "$reportingMode"""",
+                        reportingPathLimit?.let {
+                            """${EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name}: "$it""""
+                        }
+                    )
+
                     parameterConfigFile.writeText(
                         """
-                                config.client = config.client || {};
-                                config.client.env = {
-                                    ${EnvironmentVariable.TESTBALLOON_INCLUDE.name}: $includePatternsJs,
-                                    ${EnvironmentVariable.TESTBALLOON_EXCLUDE.name}: $excludePatternsJs,
-                                    ${EnvironmentVariable.TESTBALLOON_REPORTING.name}: "$reportingMode"
-                                }
-                        """.trimIndent()
+                        config.client = config.client || {};
+                        config.client.env = {
+                            ${clientEnvLines.joinToString(separator = ",\n")}
+                        }
+                        """.trimStart()
                     )
                 }
 
@@ -167,6 +181,9 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                     prioritizedPatterns(EnvironmentVariable.TESTBALLOON_EXCLUDE, secondary = filter.excludePatterns)
                 )
                 setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING, reportingMode.name)
+                if (reportingPathLimit != null) {
+                    setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT, reportingPathLimit)
+                }
             }
 
             when (this) {

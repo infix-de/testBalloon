@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework
 
+import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,7 @@ public object TestPlatformAndroid : TestPlatform {
     override fun threadDisplayName(): String = Thread.currentThread().name ?: "(thread ${threadId()})"
 
     override fun environment(variableName: String): String? = System.getenv(variableName)
+        ?: instrumentationArguments.getString(variableName)
 }
 
 public actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =
@@ -32,3 +34,5 @@ public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatch
         action(dispatcher)
     }
 }
+
+private val instrumentationArguments = InstrumentationRegistry.getArguments()

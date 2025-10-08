@@ -3,7 +3,6 @@ package de.infix.testBalloon.framework.internal.integration
 import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.FailFastException
 import de.infix.testBalloon.framework.Test
-import de.infix.testBalloon.framework.TestCompartment
 import de.infix.testBalloon.framework.TestConfigurationReport
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestElementEvent
@@ -11,6 +10,7 @@ import de.infix.testBalloon.framework.TestExecutionReport
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.internal.Constants
+import de.infix.testBalloon.framework.internal.ReportingMode
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import de.infix.testBalloon.framework.internal.logDebug
 import kotlinx.coroutines.Dispatchers
@@ -110,7 +110,9 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
         val engineDescriptor = EngineDescriptor(engineUniqueId, "${this::class.qualifiedName}")
         log { "created EngineDescriptor(${engineDescriptor.uniqueId}, ${engineDescriptor.displayName})" }
         testElementDescriptors[TestSession.global] = engineDescriptor
-        engineDescriptor.addChild(TestSession.global.newPlatformDescriptor(uniqueId))
+        for (topLevelSuite in topLevelTestSuites) {
+            engineDescriptor.addChild((topLevelSuite as TestSuite).newPlatformDescriptor(uniqueId))
+        }
 
         return engineDescriptor
     }
@@ -134,6 +136,11 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
                     // A TestReport relaying each TestElementEvent to the JUnit listener.
 
                     override suspend fun add(event: TestElementEvent) {
+                        if (event.element.isSessionOrCompartment) {
+                            log { "$event: skipping session or compartment" }
+                            return
+                        }
+
                         when (event) {
                             is TestElementEvent.Starting -> {
                                 if (event.element.testElementIsEnabled) {
@@ -190,10 +197,8 @@ private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestEle
 
     val segmentType = when (element) {
         is Test -> "test"
-        is TestSession -> "session"
-        is TestCompartment -> "compartment"
         is TestSuite -> {
-            if (topLevelTestSuites.contains(element)) {
+            if (isTopLevelSuite) {
                 source = ClassSource.from(testElementName)
                 "class"
             } else {
@@ -202,10 +207,15 @@ private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestEle
         }
     }
     uniqueId = parentUniqueId.append(segmentType, testElementName)
+    val displayName = if (TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA) {
+        testElementDisplayName
+    } else {
+        testElementPath.qualifiedReportingName
+    }
 
     return TestElementJUnitPlatformDescriptor(
         uniqueId = uniqueId,
-        displayName = testElementDisplayName,
+        displayName = displayName,
         source = source,
         element = element
     ).apply {

@@ -28,6 +28,8 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
         val elementParent = element.testElementParent
         val isIgnoredTest = !element.testElementIsEnabled && element is Test
 
+        if (element.isSessionOrCompartment) return
+
         when (event) {
             is TestElementEvent.Starting -> {
                 if (isIgnoredTest) {
@@ -69,7 +71,7 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
     private fun eventMessage(event: TestElementEvent, eventName: String, content: Message.() -> Unit = {}) {
         val elementTypeName = if (event.element is Test) "test" else "testSuite"
         message("$elementTypeName$eventName") {
-            name(event.element.testElementPath.reportingName)
+            name(event.element.testElementPath.modeDependentReportingName)
             timestamp(event.instant)
             content()
         }

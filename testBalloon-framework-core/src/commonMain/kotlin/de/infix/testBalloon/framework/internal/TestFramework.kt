@@ -6,6 +6,7 @@ import de.infix.testBalloon.framework.TestCompartment
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.testPlatform
 import kotlinx.coroutines.test.TestScope
 import kotlin.time.Duration
 
@@ -89,3 +90,30 @@ internal inline fun <R> executeTestsWithExceptionHandling(action: () -> R): Resu
  * Handles a framework-level error, aborting the execution with a failure status if possible.
  */
 internal expect fun handleFrameworkLevelError(throwable: Throwable)
+
+/**
+ * Default maximum length of the test element path in reporting as supported by the platform, or null.
+ */
+internal expect val defaultReportingPathLimit: Int?
+
+/**
+ * Maximum length of the test element path in reporting.
+ */
+internal val reportingPathLimit: Int =
+    EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.value()?.let { value ->
+        try {
+            value.toInt()
+                .also { require(it > 0) }
+                .also {
+                    logInfo { "${testPlatform.displayName}: Reporting path limit set to $it characters." }
+                }
+        } catch (_: IllegalArgumentException) {
+            throw IllegalArgumentException(
+                "The environment variable '${EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT}'" +
+                    " contains the value '$value', which is unsupported.\n" +
+                    "\tPlease choose a positive integer value."
+            )
+        }
+    }
+        ?: defaultReportingPathLimit
+        ?: Int.MAX_VALUE

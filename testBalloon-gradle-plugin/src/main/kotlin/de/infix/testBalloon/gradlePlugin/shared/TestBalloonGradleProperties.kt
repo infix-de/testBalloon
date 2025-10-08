@@ -34,6 +34,13 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val testModuleRegex by stringProperty("""(_test|Test)$""")
 
     /**
+     * Name pattern for browser-based test tasks using Karma.
+     *
+     * These tasks require a Karma configuration to forward (emulated) environment variables to the browser.
+     */
+    val browserTestTaskRegex by regexProperty("""BrowserTest$""")
+
+    /**
      * Test reporting mode. One of `auto` (default), `intellij`, `files`.
      *
      * The mode `intellij` supplies full test element paths to the reporting infrastructure, supporting proper
@@ -53,10 +60,20 @@ internal class TestBalloonGradleProperties(val project: Project) {
      */
     val reportsEnabled by booleanProperty("auto")
 
+    /**
+     * Maximum length of the test element path in reporting. Defaults to a platform-specific limit if empty.
+     *
+     * Use this to solve platform reporting limitations ("path too long").
+     */
+    val reportingPathLimit by intProperty("")
+
     @Suppress("SameParameterValue")
     private fun stringProperty(default: String) = Delegate(default) { it }
 
     private fun regexProperty(default: String) = Delegate(default) { Regex(it) }
+
+    @Suppress("SameParameterValue")
+    private fun intProperty(default: String) = Delegate(default) { it.toIntOrNull() }
 
     @Suppress("SameParameterValue")
     private fun booleanProperty(default: String) = Delegate(default) { it.toBooleanStrictOrNull() }

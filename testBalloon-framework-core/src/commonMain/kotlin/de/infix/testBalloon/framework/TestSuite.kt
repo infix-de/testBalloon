@@ -83,7 +83,9 @@ public open class TestSuite internal constructor(
 
     private val children: MutableList<TestElement> = mutableListOf()
 
-    private val childNameCount: MutableMap<String, Int> = mutableMapOf()
+    private val childElementNameCount: MutableMap<String, Int> = mutableMapOf()
+
+    private val childDisplayNameCount: MutableMap<String, Int> = mutableMapOf()
 
     /**
      * The test suite's [CoroutineScope], valid only during the suite's execution.
@@ -204,13 +206,30 @@ public open class TestSuite internal constructor(
 
     // endregion
 
-    internal fun registerUniqueChildElementName(initialName: String): String {
-        val nameCount = (childNameCount[initialName] ?: 0) + 1
-        childNameCount[initialName] = nameCount
+    internal enum class ChildNameType {
+        ELEMENT,
+        DISPLAY
+    }
+
+    /**
+     * Returns a [type] name for [originalName] which is unique among children of this suite.
+     *
+     * Guarantees that [originalName] will not grow beyond [UNIQUE_APPENDIX_LENGTH_LIMIT].
+     */
+    internal fun uniqueChildName(originalName: String, type: ChildNameType): String {
+        val registeredCount = if (type == ChildNameType.ELEMENT) childElementNameCount else childDisplayNameCount
+        val nameCount = (registeredCount[originalName] ?: 0) + 1
+        registeredCount[originalName] = nameCount
         return if (nameCount == 1) {
-            initialName
+            originalName
         } else {
-            "$initialName($nameCount)"
+            val appendix = " 〈$nameCount〉"
+            require(appendix.length <= UNIQUE_APPENDIX_LENGTH_LIMIT) {
+                "$this failed to provide a unique name, but the appendix '$appendix' is longer" +
+                    " than $UNIQUE_APPENDIX_LENGTH_LIMIT\n" +
+                    "\tOriginal name: $originalName"
+            }
+            "$originalName$appendix"
         }
     }
 
@@ -350,7 +369,9 @@ public open class TestSuite internal constructor(
         }
     }
 
-    private companion object {
+    internal companion object {
+        internal const val UNIQUE_APPENDIX_LENGTH_LIMIT = 6
+
         /** A stack of suites in configuration scope, innermost scope first */
         private val suitesInConfigurationScope = mutableListOf<TestSuite>()
 

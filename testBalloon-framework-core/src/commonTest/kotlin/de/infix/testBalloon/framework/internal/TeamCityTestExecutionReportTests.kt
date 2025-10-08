@@ -53,7 +53,7 @@ class TeamCityTestExecutionReportTests {
                     .assertContainsInOrder(
                         listOf(
                             "##teamcity[testSuiteStarted name='topSuite' timestamp='...']",
-                            "##teamcity[flowStarted flowId='topSuite' parent='@Default']",
+                            "##teamcity[flowStarted flowId='topSuite' parent='TestSession||@Default']",
                             "##teamcity[testStarted name='test1' timestamp='...']",
                             "##teamcity[testFinished name='test1' timestamp='...']",
                             "##teamcity[testStarted name='test2' timestamp='...']",
@@ -107,7 +107,6 @@ class TeamCityTestExecutionReportTests {
         val output = ConcurrentList<String>()
         val report = TeamCityTestExecutionReport { output.add(it) }
 
-        // Session and compartment must be part of the report, otherwise it would remain empty.
         val sessionStartingEvent = TestElementEvent.Starting(TestSession.global).also { report.add(it) }
         val compartmentStartingEvent =
             TestElementEvent.Starting(TestSession.global.defaultCompartment).also { report.add(it) }
@@ -150,7 +149,7 @@ class TeamCityTestExecutionReportTests {
         output.comparableElements().assertContainsInOrder(
             listOf(
                 "##teamcity[testSuiteStarted name='concurrent' timestamp='...']",
-                "##teamcity[flowStarted flowId='concurrent' parent='@Default']",
+                "##teamcity[flowStarted flowId='concurrent' parent='TestSession||@Default']",
                 "##teamcity[testSuiteStarted name='suite-1' timestamp='...']",
                 "##teamcity[flowStarted flowId='concurrent||suite-1' parent='concurrent']",
                 "##teamcity[testStarted name='suite-1-test2' timestamp='...']",
@@ -180,6 +179,4 @@ class TeamCityTestExecutionReportTests {
 
     private fun ConcurrentList<String>.comparableElements() = elements()
         .map { it.replace(timestampRegex, "timestamp='...'").replace(detailsRegex, "details='AssertionError'") }
-        .drop(4) // testSuiteStarted+flowStarted for session, compartment
-        .dropLast(4) // testSuiteFinished+flowFinished for compartment, session
 }

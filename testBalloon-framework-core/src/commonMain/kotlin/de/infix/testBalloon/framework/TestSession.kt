@@ -30,7 +30,7 @@ public open class TestSession protected constructor(
     reportingMode: ReportingMode? = null
 ) : TestSuite(
     parent = null,
-    name = "${testPlatform.displayName} session",
+    name = "TestSession",
     testConfig = testConfig
 ),
     AbstractTestSession {
@@ -72,12 +72,8 @@ public open class TestSession protected constructor(
      * Parameterizes the session with a default selection, prioritizing [EnvironmentVariable.TESTBALLOON_INCLUDE].
      */
     internal fun parameterize(report: TestConfigurationReport) {
-        val includePatternsFromEnvironment = EnvironmentVariable.TESTBALLOON_INCLUDE.value()
-        val selection = if (includePatternsFromEnvironment != null) {
-            EnvironmentBasedElementSelection(
-                includePatternsFromEnvironment,
-                EnvironmentVariable.TESTBALLOON_EXCLUDE.value()
-            )
+        val selection = if (EnvironmentVariable.TESTBALLOON_INCLUDE.value() != null) {
+            EnvironmentBasedElementSelection()
         } else {
             argumentsBasedElementSelection ?: AllInSelection
         }

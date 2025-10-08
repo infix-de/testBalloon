@@ -1,6 +1,5 @@
 package de.infix.testBalloon.framework.internal.integration
 
-import androidx.test.platform.app.InstrumentationRegistry
 import de.infix.testBalloon.framework.Test
 import de.infix.testBalloon.framework.TestConfigurationReport
 import de.infix.testBalloon.framework.TestElement
@@ -8,8 +7,7 @@ import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.internal.Constants
-import de.infix.testBalloon.framework.internal.EnvironmentVariable
-import de.infix.testBalloon.framework.internal.ListsBasedElementSelection
+import de.infix.testBalloon.framework.internal.EnvironmentBasedElementSelection
 import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import de.infix.testBalloon.framework.internal.logDebug
 import de.infix.testBalloon.framework.withSingleThreadedDispatcher
@@ -58,7 +56,7 @@ internal class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) 
         }
 
         TestSession.global.parameterize(
-            InstrumentationArgumentsBasedElementSelection(),
+            EnvironmentBasedElementSelection(),
             report = object : TestConfigurationReport() {
                 override fun add(event: TestElementEvent) {
                     if (event is TestElementEvent.Finished && event.throwable != null) {
@@ -143,34 +141,23 @@ internal class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) 
     }
 }
 
-/**
- * A [TestElement.Selection] created from instrumentation arguments.
- */
-private class InstrumentationArgumentsBasedElementSelection :
-    ListsBasedElementSelection(includePatterns, excludePatterns) {
-
-    companion object {
-        private val instrumentationArguments = InstrumentationRegistry.getArguments()
-
-        private val includePatterns = instrumentationArguments.getString(EnvironmentVariable.TESTBALLOON_INCLUDE.name)
-        private val excludePatterns = instrumentationArguments.getString(EnvironmentVariable.TESTBALLOON_EXCLUDE.name)
-    }
-}
-
 private fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
-        Description.createSuiteDescription(testElementPath.reportingName, testElementPath.externalId).apply {
+        Description.createSuiteDescription(testElementPath.qualifiedReportingName, testElementPath.internalId).apply {
             testElementChildren.forEach {
                 addChild(it.newPlatformDescription())
             }
         }
     }
 
-    is Test -> Description.createTestDescription(
-        testElementParent!!.testElementPath.externalId,
-        testElementDisplayName,
-        testElementPath.externalId
-    )
+    is Test -> {
+        testElementParent as TestSuite
+        Description.createTestDescription(
+            testElementParent.testElementPath.qualifiedReportingName,
+            testElementDisplayName.replace('/', '⧸'), // A slash in the test name crashes Android Device tests
+            testElementPath.internalId
+        )
+    }
 }.also {
     testElementDescriptions[this] = it
 }

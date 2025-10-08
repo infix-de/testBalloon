@@ -5,25 +5,10 @@ package de.infix.testBalloon.framework.internal
  */
 
 /**
- * A path segment's name as an external ID, which will not be broken up by platform-specific tooling.
- *
- * Specific characters are replaced with counterparts of similar appearance, because
- * platform tooling would otherwise recognize them as path element separators:
- * - JS/Node: '.' (regular dot)
- * - JS/Browser: '.' (regular dot), ' ' (regular space)
- * - Native: '.' (regular dot)
+ * The separator between segments of an internal test element path, used for test selection.
  */
 @TestBalloonInternalApi
-public fun String.externalId(): String = replace(' ', NON_BREAKING_SPACE).replace(".", LOW_DOT)
-
-private const val NON_BREAKING_SPACE = '\u00a0'
-private const val LOW_DOT = "𛲔"
-
-/**
- * The separator between path segments, human-readable and well visible.
- */
-@TestBalloonInternalApi
-public const val PATH_SEGMENT_SEPARATOR: String = "$NON_BREAKING_SPACE↘$NON_BREAKING_SPACE"
+public const val INTERNAL_PATH_SEGMENT_SEPARATOR: String = "|"
 
 /**
  * The separator between path patterns, human-readable.
@@ -50,7 +35,8 @@ public enum class EnvironmentVariable {
 
     TESTBALLOON_INCLUDE,
     TESTBALLOON_EXCLUDE,
-    TESTBALLOON_REPORTING
+    TESTBALLOON_REPORTING,
+    TESTBALLOON_REPORTING_PATH_LIMIT
 }
 
 /**

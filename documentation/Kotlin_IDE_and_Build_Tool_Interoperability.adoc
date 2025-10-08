@@ -2,6 +2,8 @@
 
 == IDE and Build Tool Interoperability
 
+This is an overview of aspects to consider when integrating a test framework with build tooling and IntelliJ IDEA. It is meant to be introductory. Complete details are beyond the scope of this document.
+
 === Kotlin Gradle Plugin (KGP)
 
 The https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin[Kotlin Gradle plugin (KGP)] is the artifact containing the https://kotlinlang.org/docs/gradle-configure-project.html#targeting-multiple-platforms[Kotlin Multiplatform Gradle plugin] and the https://kotlinlang.org/docs/gradle-configure-project.html#targeting-the-jvm[Kotlin JVM plugin]. It also interacts with the https://developer.android.com/build/releases/gradle-plugin[Android Gradle Plugin (AGP)] and the https://developer.android.com/kotlin/multiplatform/plugin[Android Gradle Library Plugin for KMP].
@@ -38,6 +40,93 @@ KGP reports test events to a Gradle https://github.com/gradle/gradle/blob/da5d03
 * On non-JVM targets, KGP's https://github.com/JetBrains/kotlin/blob/3d735016d48fb7efcbcddac9e1882d5dfd7c619d/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesClient.kt[TCServiceMessagesClient] interprets service messages in the TeamCity format and produces Gradle test events.
 
 Additionally, KGP's https://github.com/JetBrains/kotlin/blob/fcc442fec24ea8f2d622a39a6afcb73d376b5105/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/testing/internal/KotlinTestReport.kt[KotlinTestReport] produces aggregate test reports (e.g. for `allTests`, or `jsTests`).
+
+===== Quirks in Reporting
+
+The reporting stack (KGP, Gradle, IDE) exposes the following quirks in the IDE's test results tree view and HTML test reports:
+
+[%header,cols="1,1,1,1,1,1,1"]
+|===
+.>|Target
+.>|IDE supports nesting
+.>|HTML reports support nesting
+.>|Test name cut off before last dot
+.>|Suite name cut off before last blank
+.>|Suite name cut off before last dot
+.>|Suite prefix stripped from test name
+
+|JVM
+|✅
+|🚫
+|
+|
+|
+|
+
+|Native
+|🚫
+|🚫
+|⚠️
+|
+|⚠️
+|⚠️
+
+|JS/Node
+|🚫
+|🚫
+|⚠️
+|
+|⚠️
+|⚠️
+
+|JS/Browser
+|🚫
+|🚫
+|⚠️
+|⚠️
+|⚠️
+|⚠️
+
+|Wasm/JS/Node
+|🚫
+|🚫
+|⚠️
+|
+|⚠️
+|⚠️
+
+|Wasm/JS/Browser
+|🚫
+|🚫
+|⚠️
+|⚠️
+|⚠️
+|⚠️
+
+|Wasm/WASI
+|🚫
+|🚫
+|⚠️
+|
+|⚠️
+|⚠️
+
+|Android Device (Instrumented)
+|🚫
+|🚫
+|
+|
+|⚠️
+|⚠️
+
+|Android Host (Unit)
+|✅
+|🚫
+|
+|
+|
+|⚠️
+|===
 
 === Gradle
 

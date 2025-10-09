@@ -58,6 +58,7 @@ fun KotlinMultiplatformExtension.applyHierarchy(nonJvm: KotlinHierarchyBuilder.(
                     withJs()
                     withWasmJs()
                 }
+                group("web")
                 group("native")
                 nonJvm()
             }

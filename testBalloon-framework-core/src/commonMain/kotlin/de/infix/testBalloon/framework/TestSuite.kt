@@ -223,10 +223,10 @@ public open class TestSuite internal constructor(
         return if (nameCount == 1) {
             originalName
         } else {
-            val appendix = " 〈$nameCount〉"
+            val appendix = appendix(nameCount)
             require(appendix.length <= UNIQUE_APPENDIX_LENGTH_LIMIT) {
-                "$this failed to provide a unique name, but the appendix '$appendix' is longer" +
-                    " than $UNIQUE_APPENDIX_LENGTH_LIMIT\n" +
+                "$this failed to provide a unique name. The required appendix '$appendix' is longer" +
+                    " than $UNIQUE_APPENDIX_LENGTH_LIMIT characters.\n" +
                     "\tOriginal name: $originalName"
             }
             "$originalName$appendix"
@@ -370,7 +370,11 @@ public open class TestSuite internal constructor(
     }
 
     internal companion object {
-        internal const val UNIQUE_APPENDIX_LENGTH_LIMIT = 6
+        /** The maximum length which a unique appendix is guaranteed not to exceed. */
+        internal val UNIQUE_APPENDIX_LENGTH_LIMIT = appendix(999_999).length
+
+        /** Returns an appendix for [number]. */
+        private fun appendix(number: Int) = " 〈$number〉"
 
         /** A stack of suites in configuration scope, innermost scope first */
         private val suitesInConfigurationScope = mutableListOf<TestSuite>()

@@ -17,7 +17,7 @@ kotlin {
 
     compilerOptions {
         freeCompilerArgs.addAll(
-            "-opt-in=${TestBalloonInternalApi::class.qualifiedName!!}",
+            "-opt-in=${Constants.CORE_INTERNAL_PACKAGE_NAME}.TestBalloonInternalApi",
             "-opt-in=${Constants.CORE_PACKAGE_NAME}.TestBalloonExperimentalApi"
         )
     }

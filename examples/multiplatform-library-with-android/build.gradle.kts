@@ -55,9 +55,7 @@ kotlin {
 
         compilations.configureEach {
             compilerOptions.configure {
-                jvmTarget.set(
-                    org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(versionFromCatalog("jdk"))
-                )
+                jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(versionFromCatalog("jdk")))
             }
         }
     }

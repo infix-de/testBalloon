@@ -89,54 +89,43 @@ internal class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) 
             // will not deadlock.
             val notificationChannel = Channel<TestElementEvent>(10_000)
 
-            // A trigger signaling that all notifications were processed.
-            // A capacity of 1 will not block the sender in case the receiver is unresponsive or gone.
-            val completionTrigger = Channel<Unit>(1)
-
             launch(notificationDispatcher) {
-                try {
-                    for (event in notificationChannel) {
-                        val element = event.element
-                        val description = element.platformDescription
+                for (event in notificationChannel) {
+                    val element = event.element
+                    val description = element.platformDescription
 
-                        when (event) {
-                            is TestElementEvent.Starting -> {
-                                if (element.testElementIsEnabled) {
-                                    log { "$description: $element starting" }
-                                    when (element) {
-                                        is TestSuite -> notifier.fireTestSuiteStarted(description)
-                                        is Test -> notifier.fireTestStarted(description)
-                                    }
-                                } else {
-                                    if (element is Test) {
-                                        log { "$description: $element ignored" }
-                                        notifier.fireTestIgnored(description)
-                                    }
+                    when (event) {
+                        is TestElementEvent.Starting -> {
+                            if (element.testElementIsEnabled) {
+                                log { "$description: $element starting" }
+                                when (element) {
+                                    is TestSuite -> notifier.fireTestSuiteStarted(description)
+                                    is Test -> notifier.fireTestStarted(description)
                                 }
-                            }
-
-                            is TestElementEvent.Finished -> {
-                                if (element.testElementIsEnabled) {
-                                    val throwable = event.throwable
-                                    log { "$description: $element finished, result=$throwable)" }
-                                    if (throwable != null) {
-                                        notifier.fireTestFailure(Failure(description, throwable))
-                                    }
-                                    when (element) {
-                                        is TestSuite -> notifier.fireTestSuiteFinished(description)
-                                        is Test -> notifier.fireTestFinished(description)
-                                    }
+                            } else {
+                                if (element is Test) {
+                                    log { "$description: $element ignored" }
+                                    notifier.fireTestIgnored(description)
                                 }
-
-                                if (element.testElementParent == null) return@launch
                             }
                         }
+
+                        is TestElementEvent.Finished -> {
+                            if (element.testElementIsEnabled) {
+                                val throwable = event.throwable
+                                log { "$description: $element finished, result=$throwable)" }
+                                if (throwable != null) {
+                                    notifier.fireTestFailure(Failure(description, throwable))
+                                }
+                                when (element) {
+                                    is TestSuite -> notifier.fireTestSuiteFinished(description)
+                                    is Test -> notifier.fireTestFinished(description)
+                                }
+                            }
+
+                            if (element.testElementParent == null) return@launch
+                        }
                     }
-                    notificationChannel.close()
-                } catch (throwable: Throwable) {
-                    notificationChannel.close(throwable)
-                } finally {
-                    completionTrigger.send(Unit)
                 }
             }
 
@@ -148,12 +137,6 @@ internal class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) 
 
                     override suspend fun forward(event: TestElementEvent) {
                         notificationChannel.send(event)
-
-                        // Wait for the reporting infrastructure to catch up before finally returning.
-                        if (event.element == TestSession.global && event is TestElementEvent.Finished) {
-                            notificationChannel.close()
-                            completionTrigger.receive()
-                        }
                     }
                 }
             )

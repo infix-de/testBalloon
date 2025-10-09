@@ -194,7 +194,7 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                 }
 
                 is KotlinJsTest -> {
-                    if (testFramework is KotlinKarma) {
+                    if (browserTestTaskRegex.containsMatchIn(name)) {
                         configureKarmaEnvironment()
                     } else {
                         configureEnvironment { variable, value ->

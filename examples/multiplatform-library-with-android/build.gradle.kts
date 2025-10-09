@@ -12,7 +12,9 @@ plugins {
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
 
 compatPatrouille {
-    java(versionFromCatalog("jdk").toInt())
+    // WORKAROUND: Configuring Java with Compat-Patrouille and KMP Android library plugin breaks
+    //     https://github.com/GradleUp/compat-patrouille/issues/32
+    // java(versionFromCatalog("jdk").toInt())
     kotlin(versionFromCatalog("org.jetbrains.kotlin"))
 
     checkApiDependencies(compat.patrouille.Severity.ERROR)

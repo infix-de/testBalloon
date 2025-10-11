@@ -1,6 +1,7 @@
 package de.infix.testBalloon.framework.internal
 
 import de.infix.testBalloon.framework.TestElement
+import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.testPlatform
 
 /**
@@ -8,10 +9,15 @@ import de.infix.testBalloon.framework.testPlatform
  */
 internal open class ListsBasedElementSelection protected constructor(
     private val includePatterns: List<Regex>,
-    private val excludePatterns: List<Regex>
+    private val excludePatterns: List<Regex>,
+    private val includePrefixes: List<String>
 ) : TestElement.Selection {
     protected constructor(includePatterns: String?, excludePatterns: String?) :
-        this(includePatterns.toRegexList(), excludePatterns.toRegexList())
+        this(
+            includePatterns = includePatterns.toRegexList(),
+            excludePatterns = excludePatterns.toRegexList(),
+            includePrefixes = includePatterns.toPrefixList()
+        )
 
     private var used = false
 
@@ -27,14 +33,25 @@ internal open class ListsBasedElementSelection protected constructor(
         }
     }
 
+    override fun mayInclude(testSuite: TestSuite): Boolean = testSuite.isSessionOrCompartment ||
+        includePrefixes.isEmpty() ||
+        includePrefixes.any { includePrefix ->
+            val pathId = testSuite.testElementPath.internalId
+            if (pathId.length > includePrefix.length) {
+                pathId.startsWith(includePrefix)
+            } else {
+                includePrefix.startsWith(pathId)
+            }
+        }
+
     override fun toString(): String =
         "${this::class.simpleName}(includePatterns=$includePatterns, excludePatterns=$excludePatterns)"
 
     companion object {
         /**
-         * Returns a list of regular expressions from a string of comma-separated patterns with `*` wildcards.
+         * Returns regular expressions from a string of [PATH_PATTERN_SEPARATOR]-separated patterns with `*` wildcards.
          */
-        private fun String?.toRegexList(): List<Regex> = this?.ifEmpty { null }?.split(PATH_PATTERN_SEPARATOR)?.map {
+        private fun String?.toRegexList(): List<Regex> = toPatternList().map {
             try {
                 buildString {
                     for (character in it) {
@@ -48,7 +65,23 @@ internal open class ListsBasedElementSelection protected constructor(
             } catch (throwable: Throwable) {
                 throw IllegalArgumentException("Could not convert regex pattern '$it'.", throwable)
             }
-        } ?: listOf()
+        }
+
+        /**
+         * Returns literal prefixes from a string of [PATH_PATTERN_SEPARATOR]-separated patterns with `*` wildcards.
+         *
+         * A literal prefix is the longest prefix of a pattern that is free of any wildcard. For example,
+         * the literal prefix of "com.example.MySuite|sub-suite*|test2*" is "com.example.MySuite|sub-suite".
+         * A trailing path segment separator is always dropped from a literal prefix.
+         */
+        private fun String?.toPrefixList(): List<String> = toPatternList().map {
+            it.substringBefore('*').run {
+                if (this.endsWith(INTERNAL_PATH_SEGMENT_SEPARATOR)) dropLast(1) else this
+            }
+        }.toSet().toList()
+
+        private fun String?.toPatternList(): List<String> =
+            this?.ifEmpty { null }?.split(PATH_PATTERN_SEPARATOR) ?: listOf()
 
         private val REGEX_META_CHARACTERS = "\\[].^$?+{}|()".toSet()
     }

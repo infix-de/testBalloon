@@ -25,6 +25,8 @@ internal typealias JsPromiseLike = Any
  * Registers [this] element with the Kotlin/JS test framework.
  */
 internal fun TestElement.registerWithKotlinJsTestFramework() {
+    if (!isIncluded) return
+
     when (this) {
         is TestSuite -> {
             if (isSessionOrCompartment) {

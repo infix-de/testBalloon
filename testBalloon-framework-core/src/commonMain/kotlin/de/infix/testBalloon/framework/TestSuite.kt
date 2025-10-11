@@ -320,6 +320,14 @@ public open class TestSuite internal constructor(
     }
 
     override fun parameterize(selection: Selection, report: TestConfigurationReport) {
+        if (!selection.mayInclude(this)) {
+            // Short-circuit test registration, if possible.
+            // If the selection is sure not to include this suite, do not create any children below it.
+            // This helps to keep the test element tree small, speeding up the test registration phase.
+            isIncluded = false
+            return
+        }
+
         configureReporting(report) {
             inConfigurationScope {
                 content()
@@ -342,8 +350,10 @@ public open class TestSuite internal constructor(
                 it.parameterize(selection, report)
             }
 
+            // Propagate inclusion status bottom up: A suite without children excludes itself.
+            isIncluded = testElementChildren.any { it.isIncluded }
             // Propagate enabled status bottom up: A suite without enabled children disables itself.
-            enabledChildExists = testElementChildren.any { it.isIncluded && it.testElementIsEnabled }
+            enabledChildExists = isIncluded && testElementChildren.any { it.isIncluded && it.testElementIsEnabled }
         }
     }
 

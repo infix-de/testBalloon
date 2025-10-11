@@ -8,7 +8,7 @@ package de.infix.testBalloon.framework.internal
  * The separator between segments of an internal test element path, used for test selection.
  */
 @TestBalloonInternalApi
-public const val INTERNAL_PATH_SEGMENT_SEPARATOR: String = "|"
+public const val INTERNAL_PATH_SEGMENT_SEPARATOR: Char = '|'
 
 /**
  * The separator between path patterns, human-readable.

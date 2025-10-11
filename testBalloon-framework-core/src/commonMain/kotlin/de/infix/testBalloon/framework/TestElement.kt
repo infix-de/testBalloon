@@ -33,7 +33,9 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
         /**
          * This path's internal ID, directly derived from element names.
          */
-        internal val internalId: String by lazy { flattened(INTERNAL_PATH_SEGMENT_SEPARATOR) { testElementName } }
+        internal val internalId: String by lazy {
+            flattened(INTERNAL_PATH_SEGMENT_SEPARATOR_STRING) { testElementName }
+        }
 
         /**
          * This path's qualified reporting name.
@@ -92,6 +94,7 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
             private const val NON_BREAKING_SPACE = '\u00a0'
             private const val MIDDLE_DOT = "·"
             private const val REPORTING_SEPARATOR: String = "$NON_BREAKING_SPACE↘$NON_BREAKING_SPACE"
+            private const val INTERNAL_PATH_SEGMENT_SEPARATOR_STRING = "$INTERNAL_PATH_SEGMENT_SEPARATOR"
         }
     }
 

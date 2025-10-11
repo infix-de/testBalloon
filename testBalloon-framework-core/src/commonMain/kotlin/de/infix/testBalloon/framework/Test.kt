@@ -25,11 +25,13 @@ public class Test internal constructor(
         configureReporting(report) {
             super.parameterize(selection, report)
 
-            if (testElementIsEnabled && !selection.includes(this)) testElementIsEnabled = false
+            isIncluded = selection.includes(this)
         }
     }
 
     override suspend fun execute(report: TestExecutionReport) {
+        if (!isIncluded) return
+
         executeReporting(report) {
             if (testElementIsEnabled) {
                 @Suppress("DEPRECATION")

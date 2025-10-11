@@ -46,8 +46,7 @@ public open class TestConfig internal constructor(
     internal fun parameterizing(nextParameterizingAction: ParameterizingAction): TestConfig = TestConfig(
         parameterizingAction = if (parameterizingAction != null) {
             {
-                parameterizingAction()
-                nextParameterizingAction()
+                parameterizingAction().nextParameterizingAction()
             }
         } else {
             nextParameterizingAction
@@ -98,8 +97,10 @@ public open class TestConfig internal constructor(
     }
 
     /** Parameterizes [testElement] according to `this` configuration. */
-    internal open fun parameterize(testElement: TestElement) {
-        if (parameterizingAction != null) testElement.parameterizingAction()
+    internal fun parameterize(testElement: TestElement) {
+        val initialParameters = testElement.testElementParent?.parameters ?: TestElement.Parameters.default
+        testElement.parameters =
+            if (parameterizingAction == null) initialParameters else initialParameters.parameterizingAction()
     }
 
     /** Wraps the execution according to `this` configuration, then executes [elementAction] on [testElement]. */
@@ -107,13 +108,22 @@ public open class TestConfig internal constructor(
         testElement: SpecificTestElement,
         elementAction: suspend SpecificTestElement.() -> Unit
     ) {
+        var elementActionInvoked = false
+        val invocationGuardingAction: suspend SpecificTestElement.() -> Unit = {
+            elementAction()
+            elementActionInvoked = true
+        }
         val executionTraversalContext = ExecutionTraversalContext.current()
         if (executionTraversalContext != null) {
             executionTraversalContext.executeInside(testElement) {
-                executionWrappingAction.wrapIfNotNull(testElement, elementAction)
+                executionWrappingAction.wrapIfNotNull(testElement, invocationGuardingAction)
             }
         } else {
-            executionWrappingAction.wrapIfNotNull(testElement, elementAction)
+            executionWrappingAction.wrapIfNotNull(testElement, invocationGuardingAction)
+        }
+        require(elementActionInvoked || TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION in testElement.parameters.permits) {
+            "$testElement: the element action has not been invoked.\n" +
+                "\tThis is typically caused by a wrapper not invoking its element action."
         }
     }
 
@@ -134,7 +144,7 @@ public open class TestConfig internal constructor(
     public companion object : TestConfig(null, null, null)
 }
 
-private typealias ParameterizingAction = TestElement.() -> Unit
+private typealias ParameterizingAction = TestElement.Parameters.() -> TestElement.Parameters
 private typealias ExecutionReportSetupAction =
     suspend TestElement.(elementAction: suspend TestElement.() -> Unit) -> Unit
 
@@ -148,8 +158,8 @@ private typealias ExecutionReportSetupAction =
  * - An [TestElementExecutionWrappingAction] must invoke `elementAction` exactly once.
  *
  * Requirements for [TestElement]s of type [Test]:
- * - If `elementAction` throws, it is considered a test failure. If [TestElementExecutionWrappingAction] catches the exception,
- *   it should re-throw, or the test failure will be muted.
+ * - If `elementAction` throws, it is considered a test failure. If [TestElementExecutionWrappingAction] catches the
+ *   exception, it should re-throw, or the test failure will be muted.
  * - [TestElementExecutionWrappingAction] may throw an exception on its own initiative, which will be considered a test
  *   failure.
  *
@@ -167,7 +177,11 @@ public typealias TestElementExecutionWrappingAction = suspend TestElement.(
  *
  * It disables test execution for the [TestElement] it is configured for and all elements below it.
  */
-public fun TestConfig.disable(): TestConfig = parameterizing { testElementIsEnabled = false }
+public fun TestConfig.disable(): TestConfig = parameterizing {
+    // Starting with the parent element's parameters, we can only disable.
+    // We can never enable an element with a disabled parent.
+    if (isEnabled) copy(isEnabled = false) else this
+}
 
 /**
  * Returns a test configuration which wraps a coroutine [context] around the [TestElement]'s execution.
@@ -279,8 +293,8 @@ public fun TestConfig.traversal(executionTraversal: TestExecutionTraversal): Tes
     executionWrapping { elementAction ->
         val testElement = this
         withContext(ExecutionTraversalContext(executionTraversal)) {
-            // The context element enables the traversal for this element's children only. To cover this element as well,
-            // we explicitly invoke its traversal action.
+            // The context element enables the traversal for this element's children only. To cover this element as
+            // well, we explicitly invoke its traversal action.
             executionTraversal.aroundEach(testElement, elementAction)
         }
     }
@@ -369,6 +383,49 @@ public enum class TestInvocation {
 
 private class InvocationContext(val mode: TestInvocation) : AbstractCoroutineContextElement(Key) {
     companion object Key : CoroutineContext.Key<InvocationContext>
+}
+
+/**
+ * Returns a test configuration which specifies a set of [permits] for all [TestSuite]s of a [TestElement] tree.
+ *
+ * The [permits] apply to the [TestSuite] they are configured for and all [TestSuite]s below it, unless configured
+ * otherwise.
+ */
+@TestBalloonExperimentalApi
+public fun TestConfig.permits(vararg permits: TestPermit): TestConfig = parameterizing {
+    copy(permits = permits.toSet())
+}
+
+/**
+ * Returns a test configuration which adds [permits] for all [TestSuite]s of a [TestElement] tree.
+ *
+ * See [permits].
+ */
+@TestBalloonExperimentalApi
+public fun TestConfig.addPermits(vararg permits: TestPermit): TestConfig = parameterizing {
+    copy(permits = this.permits + permits.toSet())
+}
+
+/**
+ * Returns a test configuration which removes [permits] for all [TestSuite]s of a [TestElement] tree.
+ *
+ * See [permits].
+ */
+@TestBalloonExperimentalApi
+public fun TestConfig.removePermits(vararg permits: TestPermit): TestConfig = parameterizing {
+    copy(permits = this.permits - permits.toSet())
+}
+
+/**
+ * The permit to accept a situation which would otherwise trigger an error in TestBalloon.
+ */
+@TestBalloonExperimentalApi
+public enum class TestPermit {
+    /** Accept a test suite not registering and child tests or suites. */
+    SUITE_WITHOUT_CHILDREN,
+
+    /** Accept a wrapper not invoking its inner action, effectively blocking everything inside. */
+    WRAPPER_WITHOUT_INNER_INVOCATION
 }
 
 /**

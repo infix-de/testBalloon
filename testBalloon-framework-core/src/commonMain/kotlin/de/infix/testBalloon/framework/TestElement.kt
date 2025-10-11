@@ -101,7 +101,26 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
 
     internal val isTopLevelSuite: Boolean = parent is TestCompartment
 
-    override var testElementIsEnabled: Boolean = true
+    override val testElementIsEnabled: Boolean get() = parameters.isEnabled
+
+    /** Indicates whether the element included by the session's [Selection]? */
+    internal var isIncluded: Boolean = true
+
+    @Suppress("ktlint:standard:backing-property-naming")
+    private var _parameters: Parameters? = null
+
+    internal var parameters: Parameters
+        get() = _parameters ?: Parameters.default
+        set(value) {
+            require(_parameters == null) { "$this: parameters may be set only once" }
+            _parameters = value
+        }
+
+    internal data class Parameters(val isEnabled: Boolean = true, val permits: Set<TestPermit> = emptySet()) {
+        companion object {
+            val default = Parameters()
+        }
+    }
 
     /** The most recent event observed by a `SequencingExecutionReport`. */
     internal var recentEvent: TestElementEvent? = null
@@ -121,6 +140,15 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
      */
     internal interface Selection {
         fun includes(testElement: TestElement): Boolean
+
+        /**
+         * Returns true if the selection may include [testSuite], false if it is guaranteed to exclude it.
+         *
+         * Normally, the inclusion of a suite cannot be fully determined until all its child elements have been
+         * considered. But if the selection uses a literal pattern (without wildcards) or a literal prefix,
+         * we can use it to determine up-front which suites cannot be included.
+         */
+        fun mayInclude(testSuite: TestSuite): Boolean
     }
 
     /**
@@ -129,9 +157,6 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
      * The framework invokes this method for all test elements before creating an execution plan.
      */
     internal open fun parameterize(selection: Selection, report: TestConfigurationReport) {
-        testElementParent?.let { parent ->
-            if (!parent.testElementIsEnabled) testElementIsEnabled = false // Inherit a 'disabled' state
-        }
         @Suppress("DEPRECATION")
         testConfig.parameterize(this)
     }
@@ -208,6 +233,7 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
          */
         internal val AllInSelection = object : Selection {
             override fun includes(testElement: TestElement): Boolean = true
+            override fun mayInclude(testSuite: TestSuite): Boolean = true
         }
     }
 }

@@ -83,6 +83,10 @@ public open class TestSuite internal constructor(
 
     private val children: MutableList<TestElement> = mutableListOf()
 
+    override val testElementIsEnabled: Boolean get() = super.testElementIsEnabled && enabledChildExists
+
+    private var enabledChildExists: Boolean = false
+
     private val childElementNameCount: MutableMap<String, Int> = mutableMapOf()
 
     private val childDisplayNameCount: MutableMap<String, Int> = mutableMapOf()
@@ -323,17 +327,29 @@ public open class TestSuite internal constructor(
 
             super.parameterize(selection, report)
 
+            check(testElementChildren.any() || TestPermit.SUITE_WITHOUT_CHILDREN in parameters.permits) {
+                buildString {
+                    append("$this does not contain any child tests or test suites.\n")
+                    if (this@TestSuite is TestSession) {
+                        append("\tPlease add tests or remove the TestBalloon Gradle plugin from this project.")
+                    } else {
+                        append("\tPlease add at least one test or test suite to this test suite, or remove it.")
+                    }
+                }
+            }
+
             testElementChildren.forEach {
                 it.parameterize(selection, report)
             }
 
-            if (testElementIsEnabled && testElementChildren.none { it.testElementIsEnabled }) {
-                testElementIsEnabled = false
-            }
+            // Propagate enabled status bottom up: A suite without enabled children disables itself.
+            enabledChildExists = testElementChildren.any { it.isIncluded && it.testElementIsEnabled }
         }
     }
 
     override suspend fun execute(report: TestExecutionReport) {
+        if (!isIncluded) return
+
         executeReporting(report) {
             if (testElementIsEnabled) {
                 @Suppress("DEPRECATION")

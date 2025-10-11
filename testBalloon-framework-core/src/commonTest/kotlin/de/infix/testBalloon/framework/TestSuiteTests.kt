@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -222,6 +223,53 @@ class TestSuiteTests {
                 ),
                 trace.elements()
             )
+        }
+    }
+
+    @Test
+    fun aroundAllWithoutInnerInvocation() = withTestFramework {
+        val suite1 by testSuite("suite1", testConfig = TestConfig.aroundAll {}) {
+            test("test1") {}
+        }
+
+        withTestReport(suite1) {
+            finishedTestEvents().any {
+                it.throwable?.message?.contains("the element action has not been invoked") == true
+            }
+        }
+    }
+
+    @Test
+    fun aroundAllWithoutInnerInvocationPermitted() = withTestFramework {
+        val suite1 by testSuite(
+            "suite1",
+            testConfig = TestConfig.permits(TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION).aroundAll {}
+        ) {
+            test("test1") {}
+        }
+
+        withTestReport(suite1) {
+            finishedTestEvents().all { it.succeeded }
+        }
+    }
+
+    @Test
+    fun suiteWithoutChildren() = withTestFramework {
+        val suite1 by testSuite("suite1") {
+        }
+
+        assertFails("does not contain any child tests or test suites") {
+            withTestReport(suite1) {}
+        }
+    }
+
+    @Test
+    fun suiteWithoutChildrenPermitted() = withTestFramework {
+        val suite1 by testSuite("suite1", testConfig = TestConfig.permits(TestPermit.SUITE_WITHOUT_CHILDREN)) {
+        }
+
+        withTestReport(suite1) {
+            finishedTestEvents().all { it.succeeded }
         }
     }
 

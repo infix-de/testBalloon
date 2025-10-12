@@ -19,9 +19,11 @@ import kotlin.test.fail
 class TeamCityTestExecutionReportTests {
     private val timestampRegex = Regex("""timestamp='[^']+'""")
     private val detailsRegex = Regex("""details='[^:]+Error:[^']*'""")
+    private val rSepEsc = "|0x00a0|0x2198|0x00a0" // escaped report separator
+    private val iSepEsc = "|0x2198" // escaped internal separator
 
     @Test
-    fun basicOutputIntelliJ() = basicOutputTest(ReportingMode.INTELLIJ_IDEA, "topSuite|0x00a0|0x2198|0x00a0")
+    fun basicOutputIntelliJ() = basicOutputTest(ReportingMode.INTELLIJ_IDEA, "topSuite$rSepEsc")
 
     @Test
     fun basicOutputFiles() = basicOutputTest(ReportingMode.FILES, "")
@@ -53,7 +55,7 @@ class TeamCityTestExecutionReportTests {
                     .assertContainsInOrder(
                         listOf(
                             "##teamcity[testSuiteStarted name='topSuite' timestamp='...']",
-                            "##teamcity[flowStarted flowId='topSuite' parent='TestSession||@Default']",
+                            "##teamcity[flowStarted flowId='topSuite' parent='TestSession$iSepEsc@Default']",
                             "##teamcity[testStarted name='test1' timestamp='...']",
                             "##teamcity[testFinished name='test1' timestamp='...']",
                             "##teamcity[testStarted name='test2' timestamp='...']",
@@ -61,20 +63,20 @@ class TeamCityTestExecutionReportTests {
                                 " details='AssertionError']",
                             "##teamcity[testFinished name='test2' timestamp='...']",
                             "##teamcity[testSuiteStarted name='${extraPath}subSuite1' timestamp='...']",
-                            "##teamcity[flowStarted flowId='topSuite||subSuite1' parent='topSuite']",
+                            "##teamcity[flowStarted flowId='topSuite${iSepEsc}subSuite1' parent='topSuite']",
                             "##teamcity[testStarted name='test1' timestamp='...']",
                             "##teamcity[testFinished name='test1' timestamp='...']",
-                            "##teamcity[flowFinished flowId='topSuite||subSuite1']",
+                            "##teamcity[flowFinished flowId='topSuite${iSepEsc}subSuite1']",
                             "##teamcity[testSuiteFinished name='${extraPath}subSuite1' timestamp='...']",
                             "##teamcity[testStarted name='test3' timestamp='...']",
                             "##teamcity[testFinished name='test3' timestamp='...']",
                             "##teamcity[testSuiteStarted name='${extraPath}subSuite2' timestamp='...']",
-                            "##teamcity[flowStarted flowId='topSuite||subSuite2' parent='topSuite']",
+                            "##teamcity[flowStarted flowId='topSuite${iSepEsc}subSuite2' parent='topSuite']",
                             "##teamcity[testStarted name='test1' timestamp='...']",
                             "##teamcity[testFailed name='test1' timestamp='...' message='intentionally'" +
                                 " details='AssertionError']",
                             "##teamcity[testFinished name='test1' timestamp='...']",
-                            "##teamcity[flowFinished flowId='topSuite||subSuite2']",
+                            "##teamcity[flowFinished flowId='topSuite${iSepEsc}subSuite2']",
                             "##teamcity[testSuiteFinished name='${extraPath}subSuite2' timestamp='...']",
                             "##teamcity[flowFinished flowId='topSuite']",
                             "##teamcity[testSuiteFinished name='topSuite' timestamp='...']"
@@ -116,11 +118,11 @@ class TeamCityTestExecutionReportTests {
             "/S",
             "suite-1/S",
             "suite-2/S", // concurrent start, delayed reporting
-            "suite-2.suite-2-test2", // reported in tree order (2)
-            "suite-2.suite-2-test1", // reported in tree order (1)
-            "suite-1.suite-1-test2", // reported in start order (1)
+            "suite-2|suite-2-test2", // reported in tree order (2)
+            "suite-2|suite-2-test1", // reported in tree order (1)
+            "suite-1|suite-1-test2", // reported in start order (1)
             "suite-2/F", // finished before suite-1, children reported in tree order, not start order
-            "suite-1.suite-1-test1", // reported in start order (2)
+            "suite-1|suite-1-test1", // reported in start order (2)
             "suite-1/F",
             "test2",
             "test1",
@@ -128,8 +130,8 @@ class TeamCityTestExecutionReportTests {
         ).forEach { elementPathPlusOptionalSuffix ->
             val elementPath = elementPathPlusOptionalSuffix.substringBeforeLast("/")
             val suffix = elementPathPlusOptionalSuffix.substringAfterLast("/", "")
-            val segments = if (elementPath.isEmpty()) listOf() else elementPath.split(".")
-            val element = segments.fold<String, TestElement>(suite) { element, childName ->
+            val elements = if (elementPath.isEmpty()) listOf() else elementPath.split("|")
+            val element = elements.fold<String, TestElement>(suite) { element, childName ->
                 (element as TestSuite).testElementChildren.first { it.testElementName == childName }
             }
             when (suffix) {
@@ -149,22 +151,22 @@ class TeamCityTestExecutionReportTests {
         output.comparableElements().assertContainsInOrder(
             listOf(
                 "##teamcity[testSuiteStarted name='concurrent' timestamp='...']",
-                "##teamcity[flowStarted flowId='concurrent' parent='TestSession||@Default']",
+                "##teamcity[flowStarted flowId='concurrent' parent='TestSession$iSepEsc@Default']",
                 "##teamcity[testSuiteStarted name='suite-1' timestamp='...']",
-                "##teamcity[flowStarted flowId='concurrent||suite-1' parent='concurrent']",
+                "##teamcity[flowStarted flowId='concurrent${iSepEsc}suite-1' parent='concurrent']",
                 "##teamcity[testStarted name='suite-1-test2' timestamp='...']",
                 "##teamcity[testFinished name='suite-1-test2' timestamp='...']",
                 "##teamcity[testStarted name='suite-1-test1' timestamp='...']",
                 "##teamcity[testFinished name='suite-1-test1' timestamp='...']",
-                "##teamcity[flowFinished flowId='concurrent||suite-1']",
+                "##teamcity[flowFinished flowId='concurrent${iSepEsc}suite-1']",
                 "##teamcity[testSuiteFinished name='suite-1' timestamp='...']",
                 "##teamcity[testSuiteStarted name='suite-2' timestamp='...']",
-                "##teamcity[flowStarted flowId='concurrent||suite-2' parent='concurrent']",
+                "##teamcity[flowStarted flowId='concurrent${iSepEsc}suite-2' parent='concurrent']",
                 "##teamcity[testStarted name='suite-2-test1' timestamp='...']",
                 "##teamcity[testFinished name='suite-2-test1' timestamp='...']",
                 "##teamcity[testStarted name='suite-2-test2' timestamp='...']",
                 "##teamcity[testFinished name='suite-2-test2' timestamp='...']",
-                "##teamcity[flowFinished flowId='concurrent||suite-2']",
+                "##teamcity[flowFinished flowId='concurrent${iSepEsc}suite-2']",
                 "##teamcity[testSuiteFinished name='suite-2' timestamp='...']",
                 "##teamcity[testStarted name='test2' timestamp='...']",
                 "##teamcity[testFinished name='test2' timestamp='...']",

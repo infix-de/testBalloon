@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework
 
+import de.infix.testBalloon.framework.internal.Constants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,7 +28,9 @@ class TestTests {
         test("test1") {
             assertFails {
                 testScope.currentTime
-            }.assertMessageStartsWith("Test(«suite|test1») is not executing in a TestScope.")
+            }.assertMessageStartsWith(
+                "Test(«suite${Constants.INTERNAL_PATH_ELEMENT_SEPARATOR}test1») is not executing in a TestScope."
+            )
         }
     }
 

@@ -1,20 +1,8 @@
 package de.infix.testBalloon.framework.internal
 
 /**
- * This file contains parameters shared across framework components.
+ * This file contains symbols shared across framework modules.
  */
-
-/**
- * The separator between segments of an internal test element path, used for test selection.
- */
-@TestBalloonInternalApi
-public const val INTERNAL_PATH_SEGMENT_SEPARATOR: Char = '|'
-
-/**
- * The separator between path patterns, human-readable.
- */
-@TestBalloonInternalApi
-public const val PATH_PATTERN_SEPARATOR: Char = '⬥'
 
 /**
  * The framework-internal test reporting mode.
@@ -79,4 +67,10 @@ public object Constants {
 
     public const val GRADLE_EXTENSION_NAME: String = "testBalloon"
     public const val GRADLE_PROPERTY_PREFIX: String = "testBalloon"
+
+    /** The internal separator between elements of a test element path. */
+    public const val INTERNAL_PATH_ELEMENT_SEPARATOR: Char = '↘'
+
+    /** The internal separator between path patterns. */
+    public const val INTERNAL_PATH_PATTERN_SEPARATOR: Char = '⬥'
 }

@@ -1,6 +1,6 @@
 package de.infix.testBalloon.framework
 
-import de.infix.testBalloon.framework.internal.INTERNAL_PATH_SEGMENT_SEPARATOR
+import de.infix.testBalloon.framework.internal.Constants
 import de.infix.testBalloon.framework.internal.ReportingMode
 import de.infix.testBalloon.framework.internal.reportingPathLimit
 
@@ -34,7 +34,7 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
          * This path's internal ID, directly derived from element names.
          */
         internal val internalId: String by lazy {
-            flattened(INTERNAL_PATH_SEGMENT_SEPARATOR_STRING) { testElementName }
+            flattened(INTERNAL_PATH_ELEMENT_SEPARATOR_STRING) { testElementName }
         }
 
         /**
@@ -54,7 +54,7 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
             when (TestSession.global.reportingMode) {
                 ReportingMode.INTELLIJ_IDEA -> {
                     // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA, but
-                    // duplicates path segments in XML and HTML file reports.
+                    // duplicates path elements in XML and HTML file reports.
                     if (element is Test) simpleReportingName else qualifiedReportingName
                 }
 
@@ -66,35 +66,35 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
         }
 
         private fun TestElement.externalizedName(): String = if (isTopLevelSuite) {
-            when (TestSession.global.reportingMode) {
-                ReportingMode.INTELLIJ_IDEA -> testElementName // TODO: replace with `testElementDisplayName` if selection uses internalId
-                ReportingMode.FILES -> testElementName // file reports assume that a package name is present
-            }
+            // Do not escape display names for top-level suites as reporting tools extract a package name.
+            // If users supply display names formatted without a package prefix, reports might deviate from
+            // expectations.
+            testElementDisplayName
         } else {
             if (this is Test) {
-                testElementDisplayName.replace(".", MIDDLE_DOT)
+                testElementDisplayName.replace(".", ESCAPED_DOT)
             } else {
                 // lower-level suite
-                testElementDisplayName.replace(' ', NON_BREAKING_SPACE).replace(".", MIDDLE_DOT)
+                testElementDisplayName.replace(' ', ESCAPED_SPACE).replace(".", ESCAPED_DOT)
             }
         }
 
-        private fun flattened(separator: String, segment: TestElement.() -> String): String =
+        private fun flattened(separator: String, elementName: TestElement.() -> String): String =
             if (element.testElementParent == null || element.isTopLevelSuite) {
-                element.segment()
+                element.elementName()
             } else {
                 buildString {
-                    append(element.testElementParent.testElementPath.flattened(separator, segment))
+                    append(element.testElementParent.testElementPath.flattened(separator, elementName))
                     append(separator)
-                    append(segment(element))
+                    append(elementName(element))
                 }
             }
 
         private companion object {
-            private const val NON_BREAKING_SPACE = '\u00a0'
-            private const val MIDDLE_DOT = "·"
-            private const val REPORTING_SEPARATOR: String = "$NON_BREAKING_SPACE↘$NON_BREAKING_SPACE"
-            private const val INTERNAL_PATH_SEGMENT_SEPARATOR_STRING = "$INTERNAL_PATH_SEGMENT_SEPARATOR"
+            private const val ESCAPED_SPACE = '\u00a0' // non-breaking space
+            private const val ESCAPED_DOT = "·" // middle dot
+            private const val REPORTING_SEPARATOR: String = "$ESCAPED_SPACE↘$ESCAPED_SPACE"
+            private const val INTERNAL_PATH_ELEMENT_SEPARATOR_STRING = "${Constants.INTERNAL_PATH_ELEMENT_SEPARATOR}"
         }
     }
 

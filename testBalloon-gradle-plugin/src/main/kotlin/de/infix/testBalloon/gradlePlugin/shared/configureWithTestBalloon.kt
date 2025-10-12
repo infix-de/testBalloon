@@ -5,7 +5,6 @@ package de.infix.testBalloon.gradlePlugin.shared
 
 import de.infix.testBalloon.framework.internal.Constants
 import de.infix.testBalloon.framework.internal.EnvironmentVariable
-import de.infix.testBalloon.framework.internal.PATH_PATTERN_SEPARATOR
 import de.infix.testBalloon.framework.internal.ReportingMode
 import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import org.gradle.api.Project
@@ -105,10 +104,14 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                 fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
                     val patterns = primary.firstNotNullOfOrNull {
                         providers.environmentVariable(it.name).orNull?.ifEmpty { null }
-                            ?.split("$PATH_PATTERN_SEPARATOR")
+                            ?.split("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
                     } ?: secondary
 
-                    return patterns.joinToString("$PATH_PATTERN_SEPARATOR", prefix = "\"", postfix = "\"") {
+                    return patterns.joinToString(
+                        "${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}",
+                        prefix = "\"",
+                        postfix = "\""
+                    ) {
                         it.replace("\"", "\\\"")
                     }
                 }
@@ -165,7 +168,7 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                     primary.firstNotNullOfOrNull {
                         providers.environmentVariable(it.name).orNull?.ifEmpty { null }
                     }
-                        ?: secondary.joinToString("${PATH_PATTERN_SEPARATOR}")
+                        ?: secondary.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
 
                 setTestEnvironment(
                     EnvironmentVariable.TESTBALLOON_INCLUDE,

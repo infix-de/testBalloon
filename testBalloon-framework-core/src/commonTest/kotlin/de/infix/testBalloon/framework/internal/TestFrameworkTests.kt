@@ -13,7 +13,10 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 
+@Suppress("SpellCheckingInspection")
 class TestFrameworkTests {
+    private val iSep = Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
+
     @Test
     fun frameworkNotInitialized() {
         assertFailsWith<IllegalStateException> {
@@ -26,8 +29,8 @@ class TestFrameworkTests {
     fun elementSelectionByArguments() = verifyElementSelection(
         ArgumentsBasedElementSelection(arrayOf("--include", "suite1|sub-suite1|*")),
         listOf(
-            Pair("«suite1|sub-suite1|test1»", true),
-            Pair("«suite1|sub-suite1|test2»", false)
+            Pair("«suite1${iSep}sub-suite1${iSep}test1»", true),
+            Pair("«suite1${iSep}sub-suite1${iSep}test2»", false)
         )
     )
 
@@ -35,8 +38,16 @@ class TestFrameworkTests {
     fun elementSelectionByEnvironment() = verifyElementSelection(
         EnvironmentBasedElementSelection(includePatterns = "suite1|sub-suite1|*", excludePatterns = null),
         listOf(
-            Pair("«suite1|sub-suite1|test1»", true),
-            Pair("«suite1|sub-suite1|test2»", false)
+            Pair("«suite1${iSep}sub-suite1${iSep}test1»", true),
+            Pair("«suite1${iSep}sub-suite1${iSep}test2»", false)
+        )
+    )
+
+    @Test
+    fun elementSelectionWithCustomSeparator() = verifyElementSelection(
+        EnvironmentBasedElementSelection(includePatterns = ";suite1;sub-suite1;te*1", excludePatterns = null),
+        listOf(
+            Pair("«suite1${iSep}sub-suite1${iSep}test1»", true)
         )
     )
 
@@ -44,14 +55,14 @@ class TestFrameworkTests {
     fun elementSelectionAllIn() = verifyElementSelection(
         TestElement.AllInSelection,
         listOf(
-            Pair("«suite1|test1»", true),
-            Pair("«suite1|test2»", false),
-            Pair("«suite1|sub-suite1|test1»", true),
-            Pair("«suite1|sub-suite1|test2»", false),
-            Pair("«suite1|sub-suite2|test1»", false),
-            Pair("«suite1|sub-suite2|test2»", false),
-            Pair("«suite2|test1»", true),
-            Pair("«suite2|test2»", false)
+            Pair("«suite1${iSep}test1»", true),
+            Pair("«suite1${iSep}test2»", false),
+            Pair("«suite1${iSep}sub-suite1${iSep}test1»", true),
+            Pair("«suite1${iSep}sub-suite1${iSep}test2»", false),
+            Pair("«suite1${iSep}sub-suite2${iSep}test1»", false),
+            Pair("«suite1${iSep}sub-suite2${iSep}test2»", false),
+            Pair("«suite2${iSep}test1»", true),
+            Pair("«suite2${iSep}test2»", false)
         )
     )
 
@@ -59,8 +70,8 @@ class TestFrameworkTests {
     fun elementSelectionWithShortIncludePrefix() = verifyElementSelection(
         EnvironmentBasedElementSelection(includePatterns = "s*uite1|sub-suite1|*", excludePatterns = null),
         listOf(
-            Pair("«suite1|sub-suite1|test1»", true),
-            Pair("«suite1|sub-suite1|test2»", false)
+            Pair("«suite1${iSep}sub-suite1${iSep}test1»", true),
+            Pair("«suite1${iSep}sub-suite1${iSep}test2»", false)
         )
     )
 
@@ -68,21 +79,24 @@ class TestFrameworkTests {
     fun elementSelectionWithExclusion() = verifyElementSelection(
         EnvironmentBasedElementSelection(includePatterns = null, excludePatterns = "*|test1"),
         listOf(
-            Pair("«suite1|test2»", false),
-            Pair("«suite1|sub-suite1|test2»", false),
-            Pair("«suite1|sub-suite2|test2»", false),
-            Pair("«suite2|test2»", false)
+            Pair("«suite1${iSep}test2»", false),
+            Pair("«suite1${iSep}sub-suite1${iSep}test2»", false),
+            Pair("«suite1${iSep}sub-suite2${iSep}test2»", false),
+            Pair("«suite2${iSep}test2»", false)
         )
     )
 
     @Test
     fun elementSelectionWithInclusionAndExclusion() = verifyElementSelection(
-        EnvironmentBasedElementSelection(includePatterns = "suite1|*", excludePatterns = "*|sub-suite1|*"),
+        EnvironmentBasedElementSelection(
+            includePatterns = "suite1|*",
+            excludePatterns = "*|sub-suite1|*"
+        ),
         listOf(
-            Pair("«suite1|test1»", true),
-            Pair("«suite1|test2»", false),
-            Pair("«suite1|sub-suite2|test1»", false),
-            Pair("«suite1|sub-suite2|test2»", false)
+            Pair("«suite1${iSep}test1»", true),
+            Pair("«suite1${iSep}test2»", false),
+            Pair("«suite1${iSep}sub-suite2${iSep}test1»", false),
+            Pair("«suite1${iSep}sub-suite2${iSep}test2»", false)
         )
     )
 

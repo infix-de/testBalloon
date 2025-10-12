@@ -49,13 +49,27 @@ internal open class ListsBasedElementSelection protected constructor(
 
     companion object {
         /**
-         * Returns regular expressions from a string of [PATH_PATTERN_SEPARATOR]-separated patterns with `*` wildcards.
+         * Returns regular expressions from a string of path patterns with `*` wildcards.
+         *
+         * The first character of each pattern may define an input separator (the default of which is '|').
          */
         private fun String?.toRegexList(): List<Regex> = toPatternList().map {
             try {
+                var inputElementSeparator: Char? = null
                 buildString {
                     for (character in it) {
+                        // If the first character is not a letter, use it as an element separator, which will then
+                        // be transformed into the framework's internal separator.
+                        if (inputElementSeparator == null) {
+                            if (character.definesSeparator()) {
+                                inputElementSeparator = character
+                                continue
+                            } else {
+                                inputElementSeparator = DEFAULT_INPUT_ELEMENT_SEPARATOR
+                            }
+                        }
                         when (character) {
+                            inputElementSeparator -> append(Constants.INTERNAL_PATH_ELEMENT_SEPARATOR)
                             '*' -> append(".*")
                             in REGEX_META_CHARACTERS -> append("\\$character")
                             else -> append(character)
@@ -68,22 +82,34 @@ internal open class ListsBasedElementSelection protected constructor(
         }
 
         /**
-         * Returns literal prefixes from a string of [PATH_PATTERN_SEPARATOR]-separated patterns with `*` wildcards.
+         * Returns literal prefixes from a string of path patterns with `*` wildcards.
          *
          * A literal prefix is the longest prefix of a pattern that is free of any wildcard. For example,
          * the literal prefix of "com.example.MySuite|sub-suite*|test2*" is "com.example.MySuite|sub-suite".
-         * A trailing path segment separator is always dropped from a literal prefix.
+         *
+         * Also considered:
+         * - The first character of each pattern may define an input separator (the default of which is '|').
+         * - A trailing path element separator is always dropped from a literal prefix.
          */
         private fun String?.toPrefixList(): List<String> = toPatternList().map {
-            it.substringBefore('*').run {
-                if (this.endsWith(INTERNAL_PATH_SEGMENT_SEPARATOR)) dropLast(1) else this
+            var result = it.substringBefore('*')
+            var inputElementSeparator: Char = DEFAULT_INPUT_ELEMENT_SEPARATOR
+            if (result.firstOrNull().definesSeparator()) {
+                inputElementSeparator = result.first()
+                result = result.drop(1)
             }
+            result = result.replace(inputElementSeparator, Constants.INTERNAL_PATH_ELEMENT_SEPARATOR)
+            if (result.endsWith(Constants.INTERNAL_PATH_ELEMENT_SEPARATOR)) result = result.dropLast(1)
+            result
         }.toSet().toList()
 
         private fun String?.toPatternList(): List<String> =
-            this?.ifEmpty { null }?.split(PATH_PATTERN_SEPARATOR) ?: listOf()
+            this?.ifEmpty { null }?.split(Constants.INTERNAL_PATH_PATTERN_SEPARATOR) ?: listOf()
+
+        private fun Char?.definesSeparator() = this != null && !isLetter() && this != '*'
 
         private val REGEX_META_CHARACTERS = "\\[].^$?+{}|()".toSet()
+        private const val DEFAULT_INPUT_ELEMENT_SEPARATOR = '|'
     }
 }
 

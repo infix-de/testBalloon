@@ -47,7 +47,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
      * hierarchy display in IntelliJ's test run window.
      *
      * The mode `files` supplies test element names instead of full paths, supporting proper XML and HTML report
-     * files, avoiding duplicate path segments leading to `file name too long' errors.
+     * files, avoiding duplicate path elements leading to `file name too long' errors.
      *
      * `auto` detects whether tests run under IntelliJ IDEA and chooses the mode accordingly.
      */

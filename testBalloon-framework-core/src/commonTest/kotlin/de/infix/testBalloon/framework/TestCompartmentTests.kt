@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework
 
+import de.infix.testBalloon.framework.internal.Constants
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -13,6 +14,8 @@ import kotlin.test.fail
 import kotlin.time.Duration.Companion.milliseconds
 
 class TestCompartmentTests {
+    private val iSep = Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
+
     @Test
     fun defaultCompartment() = assertSuccessfulSuite {
         val compartment = testElementParent as? TestCompartment
@@ -86,12 +89,12 @@ class TestCompartmentTests {
                 assertElementPathsContainInOrder(
                     map {
                         it.element.testElementPath.internalId
-                    }.filter { it.startsWith("suite1|") || it.startsWith("suite3|") }
+                    }.filter { it.startsWith("suite1$iSep") || it.startsWith("suite3$iSep") }
                 )
                 assertElementPathsContainInOrder(
                     map {
                         it.element.testElementPath.internalId
-                    }.filter { it.startsWith("suite2|") || it.startsWith("suite4|") }
+                    }.filter { it.startsWith("suite2$iSep") || it.startsWith("suite4$iSep") }
                 )
             }
         }
@@ -156,12 +159,12 @@ class TestCompartmentTests {
                 assertElementPathsContainInOrder(
                     map {
                         it.element.testElementPath.internalId
-                    }.filter { it.startsWith("topSuite1|") }
+                    }.filter { it.startsWith("topSuite1$iSep") }
                 )
                 assertElementPathsContainInOrder(
                     map {
                         it.element.testElementPath.internalId
-                    }.filter { it.startsWith("topSuite2|") }
+                    }.filter { it.startsWith("topSuite2$iSep") }
                 )
             }
         }

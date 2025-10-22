@@ -14,8 +14,8 @@ dependencies {
 
 tasks {
     val integrationTestRepositoryDir = rootProject.layout.buildDirectory.dir("integration-test-repository")
-    val scenariosSourceDirectory = project.layout.projectDirectory.dir("scenarioTemplates")
-    val scenariosBuildDirectory = project.layout.buildDirectory.dir("scenarioTemplates")
+    val projectSourceTemplatesDirectory = project.layout.projectDirectory.dir("projectTemplates")
+    val projectBuildTemplatesDirectory = project.layout.buildDirectory.dir("projectTemplates")
 
     val updateIntegrationTestRepository by registering(Exec::class) {
         group = "verification"
@@ -32,24 +32,22 @@ tasks {
         }
     }
 
-    val syncScenarioBuildGradleConfiguration by registering(Copy::class) {
+    val copyScenarioBuildGradleConfigurationToBuildTemplates by registering(Copy::class) {
         group = "verification"
-        description = "Synchronizes the Gradle configuration in the scenario build directory" +
-            " with the root project's configuration."
+        description = "Copies the root project's Gradle configuration into the project build templates directory."
 
         val primaryProjectDirectory = rootDir
 
         from(primaryProjectDirectory)
-        into(scenariosBuildDirectory.map { it.dir("common") })
+        into(projectBuildTemplatesDirectory.map { it.dir("common") })
         include("gradlew*", "gradle/**")
         include("kotlin-js-store/**")
     }
 
-    val syncScenarioBuildFiles by registering(Copy::class) {
+    val copyAndParameterizeScenarioSourceTemplatesToBuildTemplates by registering(Copy::class) {
         group = "verification"
-        description = "Synchronizes the scenario build directory with scenario sources."
-
-        dependsOn(syncScenarioBuildGradleConfiguration)
+        description = "Copies the projects' template sources into the project build templates directory," +
+            " resolving template parameters."
 
         val baseVersions = with(project.the<VersionCatalogsExtension>().named("libs")) {
             versionAliases.associateWith { findVersion(it).get().displayName }
@@ -58,16 +56,16 @@ tasks {
             pluginAliases.associateWith { findPlugin(it).get().get().version.toString() }
         }
         val baseProperties = project.properties.map { it.key!! to it.value.toString() }.toMap()
-        val replaceRegex = Regex("""\{\{(.*?)\}\}""")
+        val parameterRegex = Regex("""\{\{(.*?)\}\}""")
 
         inputs.property("baseVersions", baseVersions)
         inputs.property("basePluginVersions", basePluginVersions)
         inputs.property("baseProperties", baseProperties)
 
-        from(scenariosSourceDirectory)
-        into(scenariosBuildDirectory)
+        from(projectSourceTemplatesDirectory)
+        into(projectBuildTemplatesDirectory)
         filter { line ->
-            line.replace(replaceRegex) { matchResult ->
+            line.replace(parameterRegex) { matchResult ->
                 val (protocol, name) = matchResult.groupValues[1].split(':')
                 when (protocol) {
                     "version" -> baseVersions[name] ?: "??version alias '$name' not found??"
@@ -86,10 +84,8 @@ tasks {
     }
 
     named("test") {
-        dependsOn(updateIntegrationTestRepository)
-        inputs.dir(integrationTestRepositoryDir)
-
-        dependsOn(syncScenarioBuildFiles)
-        inputs.dir(syncScenarioBuildFiles.map { it.destinationDir })
+        inputs.files(updateIntegrationTestRepository)
+        inputs.files(copyScenarioBuildGradleConfigurationToBuildTemplates)
+        inputs.files(copyAndParameterizeScenarioSourceTemplatesToBuildTemplates)
     }
 }

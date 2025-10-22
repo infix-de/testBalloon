@@ -1,40 +1,26 @@
 import de.infix.testBalloon.framework.AbstractTestElement
-import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.TestConfig
 import de.infix.testBalloon.framework.TestDiscoverable
 import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.disable
-import de.infix.testBalloon.framework.testPlatform
 import de.infix.testBalloon.framework.testScope
 import de.infix.testBalloon.framework.testSuite
-import java.nio.file.Path
-import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.collections.buildList
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.Path
-import kotlin.io.path.copyToRecursively
-import kotlin.io.path.createDirectories
-import kotlin.io.path.deleteRecursively
 import kotlin.io.path.div
-import kotlin.io.path.exists
 import kotlin.io.path.moveTo
-import kotlin.io.path.pathString
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.ExperimentalTime
 
 val IncrementalCompilationTests by testSuite(
     testConfig = TestConfig.testScope(isEnabled = true, timeout = 12.minutes)
 ) {
-    val kotlinTestConfig = TestConfig.disable()
-    val fullCompilationConfig = TestConfig.disable()
-
-    testScenario("incremental-compilation-kotlin-test", testConfig = kotlinTestConfig) {
-        variant("incremental compilation")
+    incrementalCompilationTestSuite(
+        "incremental-compilation-kotlin-test",
+        testConfig = TestConfig.disable() // enable to observe IC with kotlin-test
+    ) {
+        testSeries("incremental compilation")
     }
 
-    testScenario("incremental-compilation-testBalloon") {
-        variant(
+    incrementalCompilationTestSuite("incremental-compilation-testBalloon") {
+        testSeries(
             name = "full compilation",
             gradleOptions = arrayOf(
                 "-Pkotlin.incremental=false",
@@ -42,71 +28,51 @@ val IncrementalCompilationTests by testSuite(
                 "-Pkotlin.incremental.js.klib=false",
                 "-Pkotlin.incremental.js.ir=false"
             ),
-            testConfig = fullCompilationConfig
+            testConfig = TestConfig.disable() // enable to observe behavior with full compilation
         )
 
-        variant("incremental compilation")
+        testSeries("incremental compilation")
     }
 }
 
 @TestDiscoverable
-private fun TestSuite.testScenario(
-    scenarioName: String,
+private fun TestSuite.incrementalCompilationTestSuite(
+    projectName: String,
     testConfig: TestConfig = TestConfig,
-    action: TestScenario.() -> Unit
-) = testSuite(scenarioName, displayName = "scenario: $scenarioName", testConfig) {
-    val commonTemplateDirectory = Path("build") / "scenarioTemplates" / "common"
-    val scenarioTemplateDirectory = Path("build") / "scenarioTemplates" / scenarioName
-    val projectDirectory = Path("build") / "scenarioProjects" / scenarioName
-
-    @OptIn(ExperimentalPathApi::class)
-    aroundAll { testSuiteAction ->
-        log("Setting up $projectDirectory from $commonTemplateDirectory, $scenarioTemplateDirectory")
-        if (projectDirectory.exists()) projectDirectory.deleteRecursively()
-        projectDirectory.createDirectories()
-        commonTemplateDirectory.copyToRecursively(projectDirectory, followLinks = false, overwrite = false)
-        scenarioTemplateDirectory.copyToRecursively(projectDirectory, followLinks = false, overwrite = false)
-        testSuiteAction()
-    }
-
-    TestScenario(this@testSuite, projectDirectory).action()
+    action: IncrementalCompilationTestProject.() -> Unit
+) = testSuite(projectName, displayName = "project: $projectName", testConfig) {
+    IncrementalCompilationTestProject(this, projectName).action()
 }
 
-private class TestScenario(private val parentTestSuite: TestSuite, private val projectDirectory: Path) {
-    private val commonTestSourceDirectory = projectDirectory / "src" / "commonTest"
-    private val enabledSourcesDirectory = commonTestSourceDirectory / "kotlin"
-    private val disabledSourcesDirectory = commonTestSourceDirectory / "disabled"
+private class IncrementalCompilationTestProject(private val projectTestSuite: TestSuite, projectName: String) :
+    TestProject(projectTestSuite, projectName) {
 
-    private val taskNames = parentTestSuite.testFixture {
-        // Invoking `gradlew --version` does nothing meaningful, but it does trigger a Gradle distribution
-        // download if necessary. This ensures that the download info on stdout does not interfere with the
-        // output of `gradlew listTests` we are looking for.
-        gradleExecution(projectDirectory, "--version").checked()
-        gradleExecution(projectDirectory, "listTests", "--quiet").checkedStdout().lines()
-    }
+    /**
+     * A series of tests which repeatedly executes a Gradle test task for all available targets.
+     *
+     * The test series starts with a clean project containing a set of source files. The first task execution
+     * produces a baseline set of test results. Then, incremental compilation is challenged by
+     * - removing the first file,
+     * - executing the Gradle test task (one per target),
+     * - restoring the first file,
+     * - executing the Gradle test task (one per target).
+     * Incremental compilation is correct if the test results match the set of files present at each stage.
+     */
+    @TestDiscoverable
+    fun testSeries(name: String, gradleOptions: Array<String> = arrayOf(), testConfig: TestConfig = TestConfig) =
+        projectTestSuite.testSuite(name, testConfig = testConfig) {
+            suspend fun compileTaskExecution(taskName: String) = gradleExecution(taskName, *gradleOptions)
 
-    private val npmPackageLockTasks = parentTestSuite.testFixture {
-        buildList {
-            if (taskNames().any { it.startsWith("js") }) add("kotlinUpgradePackageLock")
-            if (taskNames().any { it.startsWith("wasmJs") }) add("kotlinWasmUpgradePackageLock")
-        }.toTypedArray()
-    }
-
-    fun variant(name: String, gradleOptions: Array<String> = arrayOf(), testConfig: TestConfig = TestConfig) =
-        parentTestSuite.testSuite(name, testConfig = testConfig) {
-            fun taskExecution(taskName: String) = gradleExecution(projectDirectory, taskName, *gradleOptions)
-
-            aroundAll { testSuiteAction ->
-                gradleExecution(projectDirectory, "clean", *npmPackageLockTasks()).checked()
-                testSuiteAction()
-            }
-
-            val fileCount = 2
-            val nativeTargetsThatMayFail = listOf("macosX64", "linuxX64", "mingwX64")
+            val commonTestSourceDirectory = testFixture { projectDirectory() / "src" / "commonTest" }
+            val enabledSourcesDirectory = testFixture { commonTestSourceDirectory() / "kotlin" }
+            val disabledSourcesDirectory = testFixture { commonTestSourceDirectory() / "disabled" }
 
             val baselineResults = testFixture {
-                taskNames().mapNotNull { taskName ->
-                    val taskExecution = taskExecution(taskName)
+                val fileCount = 2
+                val nativeTargetsThatMayFail = listOf("macosX64", "linuxX64", "mingwX64")
+
+                testTaskNames().mapNotNull { taskName ->
+                    val taskExecution = compileTaskExecution(taskName)
                     val targetName = taskName.removeSuffix("Test")
 
                     if (targetName in nativeTargetsThatMayFail &&
@@ -133,7 +99,7 @@ private class TestScenario(private val parentTestSuite: TestSuite, private val p
 
             test("baseline") {
                 check(baselineResults().isNotEmpty()) {
-                    "None of the tasks ${taskNames()} produced a result."
+                    "None of the tasks ${testTaskNames()} produced a result."
                 }
             }
 
@@ -142,7 +108,7 @@ private class TestScenario(private val parentTestSuite: TestSuite, private val p
                 val expectedResults = baselineResult.filterIndexed { index, _ ->
                     index != exceptIndex
                 }
-                val taskExecution = taskExecution(taskName)
+                val taskExecution = compileTaskExecution(taskName)
                 val actualResults = taskExecution.logMessages()
                 if (actualResults != expectedResults) {
                     throw AssertionError(
@@ -154,95 +120,21 @@ private class TestScenario(private val parentTestSuite: TestSuite, private val p
                 println("$testElementPath: $taskName – OK")
             }
 
-            val fileIndex = 0
-            val fileNameToMove = "File1.kt"
+            val firstFileIndex = 0
+            val firstFileName = "File1.kt"
 
-            test("remove $fileNameToMove") {
-                (enabledSourcesDirectory / fileNameToMove).moveTo(disabledSourcesDirectory / fileNameToMove)
-                for (taskName in taskNames()) {
-                    verifyResults(taskName, fileIndex)
+            test("remove $firstFileName") {
+                (enabledSourcesDirectory() / firstFileName).moveTo(disabledSourcesDirectory() / firstFileName)
+                for (taskName in testTaskNames()) {
+                    verifyResults(taskName, firstFileIndex)
                 }
             }
 
-            test("restore $fileNameToMove") {
-                (disabledSourcesDirectory / fileNameToMove).moveTo(enabledSourcesDirectory / fileNameToMove)
-                for (taskName in taskNames()) {
+            test("restore $firstFileName") {
+                (disabledSourcesDirectory() / firstFileName).moveTo(enabledSourcesDirectory() / firstFileName)
+                for (taskName in testTaskNames()) {
                     verifyResults(taskName)
                 }
             }
         }
-}
-
-private fun List<String>.asIndentedText(indent: String = "\t") = joinToString(prefix = indent, separator = "\n$indent")
-
-private fun gradleExecution(projectDirectory: Path, vararg arguments: String): Execution = execution(
-    (projectDirectory / (if (runsOnWindows) "gradlew.bat" else "gradlew")).pathString,
-    "-p",
-    projectDirectory.pathString,
-    *arguments
-)
-
-private val runsOnWindows = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
-
-private fun execution(vararg arguments: String): Execution {
-    val process = ProcessBuilder(*arguments).also {
-        it.environment().run {
-            val keysToRemove = keys.mapNotNull { key ->
-                if (key in listOf("JAVA_HOME", "PATH", "LANG", "SHELL", "TERM") || key.startsWith("LC_")) {
-                    null
-                } else {
-                    key
-                }
-            }
-            for (key in keysToRemove) {
-                remove(key)
-            }
-        }
-    }.start()
-
-    val stdout = process.inputStream.readAllBytes().toString(Charsets.UTF_8).trim()
-    val stderr = process.errorStream.readAllBytes().toString(Charsets.UTF_8).trim()
-    val exitCode = process.waitFor()
-
-    return Execution(arguments.toList(), exitCode, stdout, stderr).run {
-        log("Execution ${this.arguments} returned exit code $exitCode\n${stdoutStderr("\t")}")
-        this
-    }
-}
-
-private data class Execution(val arguments: List<String>, val exitCode: Int, val stdout: String, val stderr: String) {
-    private val logMessageRegex = Regex("""##LOG\((.*?)\)LOG##""")
-
-    fun logMessages(): List<String> = logMessageRegex.findAll(checkedStdout()).mapNotNull {
-        it.groups[1]?.value
-    }.toList()
-
-    fun stdoutStderr(indent: String = "\t") = "$indent--- stdout ---\n${stdout.prependIndent("$indent\t")}\n" +
-        "$indent--- stderr ---${stderr.prependIndent("$indent\t")}"
-
-    fun checked(): Execution {
-        check(exitCode == 0) {
-            "Execution $arguments failed with exit code $exitCode\n" + stdoutStderr("\t")
-        }
-        return this
-    }
-
-    fun checkedStdout(): String = checked().stdout
-}
-
-private const val LOG_ENABLED = true
-private val logDirectory = (Path("build") / "reports").also { it.toFile().mkdirs() }
-private val logFile = (logDirectory / "TestScenario.log").toFile()
-private val logInitialized = AtomicBoolean(false)
-
-private fun log(message: String) {
-    @Suppress("KotlinConstantConditions")
-    if (!LOG_ENABLED) return
-
-    if (!logInitialized.getAndSet(true)) {
-        logFile.appendText("\n––– Session Starting –––\n")
-    }
-
-    @OptIn(TestBalloonExperimentalApi::class, ExperimentalTime::class)
-    logFile.appendText("${Clock.System.now()} [${testPlatform.threadId()}] $message\n")
 }

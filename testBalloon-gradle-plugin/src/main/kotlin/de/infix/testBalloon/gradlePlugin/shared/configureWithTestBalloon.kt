@@ -22,8 +22,19 @@ import kotlin.io.path.div
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
 
+/**
+ * Configures the project for TestBalloon, given the precondition that the compiler plugin artifacts are set up.
+ */
 internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloonGradleProperties) {
-    val generateTestBalloonInitializationTask = tasks.register("generateTestBalloonInitialization") {
+    addEntryPointSourceFile(testBalloonProperties)
+    configureTestReporting(testBalloonProperties)
+}
+
+/**
+ * Adds TestBalloon's entry point source file to all test root source sets (such as "commonTest").
+ */
+private fun Project.addEntryPointSourceFile(testBalloonProperties: TestBalloonGradleProperties) {
+    val generateTestBalloonEntryPointTask = tasks.register("generateTestBalloonEntryPoint") {
         val generatedCommonTestDir = layout.buildDirectory.dir("generated/testBalloon/src/commonTest")
         outputs.dir(generatedCommonTestDir)
         doLast {
@@ -43,18 +54,29 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
 
     afterEvaluate {
         // Why use afterEvaluate at this point?
-        // In order to reliably detect all top-level source sets, we must be sure that the source set hierarchy
+        // In order to reliably detect all test root source sets, we must be sure that the source set hierarchy
         // has been completely set up. Otherwise, `dependsOn.isEmpty()` would detect false positives.
+        //
+        // What are the expected failure modes of using `afterEvaluate` (as described
+        // in https://www.liutikas.net/2022/12/09/Evaluate-Your-AfterEvaluate.html)?
+        // - If another plugin modifies the source set hierarchy in an `afterEvaluate` block, its modifications might
+        //   not be picked up, depending on the order plugins are applied to the project.
+
         extensions.configure<KotlinBaseExtension>("kotlin") {
             val testRootSourceSetRegex = testBalloonProperties.testRootSourceSetRegex
             sourceSets.configureEach {
                 if (testRootSourceSetRegex.containsMatchIn(name) && dependsOn.isEmpty()) {
-                    kotlin.srcDir(generateTestBalloonInitializationTask)
+                    kotlin.srcDir(generateTestBalloonEntryPointTask)
                 }
             }
         }
     }
+}
 
+/**
+ * Configures the project's test reporting for TestBalloon.
+ */
+private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGradleProperties) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
         "intellij" -> ReportingMode.INTELLIJ_IDEA
         "files" -> ReportingMode.FILES
@@ -77,7 +99,7 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
         }
     }
 
-    tasks.withType(Test::class.java) {
+    tasks.withType(Test::class.java).configureEach {
         // https://docs.gradle.org/current/userguide/java_testing.html
         useJUnitPlatform()
 
@@ -94,8 +116,24 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
         }
             ?: testBalloonProperties.reportingPathLimit?.toString()
 
-    afterEvaluate {
+    gradle.taskGraph.whenReady {
+        // Why use `taskGraph.whenReady` at this point?
+        // We want to
+        // 1. access the test patterns provided by `AbstractTestTask.filter` options and `--tests` command line
+        //    arguments, and
+        // 2. mutate the test task to populate an environment variable or Karma configuration file with those patterns.
+        //
+        // What are the expected failure modes of using `taskGraph.whenReady`?
+        // - If another plugin modifies test-related parameters in a `taskGraph.whenReady` block, they might not be
+        //   picked up, depending on the order plugins are applied to the project.
+
         tasks.withType(AbstractTestTask::class.java).configureEach {
+            /**
+             * true, if one of the following environment configuration functions has converted filtering patterns
+             * into TestBalloon's environment variables.
+             */
+            var filteringPatternsConverted = false
+
             fun KotlinJsTest.configureKarmaEnvironment() {
                 val directory = Path("${layout.projectDirectory}") / "karma.config.d"
                 val parameterConfigFile = directory / "testBalloonParameters.js"
@@ -106,6 +144,8 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                         providers.environmentVariable(it.name).orNull?.ifEmpty { null }
                             ?.split("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
                     } ?: secondary
+
+                    if (patterns.any()) filteringPatternsConverted = true
 
                     return patterns.joinToString(
                         "${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}",
@@ -163,12 +203,21 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                 }
             }
 
+            /**
+             * Invokes [setTestEnvironment] to set up TestBalloon environment variables.
+             */
             fun configureEnvironment(setTestEnvironment: (variable: EnvironmentVariable, value: String) -> Unit) {
-                fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String =
-                    primary.firstNotNullOfOrNull {
-                        providers.environmentVariable(it.name).orNull?.ifEmpty { null }
-                    }
-                        ?: secondary.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
+                fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
+                    val patterns =
+                        primary.firstNotNullOfOrNull {
+                            providers.environmentVariable(it.name).orNull?.ifEmpty { null }
+                        }
+                            ?: secondary.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
+
+                    if (patterns.isNotEmpty()) filteringPatternsConverted = true
+
+                    return patterns
+                }
 
                 setTestEnvironment(
                     EnvironmentVariable.TESTBALLOON_INCLUDE,
@@ -211,6 +260,19 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                         environment(variable.name, value)
                     }
                 }
+            }
+
+            if (filteringPatternsConverted) {
+                // If patterns exist and have been converted into TestBalloon's environment variables, reset
+                // Gradle-provided patterns. This prevents using the original patterns to filter in ways
+                // which are incompatible with TestBalloon's own include/exclude patterns on JS (by Mocha) and the
+                // JVM (by JUnit Platform).
+                (filter as DefaultTestFilter).commandLineIncludePatterns.clear()
+                filter.includePatterns.clear()
+                filter.excludePatterns.clear()
+                // Avoid Gradle error
+                //    "...no filters are applied, but the test task did not discover any tests to execute."
+                setProperty("failOnNoDiscoveredTests", false)
             }
         }
     }

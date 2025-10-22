@@ -12,13 +12,14 @@ The https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin[K
 
 KGP sets up different test tasks for the platforms it supports. All test tasks use Gradle's https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.AbstractTestTask.html[`AbstractTestTask`] API.
 
-A Gradle test task's primary responsibility is to create a `TestExecuter` and a `TestExecutionSpec`. They basically execute a test run and provide results to a `TestResultProcessor`.
+A Gradle ``AbstractTestTask``'s primary responsibility is to create a `TestExecuter` and a `TestExecutionSpec`. They basically execute a test run and provide results to a `TestResultProcessor`.
 
-KGP's test tasks are structured as follows:
+KGP's and AGP's test tasks are structured as follows:
 
-* `AbstractTestTask` (Gradle)
-** `Test` (Gradle) – invokes test frameworks like JUnit 4, JUnit Platform
+* `AbstractTestTask` – provides test filtering, progress notifications, progress listeners, logging, reporting in HTML and JUnit XML formats
+** https://docs.gradle.org/current/userguide/java_testing.html[`Test`] (Gradle) – invokes specific JVM test frameworks like JUnit 4, JUnit Platform
 *** https://github.com/JetBrains/kotlin/blob/b5da7ecd937518adc7859c62be855727560f0b44/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/jvm/tasks/KotlinJvmTest.kt[`KotlinJvmTest`] – uses Gradle ``Test``'s invocation and reporting, but appends `[$targetName]` to a test's display name and replaces `$` signs with `.` in class names
+*** `AndroidUnitTest` – runs https://developer.android.com/training/testing/local-tests[Android local tests] (a.k.a. host-side tests, a.k.a. unit tests) with an https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#access-context[application Context] a https://developer.android.com/training/testing/local-tests#mockable-library[mockable Android library] via JUnit 4
 ** https://github.com/JetBrains/kotlin/blob/8b9a990587b1afeb938a77ab096602bcb56848a6/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/tasks/KotlinTest.kt[`KotlinTest`]
 *** https://github.com/JetBrains/kotlin/blob/8b9a990587b1afeb938a77ab096602bcb56848a6/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest.kt[`KotlinJsTest`] – runs JS and Wasm tests locally via an engine like Node.js, or remotely via https://karma-runner.github.io/6.4/intro/how-it-works.html[Karma]
 *** https://github.com/JetBrains/kotlin/blob/8b9a990587b1afeb938a77ab096602bcb56848a6/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeTest.kt[`KotlinNativeTest`]
@@ -32,6 +33,14 @@ KGP's test tasks are structured as follows:
 * `KotlinKarma` – invokes a Web browser, runs JS tests there via https://mochajs.org/[Mocha]
 * `KotlinMocha` – runs JS tests on Node.js via Mocha
 
+===== Android Device Tests (a.k.a. Instrumented Tests)
+
+For device tests, AGP uses tasks outside Gradle's `AbstractTestTask` class hierarchy:
+
+* `AndroidTestTask`
+** `DeviceProviderInstrumentTestTask` – runs Android device tests (instrumented tests) on a connected device
+** `ManagedDeviceInstrumentationTestTask` – runs Android device tests (instrumented tests) on a Gradle-managed device
+
 ==== Test Reporting
 
 KGP reports test events to a Gradle https://github.com/gradle/gradle/blob/da5d03163550e25b694557f93d0d2c678a7fe34c/platforms/software/testing-base-infrastructure/src/main/java/org/gradle/api/internal/tasks/testing/TestResultProcessor.java[TestResultProcessor].
@@ -39,11 +48,11 @@ KGP reports test events to a Gradle https://github.com/gradle/gradle/blob/da5d03
 * On the JVM, the reporting is done by the underlying JVM test framework like JUnit 4, JUnit Platform.
 * On non-JVM targets, KGP's https://github.com/JetBrains/kotlin/blob/3d735016d48fb7efcbcddac9e1882d5dfd7c619d/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesClient.kt[TCServiceMessagesClient] interprets service messages in the TeamCity format and produces Gradle test events.
 
-Additionally, KGP's https://github.com/JetBrains/kotlin/blob/fcc442fec24ea8f2d622a39a6afcb73d376b5105/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/testing/internal/KotlinTestReport.kt[KotlinTestReport] produces aggregate test reports (e.g. for `allTests`, or `jsTests`).
+In addition to the reports provided by Gradle's `AbstractTestTask`, KGP's https://github.com/JetBrains/kotlin/blob/fcc442fec24ea8f2d622a39a6afcb73d376b5105/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/testing/internal/KotlinTestReport.kt[KotlinTestReport] produces aggregate test reports (e.g. for `allTests`, or `jsTests`).
 
 ===== Quirks in Reporting
 
-The reporting stack (KGP, Gradle, IDE) exposes the following quirks in the IDE's test results tree view and HTML test reports:
+The reporting stack (KGP, AGP, Gradle, IDE) exposes the following quirks in the IDE's test results tree view and HTML test reports:
 
 [%header,cols="1,1,1,1,1,1,1"]
 |===
@@ -119,7 +128,7 @@ The reporting stack (KGP, Gradle, IDE) exposes the following quirks in the IDE's
 |⚠️
 |⚠️
 
-|Android Host (Unit)
+|Android Local (Unit)
 |✅
 |🚫
 |
@@ -132,7 +141,7 @@ The reporting stack (KGP, Gradle, IDE) exposes the following quirks in the IDE's
 
 ==== Running Tests
 
-Gradle's https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html[Test] task invokes an underlying JVM test framework (JUnit 4, JUnit Platform), providing it with test parameters, like filtering options.
+Gradle's https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/AbstractTestTask.html[AbstractTestTask] forms the basis of test invocations, defining test capabilities such as filtering, listeners and reporting.
 
 ==== Test Reporting
 

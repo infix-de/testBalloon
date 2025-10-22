@@ -133,6 +133,6 @@ internal class ArgumentsBasedElementSelection(arguments: Array<String>) :
  * A [TestElement.Selection] created from environment variables which define [includePatterns] and [excludePatterns].
  */
 internal class EnvironmentBasedElementSelection(
-    includePatterns: String? = EnvironmentVariable.TESTBALLOON_INCLUDE.value(),
-    excludePatterns: String? = EnvironmentVariable.TESTBALLOON_EXCLUDE.value()
+    includePatterns: String? = EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.value(),
+    excludePatterns: String? = EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.value()
 ) : ListsBasedElementSelection(includePatterns, excludePatterns)

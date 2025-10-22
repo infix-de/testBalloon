@@ -69,10 +69,10 @@ public open class TestSession protected constructor(
     )
 
     /**
-     * Parameterizes the session with a default selection, prioritizing [EnvironmentVariable.TESTBALLOON_INCLUDE].
+     * Parameterizes the session with a default selection, prioritizing [EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS].
      */
     internal fun parameterize(report: TestConfigurationReport) {
-        val selection = if (EnvironmentVariable.TESTBALLOON_INCLUDE.value() != null) {
+        val selection = if (EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.value() != null) {
             EnvironmentBasedElementSelection()
         } else {
             argumentsBasedElementSelection ?: AllInSelection

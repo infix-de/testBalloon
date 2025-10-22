@@ -157,13 +157,13 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
                 }
 
                 val includePatternsJs = prioritizedPatterns(
-                    EnvironmentVariable.TESTBALLOON_INCLUDE,
+                    EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
                     EnvironmentVariable.TEST_INCLUDE,
                     secondary = filter.includePatterns +
                         (filter as DefaultTestFilter).commandLineIncludePatterns
                 )
                 val excludePatternsJs = prioritizedPatterns(
-                    EnvironmentVariable.TESTBALLOON_EXCLUDE,
+                    EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
                     secondary = filter.excludePatterns
                 )
 
@@ -174,8 +174,8 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
                     }
 
                     val clientEnvLines = listOfNotNull(
-                        """${EnvironmentVariable.TESTBALLOON_INCLUDE.name}: $includePatternsJs""",
-                        """${EnvironmentVariable.TESTBALLOON_EXCLUDE.name}: $excludePatternsJs""",
+                        """${EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name}: $includePatternsJs""",
+                        """${EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name}: $excludePatternsJs""",
                         """${EnvironmentVariable.TESTBALLOON_REPORTING.name}: "$reportingMode"""",
                         reportingPathLimit?.let {
                             """${EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name}: "$it""""
@@ -220,17 +220,20 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
                 }
 
                 setTestEnvironment(
-                    EnvironmentVariable.TESTBALLOON_INCLUDE,
+                    EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
                     prioritizedPatterns(
-                        EnvironmentVariable.TESTBALLOON_INCLUDE,
+                        EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
                         EnvironmentVariable.TEST_INCLUDE,
                         secondary = filter.includePatterns +
                             (filter as DefaultTestFilter).commandLineIncludePatterns
                     )
                 )
                 setTestEnvironment(
-                    EnvironmentVariable.TESTBALLOON_EXCLUDE,
-                    prioritizedPatterns(EnvironmentVariable.TESTBALLOON_EXCLUDE, secondary = filter.excludePatterns)
+                    EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
+                    prioritizedPatterns(
+                        EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
+                        secondary = filter.excludePatterns
+                    )
                 )
                 setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING, reportingMode.name)
                 if (reportingPathLimit != null) {

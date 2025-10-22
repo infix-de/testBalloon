@@ -35,7 +35,7 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
                 project.gradleExecution(
                     ":clean${taskName.capitalizedTaskName()}",
                     ":$taskName",
-                    environment = mapOf("TESTBALLOON_INCLUDE" to pattern)
+                    environment = mapOf("TESTBALLOON_INCLUDE_PATTERNS" to pattern)
                 )
             }
         ),

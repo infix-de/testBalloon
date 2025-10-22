@@ -24,12 +24,3 @@
 ### IDE mode, HTML output
 
 * `./gradlew -PtestBalloon.reportsEnabled=true --no-build-cache cleanPixel2api30AndroidDeviceTest pixel2api30AndroidDeviceTest`
-
-### AndroidHostTest Dance
-
-1. `gradlew --no-build-cache clean testAndroidHostTest`
-   > Plugin de.infix.testBalloon: Could not find function 'de.infix.testBalloon.framework.internal.configureAndExecuteTests'.
-2. `gradlew --no-build-cache clean testAndroidHostTest -Plocal.androidHostTestDance=removeDependency`
-   > [OK] There are test sources present and no filters are applied, but the test task did not discover any tests to execute.
-3. `gradlew testAndroidHostTest`
-   > [OK] 8 tests completed, 4 failed

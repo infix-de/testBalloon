@@ -60,7 +60,7 @@ gradlePlugin {
     }
 }
 
-val syncSharedTestBalloonSources by tasks.registering(Sync::class) {
+val copySharedTestBalloonSources by tasks.registering(Copy::class) {
     into(layout.buildDirectory.dir("generated/sharedTestBalloon/src/main"))
     from(
         layout.projectDirectory.dir(
@@ -79,7 +79,7 @@ val syncSharedTestBalloonSources by tasks.registering(Sync::class) {
 kotlin {
     sourceSets {
         main {
-            kotlin.srcDir(syncSharedTestBalloonSources)
+            kotlin.srcDir(copySharedTestBalloonSources)
         }
     }
 }

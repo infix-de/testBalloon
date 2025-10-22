@@ -39,12 +39,11 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
     }
 
     internal val testTaskNames = projectTestSuite.testFixture {
-        // Invoking `gradlew --version` does nothing meaningful, but it does trigger a Gradle distribution
-        // download if necessary. This ensures that the download info on stdout does not interfere with the
-        // output of `gradlew listTests` we are looking for.
-        gradleExecution("--version").checked()
+        val listTestsResultRegex = Regex("""##TEST\((.*?)\)##""")
 
-        val testTaskNames = gradleExecution("listTests", "--quiet").checkedStdout().lines()
+        val testTaskNames = gradleExecution("listTests").checkedStdout().let { stdout ->
+            listTestsResultRegex.findAll(stdout).mapNotNull { it.groups[1]?.value }
+        }.toList()
 
         // Prepare the project for execution.
         val npmPackageLockTasks =
@@ -74,7 +73,9 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
         val process = ProcessBuilder(*arguments).also {
             it.environment().run {
                 val keysToRemove = keys.mapNotNull { key ->
-                    if (key in listOf("JAVA_HOME", "PATH", "LANG", "SHELL", "TERM") || key.startsWith("LC_")) {
+                    if (key in listOf("ANDROID_HOME", "JAVA_HOME", "LANG", "PATH", "SHELL", "TERM") ||
+                        key.startsWith("LC_")
+                    ) {
                         null
                     } else {
                         key

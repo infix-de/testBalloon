@@ -36,10 +36,11 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
             )
         }
 
-        val testRuntimeOnlyConfigurationRegex = testBalloonProperties.testRuntimeOnlyConfigurationRegex
+        val junitPlatformLauncherDependentConfigurationRegex =
+            testBalloonProperties.junitPlatformLauncherDependentConfigurationRegex
 
         configurations.configureEach {
-            if (testRuntimeOnlyConfigurationRegex.containsMatchIn(name)) {
+            if (junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
                 dependencies.add(project.dependencies.create(PROJECT_JUNIT_PLATFORM_LAUNCHER))
             }
         }

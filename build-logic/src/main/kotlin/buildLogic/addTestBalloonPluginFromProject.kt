@@ -22,10 +22,11 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
         add(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, abstractionsDependency)
     }
 
-    val testRuntimeOnlyConfigurationRegex = testBalloonProperties.testRuntimeOnlyConfigurationRegex
+    val junitPlatformLauncherDependentConfigurationRegex =
+        testBalloonProperties.junitPlatformLauncherDependentConfigurationRegex
 
     configurations.configureEach {
-        if (testRuntimeOnlyConfigurationRegex.containsMatchIn(name)) {
+        if (junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
             dependencies.add(
                 project.dependencies.create(libraryFromCatalog("org.junit.platform.launcher"))
             )

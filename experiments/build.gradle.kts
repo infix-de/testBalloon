@@ -3,6 +3,7 @@ import buildLogic.applyHierarchy
 import buildLogic.jsTargets
 import buildLogic.nativeTargets
 import buildLogic.versionFromCatalog
+import org.gradle.api.internal.artifacts.dependencies.DefaultFileCollectionDependency
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -60,11 +61,8 @@ kotlin {
                 localDevices {
                     @Suppress("UnstableApiUsage")
                     create("pixel2api30") {
-                        // Use device profiles you typically see in Android Studio.
                         device = "Pixel 2"
-                        // Use only API levels 27 and higher.
                         apiLevel = 30
-                        // To include Google services, use "google".
                         systemImageSource = "aosp"
                     }
                 }
@@ -99,6 +97,32 @@ kotlin {
                 // instead of this project-internal dependency:
                 implementation(projects.testBalloonFrameworkCore)
                 implementation(libs.androidx.test.runner)
+            }
+        }
+    }
+}
+
+tasks {
+    register("listConfigurations") {
+        group = "help"
+        notCompatibleWithConfigurationCache("Not important.")
+        dependsOn("commonizeNativeDistribution")
+
+        doLast {
+            project.configurations.forEach {
+                if (/*it.name.contains("HostTest") &&*/ it.dependencies.isNotEmpty()) {
+                    println("${it.name} – ${it.description}")
+                    it.dependencies.forEach {
+                        if (it is DefaultFileCollectionDependency && !it.files.isEmpty) {
+                            println("\tFiles:")
+                            it.files.forEach {
+                                println("\t\t$it")
+                            }
+                        } else {
+                            println("\t$it")
+                        }
+                    }
+                }
             }
         }
     }

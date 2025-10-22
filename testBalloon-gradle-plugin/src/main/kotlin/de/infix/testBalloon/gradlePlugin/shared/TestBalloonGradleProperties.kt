@@ -23,8 +23,14 @@ internal class TestBalloonGradleProperties(val project: Project) {
 
     /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.
+     *
+     * NOTE: Android local/host tests do not use JUnit Platform, yet they require a dependency on TestBalloon's JVM
+     * artifact. As this introduces an (unused) JUnit Platform dependency, we must provide a launcher in the
+     * 'androidHostTestRuntimeClasspath' configuration.
      */
-    val testRuntimeOnlyConfigurationRegex by regexProperty("""^(test|jvmTest)RuntimeOnly$""")
+    val junitPlatformLauncherDependentConfigurationRegex by regexProperty(
+        """^(test|jvmTest)RuntimeOnly|androidHostTestRuntimeClasspath$"""
+    )
 
     /**
      * Name pattern for test modules in which the compiler plugin will look up test suites and a test session.

@@ -51,7 +51,7 @@ tasks {
         group = "verification"
 
         val testTaskNames = project.tasks.mapNotNull { task ->
-            task.takeIf { it.name.endsWith("Test") && !it.javaClass.name.contains("Report") }?.name
+            task.takeIf { it.name.endsWith("Test") && !it.javaClass.name.contains("Report") }?.run { "##TEST($name)##" }
         }
 
         doLast {

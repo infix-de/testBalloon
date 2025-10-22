@@ -17,6 +17,7 @@ dependencyResolutionManagement {
 fun RepositoryHandler.projectRepositories() {
     mavenCentral()
     maven(uri("""{{path:integration-test-repository}}"""))
+    google()
     System.getProperty("user.home")?.let { home ->
         maven(url = uri("$home/.m2/local-repository"))
     }

@@ -5,7 +5,7 @@ plugins {
     id("buildLogic.publishing-multiplatform")
 }
 
-description = "Shared abstractions for the TestBalloon framework"
+description = "Shared declarations for the TestBalloon framework"
 
 kotlin {
     enableAbiValidation()

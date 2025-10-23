@@ -13,7 +13,7 @@ description = "Gradle plugin for the TestBalloon framework"
 
 dependencies {
     implementation(libs.org.jetbrains.kotlin.gradle.plugin)
-    implementation(projects.testBalloonFrameworkAbstractions)
+    implementation(projects.testBalloonFrameworkShared)
 }
 
 samWithReceiver {
@@ -38,8 +38,8 @@ buildConfig {
     buildConfigField("String", "PROJECT_COMPILER_PLUGIN_ARTIFACT_ID", "\"${projects.testBalloonCompilerPlugin.name}\"")
     buildConfigField(
         "String",
-        "PROJECT_ABSTRACTIONS_ARTIFACT_ID",
-        "\"${projects.testBalloonFrameworkAbstractions.name}\""
+        "PROJECT_SHARED_ARTIFACT_ID",
+        "\"${projects.testBalloonFrameworkShared.name}\""
     )
     buildConfigField(
         "String",

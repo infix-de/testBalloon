@@ -7,7 +7,7 @@ plugins {
 description = "Compiler plugin for the TestBalloon framework"
 
 dependencies {
-    implementation(projects.testBalloonFrameworkAbstractions)
+    implementation(projects.testBalloonFrameworkShared)
     implementation(kotlin("compiler-embeddable"))
     implementation(libs.org.jetbrains.kotlinx.coroutines.core)
 

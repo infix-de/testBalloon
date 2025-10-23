@@ -2,11 +2,11 @@
 
 package de.infix.testBalloon.gradlePlugin
 
-import buildConfig.BuildConfig.PROJECT_ABSTRACTIONS_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
+import buildConfig.BuildConfig.PROJECT_SHARED_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
@@ -32,7 +32,7 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
         // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
         configurations.named(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME) {
             dependencies.add(
-                project.dependencies.create("$PROJECT_GROUP_ID:$PROJECT_ABSTRACTIONS_ARTIFACT_ID:$PROJECT_VERSION")
+                project.dependencies.create("$PROJECT_GROUP_ID:$PROJECT_SHARED_ARTIFACT_ID:$PROJECT_VERSION")
             )
         }
 

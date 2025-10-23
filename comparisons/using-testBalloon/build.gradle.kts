@@ -4,7 +4,7 @@ plugins {
     id("buildLogic.multiplatform")
 }
 
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 kotlin {
     sourceSets {

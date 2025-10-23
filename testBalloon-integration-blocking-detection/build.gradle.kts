@@ -8,7 +8,7 @@ plugins {
 
 description = "Library supporting blocking code detection with the TestBalloon framework"
 
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 kotlin {
     enableAbiValidation()

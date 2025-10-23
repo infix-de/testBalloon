@@ -5,7 +5,7 @@ plugins {
     id("buildLogic.jvm")
 }
 
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 dependencies {
     testImplementation(projects.testBalloonFrameworkCore)

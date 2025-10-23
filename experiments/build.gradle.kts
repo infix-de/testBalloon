@@ -16,7 +16,7 @@ plugins {
     id("com.gradleup.compat.patrouille")
 }
 
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkAbstractions)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 compatPatrouille {
     java(versionFromCatalog("jdk").toInt())

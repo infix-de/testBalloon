@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
  *
  * This enables the project's compiler plugin without loading it from a repository.
  */
-fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency, abstractionsDependency: Dependency) {
+fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency, sharedDependency: Dependency) {
     val testBalloonProperties = TestBalloonGradleProperties(this)
 
     with(dependencies) {
         add(PLUGIN_CLASSPATH_CONFIGURATION_NAME, compilerPluginDependency)
         add(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, compilerPluginDependency)
         // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
-        add(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, abstractionsDependency)
+        add(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, sharedDependency)
     }
 
     val junitPlatformLauncherDependentConfigurationRegex =

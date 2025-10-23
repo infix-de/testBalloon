@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <de.infix.testBalloon:testBalloon-framework-abstractions>
+// Library unique name: <de.infix.testBalloon:testBalloon-framework-shared>
 open annotation class de.infix.testBalloon.framework.shared/TestDiscoverable : kotlin/Annotation { // de.infix.testBalloon.framework.shared/TestDiscoverable|null[0]
     constructor <init>() // de.infix.testBalloon.framework.shared/TestDiscoverable.<init>|<init>(){}[0]
 }

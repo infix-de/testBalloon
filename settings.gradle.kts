@@ -9,7 +9,7 @@ plugins {
 
 rootProject.name = "testBalloon"
 
-include(":testBalloon-framework-abstractions")
+include(":testBalloon-framework-shared")
 include(":testBalloon-framework-core")
 include(":testBalloon-gradle-plugin")
 include(":testBalloon-compiler-plugin")

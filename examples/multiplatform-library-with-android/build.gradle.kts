@@ -82,15 +82,3 @@ kotlin {
         }
     }
 }
-
-afterEvaluate {
-    tasks.named("compileAndroidHostTest") {
-        doFirst {
-            logger.warn(
-                "WARNING: If this fails with «Plugin de.infix.testBalloon: Could not find function" +
-                    " 'de.infix.testBalloon.framework.internal.configureAndExecuteTests'»:\n" +
-                    "\tPlease see examples/multiplatform-library-with-android/README.md"
-            )
-        }
-    }
-}

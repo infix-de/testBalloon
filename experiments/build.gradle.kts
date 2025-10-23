@@ -106,17 +106,17 @@ tasks {
         dependsOn("commonizeNativeDistribution")
 
         doLast {
-            project.configurations.forEach {
-                if (/*it.name.contains("HostTest") &&*/ it.dependencies.isNotEmpty()) {
-                    println("${it.name} – ${it.description}")
-                    it.dependencies.forEach {
-                        if (it is DefaultFileCollectionDependency && !it.files.isEmpty) {
+            project.configurations.forEach { configuration ->
+                if (configuration.dependencies.isNotEmpty()) {
+                    println("${configuration.name} – ${configuration.description}")
+                    configuration.dependencies.forEach { dependency ->
+                        if (dependency is DefaultFileCollectionDependency && !dependency.files.isEmpty) {
                             println("\tFiles:")
-                            it.files.forEach {
+                            dependency.files.forEach {
                                 println("\t\t$it")
                             }
                         } else {
-                            println("\t$it")
+                            println("\t$dependency")
                         }
                     }
                 }

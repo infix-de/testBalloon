@@ -1,4 +1,4 @@
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.testSuite
 
 val File1Suite1 by testSuite {
     test("test1") {

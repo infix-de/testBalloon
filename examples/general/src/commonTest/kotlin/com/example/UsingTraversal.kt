@@ -1,8 +1,8 @@
 package com.example
 
 import com.example.testLibrary.statisticsReport
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.testSuite
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 

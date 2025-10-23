@@ -1,7 +1,7 @@
 package com.example
 
-import de.infix.testBalloon.framework.TestSuite
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.testSuite
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

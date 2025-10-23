@@ -2,14 +2,14 @@ package com.example
 
 import com.example.testLibrary.statisticsReport
 import com.example.testLibrary.test
-import de.infix.testBalloon.framework.TestBalloonExperimentalApi
-import de.infix.testBalloon.framework.TestCompartment
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.internal.printlnFixed
+import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
+import de.infix.testBalloon.framework.core.TestCompartment
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.internal.printlnFixed
+import de.infix.testBalloon.framework.core.testPlatform
+import de.infix.testBalloon.framework.core.testScope
+import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
-import de.infix.testBalloon.framework.testPlatform
-import de.infix.testBalloon.framework.testScope
-import de.infix.testBalloon.framework.testSuite
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

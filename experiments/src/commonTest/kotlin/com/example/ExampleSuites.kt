@@ -1,11 +1,11 @@
 package com.example
 
-import de.infix.testBalloon.framework.Test
-import de.infix.testBalloon.framework.TestBalloonExperimentalApi
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.aroundEach
-import de.infix.testBalloon.framework.testPlatform
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.Test
+import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.aroundEach
+import de.infix.testBalloon.framework.core.testPlatform
+import de.infix.testBalloon.framework.core.testSuite
 
 val SimpleSuite by testSuite(testConfig = TestConfig.logTestExecution()) {
     test("test 1") {

@@ -1,6 +1,6 @@
 package com.example
 
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.testSuite
 import org.junit.Assert
 
 val TestsWithTestBalloon by testSuite {

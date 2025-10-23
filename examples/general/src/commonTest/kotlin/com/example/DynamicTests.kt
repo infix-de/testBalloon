@@ -1,6 +1,6 @@
 package com.example
 
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.testSuite
 import kotlin.test.assertEquals
 
 // Use plain Kotlin to dynamically create a set of data-driven tests.

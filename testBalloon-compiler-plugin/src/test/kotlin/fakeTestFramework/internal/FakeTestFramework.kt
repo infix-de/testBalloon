@@ -3,7 +3,7 @@
 
 // The compiler plugin requires this package name.
 
-package de.infix.testBalloon.framework.internal
+package de.infix.testBalloon.framework.core.internal
 
 import de.infix.testBalloon.framework.shared.AbstractTestSession
 import de.infix.testBalloon.framework.shared.AbstractTestSuite

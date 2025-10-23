@@ -1,7 +1,7 @@
 package de.infix.testBalloon.integration.blockingDetection
 
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.testScope
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.testScope
 
 public enum class BlockingDetection {
     DISABLED,

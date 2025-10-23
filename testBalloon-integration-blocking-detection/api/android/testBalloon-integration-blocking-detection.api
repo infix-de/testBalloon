@@ -8,7 +8,7 @@ public final class de/infix/testBalloon/integration/blockingDetection/BlockingDe
 }
 
 public final class de/infix/testBalloon/integration/blockingDetection/Integration_androidKt {
-	public static final fun blockingDetection (Lde/infix/testBalloon/framework/TestConfig;Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;)Lde/infix/testBalloon/framework/TestConfig;
-	public static synthetic fun blockingDetection$default (Lde/infix/testBalloon/framework/TestConfig;Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;ILjava/lang/Object;)Lde/infix/testBalloon/framework/TestConfig;
+	public static final fun blockingDetection (Lde/infix/testBalloon/framework/core/TestConfig;Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;)Lde/infix/testBalloon/framework/core/TestConfig;
+	public static synthetic fun blockingDetection$default (Lde/infix/testBalloon/framework/core/TestConfig;Lde/infix/testBalloon/integration/blockingDetection/BlockingDetection;ILjava/lang/Object;)Lde/infix/testBalloon/framework/core/TestConfig;
 }
 

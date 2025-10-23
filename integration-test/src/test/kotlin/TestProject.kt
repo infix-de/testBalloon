@@ -1,6 +1,6 @@
-import de.infix.testBalloon.framework.TestBalloonExperimentalApi
-import de.infix.testBalloon.framework.TestSuite
-import de.infix.testBalloon.framework.testPlatform
+import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
+import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.testPlatform
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path

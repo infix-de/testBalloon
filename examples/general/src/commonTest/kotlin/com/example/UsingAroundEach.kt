@@ -1,10 +1,10 @@
 package com.example
 
-import de.infix.testBalloon.framework.Test
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.aroundEach
-import de.infix.testBalloon.framework.testScope
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.Test
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.aroundEach
+import de.infix.testBalloon.framework.core.testScope
+import de.infix.testBalloon.framework.core.testSuite
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.measureTime

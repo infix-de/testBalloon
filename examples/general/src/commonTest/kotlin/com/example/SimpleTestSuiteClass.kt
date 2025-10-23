@@ -1,6 +1,6 @@
 package com.example
 
-import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.core.TestSuite
 import kotlin.test.assertEquals
 
 // Experimental: While you can use a class to declare a top-level test suite, this requires more boilerplate.

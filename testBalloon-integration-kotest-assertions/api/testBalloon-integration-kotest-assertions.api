@@ -1,4 +1,4 @@
 public final class de/infix/testBalloon/integration/kotest/assertions/Integration_jvmKt {
-	public static final fun kotestAssertionsSupport (Lde/infix/testBalloon/framework/TestConfig;)Lde/infix/testBalloon/framework/TestConfig;
+	public static final fun kotestAssertionsSupport (Lde/infix/testBalloon/framework/core/TestConfig;)Lde/infix/testBalloon/framework/core/TestConfig;
 }
 

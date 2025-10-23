@@ -6,4 +6,4 @@
 // - Show declarations: true
 
 // Library unique name: <de.infix.testBalloon:testBalloon-integration-kotest-assertions>
-final fun (de.infix.testBalloon.framework/TestConfig).de.infix.testBalloon.integration.kotest.assertions/kotestAssertionsSupport(): de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.integration.kotest.assertions/kotestAssertionsSupport|kotestAssertionsSupport@de.infix.testBalloon.framework.TestConfig(){}[0]
+final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.integration.kotest.assertions/kotestAssertionsSupport(): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.integration.kotest.assertions/kotestAssertionsSupport|kotestAssertionsSupport@de.infix.testBalloon.framework.core.TestConfig(){}[0]

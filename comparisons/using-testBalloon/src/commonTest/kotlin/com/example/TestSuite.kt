@@ -1,7 +1,7 @@
 package com.example
 
+import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
-import de.infix.testBalloon.framework.testSuite
 import kotlin.test.assertEquals
 
 val TestSuite by testSuite {

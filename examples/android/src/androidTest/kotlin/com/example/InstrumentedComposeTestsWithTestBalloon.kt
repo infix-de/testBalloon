@@ -15,11 +15,11 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import de.infix.testBalloon.framework.TestBalloonExperimentalApi
-import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
+import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.testSuite
+import de.infix.testBalloon.framework.core.testWithJUnit4Rule
 import de.infix.testBalloon.framework.shared.TestDiscoverable
-import de.infix.testBalloon.framework.testSuite
-import de.infix.testBalloon.framework.testWithJUnit4Rule
 
 val ComposeTestsWithTestBalloon by testSuite {
     @Composable

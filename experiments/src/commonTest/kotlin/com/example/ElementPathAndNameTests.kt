@@ -2,9 +2,9 @@
 
 package com.example
 
-import de.infix.testBalloon.framework.internal.printlnFixed
+import de.infix.testBalloon.framework.core.internal.printlnFixed
+import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
-import de.infix.testBalloon.framework.testSuite
 
 /*
 val Suite_Level_1 by testSuite(

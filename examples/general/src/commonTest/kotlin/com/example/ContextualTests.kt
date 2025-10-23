@@ -1,7 +1,7 @@
 package com.example
 
+import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.TestDiscoverable
-import de.infix.testBalloon.framework.testSuite
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.test.assertEquals

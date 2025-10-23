@@ -1,10 +1,10 @@
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.TestSuite
-import de.infix.testBalloon.framework.disable
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.disable
+import de.infix.testBalloon.framework.core.testScope
+import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.TestDiscoverable
-import de.infix.testBalloon.framework.testScope
-import de.infix.testBalloon.framework.testSuite
 import kotlin.io.path.div
 import kotlin.io.path.moveTo
 import kotlin.time.Duration.Companion.minutes

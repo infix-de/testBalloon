@@ -1,14 +1,14 @@
 package com.example.testLibrary
 
-import de.infix.testBalloon.framework.Test
-import de.infix.testBalloon.framework.TestBalloonExperimentalApi
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.TestElement
-import de.infix.testBalloon.framework.TestExecutionTraversal
-import de.infix.testBalloon.framework.internal.printlnFixed
+import de.infix.testBalloon.framework.core.Test
+import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.TestElement
+import de.infix.testBalloon.framework.core.TestExecutionTraversal
+import de.infix.testBalloon.framework.core.internal.printlnFixed
+import de.infix.testBalloon.framework.core.testPlatform
+import de.infix.testBalloon.framework.core.traversal
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
-import de.infix.testBalloon.framework.testPlatform
-import de.infix.testBalloon.framework.traversal
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.locks.reentrantLock
 import kotlinx.atomicfu.locks.withLock

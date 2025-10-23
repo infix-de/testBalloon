@@ -1,6 +1,6 @@
 package com.example
 
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.testSuite
 import kotlin.test.assertEquals
 
 // Declare a test suite in plain Kotlin, without annotations.

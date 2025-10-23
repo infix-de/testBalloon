@@ -5,7 +5,7 @@ package de.infix.testBalloon.framework.shared.internal
  */
 @TestBalloonInternalApi
 public object Constants {
-    public const val CORE_PACKAGE_NAME: String = "de.infix.testBalloon.framework"
+    public const val CORE_PACKAGE_NAME: String = "de.infix.testBalloon.framework.core"
     public const val CORE_INTERNAL_PACKAGE_NAME: String = "$CORE_PACKAGE_NAME.internal"
 
     public const val SHARED_PACKAGE_NAME: String = "de.infix.testBalloon.framework.shared"

@@ -1,6 +1,6 @@
 package com.example
 
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.testSuite
 
 val CommonTestsWithTestBalloon by testSuite {
     test("expected to pass") {

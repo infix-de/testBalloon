@@ -1,10 +1,10 @@
 package com.example.testLibrary
 
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.TestExecutionScope
-import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.TestExecutionScope
+import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.shared.TestDiscoverable
-import de.infix.testBalloon.framework.testScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout

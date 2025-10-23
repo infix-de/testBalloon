@@ -1,8 +1,8 @@
 package blockingDetection
 
-import de.infix.testBalloon.framework.TestBalloonExperimentalApi
-import de.infix.testBalloon.framework.testPlatform
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
+import de.infix.testBalloon.framework.core.testPlatform
+import de.infix.testBalloon.framework.core.testSuite
 
 val IntegrationTest by testSuite {
     @OptIn(TestBalloonExperimentalApi::class)

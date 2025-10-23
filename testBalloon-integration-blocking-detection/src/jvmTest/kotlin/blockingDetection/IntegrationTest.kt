@@ -1,7 +1,7 @@
 package blockingDetection
 
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.integration.blockingDetection.BlockingDetection
 import de.infix.testBalloon.integration.blockingDetection.blockingDetection
 import de.infix.testBalloon.integration.blockingDetection.withBlockingDetection

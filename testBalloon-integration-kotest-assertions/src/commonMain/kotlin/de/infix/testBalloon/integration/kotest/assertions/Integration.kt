@@ -1,7 +1,7 @@
 package de.infix.testBalloon.integration.kotest.assertions
 
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.TestElement
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.TestElement
 
 /**
  * Returns a test configuration which enables Kotest assertions for a [TestElement] tree.

@@ -2,7 +2,7 @@ package com.example
 
 import com.example.testLibrary.databaseTest
 import com.example.testLibrary.test
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.testSuite
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds

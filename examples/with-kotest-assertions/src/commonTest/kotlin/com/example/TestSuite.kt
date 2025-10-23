@@ -1,8 +1,8 @@
 package com.example
 
-import de.infix.testBalloon.framework.TestSession
+import de.infix.testBalloon.framework.core.TestSession
+import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
-import de.infix.testBalloon.framework.testSuite
 import de.infix.testBalloon.integration.kotest.assertions.kotestAssertionsSupport
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.equals.shouldBeEqual

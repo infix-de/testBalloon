@@ -1,15 +1,15 @@
 package com.example
 
 import com.example.testLibrary.statisticsReport
-import de.infix.testBalloon.framework.TestBalloonExperimentalApi
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.TestInvocation
-import de.infix.testBalloon.framework.coroutineContext
-import de.infix.testBalloon.framework.disable
-import de.infix.testBalloon.framework.dispatcherWithParallelism
-import de.infix.testBalloon.framework.invocation
-import de.infix.testBalloon.framework.testPlatform
-import de.infix.testBalloon.framework.testSuite
+import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.TestInvocation
+import de.infix.testBalloon.framework.core.coroutineContext
+import de.infix.testBalloon.framework.core.disable
+import de.infix.testBalloon.framework.core.dispatcherWithParallelism
+import de.infix.testBalloon.framework.core.invocation
+import de.infix.testBalloon.framework.core.testPlatform
+import de.infix.testBalloon.framework.core.testSuite
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

@@ -1,15 +1,15 @@
 package com.example
 
-import de.infix.testBalloon.framework.Test
-import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.TestElement
-import de.infix.testBalloon.framework.TestElementEvent
-import de.infix.testBalloon.framework.TestExecutionReport
-import de.infix.testBalloon.framework.disable
-import de.infix.testBalloon.framework.internal.printlnFixed
-import de.infix.testBalloon.framework.report
+import de.infix.testBalloon.framework.core.Test
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.TestElement
+import de.infix.testBalloon.framework.core.TestElementEvent
+import de.infix.testBalloon.framework.core.TestExecutionReport
+import de.infix.testBalloon.framework.core.disable
+import de.infix.testBalloon.framework.core.internal.printlnFixed
+import de.infix.testBalloon.framework.core.report
+import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
-import de.infix.testBalloon.framework.testSuite
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.locks.reentrantLock
 import kotlinx.atomicfu.locks.withLock

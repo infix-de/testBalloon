@@ -1,30 +1,30 @@
-public abstract interface class de/infix/testBalloon/framework/AbstractTest : de/infix/testBalloon/framework/AbstractTestElement {
+public abstract interface class de/infix/testBalloon/framework/shared/AbstractTest : de/infix/testBalloon/framework/shared/AbstractTestElement {
 }
 
-public abstract interface class de/infix/testBalloon/framework/AbstractTestElement {
+public abstract interface class de/infix/testBalloon/framework/shared/AbstractTestElement {
 	public abstract fun getTestElementIsEnabled ()Z
-	public abstract fun getTestElementPath ()Lde/infix/testBalloon/framework/AbstractTestElement$Path;
+	public abstract fun getTestElementPath ()Lde/infix/testBalloon/framework/shared/AbstractTestElement$Path;
 }
 
-public abstract interface class de/infix/testBalloon/framework/AbstractTestElement$Path {
+public abstract interface class de/infix/testBalloon/framework/shared/AbstractTestElement$Path {
 	public abstract fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class de/infix/testBalloon/framework/AbstractTestSession : de/infix/testBalloon/framework/AbstractTestSuite {
+public abstract interface class de/infix/testBalloon/framework/shared/AbstractTestSession : de/infix/testBalloon/framework/shared/AbstractTestSuite {
 }
 
-public abstract interface class de/infix/testBalloon/framework/AbstractTestSuite : de/infix/testBalloon/framework/AbstractTestElement {
+public abstract interface class de/infix/testBalloon/framework/shared/AbstractTestSuite : de/infix/testBalloon/framework/shared/AbstractTestElement {
 }
 
-public abstract interface annotation class de/infix/testBalloon/framework/TestDiscoverable : java/lang/annotation/Annotation {
+public abstract interface annotation class de/infix/testBalloon/framework/shared/TestDiscoverable : java/lang/annotation/Annotation {
 }
 
-public abstract interface annotation class de/infix/testBalloon/framework/TestDisplayName : java/lang/annotation/Annotation {
+public abstract interface annotation class de/infix/testBalloon/framework/shared/TestDisplayName : java/lang/annotation/Annotation {
 }
 
-public abstract interface annotation class de/infix/testBalloon/framework/TestElementDsl : java/lang/annotation/Annotation {
+public abstract interface annotation class de/infix/testBalloon/framework/shared/TestElementDsl : java/lang/annotation/Annotation {
 }
 
-public abstract interface annotation class de/infix/testBalloon/framework/TestElementName : java/lang/annotation/Annotation {
+public abstract interface annotation class de/infix/testBalloon/framework/shared/TestElementName : java/lang/annotation/Annotation {
 }
 

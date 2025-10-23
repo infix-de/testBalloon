@@ -88,15 +88,15 @@ abstract class de.infix.testBalloon.framework/TestExecutionReport { // de.infix.
     abstract suspend fun add(de.infix.testBalloon.framework/TestElementEvent) // de.infix.testBalloon.framework/TestExecutionReport.add|add(de.infix.testBalloon.framework.TestElementEvent){}[0]
 }
 
-final class de.infix.testBalloon.framework/Test : de.infix.testBalloon.framework/AbstractTest, de.infix.testBalloon.framework/TestElement // de.infix.testBalloon.framework/Test|null[0]
+final class de.infix.testBalloon.framework/Test : de.infix.testBalloon.framework.shared/AbstractTest, de.infix.testBalloon.framework/TestElement // de.infix.testBalloon.framework/Test|null[0]
 
-final class de.infix.testBalloon.framework/TestExecutionScope : de.infix.testBalloon.framework/AbstractTest, kotlinx.coroutines/CoroutineScope { // de.infix.testBalloon.framework/TestExecutionScope|null[0]
+final class de.infix.testBalloon.framework/TestExecutionScope : de.infix.testBalloon.framework.shared/AbstractTest, kotlinx.coroutines/CoroutineScope { // de.infix.testBalloon.framework/TestExecutionScope|null[0]
     final val coroutineContext // de.infix.testBalloon.framework/TestExecutionScope.coroutineContext|{}coroutineContext[0]
         final fun <get-coroutineContext>(): kotlin.coroutines/CoroutineContext // de.infix.testBalloon.framework/TestExecutionScope.coroutineContext.<get-coroutineContext>|<get-coroutineContext>(){}[0]
     final val testElementIsEnabled // de.infix.testBalloon.framework/TestExecutionScope.testElementIsEnabled|{}testElementIsEnabled[0]
         final fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/TestExecutionScope.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
     final val testElementPath // de.infix.testBalloon.framework/TestExecutionScope.testElementPath|{}testElementPath[0]
-        final fun <get-testElementPath>(): de.infix.testBalloon.framework/AbstractTestElement.Path // de.infix.testBalloon.framework/TestExecutionScope.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+        final fun <get-testElementPath>(): de.infix.testBalloon.framework.shared/AbstractTestElement.Path // de.infix.testBalloon.framework/TestExecutionScope.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
     final val testScope // de.infix.testBalloon.framework/TestExecutionScope.testScope|{}testScope[0]
         final fun <get-testScope>(): kotlinx.coroutines.test/TestScope // de.infix.testBalloon.framework/TestExecutionScope.testScope.<get-testScope>|<get-testScope>(){}[0]
 }
@@ -124,8 +124,8 @@ open class de.infix.testBalloon.framework/TestConfig { // de.infix.testBalloon.f
     final object Companion : de.infix.testBalloon.framework/TestConfig // de.infix.testBalloon.framework/TestConfig.Companion|null[0]
 }
 
-open class de.infix.testBalloon.framework/TestSession : de.infix.testBalloon.framework/AbstractTestSession, de.infix.testBalloon.framework/TestSuite { // de.infix.testBalloon.framework/TestSession|null[0]
-    constructor <init>(de.infix.testBalloon.framework/TestConfig = ..., kotlin/Function0<de.infix.testBalloon.framework/TestCompartment> = ..., de.infix.testBalloon.framework.internal/ReportingMode? = ...) // de.infix.testBalloon.framework/TestSession.<init>|<init>(de.infix.testBalloon.framework.TestConfig;kotlin.Function0<de.infix.testBalloon.framework.TestCompartment>;de.infix.testBalloon.framework.internal.ReportingMode?){}[0]
+open class de.infix.testBalloon.framework/TestSession : de.infix.testBalloon.framework.shared/AbstractTestSession, de.infix.testBalloon.framework/TestSuite { // de.infix.testBalloon.framework/TestSession|null[0]
+    constructor <init>(de.infix.testBalloon.framework/TestConfig = ..., kotlin/Function0<de.infix.testBalloon.framework/TestCompartment> = ..., de.infix.testBalloon.framework.shared.internal/ReportingMode? = ...) // de.infix.testBalloon.framework/TestSession.<init>|<init>(de.infix.testBalloon.framework.TestConfig;kotlin.Function0<de.infix.testBalloon.framework.TestCompartment>;de.infix.testBalloon.framework.shared.internal.ReportingMode?){}[0]
 
     final object Companion { // de.infix.testBalloon.framework/TestSession.Companion|null[0]
         final val DefaultConfiguration // de.infix.testBalloon.framework/TestSession.Companion.DefaultConfiguration|{}DefaultConfiguration[0]
@@ -133,7 +133,7 @@ open class de.infix.testBalloon.framework/TestSession : de.infix.testBalloon.fra
     }
 }
 
-open class de.infix.testBalloon.framework/TestSuite : de.infix.testBalloon.framework/AbstractTestSuite, de.infix.testBalloon.framework/TestElement { // de.infix.testBalloon.framework/TestSuite|null[0]
+open class de.infix.testBalloon.framework/TestSuite : de.infix.testBalloon.framework.shared/AbstractTestSuite, de.infix.testBalloon.framework/TestElement { // de.infix.testBalloon.framework/TestSuite|null[0]
     constructor <init>(de.infix.testBalloon.framework/TestCompartment, de.infix.testBalloon.framework/TestConfig, kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ..., kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(de.infix.testBalloon.framework.TestCompartment;de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String;kotlin.String){}[0]
     constructor <init>(de.infix.testBalloon.framework/TestCompartment, kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ..., kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(de.infix.testBalloon.framework.TestCompartment;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String;kotlin.String){}[0]
     constructor <init>(de.infix.testBalloon.framework/TestConfig, kotlin/Function1<de.infix.testBalloon.framework/TestSuite, kotlin/Unit>, kotlin/String = ..., kotlin/String = ...) // de.infix.testBalloon.framework/TestSuite.<init>|<init>(de.infix.testBalloon.framework.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.TestSuite,kotlin.Unit>;kotlin.String;kotlin.String){}[0]
@@ -158,7 +158,7 @@ open class de.infix.testBalloon.framework/TestSuite : de.infix.testBalloon.frame
     }
 }
 
-sealed class de.infix.testBalloon.framework/TestElement : de.infix.testBalloon.framework/AbstractTestElement { // de.infix.testBalloon.framework/TestElement|null[0]
+sealed class de.infix.testBalloon.framework/TestElement : de.infix.testBalloon.framework.shared/AbstractTestElement { // de.infix.testBalloon.framework/TestElement|null[0]
     open val testElementIsEnabled // de.infix.testBalloon.framework/TestElement.testElementIsEnabled|{}testElementIsEnabled[0]
         open fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/TestElement.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
     open val testElementPath // de.infix.testBalloon.framework/TestElement.testElementPath|{}testElementPath[0]
@@ -170,7 +170,7 @@ sealed class de.infix.testBalloon.framework/TestElement : de.infix.testBalloon.f
 
     open fun toString(): kotlin/String // de.infix.testBalloon.framework/TestElement.toString|toString(){}[0]
 
-    final class Path : de.infix.testBalloon.framework/AbstractTestElement.Path { // de.infix.testBalloon.framework/TestElement.Path|null[0]
+    final class Path : de.infix.testBalloon.framework.shared/AbstractTestElement.Path { // de.infix.testBalloon.framework/TestElement.Path|null[0]
         final fun toString(): kotlin/String // de.infix.testBalloon.framework/TestElement.Path.toString|toString(){}[0]
     }
 }

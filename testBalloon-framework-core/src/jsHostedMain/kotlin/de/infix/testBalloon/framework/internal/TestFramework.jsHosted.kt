@@ -1,12 +1,13 @@
 package de.infix.testBalloon.framework.internal
 
-import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.internal.integration.TeamCityTestExecutionReport
 import de.infix.testBalloon.framework.internal.integration.ThrowingTestConfigurationReport
 import de.infix.testBalloon.framework.internal.integration.kotlinJsTestFrameworkAvailable
 import de.infix.testBalloon.framework.internal.integration.processArguments
 import de.infix.testBalloon.framework.internal.integration.registerWithKotlinJsTestFramework
+import de.infix.testBalloon.framework.shared.AbstractTestSuite
+import de.infix.testBalloon.framework.shared.internal.InvokedByGeneratedCode
 
 @InvokedByGeneratedCode
 internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestSuite>) {

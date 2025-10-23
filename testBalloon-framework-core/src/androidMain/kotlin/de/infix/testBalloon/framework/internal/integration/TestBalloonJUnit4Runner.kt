@@ -6,10 +6,10 @@ import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
-import de.infix.testBalloon.framework.internal.Constants
 import de.infix.testBalloon.framework.internal.EnvironmentBasedElementSelection
-import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import de.infix.testBalloon.framework.internal.logDebug
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
 import de.infix.testBalloon.framework.withSingleThreadedDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

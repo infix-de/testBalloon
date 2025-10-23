@@ -6,15 +6,15 @@ import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import buildConfig.BuildConfig.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
-import de.infix.testBalloon.framework.AbstractTestSession
-import de.infix.testBalloon.framework.AbstractTestSuite
-import de.infix.testBalloon.framework.TestDiscoverable
-import de.infix.testBalloon.framework.TestDisplayName
-import de.infix.testBalloon.framework.TestElementName
-import de.infix.testBalloon.framework.internal.Constants
-import de.infix.testBalloon.framework.internal.DebugLevel
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
-import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
+import de.infix.testBalloon.framework.shared.AbstractTestSession
+import de.infix.testBalloon.framework.shared.AbstractTestSuite
+import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestDisplayName
+import de.infix.testBalloon.framework.shared.TestElementName
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.DebugLevel
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -170,7 +170,7 @@ private class Configuration(
     override val messageCollector: MessageCollector
 ) : CapableOfSymbolResolving {
 
-    val internalPackageName = Constants.CORE_INTERNAL_PACKAGE_NAME
+    val coreInternalPackageName = Constants.CORE_INTERNAL_PACKAGE_NAME
     val entryPointPackageName = Constants.ENTRY_POINT_PACKAGE_NAME
 
     val debugLevel = Options.debugLevel.value(compilerConfiguration)
@@ -187,13 +187,13 @@ private class Configuration(
     val testFrameworkDiscoveryResultSymbol by lazy { irClassSymbol(TestFrameworkDiscoveryResult::class) }
 
     val initializeTestFrameworkFunctionSymbol by lazy {
-        irFunctionSymbol(internalPackageName, "initializeTestFramework")
+        irFunctionSymbol(coreInternalPackageName, "initializeTestFramework")
     }
     val configureAndExecuteTestsFunctionSymbol by lazy {
-        irFunctionSymbol(internalPackageName, "configureAndExecuteTests")
+        irFunctionSymbol(coreInternalPackageName, "configureAndExecuteTests")
     }
     val configureAndExecuteTestsBlockingFunctionSymbol by lazy {
-        irFunctionSymbol(internalPackageName, "configureAndExecuteTestsBlocking")
+        irFunctionSymbol(coreInternalPackageName, "configureAndExecuteTestsBlocking")
     }
 
     val testFrameworkDiscoveryResultPropertyName = Name.identifier(Constants.JVM_DISCOVERY_RESULT_PROPERTY)
@@ -764,7 +764,7 @@ private fun CapableOfSymbolResolving.irFunctionSymbol(
     functionName: String
 ): IrSimpleFunctionSymbol =
     pluginContext.referenceFunctions(CallableId(FqName(packageName), Name.identifier(functionName))).singleOrElse {
-        if (it.size == 1) {
+        if (it.isEmpty()) {
             throw MissingFrameworkSymbol("function '$packageName.$functionName'")
         } else {
             reportWarning(

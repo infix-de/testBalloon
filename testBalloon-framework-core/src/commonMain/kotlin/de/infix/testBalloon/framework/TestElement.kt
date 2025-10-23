@@ -1,8 +1,9 @@
 package de.infix.testBalloon.framework
 
-import de.infix.testBalloon.framework.internal.Constants
-import de.infix.testBalloon.framework.internal.ReportingMode
 import de.infix.testBalloon.framework.internal.reportingPathLimit
+import de.infix.testBalloon.framework.shared.AbstractTestElement
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.ReportingMode
 
 public sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, testConfig: TestConfig) :
     AbstractTestElement {

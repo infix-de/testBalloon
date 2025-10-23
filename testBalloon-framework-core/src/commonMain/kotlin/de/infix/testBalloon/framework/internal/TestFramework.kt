@@ -1,11 +1,13 @@
 package de.infix.testBalloon.framework.internal
 
-import de.infix.testBalloon.framework.AbstractTestSession
-import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.TestCompartment
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.shared.AbstractTestSession
+import de.infix.testBalloon.framework.shared.AbstractTestSuite
+import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
+import de.infix.testBalloon.framework.shared.internal.InvokedByGeneratedCode
 import de.infix.testBalloon.framework.testPlatform
 import kotlinx.coroutines.test.TestScope
 import kotlin.time.Duration

@@ -1,10 +1,12 @@
 package de.infix.testBalloon.framework
 
 import de.infix.testBalloon.framework.internal.EnvironmentBasedElementSelection
-import de.infix.testBalloon.framework.internal.EnvironmentVariable
-import de.infix.testBalloon.framework.internal.ReportingMode
 import de.infix.testBalloon.framework.internal.argumentsBasedElementSelection
 import de.infix.testBalloon.framework.internal.value
+import de.infix.testBalloon.framework.shared.AbstractTestSession
+import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
+import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import kotlinx.coroutines.Dispatchers
 
 /**

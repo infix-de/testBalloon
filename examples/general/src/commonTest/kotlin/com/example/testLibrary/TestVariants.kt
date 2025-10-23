@@ -1,9 +1,9 @@
 package com.example.testLibrary
 
 import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.TestDiscoverable
 import de.infix.testBalloon.framework.TestExecutionScope
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.shared.TestDiscoverable
 import de.infix.testBalloon.framework.testScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.TimeoutCancellationException

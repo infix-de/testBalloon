@@ -5,6 +5,7 @@ import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.assertMessageStartsWith
 import de.infix.testBalloon.framework.disable
 import de.infix.testBalloon.framework.reference
+import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.testSuite
 import de.infix.testBalloon.framework.withTestFramework
 import de.infix.testBalloon.framework.withTestReport

@@ -4,6 +4,7 @@ import de.infix.testBalloon.framework.internal.TestFramework
 import de.infix.testBalloon.framework.internal.initializeTestFramework
 import de.infix.testBalloon.framework.internal.integration.ThrowingTestConfigurationReport
 import de.infix.testBalloon.framework.internal.logInfo
+import de.infix.testBalloon.framework.shared.AbstractTestSession
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.DelicateCoroutinesApi

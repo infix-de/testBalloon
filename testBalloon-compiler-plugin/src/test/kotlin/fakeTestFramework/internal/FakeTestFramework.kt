@@ -5,8 +5,10 @@
 
 package de.infix.testBalloon.framework.internal
 
-import de.infix.testBalloon.framework.AbstractTestSession
-import de.infix.testBalloon.framework.AbstractTestSuite
+import de.infix.testBalloon.framework.shared.AbstractTestSession
+import de.infix.testBalloon.framework.shared.AbstractTestSuite
+import de.infix.testBalloon.framework.shared.internal.InvokedByGeneratedCode
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 
 @InvokedByGeneratedCode
 internal fun initializeTestFramework(testSession: AbstractTestSession?, arguments: Array<String>? = null) {}

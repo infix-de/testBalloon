@@ -2,8 +2,8 @@
 
 package de.infix.testBalloon.gradlePlugin.shared
 
-import de.infix.testBalloon.framework.internal.Constants
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.gradle.api.Project
 import kotlin.reflect.KProperty
 

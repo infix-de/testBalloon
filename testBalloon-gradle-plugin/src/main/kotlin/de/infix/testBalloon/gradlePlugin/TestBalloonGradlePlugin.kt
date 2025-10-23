@@ -8,9 +8,9 @@ import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
 import buildConfig.BuildConfig.PROJECT_VERSION
-import de.infix.testBalloon.framework.internal.Constants
-import de.infix.testBalloon.framework.internal.DebugLevel
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.DebugLevel
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleProperties
 import de.infix.testBalloon.gradlePlugin.shared.configureWithTestBalloon
 import org.gradle.api.Project

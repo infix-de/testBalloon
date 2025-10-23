@@ -7,9 +7,9 @@ import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestExecutionTraversal
 import de.infix.testBalloon.framework.TestInvocation
 import de.infix.testBalloon.framework.TestSuite
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.printlnFixed
 import de.infix.testBalloon.framework.invocation
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.singleThreaded
 import de.infix.testBalloon.framework.testPlatform
 import de.infix.testBalloon.framework.testScope

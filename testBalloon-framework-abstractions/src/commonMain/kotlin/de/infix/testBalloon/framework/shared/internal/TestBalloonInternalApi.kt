@@ -1,4 +1,4 @@
-package de.infix.testBalloon.framework.internal
+package de.infix.testBalloon.framework.shared.internal
 
 /**
  * Marker for a TestBalloon-internal API, which must have public visibility for technical reasons.

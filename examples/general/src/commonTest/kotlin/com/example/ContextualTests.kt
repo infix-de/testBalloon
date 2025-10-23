@@ -1,6 +1,6 @@
 package com.example
 
-import de.infix.testBalloon.framework.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestDiscoverable
 import de.infix.testBalloon.framework.testSuite
 import kotlin.random.Random
 import kotlin.random.nextInt

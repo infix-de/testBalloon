@@ -2,6 +2,8 @@ package de.infix.testBalloon.framework.internal
 
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.testPlatform
 
 /**

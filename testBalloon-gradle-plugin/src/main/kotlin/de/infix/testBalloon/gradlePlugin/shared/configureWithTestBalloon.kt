@@ -3,10 +3,10 @@
 
 package de.infix.testBalloon.gradlePlugin.shared
 
-import de.infix.testBalloon.framework.internal.Constants
-import de.infix.testBalloon.framework.internal.EnvironmentVariable
-import de.infix.testBalloon.framework.internal.ReportingMode
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
+import de.infix.testBalloon.framework.shared.internal.ReportingMode
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.gradle.api.Project
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.tasks.testing.AbstractTestTask

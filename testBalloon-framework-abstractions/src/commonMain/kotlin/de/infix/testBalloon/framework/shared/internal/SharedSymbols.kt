@@ -1,4 +1,4 @@
-package de.infix.testBalloon.framework.internal
+package de.infix.testBalloon.framework.shared.internal
 
 /**
  * This file contains symbols shared across framework modules.
@@ -51,12 +51,13 @@ public annotation class InvokedByGeneratedCode
  */
 @TestBalloonInternalApi
 public object Constants {
-    public const val ABSTRACTIONS_PACKAGE_NAME: String = "de.infix.testBalloon.framework"
-
     public const val CORE_PACKAGE_NAME: String = "de.infix.testBalloon.framework"
     public const val CORE_INTERNAL_PACKAGE_NAME: String = "$CORE_PACKAGE_NAME.internal"
 
-    public const val ENTRY_POINT_PACKAGE_NAME: String = "$CORE_INTERNAL_PACKAGE_NAME.entryPoint"
+    public const val SHARED_PACKAGE_NAME: String = "de.infix.testBalloon.framework.shared"
+    public const val SHARED_INTERNAL_PACKAGE_NAME: String = "$SHARED_PACKAGE_NAME.internal"
+
+    public const val ENTRY_POINT_PACKAGE_NAME: String = "$SHARED_INTERNAL_PACKAGE_NAME.entryPoint"
     public const val ENTRY_POINT_ANCHOR_FILE_NAME: String = "EntryPointAnchor.kt"
     public const val ENTRY_POINT_ANCHOR_CLASS_NAME: String = "$ENTRY_POINT_PACKAGE_NAME.EntryPointAnchorKt"
 

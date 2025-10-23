@@ -6,35 +6,35 @@
 // - Show declarations: true
 
 // Library unique name: <de.infix.testBalloon:testBalloon-framework-abstractions>
-open annotation class de.infix.testBalloon.framework/TestDiscoverable : kotlin/Annotation { // de.infix.testBalloon.framework/TestDiscoverable|null[0]
-    constructor <init>() // de.infix.testBalloon.framework/TestDiscoverable.<init>|<init>(){}[0]
+open annotation class de.infix.testBalloon.framework.shared/TestDiscoverable : kotlin/Annotation { // de.infix.testBalloon.framework.shared/TestDiscoverable|null[0]
+    constructor <init>() // de.infix.testBalloon.framework.shared/TestDiscoverable.<init>|<init>(){}[0]
 }
 
-open annotation class de.infix.testBalloon.framework/TestDisplayName : kotlin/Annotation { // de.infix.testBalloon.framework/TestDisplayName|null[0]
-    constructor <init>() // de.infix.testBalloon.framework/TestDisplayName.<init>|<init>(){}[0]
+open annotation class de.infix.testBalloon.framework.shared/TestDisplayName : kotlin/Annotation { // de.infix.testBalloon.framework.shared/TestDisplayName|null[0]
+    constructor <init>() // de.infix.testBalloon.framework.shared/TestDisplayName.<init>|<init>(){}[0]
 }
 
-open annotation class de.infix.testBalloon.framework/TestElementDsl : kotlin/Annotation { // de.infix.testBalloon.framework/TestElementDsl|null[0]
-    constructor <init>() // de.infix.testBalloon.framework/TestElementDsl.<init>|<init>(){}[0]
+open annotation class de.infix.testBalloon.framework.shared/TestElementDsl : kotlin/Annotation { // de.infix.testBalloon.framework.shared/TestElementDsl|null[0]
+    constructor <init>() // de.infix.testBalloon.framework.shared/TestElementDsl.<init>|<init>(){}[0]
 }
 
-open annotation class de.infix.testBalloon.framework/TestElementName : kotlin/Annotation { // de.infix.testBalloon.framework/TestElementName|null[0]
-    constructor <init>() // de.infix.testBalloon.framework/TestElementName.<init>|<init>(){}[0]
+open annotation class de.infix.testBalloon.framework.shared/TestElementName : kotlin/Annotation { // de.infix.testBalloon.framework.shared/TestElementName|null[0]
+    constructor <init>() // de.infix.testBalloon.framework.shared/TestElementName.<init>|<init>(){}[0]
 }
 
-abstract interface de.infix.testBalloon.framework/AbstractTest : de.infix.testBalloon.framework/AbstractTestElement // de.infix.testBalloon.framework/AbstractTest|null[0]
+abstract interface de.infix.testBalloon.framework.shared/AbstractTest : de.infix.testBalloon.framework.shared/AbstractTestElement // de.infix.testBalloon.framework.shared/AbstractTest|null[0]
 
-abstract interface de.infix.testBalloon.framework/AbstractTestElement { // de.infix.testBalloon.framework/AbstractTestElement|null[0]
-    abstract val testElementIsEnabled // de.infix.testBalloon.framework/AbstractTestElement.testElementIsEnabled|{}testElementIsEnabled[0]
-        abstract fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework/AbstractTestElement.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
-    abstract val testElementPath // de.infix.testBalloon.framework/AbstractTestElement.testElementPath|{}testElementPath[0]
-        abstract fun <get-testElementPath>(): de.infix.testBalloon.framework/AbstractTestElement.Path // de.infix.testBalloon.framework/AbstractTestElement.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+abstract interface de.infix.testBalloon.framework.shared/AbstractTestElement { // de.infix.testBalloon.framework.shared/AbstractTestElement|null[0]
+    abstract val testElementIsEnabled // de.infix.testBalloon.framework.shared/AbstractTestElement.testElementIsEnabled|{}testElementIsEnabled[0]
+        abstract fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework.shared/AbstractTestElement.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
+    abstract val testElementPath // de.infix.testBalloon.framework.shared/AbstractTestElement.testElementPath|{}testElementPath[0]
+        abstract fun <get-testElementPath>(): de.infix.testBalloon.framework.shared/AbstractTestElement.Path // de.infix.testBalloon.framework.shared/AbstractTestElement.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
 
-    abstract interface Path { // de.infix.testBalloon.framework/AbstractTestElement.Path|null[0]
-        abstract fun toString(): kotlin/String // de.infix.testBalloon.framework/AbstractTestElement.Path.toString|toString(){}[0]
+    abstract interface Path { // de.infix.testBalloon.framework.shared/AbstractTestElement.Path|null[0]
+        abstract fun toString(): kotlin/String // de.infix.testBalloon.framework.shared/AbstractTestElement.Path.toString|toString(){}[0]
     }
 }
 
-abstract interface de.infix.testBalloon.framework/AbstractTestSession : de.infix.testBalloon.framework/AbstractTestSuite // de.infix.testBalloon.framework/AbstractTestSession|null[0]
+abstract interface de.infix.testBalloon.framework.shared/AbstractTestSession : de.infix.testBalloon.framework.shared/AbstractTestSuite // de.infix.testBalloon.framework.shared/AbstractTestSession|null[0]
 
-abstract interface de.infix.testBalloon.framework/AbstractTestSuite : de.infix.testBalloon.framework/AbstractTestElement // de.infix.testBalloon.framework/AbstractTestSuite|null[0]
+abstract interface de.infix.testBalloon.framework.shared/AbstractTestSuite : de.infix.testBalloon.framework.shared/AbstractTestElement // de.infix.testBalloon.framework.shared/AbstractTestSuite|null[0]

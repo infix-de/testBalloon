@@ -1,8 +1,8 @@
 package fakeTestFramework
 
-import de.infix.testBalloon.framework.AbstractTestSuite
-import de.infix.testBalloon.framework.TestDiscoverable
-import de.infix.testBalloon.framework.TestElementName
+import de.infix.testBalloon.framework.shared.AbstractTestSuite
+import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestElementName
 
 @Suppress("unused")
 @TestDiscoverable

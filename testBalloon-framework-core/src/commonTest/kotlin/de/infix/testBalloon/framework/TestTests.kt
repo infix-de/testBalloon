@@ -1,6 +1,6 @@
 package de.infix.testBalloon.framework
 
-import de.infix.testBalloon.framework.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.Constants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

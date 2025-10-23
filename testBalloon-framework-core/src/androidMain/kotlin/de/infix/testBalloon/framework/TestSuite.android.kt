@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework
 
+import de.infix.testBalloon.framework.shared.TestDiscoverable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.test.runTest
 import org.junit.rules.TestRule

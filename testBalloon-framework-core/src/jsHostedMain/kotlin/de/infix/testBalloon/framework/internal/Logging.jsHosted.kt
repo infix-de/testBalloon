@@ -1,6 +1,7 @@
 package de.infix.testBalloon.framework.internal
 
 import de.infix.testBalloon.framework.TestPlatformJsHosted
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.testPlatform
 
 internal val runsInBrowser: Boolean =

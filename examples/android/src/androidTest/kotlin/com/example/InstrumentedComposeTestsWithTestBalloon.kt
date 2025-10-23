@@ -15,8 +15,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import de.infix.testBalloon.framework.TestDiscoverable
+import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.TestSuite
+import de.infix.testBalloon.framework.shared.TestDiscoverable
 import de.infix.testBalloon.framework.testSuite
 import de.infix.testBalloon.framework.testWithJUnit4Rule
 
@@ -53,6 +54,7 @@ val ComposeTestsWithTestBalloon by testSuite {
  * Declares a `Test` with a [ComposeTestContext] providing a basic `composeTestRule`.
  */
 @TestDiscoverable
+@OptIn(TestBalloonExperimentalApi::class)
 fun TestSuite.composeTest(
     name: String,
     composeTestRule: ComposeContentTestRule = createComposeRule(),
@@ -67,6 +69,7 @@ class ComposeTestContext<Rule>(val composeTestRule: Rule)
  * Declares a `Test` with a [ComposeTestContext] providing an Activity-based `composeTestRule`.
  */
 @TestDiscoverable
+@OptIn(TestBalloonExperimentalApi::class)
 inline fun <reified A : ComponentActivity> TestSuite.androidComposeTest(
     name: String,
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<A>, A> = createAndroidComposeRule<A>(),

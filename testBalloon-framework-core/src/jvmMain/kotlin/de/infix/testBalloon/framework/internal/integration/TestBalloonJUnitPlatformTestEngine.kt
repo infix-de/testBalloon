@@ -1,6 +1,5 @@
 package de.infix.testBalloon.framework.internal.integration
 
-import de.infix.testBalloon.framework.AbstractTestSuite
 import de.infix.testBalloon.framework.FailFastException
 import de.infix.testBalloon.framework.Test
 import de.infix.testBalloon.framework.TestConfigurationReport
@@ -9,10 +8,11 @@ import de.infix.testBalloon.framework.TestElementEvent
 import de.infix.testBalloon.framework.TestExecutionReport
 import de.infix.testBalloon.framework.TestSession
 import de.infix.testBalloon.framework.TestSuite
-import de.infix.testBalloon.framework.internal.Constants
-import de.infix.testBalloon.framework.internal.ReportingMode
-import de.infix.testBalloon.framework.internal.TestFrameworkDiscoveryResult
 import de.infix.testBalloon.framework.internal.logDebug
+import de.infix.testBalloon.framework.shared.AbstractTestSuite
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.ReportingMode
+import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.platform.engine.DiscoveryIssue

@@ -1,7 +1,7 @@
 package fakeTestFramework
 
-import de.infix.testBalloon.framework.AbstractTestSession
-import de.infix.testBalloon.framework.TestDiscoverable
+import de.infix.testBalloon.framework.shared.AbstractTestSession
+import de.infix.testBalloon.framework.shared.TestDiscoverable
 
 @TestDiscoverable
 open class TestSession :

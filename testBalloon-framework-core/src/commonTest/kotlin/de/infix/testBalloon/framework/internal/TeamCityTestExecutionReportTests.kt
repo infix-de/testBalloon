@@ -8,6 +8,7 @@ import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.assertContainsInOrder
 import de.infix.testBalloon.framework.internal.integration.TeamCityTestExecutionReport
 import de.infix.testBalloon.framework.internal.integration.ThrowingTestConfigurationReport
+import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.testSuite
 import de.infix.testBalloon.framework.withTestFramework
 import de.infix.testBalloon.framework.withTestReport

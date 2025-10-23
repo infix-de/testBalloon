@@ -5,8 +5,8 @@ import com.example.testLibrary.test
 import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.TestCompartment
 import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.printlnFixed
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.testPlatform
 import de.infix.testBalloon.framework.testScope
 import de.infix.testBalloon.framework.testSuite

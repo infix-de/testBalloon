@@ -1,7 +1,7 @@
 package com.example
 
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.printlnFixed
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.testSuite
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds

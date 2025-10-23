@@ -1,6 +1,7 @@
 package de.infix.testBalloon.framework
 
 import de.infix.testBalloon.framework.internal.runTestAwaitingCompletion
+import de.infix.testBalloon.framework.shared.AbstractTest
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

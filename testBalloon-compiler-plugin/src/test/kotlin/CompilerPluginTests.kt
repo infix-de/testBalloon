@@ -7,8 +7,8 @@ import com.tschuchort.compiletesting.PluginOption
 import com.tschuchort.compiletesting.SourceFile
 import de.infix.testBalloon.compilerPlugin.CompilerPluginCommandLineProcessor
 import de.infix.testBalloon.compilerPlugin.CompilerPluginRegistrar
-import de.infix.testBalloon.framework.internal.Constants
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
@@ -165,7 +165,7 @@ private class CompilerPluginTests {
     fun defectiveFrameworkLibraryDependency() {
         compilation(
             """
-                package ${Constants.ABSTRACTIONS_PACKAGE_NAME}
+                package ${Constants.SHARED_PACKAGE_NAME}
                 interface AbstractTestSuite
                 val foo = 1
             """,

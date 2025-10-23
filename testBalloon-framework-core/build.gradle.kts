@@ -1,8 +1,8 @@
 @file:OptIn(TestBalloonInternalApi::class)
 
 import buildLogic.enableAbiValidation
-import de.infix.testBalloon.framework.internal.Constants
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -17,7 +17,7 @@ kotlin {
 
     compilerOptions {
         freeCompilerArgs.addAll(
-            "-opt-in=${Constants.CORE_INTERNAL_PACKAGE_NAME}.TestBalloonInternalApi",
+            "-opt-in=${Constants.SHARED_INTERNAL_PACKAGE_NAME}.TestBalloonInternalApi",
             "-opt-in=${Constants.CORE_PACKAGE_NAME}.TestBalloonExperimentalApi"
         )
     }

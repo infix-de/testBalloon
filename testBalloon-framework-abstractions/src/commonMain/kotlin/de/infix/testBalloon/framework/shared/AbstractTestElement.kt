@@ -1,4 +1,4 @@
-package de.infix.testBalloon.framework
+package de.infix.testBalloon.framework.shared
 
 /**
  * An element of a test hierarchy. Can be a test or a suite.

@@ -1,4 +1,4 @@
-public final class de/infix/testBalloon/framework/Test : de/infix/testBalloon/framework/TestElement, de/infix/testBalloon/framework/AbstractTest {
+public final class de/infix/testBalloon/framework/Test : de/infix/testBalloon/framework/TestElement, de/infix/testBalloon/framework/shared/AbstractTest {
 }
 
 public abstract interface annotation class de/infix/testBalloon/framework/TestBalloonExperimentalApi : java/lang/annotation/Annotation {
@@ -52,18 +52,18 @@ public abstract class de/infix/testBalloon/framework/TestConfigurationReport {
 	public abstract fun add (Lde/infix/testBalloon/framework/TestElementEvent;)V
 }
 
-public abstract class de/infix/testBalloon/framework/TestElement : de/infix/testBalloon/framework/AbstractTestElement {
+public abstract class de/infix/testBalloon/framework/TestElement : de/infix/testBalloon/framework/shared/AbstractTestElement {
 	public synthetic fun <init> (Lde/infix/testBalloon/framework/TestSuite;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/TestConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lde/infix/testBalloon/framework/TestSuite;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getTestConfig ()Lde/infix/testBalloon/framework/TestConfig;
 	public fun getTestElementIsEnabled ()Z
-	public synthetic fun getTestElementPath ()Lde/infix/testBalloon/framework/AbstractTestElement$Path;
 	public fun getTestElementPath ()Lde/infix/testBalloon/framework/TestElement$Path;
+	public synthetic fun getTestElementPath ()Lde/infix/testBalloon/framework/shared/AbstractTestElement$Path;
 	public final fun setTestConfig (Lde/infix/testBalloon/framework/TestConfig;)V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class de/infix/testBalloon/framework/TestElement$Path : de/infix/testBalloon/framework/AbstractTestElement$Path {
+public final class de/infix/testBalloon/framework/TestElement$Path : de/infix/testBalloon/framework/shared/AbstractTestElement$Path {
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -93,10 +93,10 @@ public abstract class de/infix/testBalloon/framework/TestExecutionReport {
 	public abstract fun add (Lde/infix/testBalloon/framework/TestElementEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class de/infix/testBalloon/framework/TestExecutionScope : de/infix/testBalloon/framework/AbstractTest, kotlinx/coroutines/CoroutineScope {
+public final class de/infix/testBalloon/framework/TestExecutionScope : de/infix/testBalloon/framework/shared/AbstractTest, kotlinx/coroutines/CoroutineScope {
 	public fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
 	public fun getTestElementIsEnabled ()Z
-	public fun getTestElementPath ()Lde/infix/testBalloon/framework/AbstractTestElement$Path;
+	public fun getTestElementPath ()Lde/infix/testBalloon/framework/shared/AbstractTestElement$Path;
 	public final fun getTestScope ()Lkotlinx/coroutines/test/TestScope;
 }
 
@@ -156,18 +156,18 @@ public final class de/infix/testBalloon/framework/TestPlatform_androidKt {
 	public static final fun withSingleThreadedDispatcher (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public class de/infix/testBalloon/framework/TestSession : de/infix/testBalloon/framework/TestSuite, de/infix/testBalloon/framework/AbstractTestSession {
+public class de/infix/testBalloon/framework/TestSession : de/infix/testBalloon/framework/TestSuite, de/infix/testBalloon/framework/shared/AbstractTestSession {
 	public static final field Companion Lde/infix/testBalloon/framework/TestSession$Companion;
 	protected fun <init> ()V
-	protected fun <init> (Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/internal/ReportingMode;)V
-	public synthetic fun <init> (Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/internal/ReportingMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun <init> (Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/shared/internal/ReportingMode;)V
+	public synthetic fun <init> (Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/shared/internal/ReportingMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class de/infix/testBalloon/framework/TestSession$Companion {
 	public final fun getDefaultConfiguration ()Lde/infix/testBalloon/framework/TestConfig;
 }
 
-public class de/infix/testBalloon/framework/TestSuite : de/infix/testBalloon/framework/TestElement, de/infix/testBalloon/framework/AbstractTestSuite {
+public class de/infix/testBalloon/framework/TestSuite : de/infix/testBalloon/framework/TestElement, de/infix/testBalloon/framework/shared/AbstractTestSuite {
 	protected fun <init> (Lde/infix/testBalloon/framework/TestCompartment;Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Lde/infix/testBalloon/framework/TestCompartment;Lde/infix/testBalloon/framework/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected fun <init> (Lde/infix/testBalloon/framework/TestCompartment;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;)V

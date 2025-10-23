@@ -1,8 +1,8 @@
 @file:OptIn(TestBalloonInternalApi::class)
 
 import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.internal.Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.testScope
 import de.infix.testBalloon.framework.testSuite
 import java.util.Locale

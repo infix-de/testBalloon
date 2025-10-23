@@ -2,8 +2,8 @@
 
 package de.infix.testBalloon.gradlePlugin
 
-import de.infix.testBalloon.framework.internal.DebugLevel
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.DebugLevel
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 
 open class TestBalloonGradleExtension {
     var debugLevel: DebugLevel = DebugLevel.NONE

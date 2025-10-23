@@ -1,4 +1,4 @@
-package de.infix.testBalloon.framework
+package de.infix.testBalloon.framework.shared
 
 /**
  * Makes a class or function support automatic discovery of test classes or properties.

@@ -1,8 +1,8 @@
-import de.infix.testBalloon.framework.AbstractTestElement
 import de.infix.testBalloon.framework.TestConfig
-import de.infix.testBalloon.framework.TestDiscoverable
 import de.infix.testBalloon.framework.TestSuite
 import de.infix.testBalloon.framework.disable
+import de.infix.testBalloon.framework.shared.AbstractTestElement
+import de.infix.testBalloon.framework.shared.TestDiscoverable
 import de.infix.testBalloon.framework.testScope
 import de.infix.testBalloon.framework.testSuite
 import kotlin.io.path.div

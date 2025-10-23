@@ -1,6 +1,10 @@
 package de.infix.testBalloon.framework
 
 import de.infix.testBalloon.framework.internal.GuardedBy
+import de.infix.testBalloon.framework.shared.AbstractTestSuite
+import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestDisplayName
+import de.infix.testBalloon.framework.shared.TestElementName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope

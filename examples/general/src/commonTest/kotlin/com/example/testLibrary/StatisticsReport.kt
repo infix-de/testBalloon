@@ -5,8 +5,8 @@ import de.infix.testBalloon.framework.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.TestConfig
 import de.infix.testBalloon.framework.TestElement
 import de.infix.testBalloon.framework.TestExecutionTraversal
-import de.infix.testBalloon.framework.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.internal.printlnFixed
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.testPlatform
 import de.infix.testBalloon.framework.traversal
 import kotlinx.atomicfu.atomic

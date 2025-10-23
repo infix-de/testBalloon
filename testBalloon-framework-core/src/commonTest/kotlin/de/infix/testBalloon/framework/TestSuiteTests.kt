@@ -1,6 +1,6 @@
 package de.infix.testBalloon.framework
 
-import de.infix.testBalloon.framework.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.Constants
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName

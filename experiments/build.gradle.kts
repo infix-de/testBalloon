@@ -4,11 +4,8 @@ import buildLogic.jsTargets
 import buildLogic.nativeTargets
 import buildLogic.versionFromCatalog
 import org.gradle.api.internal.artifacts.dependencies.DefaultFileCollectionDependency
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")

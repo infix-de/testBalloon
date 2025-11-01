@@ -6,7 +6,7 @@
 
 A *test framework*
 
-* provides language elements to declare and structure tests,
+* provides language elements to register and structure tests,
 * discovers tests,
 * runs tests, and
 * reports test results.
@@ -30,16 +30,18 @@ The test framework should support
 
 Larger test sets require flexible structuring capabilities. A single level of grouping, as with class-based suites, is often insufficient.
 
-=== Declaring tests
+=== Registering tests
 
 The test framework should support
 
-* [x] the dynamic declaration of tests via plain Kotlin,
-* [x] the dynamic declaration of test suites via plain Kotlin.
+* [x] the dynamic registration of tests via plain Kotlin,
+* [x] the dynamic registration of test suites via plain Kotlin.
+
+NOTE: Dynamic registration means that tests or test suites can be registered at run time instead of statically at compile time. It does not refer to registering tests or test suites at test execution time.
 
 ==== Rationale
 
-Dynamic declaration via plain Kotlin supports arbitrarily parameterized tests, while keeping the API surface small, making it easy to become proficient.
+Dynamic registration via plain Kotlin supports arbitrarily parameterized tests, while keeping the API surface small, making it easy to become proficient.
 
 In contrast, static constructs like configuration annotations introduce a new, often stringly-typed language, which has to be learned from scratch and comes with limited capabilities.
 
@@ -172,7 +174,7 @@ The test framework should support fixtures with the following capabilities:
 
 * [x] Fixtures are created lazily. They do not incur a cost in (partial) test runs where they are not used.
 * [x] Fixture initialization and tear-down can suspend.
-* [x] Fixture tear-down occurs automatically when the closing the test element they were declared for.
+* [x] Fixture tear-down occurs automatically when the closing the test suite they were registered in.
 * [x] Fixtures, which are of type `AutoCloseable` will be closed automatically.
 * [x] A closing function can be defined explicitly for each fixture.
 

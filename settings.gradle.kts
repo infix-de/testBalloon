@@ -16,6 +16,10 @@ include(":testBalloon-compiler-plugin")
 
 include(":integration-test")
 
+include(":documentation:site:docs")
+include(":documentation:site:snippets")
+include(":documentation:dokka-plugin-hide-internal-api")
+
 include(":testBalloon-integration-kotest-assertions")
 include(":testBalloon-integration-blocking-detection")
 

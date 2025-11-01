@@ -1,0 +1,39 @@
+name: 'Publish the doc site'
+
+on: [ workflow_call, workflow_dispatch ]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Check out the project'
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: 'Configure Git credentials'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+      - name: 'Setup Python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      - name: 'Install mkdocs-material'
+        run: pip install mkdocs-material
+
+      - name: 'Generate API reference'
+        run: ./gradlew dokkaGenerateHtml
+
+      - name: 'Build and publish'
+        run: |
+          cd documentation/site
+          mkdocs gh-deploy --force

@@ -1,0 +1,200 @@
+Using TestBalloon's powers, how can we test better with less effort? This section offers guidance for typical scenarios.
+
+## Expressive names
+
+Make tests communicate their purpose:
+
+```kotlin
+--8<-- "EffectiveTesting.kt:expressive-test-names"
+```
+
+## Write once, test many
+
+Let immutable state describe and drive your test cases:
+
+```kotlin
+--8<-- "TestsAndSuites.kt:ParameterizedTests"
+```
+
+## Cover edge cases and samples
+
+Test edge cases and/or random samples with value sources (generators):
+
+```kotlin
+--8<-- "TestsAndSuites.kt:TransactionServiceTests-accepted-counts"
+```
+
+1. Edge cases.
+2. Generating repeatable pseudo-random values with a seed.
+
+One test per sample documents which tests were actually run:
+
+![Generative test results](assets/effective-testing/TransactionServiceTests-accepted-counts-light.png#only-light)
+![Generative test results](assets/effective-testing/TransactionServiceTests-accepted-counts-dark.png#only-dark)
+
+## Supply fresh state to multiple tests
+
+Suppose a number of tests needs fresh state like this:
+
+```kotlin
+--8<-- "EffectiveTesting.kt:multiple-tests-with-fresh-state-init"
+```
+
+1. Note that `signIn` can be a suspending function.
+
+To conveniently provide each test with that fresh state, available as a context via `this`, define a custom DSL function:
+
+```kotlin hl_lines="2-4 8-10"
+--8<-- "EffectiveTesting.kt:multiple-tests-with-fresh-state"
+```
+
+1. `signIn` can be a suspending function.
+2. Tell the IDE plugin to put test run gutters at the function's call sites.
+3. Redefine the `test()` function locally to use a service as an extension receiver.
+4. Provide the context to each test action.
+5. `deposit()` is a method of the `Service` extension receiver.
+6. `accountBalance()` is a method of the `Service` extension receiver.
+
+!!! tip
+
+    In this case, tests are fully isolated from each other. They are ideal candidates for concurrent execution.
+
+## Use shared state across multiple tests
+
+To conveniently share state among tests, use a fixture and define a custom DSL function providing it as a context:
+
+```kotlin
+--8<-- "EffectiveTesting.kt:multiple-tests-sharing-state"
+```
+
+1. Use a local class to define a test-specific context.
+2. We can use mutable state here. This is [green code](../../getting-started/tests-and-suites#green-code-and-blue-code) which exists exclusively at test execution time, preserving [TestBalloon's golden rule](../../getting-started/tests-and-suites#testballoons-golden-rule).
+3. Tell the IDE plugin to put test run gutters at the function's call sites.
+4. Redefine the test function locally to use the test-specific context.
+5. Provide the fixture as a context to each test action.
+
+!!! tip
+
+    Writing tests that build on each other is easy, because, by default, TestBalloon runs tests in the order they appear in the source. Just make sure that you don't configure concurrent execution for them.
+
+## Make tests run fast
+
+### …if all tests avoid non-local mutable state
+
+If you have a module where all tests only mutate local state(1), you can speed up test execution greatly by running them concurrently. To do so, put this declaration anywhere in your test module:
+{ .annotate }
+
+1. Ascertain that tests do not share mutable state among each other and do not access global mutable state.
+
+```kotlin
+--8<-- "Configuration.kt:concurrent-test-session"
+```
+
+1. For technical reasons, a compartment assignment must be done lazily.
+
+### …if most tests avoid non-local mutable state
+
+1. Configure the module's test session for concurrency:
+
+    ```kotlin
+    --8<-- "Configuration.kt:concurrent-test-session"
+    ```
+
+    1. For technical reasons, a compartment assignment must be done lazily.
+
+2. Put top-level test suites, whose test's access non-local mutable state, in the predefined `Sequential` compartment:
+
+    ```kotlin
+    --8<-- "EffectiveTesting.kt:test-suite-with-sequential-compartment"
+    ```
+
+    1. For technical reasons, a compartment assignment must be done lazily.
+
+TestBalloon will now execute tests in the `Sequential` compartment sequentially, and also isolate them from all concurrent tests.
+
+### …if only some tests can run concurrently
+
+Put top-level test suites, whose test's can run concurrently, in the predefined `Concurrent` compartment:
+
+```kotlin
+--8<-- "EffectiveTesting.kt:test-suite-with-concurrent-compartment"
+```
+
+1. For technical reasons, a compartment assignment must be done lazily.
+
+TestBalloon will now execute most tests sequentially (by default), and isolate them from those in the `Concurrent` compartment, which run concurrently.
+
+## A UI test with Jetpack Compose
+
+TestBalloon does not bundle Compose dependencies, but it does provide a `testWithJUnit4Rule()` function. With that, you can create a custom DSL function:
+
+```kotlin
+--8<-- "JetpackComposeTests.kt:custom-dsl-extension"
+```
+
+Having done this, you can use Jetpack Compose tests inside TestBalloon via `composeTestRule`, [as shown in the Google documentation](https://developer.android.com/develop/ui/compose/testing):
+
+```kotlin
+--8<-- "JetpackComposeTests.kt:composeTest-click"
+```
+
+For a complete example, see [**Jetpack Compose** UI test](https://github.com/infix-de/testBalloon/tree/main/examples/android/src/androidTest/kotlin/com/example/InstrumentedComposeTestsWithTestBalloon.kt).
+
+## A UI test with Compose Multiplatform
+
+Compose Multiplatform provides an experimental [`runComposeUiTest()`](https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-test.html) API. To use it with TestBalloon, create a custom DSL function like this:(1)
+{ .annotate }
+
+1. Using the Compose Multiplatform test API requires an opt-in directive like `@file:OptIn(ExperimentalTestApi::class)`.
+
+```kotlin
+@TestDiscoverable
+fun TestSuite.composeTest(name: String, action: suspend ComposeUiTest.() -> Unit) = test(name) {
+    @OptIn(TestBalloonExperimentalApi::class)
+    runComposeUiTest(
+        runTestContext = coroutineContext.minusKey(CoroutineExceptionHandler.Key),
+        testTimeout = testTimeout ?: 60.seconds
+    ) {
+        action()
+    }
+}
+```
+
+With that, you can use Compose Multiplatform tests inside TestBalloon [as shown in the JetBrains documentation](https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-test.html).(1)
+{ .annotate }
+
+1. Using the Compose Multiplatform test API requires an opt-in directive like `@file:OptIn(ExperimentalTestApi::class)`.
+
+```kotlin
+val ComposeMultiplatformTests by testSuite {
+    composeTest("click") {
+        setContent {
+            ComposableUnderTest()
+        }
+
+        onNodeWithText("Button").performClick()
+        onNodeWithText("Success").assertExists()
+    }
+}
+```
+
+## Handling flaky tests
+
+One way of handling flaky tests is to repeat them until they succeed.
+
+Create a `TestConfig` extension:
+
+```kotlin
+--8<-- "EffectiveTesting.kt:repeatOnFailure"
+```
+
+Use it like this:
+
+```kotlin
+--8<-- "EffectiveTesting.kt:FlakyTests"
+```
+
+The outcome:
+
+![Flaky test results](assets/effective-testing/FlakyTests-light.png#only-light)
+![Flaky test results](assets/effective-testing/FlakyTests-dark.png#only-dark)

@@ -1,5 +1,6 @@
 plugins {
     id("buildLogic.common").apply(false)
+    id("buildLogic.dokka")
 }
 
 tasks {
@@ -21,4 +22,8 @@ tasks {
 
         dependsOn(":integration-test:test")
     }
+}
+
+dependencies {
+    dokkaPlugin(project(":documentation:dokka-plugin-hide-internal-api"))
 }

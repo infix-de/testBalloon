@@ -1,0 +1,141 @@
+site_name: TestBalloon
+site_dir: build
+site_url: https://infix-de.github.io/testBalloon/
+site_description: 'TestBalloon – a next generation Kotlin Multiplatform test framework'
+
+nav:
+  - Overview:
+      - Welcome to TestBalloon: index.md
+      - Why use TestBalloon?: overview/why.md
+  - Getting started:
+      - First steps: getting-started/first-steps.md
+      - Tests and suites: getting-started/tests-and-suites.md
+      - Fixtures (shared state): getting-started/fixtures.md
+      - Coroutines: getting-started/coroutines.md
+      - Configuration: getting-started/configuration.md
+      - Integration: getting-started/integration.md
+      - Examples: getting-started/examples.md
+      - Background: getting-started/background.md
+  - How to:
+      - Effective testing: how-to/effective-testing.md
+  - Articles: articles.md
+  - Support: support.md
+  - API Reference: api/html/index.html
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/logo-icon.svg
+  custom_dir: overrides
+  features:
+    - content.code.annotate
+    - content.action.edit
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.path
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - search.share
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+repo_url: https://github.com/infix-de/testBalloon
+repo_name: infix-de/testBalloon
+edit_uri: edit/main/documentation/site/docs/
+
+copyright: >
+  Copyright &copy; 2025 infix Software-Systeme GmbH –
+  <a href="#__consent">Change cookie settings</a>
+
+plugins:
+  - social
+  - search
+  - privacy
+
+extra:
+  social:
+    - icon: fontawesome/solid/earth-europe
+      link: https://infix.de
+  version:
+    provider: mike
+  # consent:
+  #   title: Cookie consent
+  #   description: >-
+  #     We use cookies to recognize your repeated visits and preferences, as well
+  #     as to measure the effectiveness of our documentation and whether users
+  #     find what they're searching for. With your consent, you're helping us to
+  #     make our documentation better.
+  #   actions:
+  #     - accept
+  #     - reject
+  #     - manage
+  #   cookies:
+  #     github:
+  #       name: GitHub
+  #       checked: false
+  #     analytics:
+  #       name: Google Analytics
+  #       checked: false
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.caption
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      options:
+        custom_icons:
+          - overrides/.icons
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path:
+        - snippets/src/commonTest/kotlin/com/example
+        - snippets/src/androidDeviceTest/kotlin/com/example
+      check_paths: true
+      dedent_subsections: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: 🔗

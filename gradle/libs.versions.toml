@@ -24,6 +24,9 @@ com-vanniktech-maven-publish = "0.34.0"
 # https://github.com/kotest/kotest/releases
 io-kotest = "5.9.1"
 
+# https://github.com/Kotlin/dokka/releases
+org-jetbrains-dokka = "2.1.0"
+
 # https://github.com/JetBrains/kotlin/releases
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
 org-jetbrains-kotlin = "2.2.20"
@@ -81,10 +84,13 @@ junit-junit4 = "junit:junit:4.13.2"
 # https://github.com/gradle/foojay-toolchains/blob/main/CHANGELOG.md
 org-gradle-toolchains-foojay-resolver = "org.gradle.toolchains:foojay-resolver:1.0.0"
 
+org-jetbrains-dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.ref = "org-jetbrains-dokka" }
+org-jetbrains-dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "org-jetbrains-dokka" }
+org-jetbrains-dokka-gradle-plugin = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version.ref = "org-jetbrains-dokka" }
+
 org-jetbrains-kotlin-android-gradle-plugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-assignment-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-atomicfu-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.atomicfu:org.jetbrains.kotlin.plugin.atomicfu.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "org-jetbrains-kotlin-dokka" }
 org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-sam-with-receiver-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 
@@ -118,6 +124,8 @@ com-android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatf
 com-gradleup-compat-patrouille = { id = "com.gradleup.compat.patrouille", version.ref = "com-gradleup-compat-patrouille" }
 
 com-vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "com-vanniktech-maven-publish" }
+
+org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "org-jetbrains-dokka" }
 
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin" }
 

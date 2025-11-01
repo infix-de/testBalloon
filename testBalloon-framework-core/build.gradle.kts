@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 plugins {
     id("buildLogic.multiplatform-plus-android-library")
     id("buildLogic.publishing-multiplatform")
+    id("buildLogic.dokka")
 }
 
 description = "Core library for the TestBalloon framework"
@@ -84,4 +85,8 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform {
         excludeEngines(Constants.JUNIT_ENGINE_NAME)
     }
+}
+
+dependencies {
+    dokkaPlugin(project(":documentation:dokka-plugin-hide-internal-api"))
 }

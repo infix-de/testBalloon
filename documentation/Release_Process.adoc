@@ -6,6 +6,14 @@
 
 Each TestBallon version should produce releases for the most recent stable Kotlin versions, plus the most recent EAP version. Those versions are listed at https://kotlinlang.org/docs/home.html[Kotlin Docs] under _What's new in Kotlin_.
 
+==== Update documentation
+
+. Update the API reference: `gradlew dokkaGenerateHtml`
+. Serve the website locally: `gradlew serveSite`
+. Verify the API reference contents.
+. Verify documentation contents.
+. Prepare release documentation (breaking changes, what's new, what's fixed, other).
+
 ==== Prepare a release branch for a Kotlin version
 
 . For each Kotlin version, choose a branch under `releases`, like `releases/0.4.0-K2.2.0`, where `0.4.0` is the TestBalloon version and `2.2.0` is the Kotlin version.

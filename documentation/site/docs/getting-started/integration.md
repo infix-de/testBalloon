@@ -1,0 +1,81 @@
+TestBalloon has a unified API for all Kotlin target platforms, residing in the `common` source set.
+
+!!! info
+
+    TestBalloon integrates thoroughly with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
+
+TestBalloon supports multi-level nesting of test suites and [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on all platforms, even where the underlying infrastructure does not.
+
+The following sections provide an overview about TestBalloon's integration with its various platforms and build tooling. They are not meant to be exhaustive, but highlight selected details.
+
+## Kotlin Multiplatform
+
+### Gradle
+
+TestBalloon fully integrates with the Kotlin Gradle Plugin ([Multiplatform](https://kotlinlang.org/docs/gradle-configure-project.html#targeting-multiple-platforms) or [JVM](https://kotlinlang.org/docs/gradle-configure-project.html#targeting-the-jvm)). It supports
+
+* the familiar Gradle and Kotlin test tasks,
+* Gradle-based test filtering,
+* Gradle's test reports (HTML and XML), and
+* the Kotlin Gradle Plugin's combined multiplatform test reports.
+
+!!! warning
+
+    Never use the `maxParallelForks` option on Gradle test tasks. Gradle has no idea about the test structure and assumes class-based tests, which TestBalloon does not use.
+
+### JVM
+
+TestBalloon registers with Gradle, without requiring any platform-specific configuration. TestBalloon can run alongside other JUnit-based test frameworks in the same module.
+
+TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) and tests running in parallel.
+
+### JS, Wasm/JS
+
+TestBalloon fully supports the Kotlin Gradle Plugin's test infrastructure, including test execution via Node.js or in a browser via Karma.
+
+TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on JS-based platforms.
+
+### Native
+
+TestBalloon fully supports the Kotlin Gradle Plugin infrastructure.
+
+TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) and tests running in parallel.
+
+## Android
+
+TestBalloon integrates with Android's test infrastructure, the [Android Gradle Plugin (AGP)](https://developer.android.com/build/releases/gradle-plugin), and the [Android Gradle Library Plugin for KMP](https://developer.android.com/kotlin/multiplatform/plugin).
+
+### Local tests
+
+TestBalloon supports Android local (host-based) tests via Android's JUnit 4 runner. Other (non-TestBalloon) JUnit-based tests can execute alongside TestBalloon in the same module.
+
+TestBalloon supports
+
+* JUnit 4 test rules via its `testWithJUnit4Rule()` function,
+* [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) and tests running in parallel.
+
+### Device (instrumented) tests
+
+TestBalloon supports Android device tests via Android's JUnit 4 runner. Other (non-TestBalloon) JUnit-based tests can execute alongside TestBalloon in the same module.
+
+TestBalloon supports
+
+* JUnit 4 test rules via its `testWithJUnit4Rule()` function,
+* [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) and tests running in parallel (on an emulator or a physical device).
+
+## IntelliJ IDEA
+
+TestBalloon integrates with IntelliJ IDEA. Some of the functionality is provided by the [TestBalloon plugin for IntelliJ IDEA](https://plugins.jetbrains.com/plugin/27749-testballoon).
+
+* Editor windows show run gutter icons to run or debug individual tests or test suites (at any level).
+* Test results appear in IntelliJ's test run window, including the results tree display.
+* Stack traces in test results hide framework-internal lines by folding.
+* Kotlin inspections allow title-case naming for TestBalloon's top-level suite properties.
+
+### Limitations
+
+Currently, TestBalloon's IntelliJ plugin does not support the following:
+
+* Actions _run_, _debug_ and _jump to source_ in the test results tree display.
+* Actions _run_, _debug_ and _jump to source_ for failed tests in the inspections window
+* The action _rerun failed tests_ in the test run window.

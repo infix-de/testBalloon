@@ -1,4 +1,12 @@
 ###
+### Project
+###
+
+documentation/site/build
+documentation/site/venv
+documentation/site/docs/api
+
+###
 ### Kotlin
 ###
 

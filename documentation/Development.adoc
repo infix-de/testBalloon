@@ -24,7 +24,7 @@ TestBallon differentiates between a `Test` and a `TestSuite`, commonly referred 
 * A `Test` is the unit of test execution, which can either succeed or fail.
 * A `TestSuite` is a container for lower-level ``Test``s and/or ``TestSuite``s.
 
-Since ``TestSuite``s nest, they can build a tree of test elements.
+Since ``TestSuite``s nest, they can build a multi-level hierarchy of test elements.
 
 ==== Core Classes
 
@@ -36,9 +36,9 @@ TestBalloon' core classes are:
 *** `TestSession` – to orchestrate everything, one per compilation module
 *** `TestCompartment` – to isolate tests with different concurrency and runtime requirements
 
-==== Test Element Tree
+==== Test Element Hierarchy
 
-The core classes form the test element tree with
+The core classes form the test element hierarchy with
 
 * a `TestSession` at the top,
 * ``TestCompartment``s below, then
@@ -76,16 +76,17 @@ NOTE: The `TestSession` must exist before top-level test suites are initialized.
 * initializes all top-level test suites,
 +
 --
-NOTE: Top-level test suites wire themselves to the second level of the test element tree, their ``TestCompartment``s, which connect to the `TestSession` at the top.
+NOTE: Top-level test suites wire themselves to the second level of the test element hierarchy, their ``TestCompartment``s, which connect to the `TestSession` at the top.
 --
-* calls `configureAndExecuteTests`, which does what its name implies.
+* calls `setUpAndExecuteTests`, which sets up the test element hierarchy and executes tests.
 
-A test run comprises two phases:
+A test execution comprises two phases:
 
-1. `TestSession.global.parameterize` configures its entire test element tree, which includes
-* creating lower-level test elements,
-* parameterizing test elements (e.g. selecting element subsets or disabling elements).
-2. `TestSession.global.execute` executes tests (entirely or selected subsets).
+1. `TestSession.global.setUp` sets up the entire test element hierarchy, which includes
+* registering lower-level test elements,
+* selecting test elements for execution (excluded elements won't appear),
+* configuring test elements.
+2. `TestSession.global.execute` executes tests (all or a selected subset).
 
 === Tasks
 

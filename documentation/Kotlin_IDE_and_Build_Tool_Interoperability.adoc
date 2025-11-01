@@ -52,7 +52,7 @@ In addition to the reports provided by Gradle's `AbstractTestTask`, KGP's https:
 
 ===== Quirks in Reporting
 
-The reporting stack (KGP, AGP, Gradle, IDE) exposes the following quirks in the IDE's test results tree view and HTML test reports:
+The reporting stack (KGP, AGP, Gradle, IDE) exposes the following quirks in the IDE's test run results tree display and HTML test reports:
 
 [%header,cols="1,1,1,1,1,1,1"]
 |===
@@ -151,7 +151,7 @@ Gradle receives test events from the underlying framework and produces https://d
 
 ==== General
 
-https://junit.org/junit5/docs/current/user-guide/#test-engines[Test Engines] must
+https://junit.org/junit5/docs/current/user-guide#test-engines[Test Engines] must
 
 * discover tests from an https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/EngineDiscoveryRequest.html[`EngineDiscoveryRequest`], yielding a hierarchy of test descriptors, and
 * execute tests according to an https://junit.org/junit5/docs/current/api/org.junit.platform.engine/org/junit/platform/engine/ExecutionRequest.html[`ExecutionRequest`], starting at the root test descriptor and observing tests events via a listener (which also observes the discovery of new tests, if these are dynamically registered during execution).
@@ -195,4 +195,4 @@ For each test run, the IDE injects a Gradle init script, which registers a https
 
 . Gradle receives test events from the underlying JVM framework (JUnit 4, JUnit Platform).
 . Gradle calls the test listener's methods,
-. The IDE updates its test run tree window.
+. The IDE updates its test run results tree display.

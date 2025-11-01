@@ -18,7 +18,7 @@ Android uses https://developer.android.com/training/testing/fundamentals[two typ
 
 1. *Local tests*, also called host-side tests, or (wrongly) unit tests: These execute on the development machine or a server.
 ** Default source folder: `src/test`
-** Default dependency notation: `testImplementation(...)`
+** Default dependency notation: `testImplementation(…)`
 ** Default test module names: `++${baseModule}_debugUnitTest++`, `++${baseModule}_releaseUnitTest++`
 ** Default compilations: `debugUnitTest`, `releaseUnitTest`
 2. *Instrumented tests*: These run on an Android device, either physical or emulated. (Some unit tests fall into this category.)

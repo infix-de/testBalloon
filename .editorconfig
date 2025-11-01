@@ -47,6 +47,10 @@ ktlint_standard_value-parameter-comment = disabled
 # noinspection EditorConfigKeyCorrectness
 ktlint_standard_function-naming = disabled
 
+[**/snippets/**/*.kt]
+
+max_line_length = 80
+
 [*.{md,adoc,toml,api}]
 
 max_line_length = off

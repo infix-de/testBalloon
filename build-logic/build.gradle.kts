@@ -16,10 +16,10 @@ dependencies {
     implementation(libs.org.jetbrains.kotlin.android.gradle.plugin)
     implementation(libs.com.android.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.atomicfu.gradle.plugin)
-    implementation(libs.org.jetbrains.kotlin.dokka.gradle.plugin)
     implementation(libs.org.jetbrains.kotlinx.kover.gradle.plugin)
     implementation(libs.org.jmailen.kotlinter.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.atomicfu.gradle.plugin)
+    implementation(libs.org.jetbrains.dokka.gradle.plugin)
     implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
     implementation(libs.com.gradleup.compat.patrouille.gradle.plugin)
     implementation(libs.com.github.gmazzo.buildconfig.gradle.plugin)
@@ -39,6 +39,7 @@ gradlePlugin {
     plugins {
         val pluginMap = mapOf(
             "buildLogic.common" to "BuildLogicCommonPlugin",
+            "buildLogic.dokka" to "BuildLogicDokkaPlugin",
             "buildLogic.jvm" to "BuildLogicJvmPlugin",
             "buildLogic.multiplatform-base" to "BuildLogicMultiplatformBasePlugin",
             "buildLogic.multiplatform" to "BuildLogicMultiplatformPlugin",

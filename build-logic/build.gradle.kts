@@ -68,7 +68,7 @@ val copySharedTestBalloonSources by tasks.registering(Copy::class) {
             "../testBalloon-framework-shared/src/commonMain/kotlin/de/infix/testBalloon/framework/shared/internal"
         )
     ) {
-        include("SharedSymbols.kt", "TestBalloonInternalApi.kt")
+        include("Communications.kt", "Constants.kt", "InternalAnnotations.kt")
     }
     from(
         layout.projectDirectory.dir(

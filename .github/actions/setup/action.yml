@@ -60,7 +60,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: build-logic/build
-        key: build-logic-${{ hashFiles('build-logic/src/**', 'build-logic/*.kts') }}
+        key: build-logic-${{ hashFiles('build-logic/src/**', 'build-logic/*.kts', 'build-logic/build/generated/**') }}
 
     - name: 'Set up Gradle'
       uses: gradle/actions/setup-gradle@v4

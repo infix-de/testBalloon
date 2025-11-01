@@ -54,6 +54,8 @@ androidx-test-runner = "androidx.test:runner:1.7.0"
 
 com-android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
 
+com-benwoodworth-parameterize = "com.benwoodworth.parameterize:parameterize-core:0.4.0"
+
 # https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 com-github-gmazzo-buildconfig-gradle-plugin = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.6.7"
 

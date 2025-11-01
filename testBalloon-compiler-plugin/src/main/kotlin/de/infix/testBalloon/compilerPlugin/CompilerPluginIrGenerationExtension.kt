@@ -189,11 +189,11 @@ private class Configuration(
     val initializeTestFrameworkFunctionSymbol by lazy {
         irFunctionSymbol(coreInternalPackageName, "initializeTestFramework")
     }
-    val configureAndExecuteTestsFunctionSymbol by lazy {
-        irFunctionSymbol(coreInternalPackageName, "configureAndExecuteTests")
+    val setUpAndExecuteTestsFunctionSymbol by lazy {
+        irFunctionSymbol(coreInternalPackageName, "setUpAndExecuteTests")
     }
-    val configureAndExecuteTestsBlockingFunctionSymbol by lazy {
-        irFunctionSymbol(coreInternalPackageName, "configureAndExecuteTestsBlocking")
+    val setUpAndExecuteTestsBlockingFunctionSymbol by lazy {
+        irFunctionSymbol(coreInternalPackageName, "setUpAndExecuteTestsBlocking")
     }
 
     val testFrameworkDiscoveryResultPropertyName = Name.identifier(Constants.JVM_DISCOVERY_RESULT_PROPERTY)
@@ -537,7 +537,7 @@ private class ModuleTransformer(
      * ```
      * suspend fun main(arguments: Array<String>) {
      *     initializeTestFramework(customSessionOrNull, arguments)
-     *     configureAndExecuteTests(arrayOf(s1, ..., sn))
+     *     setUpAndExecuteTests(arrayOf(s1, ..., sn))
      * }
      * ```
      */
@@ -558,7 +558,7 @@ private class ModuleTransformer(
                 irGet(irArgumentsValueParameter)
             )
             +irSimpleFunctionCall(
-                configuration.configureAndExecuteTestsFunctionSymbol,
+                configuration.setUpAndExecuteTestsFunctionSymbol,
                 irArrayOfRootSuites()
             )
         }
@@ -571,7 +571,7 @@ private class ModuleTransformer(
      * @EagerInitialization
      * private val testFrameworkEntryPoint: Unit = run {
      *     initializeTestFramework(customSessionOrNull)
-     *     configureAndExecuteTestsBlocking(arrayOf(s1, ..., sn))
+     *     setUpAndExecuteTestsBlocking(arrayOf(s1, ..., sn))
      * }
      * ```
      */
@@ -591,7 +591,7 @@ private class ModuleTransformer(
                     customSessionClass?.let { irConstructorCall(it.symbol) }
                 )
                 +irSimpleFunctionCall(
-                    configuration.configureAndExecuteTestsBlockingFunctionSymbol,
+                    configuration.setUpAndExecuteTestsBlockingFunctionSymbol,
                     irArrayOfRootSuites()
                 )
             }

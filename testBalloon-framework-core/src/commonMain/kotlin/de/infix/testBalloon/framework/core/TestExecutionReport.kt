@@ -5,27 +5,17 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 /**
- * A report containing a sequence of test events, each of which will be [add]ed during configuration.
- *
- * During configuration, a report is expected to contain [TestElementEvent.Starting] and [TestElementEvent.Finished] for
- * every element in the element hierarchy. This includes events for disabled elements.
- */
-public abstract class TestConfigurationReport {
-    public abstract fun add(event: TestElementEvent)
-}
-
-/**
  * A report containing a sequence of test events, each of which will be [add]ed during execution.
  *
- * During execution, a report is expected to contain [TestElementEvent.Starting] and [TestElementEvent.Finished] for
- * every element in the element hierarchy. This includes events for disabled elements.
+ * During execution, a report is expected to contain [TestElementEvent.Starting] and [TestElementEvent.Finished]
+ * for every element in the test element hierarchy. This includes events for disabled elements.
  */
 public abstract class TestExecutionReport {
     public abstract suspend fun add(event: TestElementEvent)
 }
 
 /**
- * An event occurring as part of a test element's execution.
+ * An event occurring as part of a test element's setup or execution.
  */
 public sealed class TestElementEvent(public val element: TestElement) {
     @ExperimentalTime

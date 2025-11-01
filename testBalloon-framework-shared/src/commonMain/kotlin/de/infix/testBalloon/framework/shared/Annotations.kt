@@ -1,14 +1,7 @@
 package de.infix.testBalloon.framework.shared
 
 /**
- * Makes a class or function support automatic discovery of test classes or properties.
- *
- * Top-level test suites are declared
- * - via top-level properties lazily initialized by a `@[TestDiscoverable]` function,
- * - as top-level subclasses of a `@[TestDiscoverable]` class implementing [AbstractTestSuite].
- *
- * A test session can be declared as a top-level subclass of a `@[TestDiscoverable]` class
- * implementing [AbstractTestSession].
+ * Designates a class or function registering a test suite or test.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)

@@ -1,6 +1,7 @@
 package de.infix.testBalloon.framework.core
 
 import de.infix.testBalloon.framework.core.internal.GuardedBy
+import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.TestDiscoverable
 import de.infix.testBalloon.framework.shared.TestDisplayName
@@ -16,7 +17,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 /**
- * Declares a top-level [TestSuite].
+ * Registers a top-level [TestSuite].
  *
  * [compartment] is the optional [TestCompartment] the test suite belongs to.
  *
@@ -45,7 +46,7 @@ public fun testSuite(
 }
 
 /**
- * Declares a top-level [TestSuite].
+ * Registers a top-level [TestSuite].
  *
  * Usage:
  * ```
@@ -116,12 +117,16 @@ public open class TestSuite internal constructor(
     private val fixtures = mutableListOf<Fixture<*>>()
     private val fixturesMutex = Mutex()
 
-    // region – We need these constructor variants only for top-level test suites declared as classes.
+    // region – We need these constructor variants only for top-level test suites registered as classes.
     //
     // The constructor variants ensure proper overload resolution with default parameters,
     // because Kotlin determines argument positions before default values are filled in.
     // See https://youtrack.jetbrains.com/issue/KT-48521.
 
+    @Deprecated(
+        "Using a class to register a top-level test suite will be dropped in a future version." +
+            " Please use a top-level property instead."
+    )
     protected constructor(
         content: TestSuite.() -> Unit,
         @TestElementName name: String = "",
@@ -133,6 +138,10 @@ public open class TestSuite internal constructor(
         content = content
     )
 
+    @Deprecated(
+        "Using a class to register a top-level test suite will be dropped in a future version." +
+            " Please use a top-level property instead."
+    )
     protected constructor(
         testConfig: TestConfig,
         content: TestSuite.() -> Unit,
@@ -147,6 +156,10 @@ public open class TestSuite internal constructor(
             content = content
         )
 
+    @Deprecated(
+        "Using a class to register a top-level test suite will be dropped in a future version." +
+            " Please use a top-level property instead."
+    )
     protected constructor(
         compartment: TestCompartment,
         content: TestSuite.() -> Unit,
@@ -159,6 +172,10 @@ public open class TestSuite internal constructor(
         content = content
     )
 
+    @Deprecated(
+        "Using a class to register a top-level test suite will be dropped in a future version." +
+            " Please use a top-level property instead."
+    )
     protected constructor(
         compartment: TestCompartment,
         testConfig: TestConfig,
@@ -173,6 +190,10 @@ public open class TestSuite internal constructor(
         content = content
     )
 
+    @Deprecated(
+        "Using a class to register a top-level test suite will be dropped in a future version." +
+            " Please use a top-level property instead."
+    )
     protected constructor(
         name: String,
         testConfig: TestConfig,
@@ -186,6 +207,10 @@ public open class TestSuite internal constructor(
         content = content
     )
 
+    @Deprecated(
+        "Using a class to register a top-level test suite will be dropped in a future version." +
+            " Please use a top-level property instead."
+    )
     protected constructor(
         name: String,
         compartment: TestCompartment,
@@ -198,6 +223,10 @@ public open class TestSuite internal constructor(
         content = content
     )
 
+    @Deprecated(
+        "Using a class to register a top-level test suite will be dropped in a future version." +
+            " Please use a top-level property instead."
+    )
     protected constructor(
         name: String,
         compartment: TestCompartment,
@@ -243,16 +272,16 @@ public open class TestSuite internal constructor(
 
     internal fun registerChildElement(childElement: TestElement) {
         require(
-            this == suitesInConfigurationScope.firstOrNull() ||
-                ( // TestCompartments and TestSession accept children without being in configuration scope,
+            this == suitesInRegistrationScope.firstOrNull() ||
+                ( // TestCompartments and TestSession accept children without being in registration scope,
                     testElementParent?.testElementParent == null &&
-                        // but only if no suite below a compartment is in configuration scope.
-                        suitesInConfigurationScope.isEmpty()
+                        // but only if no suite below a compartment is in registration scope.
+                        suitesInRegistrationScope.isEmpty()
                     )
         ) {
             "$childElement tried to register as a child of $this," +
-                " which currently is not the closest configuration scope.\n" +
-                "\tThe closest configuration scope at this point is ${suitesInConfigurationScope.firstOrNull()}."
+                " which currently is not the closest registration scope.\n" +
+                "\tThe closest registration scope at this point is ${suitesInRegistrationScope.firstOrNull()}."
         }
         children.add(childElement)
     }
@@ -260,26 +289,26 @@ public open class TestSuite internal constructor(
     /**
      * Executes [action] on all child elements, recursively, in depth-first order.
      */
-    internal suspend fun forEachChildTreeElement(action: suspend (element: TestElement) -> Unit) {
+    internal suspend fun forEachChildElement(action: suspend (element: TestElement) -> Unit) {
         for (childElement in testElementChildren) {
             if (childElement is TestSuite) {
-                childElement.forEachChildTreeElement(action)
+                childElement.forEachChildElement(action)
             }
             action(childElement)
         }
     }
 
     /**
-     * Declares an [executionWrappingAction] which wraps the execution actions of this test suite.
+     * Registers an [executionWrappingAction] which wraps the execution actions of this test suite.
      *
      * [executionWrappingAction] wraps around the [TestElement]'s primary `testSuiteAction`, which accumulates
      * the execution actions of its children.
      * The wrapping action will be invoked only if at least one (direct or indirect) child [Test] executes.
      * See also [TestElementExecutionWrappingAction] for requirements.
      *
-     * Note: [TestSuite.aroundAll] will not wrap around fixtures declared for its [TestSuite]. Fixtures (which are
-     * lazily created on their first invocation) will close _after_ any [aroundAll] actions declared inside their
-     * [TestSuite]. Use the suite's `testConfig` parameter with `TestConfig.aroundAll` to declare an action which
+     * Note: [TestSuite.aroundAll] will not wrap around fixtures registered in its [TestSuite]. Fixtures (which are
+     * lazily created on their first invocation) will close _after_ any [aroundAll] actions registered in their
+     * [TestSuite]. Use the suite's `testConfig` parameter with `TestConfig.aroundAll` to register an action which
      * also wraps around the suite's fixtures.
      *
      * Usage:
@@ -298,7 +327,7 @@ public open class TestSuite internal constructor(
     }
 
     /**
-     * Declares a [TestSuite] as a child of this test suite.
+     * Registers a [TestSuite] as a child of this test suite.
      */
     @TestDiscoverable
     public fun testSuite(
@@ -311,7 +340,7 @@ public open class TestSuite internal constructor(
     }
 
     /**
-     * Declares a [Test] as a child of this test suite.
+     * Registers a [Test] as a child of this test suite.
      */
     @TestDiscoverable
     public fun test(
@@ -323,35 +352,35 @@ public open class TestSuite internal constructor(
         Test(this, name = name, displayName = displayName, testConfig = testConfig, action)
     }
 
-    override fun parameterize(selection: Selection, report: TestConfigurationReport) {
+    override fun setUp(selection: Selection, report: TestSetupReport) {
         if (!selection.mayInclude(this)) {
             // Short-circuit test registration, if possible.
             // If the selection is sure not to include this suite, do not create any children below it.
-            // This helps to keep the test element tree small, speeding up the test registration phase.
+            // This helps to keep the test element hierarchy small, speeding up the test registration phase.
             isIncluded = false
             return
         }
 
-        configureReporting(report) {
-            inConfigurationScope {
+        setUpReporting(report) {
+            inRegistrationScope {
                 content()
             }
 
-            super.parameterize(selection, report)
+            super.setUp(selection, report)
 
-            check(testElementChildren.any() || TestPermit.SUITE_WITHOUT_CHILDREN in parameters.permits) {
+            check(
+                testElementChildren.any() ||
+                    this is TestSession ||
+                    TestPermit.SUITE_WITHOUT_CHILDREN in parameters.permits
+            ) {
                 buildString {
                     append("$this does not contain any child tests or test suites.\n")
-                    if (this@TestSuite is TestSession) {
-                        append("\tPlease add tests or remove the TestBalloon Gradle plugin from this project.")
-                    } else {
-                        append("\tPlease add at least one test or test suite to this test suite, or remove it.")
-                    }
+                    append("\tPlease add at least one test or test suite to this test suite, or remove it.")
                 }
             }
 
             testElementChildren.forEach {
-                it.parameterize(selection, report)
+                it.setUp(selection, report)
             }
 
             // Propagate inclusion status bottom up: A suite without children excludes itself.
@@ -406,32 +435,32 @@ public open class TestSuite internal constructor(
         /** Returns an appendix for [number]. */
         private fun appendix(number: Int) = " 〈$number〉"
 
-        /** A stack of suites in configuration scope, innermost scope first */
-        private val suitesInConfigurationScope = mutableListOf<TestSuite>()
+        /** A stack of suites in registration scope, innermost scope first */
+        private val suitesInRegistrationScope = mutableListOf<TestSuite>()
 
-        /** Executes [action] in the configuration scope of [this] suite. */
-        private fun TestSuite.inConfigurationScope(action: () -> Unit) {
-            suitesInConfigurationScope.add(0, this)
+        /** Executes [action] in the registration scope of [this] suite. */
+        private fun TestSuite.inRegistrationScope(action: () -> Unit) {
+            suitesInRegistrationScope.add(0, this)
             try {
                 action()
             } finally {
-                check(suitesInConfigurationScope.removeAt(0) == this)
+                check(suitesInRegistrationScope.removeAt(0) == this)
             }
         }
     }
 
     /**
-     * Declares a fixture, a state holder for a lazily initialized [Value] with a lifetime of `this` test suite.
+     * Registers a fixture, a state holder for a lazily initialized [Value] with a lifetime of `this` test suite.
      *
      * Characteristics:
      * - The fixture is lazily initialized on first use by the [value] lambda.
      * - If [Value] is an [AutoCloseable], the fixture will call `close` at the end of its lifetime, otherwise
-     *   `closeWith` can declare a specific action to be called on close.
+     *   `closeWith` can specify an action to be called on close.
      * - All test elements within its suite share the same fixture value.
      *
      * Usage:
      *
-     * Declare a fixture at the suite level like this:
+     * Register a fixture at the suite level like this:
      * ```
      * val repository = testFixture { MyRepository(this) } closeWith { disconnect() }
      * ```
@@ -444,10 +473,10 @@ public open class TestSuite internal constructor(
     public fun <Value : Any> testFixture(value: suspend TestSuite.() -> Value): Fixture<Value> = Fixture(this, value)
 
     /**
-     * A fixture is a state holder for a lazily initialized [Value] with a lifetime of the test suite declaring it.
+     * A fixture is a state holder for a lazily initialized [Value] with a lifetime of the test suite registering it.
      *
      * If [Value] is an [AutoCloseable], the fixture will call [close] at the end of its lifetime, otherwise
-     * [closeWith] can declare a specific action to be called on close.
+     * [closeWith] can register a specific action to be called on close.
      */
     public class Fixture<Value : Any> internal constructor(
         private val suite: TestSuite,
@@ -472,7 +501,7 @@ public open class TestSuite internal constructor(
             }
         }
 
-        /** Declares [action] to be called when this fixture's lifetime ends. */
+        /** Registers [action] to be called when this fixture's lifetime ends. */
         public infix fun closeWith(action: suspend Value.() -> Unit): Fixture<Value> {
             close = action
             return this

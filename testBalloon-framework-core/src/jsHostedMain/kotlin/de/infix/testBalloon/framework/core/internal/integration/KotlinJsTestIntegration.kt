@@ -161,7 +161,7 @@ private object TestSessionRelay {
 
             is TestSuite -> {
                 if (throwable != null) {
-                    element.forEachChildTreeElement { childElement ->
+                    element.forEachChildElement { childElement ->
                         if (childElement is Test) {
                             childElement.resultChannel().close(throwable)
                         }
@@ -175,7 +175,7 @@ private object TestSessionRelay {
      * Sends the session failure [throwable] to all test result channels.
      */
     private suspend fun sendSessionFailure(throwable: Throwable) {
-        TestSession.global.forEachChildTreeElement { childElement ->
+        TestSession.global.forEachChildElement { childElement ->
             if (childElement is Test) {
                 if (childElement.resultChannel().close(throwable)) {
                     logInfo { "$childElement: Aborting result reporting: $throwable." }
@@ -220,16 +220,16 @@ internal expect fun CoroutineScope.testFunctionPromise(testFunction: suspend () 
  */
 internal interface KotlinJsTestFramework {
     /**
-     * Declares a test suite. (Theoretically, suites may be nested and may contain tests at each level.)
+     * Registers a test suite. (Theoretically, suites may be nested and may contain tests at each level.)
      *
-     * [suiteFn] declares one or more tests (and/or child suites, theoretically).
+     * [suiteFn] registers one or more tests (and/or child suites, theoretically).
      * Due to [limitations of JS test frameworks](https://github.com/mochajs/mocha/issues/2975) supported by
      * Kotlin's test infra, [suiteFn] cannot handle asynchronous invocations.
      */
     fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
 
     /**
-     * Declares a test.
+     * Registers a test.
      *
      * [testFn] may return a `Promise`-like object for asynchronous invocation. Otherwise, the underlying JS test
      * framework will invoke [testFn] synchronously.

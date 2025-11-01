@@ -6,8 +6,8 @@ import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.disable
+import de.infix.testBalloon.framework.core.executionReport
 import de.infix.testBalloon.framework.core.internal.printlnFixed
-import de.infix.testBalloon.framework.core.report
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import kotlinx.atomicfu.atomic
@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.seconds
 
 // Use a test report to print information about disabled tests.
 
-val UsingExecutionReport by testSuite(testConfig = TestConfig.report(DisabledTestsExecutionReport())) {
+val UsingExecutionReport by testSuite(testConfig = TestConfig.executionReport(DisabledTestsExecutionReport())) {
     test("test1") {
         delay(1.seconds)
     }

@@ -1,12 +1,12 @@
 package de.infix.testBalloon.framework.core.internal.integration
 
-import de.infix.testBalloon.framework.core.TestConfigurationReport
 import de.infix.testBalloon.framework.core.TestElementEvent
+import de.infix.testBalloon.framework.core.internal.TestSetupReport
 
 /**
- * A [TestConfigurationReport] which relays configuration errors to the standard exception handling mechanism.
+ * A [TestSetupReport] which relays setup errors to the standard exception handling mechanism.
  */
-internal class ThrowingTestConfigurationReport : TestConfigurationReport() {
+internal class ThrowingTestSetupReport : TestSetupReport() {
     override fun add(event: TestElementEvent) {
         if (event is TestElementEvent.Finished && event.throwable != null) {
             if (event.throwable is TestConfigurationError) {

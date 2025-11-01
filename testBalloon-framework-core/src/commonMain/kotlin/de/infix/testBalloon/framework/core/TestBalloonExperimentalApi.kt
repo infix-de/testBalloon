@@ -8,4 +8,5 @@ package de.infix.testBalloon.framework.core
  * versions of TestBalloon.
  */
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@MustBeDocumented
 public annotation class TestBalloonExperimentalApi

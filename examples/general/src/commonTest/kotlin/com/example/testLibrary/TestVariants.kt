@@ -11,7 +11,7 @@ import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration
 
 /**
- * Declares a test with a [timeout] as defined in kotlinx.coroutines [withTimeout].
+ * Registers a test with a [timeout] as defined in kotlinx.coroutines [withTimeout].
  */
 fun TestSuite.test(name: String, timeout: Duration, action: suspend TestExecutionScope.() -> Unit) =
     test(name, testConfig = TestConfig.testScope(isEnabled = false)) {
@@ -25,9 +25,9 @@ fun TestSuite.test(name: String, timeout: Duration, action: suspend TestExecutio
     }
 
 /**
- * Declares a test series with a number of [iterations].
+ * Registers a test series with a number of [iterations].
  */
-fun TestSuite.test(name: String, iterations: Int, action: suspend TestExecutionScope.() -> Unit) {
+fun TestSuite.testSeries(name: String, iterations: Int, action: suspend TestExecutionScope.() -> Unit) {
     for (iteration in 1..iterations) {
         test("$name $iteration") {
             action()
@@ -36,10 +36,10 @@ fun TestSuite.test(name: String, iterations: Int, action: suspend TestExecutionS
 }
 
 /**
- * Declares a test with a non-standard signature for its [action] parameter.
+ * Registers a test with a non-standard signature for its [action] parameter.
  *
- * To make the IDE plugin recognize the invocations of this function as tests, requires a `@TestDiscoverable`
- * annotation.
+ * The IDE plugin requires a `@TestDiscoverable` annotation to recognize an invocation of this function as registering
+ * a test.
  */
 @TestDiscoverable
 fun TestSuite.databaseTest(name: String, action: suspend Database.() -> Unit) {

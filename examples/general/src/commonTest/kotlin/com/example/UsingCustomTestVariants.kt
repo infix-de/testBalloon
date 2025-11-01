@@ -2,6 +2,7 @@ package com.example
 
 import com.example.testLibrary.databaseTest
 import com.example.testLibrary.test
+import com.example.testLibrary.testSeries
 import de.infix.testBalloon.framework.core.testSuite
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -14,7 +15,7 @@ val UsingCustomTestVariants by testSuite {
         assertEquals(8, "Test me!".length)
     }
 
-    test("true iterations", iterations = 10) {
+    testSeries("true iterations", iterations = 10) {
         assertTrue(true)
     }
 

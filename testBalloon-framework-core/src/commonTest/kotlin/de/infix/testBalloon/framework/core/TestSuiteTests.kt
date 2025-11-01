@@ -845,14 +845,14 @@ class TestSuiteTests {
         val additionalReportA = AdditionalExecutionReport("A")
         val additionalReportB = AdditionalExecutionReport("B")
 
-        val suite1 by testSuite("suite1", testConfig = TestConfig.report(additionalReportA)) {
+        val suite1 by testSuite("suite1", testConfig = TestConfig.executionReport(additionalReportA)) {
             test("test1", testConfig = TestConfig.disable()) {
             }
 
             test("test2") {
             }
 
-            testSuite("middleSuite", testConfig = TestConfig.report(additionalReportB)) {
+            testSuite("middleSuite", testConfig = TestConfig.executionReport(additionalReportB)) {
                 test("test1") {
                     throw IntentionalFailure()
                 }

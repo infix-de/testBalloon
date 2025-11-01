@@ -51,7 +51,7 @@ val ComposeTestsWithTestBalloon by testSuite {
 }
 
 /**
- * Declares a `Test` with a [ComposeTestContext] providing a basic `composeTestRule`.
+ * Registers a `Test` with a [ComposeTestContext] providing a basic `composeTestRule`.
  */
 @TestDiscoverable
 @OptIn(TestBalloonExperimentalApi::class)
@@ -66,7 +66,7 @@ fun TestSuite.composeTest(
 class ComposeTestContext<Rule>(val composeTestRule: Rule)
 
 /**
- * Declares a `Test` with a [ComposeTestContext] providing an Activity-based `composeTestRule`.
+ * Registers a `Test` with a [ComposeTestContext] providing an Activity-based `composeTestRule`.
  */
 @TestDiscoverable
 @OptIn(TestBalloonExperimentalApi::class)

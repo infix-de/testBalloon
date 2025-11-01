@@ -36,10 +36,10 @@ internal actual fun processArguments(): Array<String>? =
  *     https://github.com/JetBrains/kotlin/blob/v1.9.23/libraries/tools/kotlin-test-js-runner/nodejs.ts
  */
 private external interface FrameworkAdapter {
-    /** Declares a test suite. */
+    /** Registers a test suite. */
     fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
 
-    /** Declares a test. */
+    /** Registers a test. */
     fun test(name: String, ignored: Boolean, testFn: () -> JsPromiseLike?)
 }
 
@@ -82,6 +82,7 @@ private class JasmineLikeAdapter : FrameworkAdapter {
 
 // Jasmine/Mocha/Jest test API
 
+@Suppress("unused")
 private fun describe(description: String, suiteFn: () -> Unit) {
     // Here we disable the default 2s timeout.
     // The strange invocation is necessary to avoid using a JS arrow function which would bind `this` to a

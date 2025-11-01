@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.reportingPathLimit
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.internal.Constants
@@ -9,9 +10,9 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     AbstractTestElement {
 
     /**
-     * The element's test configuration.
+     * The element's configuration.
      *
-     * Note: Using `testSuite(...) { testConfig = ... }` is unsafe and will be removed in the next minor release(s).
+     * Note: Using `testSuite(...) { testConfig = ... }` is unsafe and will be removed.
      */
     @Suppress("CanBePrimaryConstructorProperty")
     @Deprecated(
@@ -156,11 +157,11 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     }
 
     /**
-     * Parameterizes this test element, preparing it for execution.
+     * Sets up this test element, preparing it for execution.
      *
-     * The framework invokes this method for all test elements before creating an execution plan.
+     * If this test element has children, it must register and set them up in this method's override.
      */
-    internal open fun parameterize(selection: Selection, report: TestConfigurationReport) {
+    internal open fun setUp(selection: Selection, report: TestSetupReport) {
         @Suppress("DEPRECATION")
         testConfig.parameterize(this)
     }
@@ -173,15 +174,15 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     internal abstract suspend fun execute(report: TestExecutionReport)
 
     /**
-     * Executes the configuration [action], reporting its [TestElementEvent]s to the [report].
+     * Executes the [setupAction], reporting its [TestElementEvent]s to the [report].
      */
-    internal fun configureReporting(report: TestConfigurationReport, action: () -> Unit) {
+    internal fun setUpReporting(report: TestSetupReport, setupAction: () -> Unit) {
         val startingEvent = TestElementEvent.Starting(this)
 
         report.add(startingEvent)
 
         try {
-            action()
+            setupAction()
             report.add(TestElementEvent.Finished(this, startingEvent))
         } catch (throwable: Throwable) {
             report.add(TestElementEvent.Finished(this, startingEvent, throwable))

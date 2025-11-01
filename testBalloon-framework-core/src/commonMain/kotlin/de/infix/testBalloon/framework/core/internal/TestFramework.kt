@@ -38,17 +38,17 @@ internal fun initializeTestFramework(testSession: AbstractTestSession? = null, a
 }
 
 /**
- * Configures and executes tests.
+ * Sets up the test element hierarchy and executes tests.
  *
  * The framework invokes this function with a list of top-level [TestSuite]s.
  */
 @InvokedByGeneratedCode
-internal expect suspend fun configureAndExecuteTests(suites: Array<AbstractTestSuite>)
+internal expect suspend fun setUpAndExecuteTests(suites: Array<AbstractTestSuite>)
 
 /**
  * An argument-based element selection, if existing, or null.
  *
- * Initialized in [initializeTestFramework], used in [configureAndExecuteTests].
+ * Initialized in [initializeTestFramework], used in [setUpAndExecuteTests].
  */
 internal var argumentsBasedElementSelection: TestElement.Selection? = null
 

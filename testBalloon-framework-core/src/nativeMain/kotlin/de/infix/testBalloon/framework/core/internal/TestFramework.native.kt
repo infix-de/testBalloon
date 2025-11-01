@@ -2,7 +2,7 @@ package de.infix.testBalloon.framework.core.internal
 
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.internal.integration.TeamCityTestExecutionReport
-import de.infix.testBalloon.framework.core.internal.integration.ThrowingTestConfigurationReport
+import de.infix.testBalloon.framework.core.internal.integration.ThrowingTestSetupReport
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.internal.InvokedByGeneratedCode
 import kotlinx.coroutines.Dispatchers
@@ -13,11 +13,11 @@ import kotlin.system.exitProcess
 import kotlin.time.Duration
 
 @InvokedByGeneratedCode
-internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestSuite>) {
+internal actual suspend fun setUpAndExecuteTests(suites: Array<AbstractTestSuite>) {
     // `suites` is unused because test suites register themselves with `TestSession`.
 
     configureTestsWithExceptionHandling {
-        TestSession.global.parameterize(ThrowingTestConfigurationReport())
+        TestSession.global.setUp(ThrowingTestSetupReport())
     }.onSuccess {
         executeTestsWithExceptionHandling {
             TestSession.global.execute(TeamCityTestExecutionReport())
@@ -27,12 +27,12 @@ internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestS
 
 @Suppress("unused")
 @InvokedByGeneratedCode
-internal fun configureAndExecuteTestsBlocking(suites: Array<AbstractTestSuite>) {
+internal fun setUpAndExecuteTestsBlocking(suites: Array<AbstractTestSuite>) {
     runBlocking(Dispatchers.Default) {
         // Why are we running on Dispatchers.Default? Because otherwise, a nested runBlocking could hang the entire
         // system due to thread starvation. See https://github.com/Kotlin/kotlinx.coroutines/issues/3983
 
-        configureAndExecuteTests(suites)
+        setUpAndExecuteTests(suites)
     }
 }
 

@@ -6,7 +6,7 @@ The link:../examples/general[examples/general] directory is intended to provide 
 
 To run them all:
 
-* `gradlew --quiet :examples:core:cleanAllTests :examples:core:allTests`
+* `gradlew --quiet :examples:general:cleanAllTests :examples:core:allTests`
 
 As usual, you can run examples for a single target:
 

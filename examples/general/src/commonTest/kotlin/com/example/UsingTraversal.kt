@@ -6,7 +6,7 @@ import de.infix.testBalloon.framework.core.testSuite
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
-// Collect and report information via a custom traversal object visiting elements of a test tree.
+// Collect and report information via a custom traversal object visiting elements of a test hierarchy.
 
 val UsingTraversal by testSuite(testConfig = TestConfig.statisticsReport()) {
     test("1 second") {

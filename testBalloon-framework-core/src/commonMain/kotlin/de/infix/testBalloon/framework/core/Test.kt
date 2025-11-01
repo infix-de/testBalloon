@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.runTestAwaitingCompletion
 import de.infix.testBalloon.framework.shared.AbstractTest
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,9 +24,9 @@ public class Test internal constructor(
 ) : TestElement(parent, name = name, displayName = displayName, testConfig = testConfig),
     AbstractTest {
 
-    override fun parameterize(selection: Selection, report: TestConfigurationReport) {
-        configureReporting(report) {
-            super.parameterize(selection, report)
+    override fun setUp(selection: Selection, report: TestSetupReport) {
+        setUpReporting(report) {
+            super.setUp(selection, report)
 
             isIncluded = selection.includes(this)
         }

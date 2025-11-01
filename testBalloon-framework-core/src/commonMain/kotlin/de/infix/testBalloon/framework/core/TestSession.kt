@@ -1,6 +1,7 @@
 package de.infix.testBalloon.framework.core
 
 import de.infix.testBalloon.framework.core.internal.EnvironmentBasedElementSelection
+import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.argumentsBasedElementSelection
 import de.infix.testBalloon.framework.core.internal.value
 import de.infix.testBalloon.framework.shared.AbstractTestSession
@@ -71,15 +72,15 @@ public open class TestSession protected constructor(
     )
 
     /**
-     * Parameterizes the session with a default selection, prioritizing [EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS].
+     * Sets up the session's test element hierarchy.
      */
-    internal fun parameterize(report: TestConfigurationReport) {
+    internal fun setUp(report: TestSetupReport) {
         val selection = if (EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.value() != null) {
             EnvironmentBasedElementSelection()
         } else {
             argumentsBasedElementSelection ?: AllInSelection
         }
-        parameterize(selection, report)
+        setUp(selection, report)
     }
 
     public companion object {

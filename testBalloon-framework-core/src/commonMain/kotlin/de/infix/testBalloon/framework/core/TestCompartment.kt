@@ -7,6 +7,8 @@ import kotlinx.coroutines.CoroutineDispatcher
  * A compartment isolating a number of tests from those belonging to other compartments.
  *
  * Compartments make sure that tests with special runtime requirements, like UI tests, can execute in isolation.
+ *
+ * The [Companion] object provides predefined compartments for common use cases.
  */
 public open class TestCompartment(name: String, testConfig: TestConfig) :
     TestSuite(parent = TestSession.global, name = "@$name", testConfig = testConfig) {

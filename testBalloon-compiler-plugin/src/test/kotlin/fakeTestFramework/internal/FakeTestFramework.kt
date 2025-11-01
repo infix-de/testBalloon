@@ -15,4 +15,4 @@ internal fun initializeTestFramework(testSession: AbstractTestSession?, argument
 
 @Suppress("RedundantSuspendModifier")
 @InvokedByGeneratedCode
-internal suspend fun configureAndExecuteTests(suites: Array<AbstractTestSuite>) {}
+internal suspend fun setUpAndExecuteTests(suites: Array<AbstractTestSuite>) {}

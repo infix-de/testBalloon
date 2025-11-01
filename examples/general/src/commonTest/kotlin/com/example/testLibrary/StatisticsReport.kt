@@ -18,9 +18,9 @@ import kotlin.time.TimeSource
 import kotlin.time.measureTime
 
 /**
- * Returns a test configuration chaining [this] with a statistics report.
+ * Returns a test configuration which adds a [StatisticsReport] to a test element hierarchy.
  *
- * The statistics cover the test element tree rooted at the configuration's element.
+ * The statistics cover the test element hierarchy rooted at the configuration's test element.
  */
 fun TestConfig.statisticsReport() = traversal(StatisticsReport())
 

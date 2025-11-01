@@ -11,8 +11,8 @@ val Dynamic by testSuite {
         "three" to 5
     )
 
-    testCases.forEach { (string, expectedLength) ->
-        test("length of '$string'") {
+    for ((string, expectedLength) in testCases) {
+        test("length of '$string' is $expectedLength") {
             assertEquals(expectedLength, string.length)
         }
     }

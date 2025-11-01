@@ -1,7 +1,7 @@
 package com.example
 
 import com.example.testLibrary.statisticsReport
-import com.example.testLibrary.test
+import com.example.testLibrary.testSeries
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestCompartment
 import de.infix.testBalloon.framework.core.TestConfig
@@ -15,7 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-// Declare a suite capable of running tests concurrently.
+// Register a test suite capable of running tests concurrently.
 // Compartments ensure that this does not interfere with tests requiring the default sequential execution.
 
 val ConcurrentSuite by testSuite(
@@ -24,12 +24,12 @@ val ConcurrentSuite by testSuite(
         .testScope(isEnabled = false)
         .statisticsReport()
 ) {
-    test("delay iterations", iterations = 10) {
+    testSeries("delay iterations", iterations = 10) {
         delay(10.milliseconds)
     }
 }
 
-// Declare a suite for UI tests. This will combine sequential execution with the presence of a Main dispatcher.
+// Register a test suite for UI tests. This will combine sequential execution with the presence of a Main dispatcher.
 
 @OptIn(TestBalloonExperimentalApi::class)
 val UiSuite by testSuite(

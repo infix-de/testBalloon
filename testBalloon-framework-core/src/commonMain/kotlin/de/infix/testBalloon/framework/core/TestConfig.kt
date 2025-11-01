@@ -19,7 +19,7 @@ import kotlin.time.Duration.Companion.seconds
  * A test element can be configured via any number of chained [TestConfig]s.
  *
  * When [TestConfig]s are combined into a chain,
- * - a later conflicting [TestConfig] takes precedence over an earlier one,
+ * - a conflicting [TestConfig] which occurs later takes precedence over an earlier one,
  * - non-conflicting coroutine context elements accumulate,
  * - a series of [aroundAll], [aroundEach] wrappers, or [traversal]s nest from the outside to the inside in order
  *   of appearance.
@@ -71,19 +71,20 @@ public open class TestConfig internal constructor(
             executionReportSetupAction = executionReportSetupAction
         )
 
-    /** Returns a [TestConfig] which combines `this` configuration with a report setup action. */
-    internal fun reportSetup(nextExecutionReportSetupAction: ExecutionReportSetupAction): TestConfig = TestConfig(
-        parameterizingAction = parameterizingAction,
-        executionWrappingAction = executionWrappingAction,
-        executionReportSetupAction = if (executionReportSetupAction != null) {
-            { elementAction ->
-                executionReportSetupAction(elementAction)
-                nextExecutionReportSetupAction(elementAction)
+    /** Returns a [TestConfig] which combines `this` configuration with an execution report setup action. */
+    internal fun executionReportSetup(nextExecutionReportSetupAction: ExecutionReportSetupAction): TestConfig =
+        TestConfig(
+            parameterizingAction = parameterizingAction,
+            executionWrappingAction = executionWrappingAction,
+            executionReportSetupAction = if (executionReportSetupAction != null) {
+                { elementAction ->
+                    executionReportSetupAction(elementAction)
+                    nextExecutionReportSetupAction(elementAction)
+                }
+            } else {
+                nextExecutionReportSetupAction
             }
-        } else {
-            nextExecutionReportSetupAction
-        }
-    )
+        )
 
     /** Returns a [TestConfig] which chains `this` configuration with [otherConfiguration]. */
     public fun chainedWith(otherConfiguration: TestConfig): TestConfig {
@@ -91,7 +92,7 @@ public open class TestConfig internal constructor(
 
         otherConfiguration.parameterizingAction?.let { result = result.parameterizing(it) }
         otherConfiguration.executionWrappingAction?.let { result = result.executionWrapping(it) }
-        otherConfiguration.executionReportSetupAction?.let { result = result.reportSetup(it) }
+        otherConfiguration.executionReportSetupAction?.let { result = result.executionReportSetup(it) }
 
         return result
     }
@@ -133,10 +134,10 @@ public open class TestConfig internal constructor(
     ) {
         if (executionReportSetupAction != null) {
             executionReportSetupAction(testElement) {
-                executionReportingAction(ReportContext.additionalReports())
+                executionReportingAction(ExecutionReportContext.additionalReports())
             }
         } else {
-            executionReportingAction(ReportContext.additionalReports())
+            executionReportingAction(ExecutionReportContext.additionalReports())
         }
     }
 
@@ -145,6 +146,7 @@ public open class TestConfig internal constructor(
 }
 
 private typealias ParameterizingAction = TestElement.Parameters.() -> TestElement.Parameters
+
 private typealias ExecutionReportSetupAction =
     suspend TestElement.(elementAction: suspend TestElement.() -> Unit) -> Unit
 
@@ -173,7 +175,7 @@ public typealias TestElementExecutionWrappingAction = suspend TestElement.(
 ) -> Unit
 
 /**
- * Returns a test configuration which disables test execution for a [TestElement] tree.
+ * Returns a test configuration which disables test execution for a [TestElement] hierarchy.
  *
  * It disables test execution for the [TestElement] it is configured for and all elements below it.
  */
@@ -250,7 +252,7 @@ private class AroundEachTraversal(val executionWrappingAction: TestElementExecut
 }
 
 /**
- * Returns a test configuration which establishes a "fail fast" strategy on a [TestElement] tree.
+ * Returns a test configuration which establishes a "fail fast" strategy on a [TestElement] hierarchy.
  *
  * If more than [maxFailureCount] tests fail, any subsequent test will abandon further testing:
  * - On platforms supporting it, the test session stops, optionally marking all remaining tests as skipped.
@@ -282,7 +284,7 @@ private class FailFastStrategy(val maxFailureCount: Int) : TestExecutionTraversa
 internal class FailFastException(val failureCount: Int) : Error("Failing fast after $failureCount failed tests")
 
 /**
- * Returns a test configuration which applies a [TestExecutionTraversal] to each element of a [TestElement] tree.
+ * Returns a test configuration which applies a [TestExecutionTraversal] to each element of a [TestElement] hierarchy.
  *
  * The traversal covers the [TestElement] it is configured for and all elements below it.
  * Multiple traversals nest outside-in in the order of appearance.
@@ -300,7 +302,7 @@ public fun TestConfig.traversal(executionTraversal: TestExecutionTraversal): Tes
     }
 
 /**
- * A traversal following the execution across all [TestElement]s of a (partial) test element tree.
+ * A traversal following the execution across all [TestElement]s of a (partial) test element hierarchy.
  *
  * For an example, see the implementation of [TestConfig.failFast].
  */
@@ -358,10 +360,9 @@ private suspend inline fun <SpecificTestElement : TestElement> TestElementExecut
 }
 
 /**
- * Returns a test configuration which specifies an invocation [mode] for all [TestSuite]s of a [TestElement] tree.
+ * Returns a test configuration which specifies an invocation [mode] for all [TestSuite]s of a [TestElement] hierarchy.
  *
- * The [mode] applies to the [TestSuite] it is configured for and all [TestSuite]s below it,
- * unless configured otherwise.
+ * Child elements inherit this [mode], unless configured otherwise.
  */
 public fun TestConfig.invocation(mode: TestInvocation): TestConfig = coroutineContext(InvocationContext(mode))
 
@@ -386,10 +387,9 @@ private class InvocationContext(val mode: TestInvocation) : AbstractCoroutineCon
 }
 
 /**
- * Returns a test configuration which specifies a set of [permits] for all [TestSuite]s of a [TestElement] tree.
+ * Returns a test configuration which specifies a set of [permits] for all [TestSuite]s of a [TestElement] hierarchy.
  *
- * The [permits] apply to the [TestSuite] they are configured for and all [TestSuite]s below it, unless configured
- * otherwise.
+ * Child elements inherit [permits], unless configured otherwise.
  */
 @TestBalloonExperimentalApi
 public fun TestConfig.permits(vararg permits: TestPermit): TestConfig = parameterizing {
@@ -397,9 +397,9 @@ public fun TestConfig.permits(vararg permits: TestPermit): TestConfig = paramete
 }
 
 /**
- * Returns a test configuration which adds [permits] for all [TestSuite]s of a [TestElement] tree.
+ * Returns a test configuration which adds [permits] for all [TestSuite]s of a [TestElement] hierarchy.
  *
- * See [permits].
+ * Child elements inherit [permits], unless configured otherwise.
  */
 @TestBalloonExperimentalApi
 public fun TestConfig.addPermits(vararg permits: TestPermit): TestConfig = parameterizing {
@@ -407,9 +407,9 @@ public fun TestConfig.addPermits(vararg permits: TestPermit): TestConfig = param
 }
 
 /**
- * Returns a test configuration which removes [permits] for all [TestSuite]s of a [TestElement] tree.
+ * Returns a test configuration which removes [permits] for all [TestSuite]s of a [TestElement] hierarchy.
  *
- * See [permits].
+ * Child elements inherit [permits], unless configured otherwise.
  */
 @TestBalloonExperimentalApi
 public fun TestConfig.removePermits(vararg permits: TestPermit): TestConfig = parameterizing {
@@ -431,8 +431,7 @@ public enum class TestPermit {
 /**
  * Returns a test configuration which wraps a single-threaded dispatcher around a [TestElement]'s execution.
  *
- * Child elements inherit the single-threaded dispatcher as part of their [CoroutineContext], unless they specify
- * another dispatcher.
+ * Child elements inherit the single-threaded dispatcher as part of their [CoroutineContext].
  */
 @TestBalloonExperimentalApi
 public fun TestConfig.singleThreaded(): TestConfig = executionWrapping { elementAction ->
@@ -444,13 +443,13 @@ public fun TestConfig.singleThreaded(): TestConfig = executionWrapping { element
 }
 
 /**
- * Returns a test configuration which specifies a main dispatcher ([Dispatchers.setMain]) for a [TestElement] tree.
+ * Returns a test configuration which specifies a main dispatcher ([Dispatchers.setMain]) for a [TestElement] hierarchy.
  *
  * If [dispatcher] is `null`, a single-threaded dispatcher is used.
  *
  * Note: Only one main dispatcher may exist at any point in time. Therefore,
  * – this configuration may not be overridden at lower levels of the [TestElement] hierarchy, and
- * - multiple [TestElement] trees with a [mainDispatcher] configuration may not execute concurrently.
+ * - multiple [TestElement] hierarchys with a [mainDispatcher] configuration may not execute concurrently.
  * Child elements inherit the main dispatcher as part of their [CoroutineContext].
  */
 @TestBalloonExperimentalApi
@@ -462,7 +461,7 @@ public fun TestConfig.mainDispatcher(dispatcher: CoroutineDispatcher? = null): T
     }
 
 /**
- * Returns a test configuration which enables/disables a [kotlinx.coroutines.test.TestScope] for a [TestElement] tree.
+ * Returns a test configuration which enables/disables a [kotlinx.coroutines.test.TestScope] for a [TestElement] hierarchy.
  *
  * If [isEnabled] is true, [Test]s will run in a [kotlinx.coroutines.test.TestScope] with the given [timeout].
  * Setting [isEnabled] to false will disable a previously enabled `TestScope` setting.
@@ -475,7 +474,7 @@ public fun TestConfig.testScope(isEnabled: Boolean, timeout: Duration = 60.secon
 /**
  * A context element, which, when present and enabled, makes a test execute in [kotlinx.coroutines.test.TestScope].
  */
-internal class TestScopeContext(internal val isEnabled: Boolean, val timeout: Duration) :
+internal class TestScopeContext(internal val isEnabled: Boolean, internal val timeout: Duration) :
     AbstractCoroutineContextElement(Key) {
     companion object {
         private val Key = object : CoroutineContext.Key<TestScopeContext> {}
@@ -527,30 +526,30 @@ public suspend fun withMainDispatcher(dispatcher: CoroutineDispatcher? = null, a
 private val mainDispatcherChanged = atomic(false)
 
 /**
- * Returns a test configuration which adds a [TestExecutionReport] to a test element tree.
+ * Returns a test configuration which adds a [TestExecutionReport] to a test element hierarchy.
  *
  * The report covers the [TestElement] it is configured for and all elements below it. A [TestElement] can be
  * covered by multiple reports.
  */
-public fun TestConfig.report(report: TestExecutionReport): TestConfig = reportSetup { elementAction ->
+public fun TestConfig.executionReport(report: TestExecutionReport): TestConfig = executionReportSetup { elementAction ->
     val testElement = this
-    withContext(ReportContext(report)) {
+    withContext(ExecutionReportContext(report)) {
         elementAction(testElement)
     }
 }
 
-private class ReportContext private constructor(
+private class ExecutionReportContext private constructor(
     /** [TestExecutionReport]s in definition order. */
     val additionalReports: List<TestExecutionReport>
 ) : AbstractCoroutineContextElement(Key) {
 
     companion object {
-        private val Key = object : CoroutineContext.Key<ReportContext> {}
+        private val Key = object : CoroutineContext.Key<ExecutionReportContext> {}
 
-        /** Returns a new [ReportContext], adding [additionalReport] to the current ones. */
-        suspend operator fun invoke(additionalReport: TestExecutionReport): ReportContext {
+        /** Returns a new [ExecutionReportContext], adding [additionalReport] to the current ones. */
+        suspend operator fun invoke(additionalReport: TestExecutionReport): ExecutionReportContext {
             val additionalReports = additionalReports()
-            return ReportContext(
+            return ExecutionReportContext(
                 if (additionalReports != null) {
                     additionalReports + listOf(additionalReport)
                 } else {

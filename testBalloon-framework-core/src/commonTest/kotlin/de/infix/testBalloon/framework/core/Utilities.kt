@@ -2,7 +2,7 @@ package de.infix.testBalloon.framework.core
 
 import de.infix.testBalloon.framework.core.internal.TestFramework
 import de.infix.testBalloon.framework.core.internal.initializeTestFramework
-import de.infix.testBalloon.framework.core.internal.integration.ThrowingTestConfigurationReport
+import de.infix.testBalloon.framework.core.internal.integration.ThrowingTestSetupReport
 import de.infix.testBalloon.framework.core.internal.logInfo
 import de.infix.testBalloon.framework.shared.AbstractTestSession
 import kotlinx.atomicfu.locks.SynchronizedObject
@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 import kotlin.time.Duration.Companion.minutes
 
-/** Configures a test suite with [content] and asserts its successful execution. */
+/** Sets up a test suite with [content] and asserts its successful execution. */
 internal fun assertSuccessfulSuite(
     testSession: AbstractTestSession? = null,
     testConfig: TestConfig = TestConfig,
@@ -73,7 +73,7 @@ internal suspend fun withTestReport(
 ) {
     require(suites.isNotEmpty()) { "At least one suite must be provided" }
 
-    TestSession.global.parameterize(selection, ThrowingTestConfigurationReport())
+    TestSession.global.setUp(selection, ThrowingTestSetupReport())
 
     val report = InMemoryTestExecutionReport()
     var frameworkFailure: Throwable? = null

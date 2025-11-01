@@ -17,12 +17,12 @@ public interface AbstractTestElement {
 }
 
 /**
- * A test containing test logic which raises assertion errors on failure.
+ * A test containing test logic which throws (assertion errors) on failure.
  */
 public interface AbstractTest : AbstractTestElement
 
 /**
- * A test suite declaring a number of children (tests and/or suites).  A suite may not contain test logic.
+ * A test suite comprised of a number of children (tests and/or suites).  A suite may not contain test logic.
  */
 public interface AbstractTestSuite : AbstractTestElement
 

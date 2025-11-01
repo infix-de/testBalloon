@@ -3,9 +3,9 @@ package com.example
 import de.infix.testBalloon.framework.core.testSuite
 import kotlin.test.assertEquals
 
-// Declare a test suite in plain Kotlin, without annotations.
+// Register a test suite in plain Kotlin, without annotations.
 val Simple by testSuite {
-    // Declare a test.
+    // Register a test.
     test("string length") {
         // Use the assertion library of your choice.
         assertEquals(8, "Test me!".length)

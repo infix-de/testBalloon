@@ -7,7 +7,7 @@ import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.assertContainsInOrder
 import de.infix.testBalloon.framework.core.internal.integration.TeamCityTestExecutionReport
-import de.infix.testBalloon.framework.core.internal.integration.ThrowingTestConfigurationReport
+import de.infix.testBalloon.framework.core.internal.integration.ThrowingTestSetupReport
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.core.withTestFramework
 import de.infix.testBalloon.framework.core.withTestReport
@@ -105,7 +105,7 @@ class TeamCityTestExecutionReportTests {
         }
 
         suite // use the lazy value
-        TestSession.global.parameterize(TestElement.AllInSelection, ThrowingTestConfigurationReport())
+        TestSession.global.setUp(TestElement.AllInSelection, ThrowingTestSetupReport())
 
         val output = ConcurrentList<String>()
         val report = TeamCityTestExecutionReport { output.add(it) }
@@ -119,10 +119,10 @@ class TeamCityTestExecutionReportTests {
             "/S",
             "suite-1/S",
             "suite-2/S", // concurrent start, delayed reporting
-            "suite-2|suite-2-test2", // reported in tree order (2)
-            "suite-2|suite-2-test1", // reported in tree order (1)
+            "suite-2|suite-2-test2", // reported in hierarchy order (2)
+            "suite-2|suite-2-test1", // reported in hierarchy order (1)
             "suite-1|suite-1-test2", // reported in start order (1)
-            "suite-2/F", // finished before suite-1, children reported in tree order, not start order
+            "suite-2/F", // finished before suite-1, children reported in hierarchy order, not start order
             "suite-1|suite-1-test1", // reported in start order (2)
             "suite-1/F",
             "test2",

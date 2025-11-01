@@ -2,12 +2,12 @@ package de.infix.testBalloon.framework.core.internal.integration
 
 import de.infix.testBalloon.framework.core.FailFastException
 import de.infix.testBalloon.framework.core.Test
-import de.infix.testBalloon.framework.core.TestConfigurationReport
 import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.internal.Constants
@@ -89,8 +89,8 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
         if (frameworkDiscoveryResult != null) {
             topLevelTestSuites = frameworkDiscoveryResult.topLevelTestSuites.toSet()
 
-            TestSession.global.parameterize(
-                report = object : TestConfigurationReport() {
+            TestSession.global.setUp(
+                report = object : TestSetupReport() {
                     override fun add(event: TestElementEvent) {
                         if (event is TestElementEvent.Finished && event.throwable != null) {
                             reportDiscoveryIssue(

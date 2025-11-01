@@ -2,7 +2,7 @@ package de.infix.testBalloon.framework.core.internal
 
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.internal.integration.TeamCityTestExecutionReport
-import de.infix.testBalloon.framework.core.internal.integration.ThrowingTestConfigurationReport
+import de.infix.testBalloon.framework.core.internal.integration.ThrowingTestSetupReport
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.internal.InvokedByGeneratedCode
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 
 @InvokedByGeneratedCode
-internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestSuite>) {
+internal actual suspend fun setUpAndExecuteTests(suites: Array<AbstractTestSuite>) {
     // `suites` is unused because test suites register themselves with `TestSession`.
 
     // WORKAROUND Wasm/WASI with kotlinx.coroutines < 1.10.0: calling delay() silently exits wasmWasiNodeRun
@@ -20,7 +20,7 @@ internal actual suspend fun configureAndExecuteTests(suites: Array<AbstractTestS
     withContext(Dispatchers.Default) { }
 
     configureTestsWithExceptionHandling {
-        TestSession.global.parameterize(ThrowingTestConfigurationReport())
+        TestSession.global.setUp(ThrowingTestSetupReport())
     }.onSuccess {
         executeTestsWithExceptionHandling {
             TestSession.global.execute(TeamCityTestExecutionReport())

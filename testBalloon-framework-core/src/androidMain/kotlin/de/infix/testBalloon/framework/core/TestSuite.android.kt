@@ -7,7 +7,7 @@ import org.junit.rules.TestRule
 import org.junit.runners.model.Statement
 
 /**
- * Declares a [Test] wrapped by a JUnit 4 [TestRule].
+ * Registers a [Test] wrapped by a JUnit 4 [TestRule].
  */
 @TestDiscoverable
 @TestBalloonExperimentalApi

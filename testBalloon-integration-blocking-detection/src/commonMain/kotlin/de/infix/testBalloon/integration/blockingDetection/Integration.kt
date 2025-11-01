@@ -1,6 +1,7 @@
 package de.infix.testBalloon.integration.blockingDetection
 
 import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.testScope
 
 public enum class BlockingDetection {
@@ -10,7 +11,7 @@ public enum class BlockingDetection {
 }
 
 /**
- * Returns a test configuration chaining [this] with a configuration enabling blocking call detection.
+ * Returns a test configuration which determines blocking call detection for a [TestElement] hierarchy.
  *
  * NOTES:
  * - Blocking call detection is only available on the JVM. This configuration has no effect on other platforms.

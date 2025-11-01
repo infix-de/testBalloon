@@ -1,12 +1,12 @@
 package de.infix.testBalloon.framework.core.internal.integration
 
 import de.infix.testBalloon.framework.core.Test
-import de.infix.testBalloon.framework.core.TestConfigurationReport
 import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.EnvironmentBasedElementSelection
+import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
 import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.internal.Constants
@@ -55,9 +55,9 @@ internal class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) 
             )
         }
 
-        TestSession.global.parameterize(
+        TestSession.global.setUp(
             EnvironmentBasedElementSelection(),
-            report = object : TestConfigurationReport() {
+            report = object : TestSetupReport() {
                 override fun add(event: TestElementEvent) {
                     if (event is TestElementEvent.Finished && event.throwable != null) {
                         throw TestBalloonInitializationError(

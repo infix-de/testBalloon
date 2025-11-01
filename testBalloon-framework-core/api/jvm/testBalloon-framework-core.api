@@ -30,26 +30,22 @@ public final class de/infix/testBalloon/framework/core/TestConfigKt {
 	public static final fun addPermits (Lde/infix/testBalloon/framework/core/TestConfig;[Lde/infix/testBalloon/framework/core/TestPermit;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun aroundAll (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function3;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun aroundEach (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function3;)Lde/infix/testBalloon/framework/core/TestConfig;
+	public static final fun aroundEachTest (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function3;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun coroutineContext (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/coroutines/CoroutineContext;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun disable (Lde/infix/testBalloon/framework/core/TestConfig;)Lde/infix/testBalloon/framework/core/TestConfig;
+	public static final fun executionReport (Lde/infix/testBalloon/framework/core/TestConfig;Lde/infix/testBalloon/framework/core/TestExecutionReport;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun failFast (Lde/infix/testBalloon/framework/core/TestConfig;I)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun invocation (Lde/infix/testBalloon/framework/core/TestConfig;Lde/infix/testBalloon/framework/core/TestInvocation;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun mainDispatcher (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlinx/coroutines/CoroutineDispatcher;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static synthetic fun mainDispatcher$default (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlinx/coroutines/CoroutineDispatcher;ILjava/lang/Object;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun permits (Lde/infix/testBalloon/framework/core/TestConfig;[Lde/infix/testBalloon/framework/core/TestPermit;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun removePermits (Lde/infix/testBalloon/framework/core/TestConfig;[Lde/infix/testBalloon/framework/core/TestPermit;)Lde/infix/testBalloon/framework/core/TestConfig;
-	public static final fun report (Lde/infix/testBalloon/framework/core/TestConfig;Lde/infix/testBalloon/framework/core/TestExecutionReport;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun singleThreaded (Lde/infix/testBalloon/framework/core/TestConfig;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun testScope-SxA4cEA (Lde/infix/testBalloon/framework/core/TestConfig;ZJ)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static synthetic fun testScope-SxA4cEA$default (Lde/infix/testBalloon/framework/core/TestConfig;ZJILjava/lang/Object;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun traversal (Lde/infix/testBalloon/framework/core/TestConfig;Lde/infix/testBalloon/framework/core/TestExecutionTraversal;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun withMainDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun withMainDispatcher$default (Lkotlinx/coroutines/CoroutineDispatcher;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-}
-
-public abstract class de/infix/testBalloon/framework/core/TestConfigurationReport {
-	public fun <init> ()V
-	public abstract fun add (Lde/infix/testBalloon/framework/core/TestElementEvent;)V
 }
 
 public abstract class de/infix/testBalloon/framework/core/TestElement : de/infix/testBalloon/framework/shared/AbstractTestElement {
@@ -94,10 +90,12 @@ public abstract class de/infix/testBalloon/framework/core/TestExecutionReport {
 }
 
 public final class de/infix/testBalloon/framework/core/TestExecutionScope : de/infix/testBalloon/framework/shared/AbstractTest, kotlinx/coroutines/CoroutineScope {
+	public synthetic fun <init> (Lde/infix/testBalloon/framework/core/Test;Lkotlinx/coroutines/CoroutineScope;Lkotlinx/coroutines/test/TestScope;Lkotlin/time/Duration;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
 	public fun getTestElementIsEnabled ()Z
 	public fun getTestElementPath ()Lde/infix/testBalloon/framework/shared/AbstractTestElement$Path;
 	public final fun getTestScope ()Lkotlinx/coroutines/test/TestScope;
+	public final fun getTestTimeout-FghU774 ()Lkotlin/time/Duration;
 }
 
 public abstract interface class de/infix/testBalloon/framework/core/TestExecutionTraversal {

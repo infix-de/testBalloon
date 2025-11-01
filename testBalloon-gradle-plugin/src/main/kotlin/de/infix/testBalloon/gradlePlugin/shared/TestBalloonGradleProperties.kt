@@ -73,6 +73,16 @@ internal class TestBalloonGradleProperties(val project: Project) {
      */
     val reportingPathLimit by intProperty("")
 
+    /**
+     * Setting to enable resetting Gradle test filtering when executing TestBalloon-recognized test tasks.
+     *
+     * If enabled, this prevents using the original patterns to filter in ways which are incompatible with
+     * TestBalloon's own include/exclude patterns on JS (by Mocha) and the JVM (by JUnit Platform).
+     * This might be disabled if other test frameworks exist in the same module alongside TestBalloon, and the
+     * resetting interferes with their expectations.
+     */
+    val testFilteringResetEnabled by booleanProperty("true")
+
     @Suppress("SameParameterValue")
     private fun stringProperty(default: String) = Delegate(default) { it }
 

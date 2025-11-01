@@ -129,45 +129,59 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
 
         tasks.withType(AbstractTestTask::class.java).configureEach {
             /**
-             * true, if one of the following environment configuration functions has converted filtering patterns
-             * into TestBalloon's environment variables.
+             * Resets Gradle test-filtering patterns.
+             *
+             * This prevents using the original patterns to filter in ways which are incompatible with TestBalloon's
+             * own include/exclude patterns on JS (by Mocha) and the JVM (by JUnit Platform).
              */
-            var filteringPatternsConverted = false
+            fun resetGradleTestFiltering() {
+                if (testBalloonProperties.testFilteringResetEnabled == true) {
+                    (filter as DefaultTestFilter).commandLineIncludePatterns.clear()
+                    filter.includePatterns.clear()
+                    filter.excludePatterns.clear()
+                    // Avoid Gradle error
+                    //    "...no filters are applied, but the test task did not discover any tests to execute."
+                    setProperty("failOnNoDiscoveredTests", false)
+                }
+            }
 
             fun KotlinJsTest.configureKarmaEnvironment() {
                 val directory = Path("${layout.projectDirectory}") / "karma.config.d"
                 val parameterConfigFile = directory / "testBalloonParameters.js"
+                val secondaryIncludePatterns = (
+                    filter.includePatterns + (filter as DefaultTestFilter).commandLineIncludePatterns
+                    ).toList()
+                val secondaryExcludePatterns = filter.excludePatterns.toList()
 
-                /** Returns the prioritized patterns as a JS source string. */
-                fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
-                    val patterns = primary.firstNotNullOfOrNull {
-                        providers.environmentVariable(it.name).orNull?.ifEmpty { null }
-                            ?.split("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
-                    } ?: secondary
-
-                    if (patterns.any()) filteringPatternsConverted = true
-
-                    return patterns.joinToString(
-                        "${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}",
-                        prefix = "\"",
-                        postfix = "\""
-                    ) {
-                        it.replace("\"", "\\\"")
-                    }
-                }
-
-                val includePatternsJs = prioritizedPatterns(
-                    EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
-                    EnvironmentVariable.TEST_INCLUDE,
-                    secondary = filter.includePatterns +
-                        (filter as DefaultTestFilter).commandLineIncludePatterns
-                )
-                val excludePatternsJs = prioritizedPatterns(
-                    EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
-                    secondary = filter.excludePatterns
-                )
+                resetGradleTestFiltering()
 
                 doFirst {
+                    /** Returns the prioritized patterns as a JS source string. */
+                    fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
+                        val patterns = primary.firstNotNullOfOrNull {
+                            System.getenv(it.name)?.ifEmpty { null }
+                                ?.split("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
+                        } ?: secondary
+
+                        return patterns.joinToString(
+                            "${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}",
+                            prefix = "\"",
+                            postfix = "\""
+                        ) {
+                            it.replace("\"", "\\\"")
+                        }
+                    }
+
+                    val includePatternsJs = prioritizedPatterns(
+                        EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
+                        EnvironmentVariable.TEST_INCLUDE,
+                        secondary = secondaryIncludePatterns
+                    )
+                    val excludePatternsJs = prioritizedPatterns(
+                        EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
+                        secondary = secondaryExcludePatterns
+                    )
+
                     @Suppress("NewApi")
                     check(directory.exists() || directory.toFile().mkdirs()) {
                         "Could not create directory '$directory'"
@@ -206,38 +220,43 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
             /**
              * Invokes [setTestEnvironment] to set up TestBalloon environment variables.
              */
-            fun configureEnvironment(setTestEnvironment: (variable: EnvironmentVariable, value: String) -> Unit) {
-                fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
-                    val patterns =
-                        primary.firstNotNullOfOrNull {
-                            providers.environmentVariable(it.name).orNull?.ifEmpty { null }
-                        }
+            fun AbstractTestTask.configureEnvironment(
+                setTestEnvironment: (variable: EnvironmentVariable, value: String) -> Unit
+            ) {
+                val secondaryIncludePatterns = (
+                    filter.includePatterns + (filter as DefaultTestFilter).commandLineIncludePatterns
+                    ).toList()
+                val secondaryExcludePatterns = filter.excludePatterns.toList()
+
+                resetGradleTestFiltering()
+
+                doFirst {
+                    fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
+                        val patterns = primary.firstNotNullOfOrNull { System.getenv(it.name)?.ifEmpty { null } }
                             ?: secondary.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
 
-                    if (patterns.isNotEmpty()) filteringPatternsConverted = true
+                        return patterns
+                    }
 
-                    return patterns
-                }
-
-                setTestEnvironment(
-                    EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
-                    prioritizedPatterns(
+                    setTestEnvironment(
                         EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
-                        EnvironmentVariable.TEST_INCLUDE,
-                        secondary = filter.includePatterns +
-                            (filter as DefaultTestFilter).commandLineIncludePatterns
+                        prioritizedPatterns(
+                            EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
+                            EnvironmentVariable.TEST_INCLUDE,
+                            secondary = secondaryIncludePatterns
+                        )
                     )
-                )
-                setTestEnvironment(
-                    EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
-                    prioritizedPatterns(
+                    setTestEnvironment(
                         EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
-                        secondary = filter.excludePatterns
+                        prioritizedPatterns(
+                            EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
+                            secondary = secondaryExcludePatterns
+                        )
                     )
-                )
-                setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING, reportingMode.name)
-                if (reportingPathLimit != null) {
-                    setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT, reportingPathLimit)
+                    setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING, reportingMode.name)
+                    if (reportingPathLimit != null) {
+                        setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT, reportingPathLimit)
+                    }
                 }
             }
 
@@ -263,19 +282,6 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
                         environment(variable.name, value)
                     }
                 }
-            }
-
-            if (filteringPatternsConverted) {
-                // If patterns exist and have been converted into TestBalloon's environment variables, reset
-                // Gradle-provided patterns. This prevents using the original patterns to filter in ways
-                // which are incompatible with TestBalloon's own include/exclude patterns on JS (by Mocha) and the
-                // JVM (by JUnit Platform).
-                (filter as DefaultTestFilter).commandLineIncludePatterns.clear()
-                filter.includePatterns.clear()
-                filter.excludePatterns.clear()
-                // Avoid Gradle error
-                //    "...no filters are applied, but the test task did not discover any tests to execute."
-                setProperty("failOnNoDiscoveredTests", false)
             }
         }
     }

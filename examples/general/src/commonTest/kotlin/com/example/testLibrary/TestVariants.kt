@@ -4,7 +4,7 @@ import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestExecutionScope
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.testScope
-import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
@@ -38,10 +38,10 @@ fun TestSuite.testSeries(name: String, iterations: Int, action: suspend TestExec
 /**
  * Registers a test with a non-standard signature for its [action] parameter.
  *
- * The IDE plugin requires a `@TestDiscoverable` annotation to recognize an invocation of this function as registering
+ * The IDE plugin requires a `@TestRegistering` annotation to recognize an invocation of this function as registering
  * a test.
  */
-@TestDiscoverable
+@TestRegistering
 fun TestSuite.databaseTest(name: String, action: suspend Database.() -> Unit) {
     test(name) {
         Database(this).use {

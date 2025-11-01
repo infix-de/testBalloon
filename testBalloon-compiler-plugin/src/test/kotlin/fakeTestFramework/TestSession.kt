@@ -1,9 +1,9 @@
 package fakeTestFramework
 
 import de.infix.testBalloon.framework.shared.AbstractTestSession
-import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestRegistering
 
-@TestDiscoverable
+@TestRegistering
 open class TestSession :
     TestSuite(name = "TestSession"),
     AbstractTestSession

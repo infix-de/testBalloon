@@ -6,10 +6,6 @@
 // - Show declarations: true
 
 // Library unique name: <de.infix.testBalloon:testBalloon-framework-shared>
-open annotation class de.infix.testBalloon.framework.shared/TestDiscoverable : kotlin/Annotation { // de.infix.testBalloon.framework.shared/TestDiscoverable|null[0]
-    constructor <init>() // de.infix.testBalloon.framework.shared/TestDiscoverable.<init>|<init>(){}[0]
-}
-
 open annotation class de.infix.testBalloon.framework.shared/TestDisplayName : kotlin/Annotation { // de.infix.testBalloon.framework.shared/TestDisplayName|null[0]
     constructor <init>() // de.infix.testBalloon.framework.shared/TestDisplayName.<init>|<init>(){}[0]
 }
@@ -20,6 +16,10 @@ open annotation class de.infix.testBalloon.framework.shared/TestElementDsl : kot
 
 open annotation class de.infix.testBalloon.framework.shared/TestElementName : kotlin/Annotation { // de.infix.testBalloon.framework.shared/TestElementName|null[0]
     constructor <init>() // de.infix.testBalloon.framework.shared/TestElementName.<init>|<init>(){}[0]
+}
+
+open annotation class de.infix.testBalloon.framework.shared/TestRegistering : kotlin/Annotation { // de.infix.testBalloon.framework.shared/TestRegistering|null[0]
+    constructor <init>() // de.infix.testBalloon.framework.shared/TestRegistering.<init>|<init>(){}[0]
 }
 
 abstract interface de.infix.testBalloon.framework.shared/AbstractTest : de.infix.testBalloon.framework.shared/AbstractTestElement // de.infix.testBalloon.framework.shared/AbstractTest|null[0]

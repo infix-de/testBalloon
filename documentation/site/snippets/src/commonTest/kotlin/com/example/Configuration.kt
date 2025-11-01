@@ -12,7 +12,7 @@ import de.infix.testBalloon.framework.core.dispatcherWithParallelism
 import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
@@ -52,7 +52,7 @@ fun TestSuite.testSeries(
 // --8<-- [end:test-series]
 
 // --8<-- [start:test-with-database-context]
-@TestDiscoverable // (1)!
+@TestRegistering // (1)!
 fun TestSuite.databaseTest(name: String, action: suspend Database.() -> Unit) {
     test(name) {
         Database(this).use { // (2)!

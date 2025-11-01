@@ -5,12 +5,12 @@ package de.infix.testBalloon.framework.shared
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-public annotation class TestDiscoverable
+public annotation class TestRegistering
 
 /**
  * Makes a String parameter receive the fully qualified name of its function's or constructor's caller.
  *
- * This annotation requires a top-level `@[TestDiscoverable]` function or class constructor. A `@[TestElementName]`
+ * This annotation requires a top-level `@[TestRegistering]` function or class constructor. A `@[TestElementName]`
  * parameter must be of type String and have a default value (typically, "").
  *
  * If the call site of the function or constructor does not supply an actual value for that `@[TestElementName]`

@@ -5,7 +5,7 @@ import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.aroundEachTest
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlinx.coroutines.delay
 import kotlin.math.round
 import kotlin.random.Random
@@ -25,7 +25,7 @@ val EffectiveTesting by testSuite {
 
 // --8<-- [start:multiple-tests-with-fresh-state]
     testSuite("Multiple tests with fresh state") {
-        @TestDiscoverable // (2)!
+        @TestRegistering // (2)!
         fun test(name: String, action: suspend Service.() -> Unit) = // (3)!
             this.test(name) {
 // --8<-- [start:multiple-tests-with-fresh-state-init]
@@ -60,7 +60,7 @@ val EffectiveTesting by testSuite {
 
         val context = testFixture { Context() }
 
-        @TestDiscoverable // (3)!
+        @TestRegistering // (3)!
         fun test(name: String, action: suspend Context.() -> Unit) = // (4)!
             this.test(name) { context().action() } // (5)!
 

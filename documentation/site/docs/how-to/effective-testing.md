@@ -148,7 +148,7 @@ Compose Multiplatform provides an experimental [`runComposeUiTest()`](https://ww
 1. Using the Compose Multiplatform test API requires an opt-in directive like `@file:OptIn(ExperimentalTestApi::class)`.
 
 ```kotlin
-@TestDiscoverable
+@TestRegistering
 fun TestSuite.composeTest(name: String, action: suspend ComposeUiTest.() -> Unit) = test(name) {
     @OptIn(TestBalloonExperimentalApi::class)
     runComposeUiTest(

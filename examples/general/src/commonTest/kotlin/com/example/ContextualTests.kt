@@ -1,7 +1,7 @@
 package com.example
 
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.test.assertEquals
@@ -27,7 +27,7 @@ val ContextualTests by testSuite {
 
             val commonContext = testFixture { Context() }
 
-            @TestDiscoverable
+            @TestRegistering
             fun testWithContext(name: String, action: suspend Context.() -> Unit) = test(name) {
                 commonContext().action()
             }
@@ -78,7 +78,7 @@ val ContextualTests by testSuite {
                 val abbreviatedPhrase = fullPhrase.take(desiredLength)
             }
 
-            @TestDiscoverable
+            @TestRegistering
             fun testWithContext(name: String, action: suspend Context.() -> Unit) = test(name) {
                 Context().action()
             }

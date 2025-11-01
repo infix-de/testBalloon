@@ -4,7 +4,7 @@ import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
-import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlin.io.path.div
 import kotlin.io.path.moveTo
 import kotlin.time.Duration.Companion.minutes
@@ -35,7 +35,7 @@ val IncrementalCompilationTests by testSuite(
     }
 }
 
-@TestDiscoverable
+@TestRegistering
 private fun TestSuite.incrementalCompilationTestSuite(
     projectName: String,
     testConfig: TestConfig = TestConfig,
@@ -58,7 +58,7 @@ private class IncrementalCompilationTestProject(private val projectTestSuite: Te
      * - executing the Gradle test task (one per target).
      * Incremental compilation is correct if the test results match the set of files present at each stage.
      */
-    @TestDiscoverable
+    @TestRegistering
     fun testSeries(name: String, gradleOptions: Array<String> = arrayOf(), testConfig: TestConfig = TestConfig) =
         projectTestSuite.testSuite(name, testConfig = testConfig) {
             suspend fun compileTaskExecution(taskName: String) = gradleExecution(taskName, *gradleOptions)

@@ -3,9 +3,9 @@ package de.infix.testBalloon.framework.core
 import de.infix.testBalloon.framework.core.internal.GuardedBy
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
-import de.infix.testBalloon.framework.shared.TestDiscoverable
 import de.infix.testBalloon.framework.shared.TestDisplayName
 import de.infix.testBalloon.framework.shared.TestElementName
+import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
@@ -28,7 +28,7 @@ import kotlin.coroutines.CoroutineContext
  * }
  * ```
  */
-@TestDiscoverable
+@TestRegistering
 public fun testSuite(
     @TestElementName name: String = "",
     @TestDisplayName displayName: String = name,
@@ -55,7 +55,7 @@ public fun testSuite(
  * }
  * ```
  */
-@TestDiscoverable
+@TestRegistering
 public fun testSuite(
     @TestElementName name: String = "",
     @TestDisplayName displayName: String = name,
@@ -74,7 +74,7 @@ public fun testSuite(
 /**
  * A test suite containing child [TestElement]s (tests and/or suites). A suite may not contain test logic.
  */
-@TestDiscoverable
+@TestRegistering
 public open class TestSuite internal constructor(
     parent: TestSuite?,
     name: String,
@@ -329,7 +329,7 @@ public open class TestSuite internal constructor(
     /**
      * Registers a [TestSuite] as a child of this test suite.
      */
-    @TestDiscoverable
+    @TestRegistering
     public fun testSuite(
         @TestElementName name: String,
         @TestDisplayName displayName: String = name,
@@ -342,7 +342,7 @@ public open class TestSuite internal constructor(
     /**
      * Registers a [Test] as a child of this test suite.
      */
-    @TestDiscoverable
+    @TestRegistering
     public fun test(
         @TestElementName name: String,
         @TestDisplayName displayName: String = name,

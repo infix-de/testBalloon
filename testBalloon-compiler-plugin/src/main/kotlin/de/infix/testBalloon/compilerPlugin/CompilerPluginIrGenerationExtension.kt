@@ -8,9 +8,9 @@ import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.AbstractTestSession
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
-import de.infix.testBalloon.framework.shared.TestDiscoverable
 import de.infix.testBalloon.framework.shared.TestDisplayName
 import de.infix.testBalloon.framework.shared.TestElementName
+import de.infix.testBalloon.framework.shared.TestRegistering
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
@@ -179,7 +179,7 @@ private class Configuration(
 
     val abstractSuiteSymbol = irClassSymbol(AbstractTestSuite::class)
     val abstractSessionSymbol = irClassSymbol(AbstractTestSession::class)
-    val testDiscoverableAnnotationSymbol = irClassSymbol(TestDiscoverable::class)
+    val testDiscoverableAnnotationSymbol = irClassSymbol(TestRegistering::class)
     val testElementNameAnnotationSymbol = irClassSymbol(TestElementName::class)
     val testDisplayNameAnnotationSymbol = irClassSymbol(TestDisplayName::class)
 
@@ -238,7 +238,7 @@ private class ModuleTransformer(
             // Fast path: Ignore non-suite classes.
             if (!irClass.isSameOrSubTypeOf(configuration.abstractSuiteSymbol)) return@withErrorReporting
 
-            // Consider classes with a @TestDiscoverable superclass.
+            // Consider classes with a @TestRegistering superclass.
             if (irClass.superClass?.hasAnnotation(configuration.testDiscoverableAnnotationSymbol) == true) {
                 if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
                     reportDebug("Found test discoverable '${irClass.fqName()}'", irClass)

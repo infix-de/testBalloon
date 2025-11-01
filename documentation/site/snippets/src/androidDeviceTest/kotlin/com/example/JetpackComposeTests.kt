@@ -17,7 +17,7 @@ import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.core.testWithJUnit4Rule
-import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestRegistering
 
 @Composable
 private fun ComposableUnderTest() {
@@ -45,7 +45,7 @@ val JetpackComposeTests by testSuite {
  * Registers a `Test` with a [ComposeTestContext] providing a basic `composeTestRule`.
  */
 // --8<-- [start:custom-dsl-extension]
-@TestDiscoverable
+@TestRegistering
 @OptIn(TestBalloonExperimentalApi::class)
 fun TestSuite.composeTest(
     name: String,

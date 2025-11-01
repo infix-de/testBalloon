@@ -113,7 +113,7 @@ private class CompilerPluginTests {
             """,
             expectedExitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR
         ) {
-            assertTrue("Found multiple test sessions annotated with @TestDiscoverable" in messages)
+            assertTrue("Found multiple test sessions annotated with @TestRegistering" in messages)
         }
     }
 

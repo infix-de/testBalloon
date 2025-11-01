@@ -19,7 +19,7 @@ import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.core.testWithJUnit4Rule
-import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestRegistering
 
 val ComposeTestsWithTestBalloon by testSuite {
     @Composable
@@ -53,7 +53,7 @@ val ComposeTestsWithTestBalloon by testSuite {
 /**
  * Registers a `Test` with a [ComposeTestContext] providing a basic `composeTestRule`.
  */
-@TestDiscoverable
+@TestRegistering
 @OptIn(TestBalloonExperimentalApi::class)
 fun TestSuite.composeTest(
     name: String,
@@ -68,7 +68,7 @@ class ComposeTestContext<Rule>(val composeTestRule: Rule)
 /**
  * Registers a `Test` with a [ComposeTestContext] providing an Activity-based `composeTestRule`.
  */
-@TestDiscoverable
+@TestRegistering
 @OptIn(TestBalloonExperimentalApi::class)
 inline fun <reified A : ComponentActivity> TestSuite.androidComposeTest(
     name: String,

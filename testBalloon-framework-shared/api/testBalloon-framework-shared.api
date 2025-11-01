@@ -16,9 +16,6 @@ public abstract interface class de/infix/testBalloon/framework/shared/AbstractTe
 public abstract interface class de/infix/testBalloon/framework/shared/AbstractTestSuite : de/infix/testBalloon/framework/shared/AbstractTestElement {
 }
 
-public abstract interface annotation class de/infix/testBalloon/framework/shared/TestDiscoverable : java/lang/annotation/Annotation {
-}
-
 public abstract interface annotation class de/infix/testBalloon/framework/shared/TestDisplayName : java/lang/annotation/Annotation {
 }
 
@@ -26,5 +23,8 @@ public abstract interface annotation class de/infix/testBalloon/framework/shared
 }
 
 public abstract interface annotation class de/infix/testBalloon/framework/shared/TestElementName : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class de/infix/testBalloon/framework/shared/TestRegistering : java/lang/annotation/Annotation {
 }
 

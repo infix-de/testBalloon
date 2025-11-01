@@ -5,7 +5,7 @@ import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.argumentsBasedElementSelection
 import de.infix.testBalloon.framework.core.internal.value
 import de.infix.testBalloon.framework.shared.AbstractTestSession
-import de.infix.testBalloon.framework.shared.TestDiscoverable
+import de.infix.testBalloon.framework.shared.TestRegistering
 import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
  *     )
  * ```
  */
-@TestDiscoverable
+@TestRegistering
 public open class TestSession protected constructor(
     testConfig: TestConfig = DefaultConfiguration,
     defaultCompartment: (() -> TestCompartment) = { TestCompartment.Default },

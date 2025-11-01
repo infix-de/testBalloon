@@ -29,6 +29,8 @@ theme:
   custom_dir: overrides
   features:
     - content.code.annotate
+    - content.code.copy
+    - content.code.select
     - content.action.edit
     - navigation.instant
     - navigation.instant.progress

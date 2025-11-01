@@ -23,6 +23,40 @@ TestBalloon fully integrates with the Kotlin Gradle Plugin ([Multiplatform](http
 
     Never use the `maxParallelForks` option on Gradle test tasks. Gradle has no idea about the test structure and assumes class-based tests, which TestBalloon does not use.
 
+#### Test selection (filtering)
+
+TestBalloon supports the usual [Gradle test task filtering](https://docs.gradle.org/current/userguide/java_testing.html#test_filtering) options for all Kotlin Multiplatform targets plus Android local (host-based) tests.(1)
+{ .annotate }
+
+1. Android device (instrumented) tests do not use Gradle's filtering options since the AGP provides them as _verification_ tasks, not _test_ tasks.
+
+Test selection accepts the pipe `|` character to separate test elements. This is a valid test invocation:
+
+```shell
+./gradlew cleanJvmTest jvmTest --tests "com.example.TestSuite|inner suite|*" --no-build-cache --info
+```
+
+Alternatively, TestBalloon's own south-east arrow `↘` can be used, or a custom separator if the test patterns begins with one, like `;com.example.TestSuite;inner suite;*`.
+
+!!! warning
+
+    IntelliJ IDEA's run configurations mess with test filtering via `--tests`. In this case, use the `TESTBALLOON_INCLUDE_PATTERNS` environment variable instead, like `TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite|inner suite|*`.
+
+To use test selection with **Android device (instrumented) tests**, you have these options:
+
+1. In the IDE's run configuration, use the **instrumentation argument** `TESTBALLOON_INCLUDE_PATTERNS` with the pattern as its value.
+2. Pass it via Gradle's command line:
+
+    ```shell
+    ./gradlew pixel2api30DebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite|inner suite|*"
+    ```
+
+3. Use the Android Gradle DSL:
+
+    ```kotlin
+    testInstrumentationRunnerArguments["TESTBALLOON_INCLUDE_PATTERNS"] = "com.example.TestSuite|inner suite|*"
+    ```
+
 ### JVM
 
 TestBalloon registers with Gradle, without requiring any platform-specific configuration. TestBalloon can run alongside other JUnit-based test frameworks in the same module.

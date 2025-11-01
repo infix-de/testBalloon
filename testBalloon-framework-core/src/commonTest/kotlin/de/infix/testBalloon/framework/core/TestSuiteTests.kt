@@ -282,15 +282,20 @@ class TestSuiteTests {
 
         val suite1 by testSuite(
             "suite1",
-            testConfig = TestConfig.aroundEach { elementAction ->
-                trace.add("$testElementPath aroundEach1.1 begin")
-                elementAction()
-                trace.add("$testElementPath aroundEach1.1 end")
-            }.aroundEach { elementAction ->
-                trace.add("$testElementPath aroundEach1.2 begin")
-                elementAction()
-                trace.add("$testElementPath aroundEach1.2 end")
-            }
+            testConfig = TestConfig
+                .aroundEach { elementAction ->
+                    trace.add("$testElementPath aroundEach1.1 begin")
+                    elementAction()
+                    trace.add("$testElementPath aroundEach1.1 end")
+                }.aroundEachTest { elementAction ->
+                    trace.add("$testElementPath aroundEachTest begin")
+                    elementAction()
+                    trace.add("$testElementPath aroundEachTest end")
+                }.aroundEach { elementAction ->
+                    trace.add("$testElementPath aroundEach1.2 begin")
+                    elementAction()
+                    trace.add("$testElementPath aroundEach1.2 end")
+                }
         ) {
             test("test1") {
                 trace.add("$testElementPath")
@@ -316,19 +321,23 @@ class TestSuiteTests {
                     "«suite1» aroundEach1.1 begin",
                     "«suite1» aroundEach1.2 begin",
                     "«suite1${iSep}test1» aroundEach1.1 begin",
+                    "«suite1${iSep}test1» aroundEachTest begin",
                     "«suite1${iSep}test1» aroundEach1.2 begin",
                     "«suite1${iSep}test1»",
                     "«suite1${iSep}test1» aroundEach1.2 end",
+                    "«suite1${iSep}test1» aroundEachTest end",
                     "«suite1${iSep}test1» aroundEach1.1 end",
                     "«suite1${iSep}innerSuite» aroundEach1.1 begin",
                     "«suite1${iSep}innerSuite» aroundEach1.2 begin",
                     "«suite1${iSep}innerSuite» aroundEach2 begin",
                     "«suite1${iSep}innerSuite${iSep}test1» aroundEach1.1 begin",
+                    "«suite1${iSep}innerSuite${iSep}test1» aroundEachTest begin",
                     "«suite1${iSep}innerSuite${iSep}test1» aroundEach1.2 begin",
                     "«suite1${iSep}innerSuite${iSep}test1» aroundEach2 begin",
                     "«suite1${iSep}innerSuite${iSep}test1»",
                     "«suite1${iSep}innerSuite${iSep}test1» aroundEach2 end",
                     "«suite1${iSep}innerSuite${iSep}test1» aroundEach1.2 end",
+                    "«suite1${iSep}innerSuite${iSep}test1» aroundEachTest end",
                     "«suite1${iSep}innerSuite${iSep}test1» aroundEach1.1 end",
                     "«suite1${iSep}innerSuite» aroundEach2 end",
                     "«suite1${iSep}innerSuite» aroundEach1.2 end",

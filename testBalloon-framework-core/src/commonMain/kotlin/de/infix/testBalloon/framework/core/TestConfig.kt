@@ -214,12 +214,52 @@ public fun TestConfig.coroutineContext(context: CoroutineContext): TestConfig = 
  *     }
  * }
  * ```
+ *
+ * @see TestConfig.aroundEach
+ * @see TestConfig.aroundEachTest
+ * @see TestElementExecutionWrappingAction
  */
 public fun TestConfig.aroundAll(executionWrappingAction: TestElementExecutionWrappingAction): TestConfig =
     executionWrapping(executionWrappingAction)
 
 /**
- * Returns a test configuration which wraps [executionWrappingAction] around each element of a [TestElement] tree.
+ * Returns a test configuration which wraps [executionWrappingAction] around each [Test] of a [TestElement] hierarchy.
+ *
+ * [executionWrappingAction] operates on all [Test]s below the [TestSuite] it is configured for (or, if configured
+ * on a single [Test], on that test).
+ *
+ * [executionWrappingAction] wraps around each [Test]'s cumulative action (a cumulative action includes
+ * all wrapping actions following this one, and the elements primary action).
+ * See [TestElementExecutionWrappingAction] for requirements.
+ *
+ * Multiple [aroundEach]/[aroundEachTest] invocations nest outside-in in the order of appearance.
+ *
+ * Notes:
+ * - If you want to wrap both, [TestSuite]s and [Test]s, use [aroundEachTest].
+ *
+ * Example:
+ * ```
+ * testConfig = TestConfig.aroundEachTest { action ->
+ *     repeat(5) {
+ *         action()
+ *     }
+ * }
+ * ```
+ *
+ * @see TestConfig.aroundEach
+ * @see TestElementExecutionWrappingAction
+ */
+public fun TestConfig.aroundEachTest(executionWrappingAction: TestElementExecutionWrappingAction): TestConfig =
+    aroundEach {
+        if (this is Test) {
+            executionWrappingAction(it)
+        } else {
+            it()
+        }
+    }
+
+/**
+ * Returns a test configuration which wraps [executionWrappingAction] around each element of a [TestElement] hierarchy.
  *
  * [executionWrappingAction] operates on the [TestElement] it is configured for and all elements below it.
  * [executionWrappingAction] wraps around each [TestElement]'s cumulative action (a cumulative action includes
@@ -228,7 +268,9 @@ public fun TestConfig.aroundAll(executionWrappingAction: TestElementExecutionWra
  *
  * Multiple [aroundEach] invocations nest outside-in in the order of appearance.
  *
- * Note: If you need an [aroundEach] wrapper with a shared context, use [TestConfig.traversal].
+ * Notes:
+ * - If you want to wrap [Test]s exclusively, use [aroundEachTest].
+ * - If you need an [aroundEach] wrapper with a shared context, use [TestConfig.traversal].
  *
  * Example:
  * ```
@@ -238,6 +280,9 @@ public fun TestConfig.aroundAll(executionWrappingAction: TestElementExecutionWra
  *     println("$elementPath aroundEach exiting")
  * }
  * ```
+ *
+ * @see TestConfig.aroundEachTest
+ * @see TestElementExecutionWrappingAction
  */
 public fun TestConfig.aroundEach(executionWrappingAction: TestElementExecutionWrappingAction): TestConfig =
     traversal(AroundEachTraversal(executionWrappingAction))

@@ -7,8 +7,6 @@ plugins {
     id("com.android.kotlin.multiplatform.library") version "{{version:android.gradle.plugin}}"
     id("com.gradleup.compat.patrouille") version "{{version:com.gradleup.compat.patrouille}}"
     id("de.infix.testBalloon") version "{{prop:version}}"
-    id("de.infix.gradle-plugins.kotlin-multiplatform-js") version
-        "{{pluginVersion:de.infix.gradle.plugins.kotlin.multiplatform.js}}"
 }
 
 compatPatrouille {

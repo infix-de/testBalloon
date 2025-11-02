@@ -41,7 +41,7 @@ See also these [tips on how to test effectively](https://infix-de.github.io/test
 ### Android Local test
 
 <details>
-  <summary>Android Device test example</summary>
+  <summary>Android Local test example</summary>
 
 ![TestBalloon example test run – Android Local](documentation/site/docs/overview/assets/example-test-run-android-local-light.png#gh-light-mode-only)
 ![TestBalloon example test run – Android Local](documentation/site/docs/overview/assets/example-test-run-android-local-dark.png#gh-dark-mode-only)

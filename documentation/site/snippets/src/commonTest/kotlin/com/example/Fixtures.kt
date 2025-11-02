@@ -1,4 +1,8 @@
-@file:Suppress("unused", "RedundantSuspendModifier")
+@file:Suppress(
+    "unused",
+    "RedundantSuspendModifier",
+    "ktlint:standard:function-literal"
+)
 
 package com.example
 
@@ -7,8 +11,7 @@ import kotlin.test.assertEquals
 
 // --8<-- [start:starred-users]
 val StarredUsers by testSuite {
-    val starRepository = testFixture {
-        // (1)!
+    val starRepository = testFixture { // (1)!
         StarRepository() // (2)!
     } closeWith {
         disconnect() // (3)!

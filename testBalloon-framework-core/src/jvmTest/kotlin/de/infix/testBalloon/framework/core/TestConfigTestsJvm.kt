@@ -14,19 +14,21 @@ import kotlin.test.assertNotEquals
 
 class TestConfigTestsJvm {
     @Test
-    fun singleThreadedDispatcher() = withTestFramework {
-        @OptIn(ExperimentalCoroutinesApi::class)
-        withSingleThreadedDispatcher { defaultDispatcher ->
-            val testSuite by testSuite("testSuite", testConfig = TestConfig.coroutineContext(defaultDispatcher)) {}
+    fun singleThreadedDispatcher() {
+        withTestFramework {
+            @OptIn(ExperimentalCoroutinesApi::class)
+            withSingleThreadedDispatcher { defaultDispatcher ->
+                val testSuite by testSuite("testSuite", testConfig = TestConfig.coroutineContext(defaultDispatcher)) {}
 
-            val defaultDispatcherThreadId = testPlatform.threadId()
+                val defaultDispatcherThreadId = testPlatform.threadId()
 
-            TestConfig.executeWrapped(testSuite) {
-                assertEquals(defaultDispatcherThreadId, testPlatform.threadId())
-            }
+                TestConfig.executeWrapped(testSuite) {
+                    assertEquals(defaultDispatcherThreadId, testPlatform.threadId())
+                }
 
-            TestConfig.singleThreaded().executeWrapped(testSuite) {
-                assertNotEquals(defaultDispatcherThreadId, testPlatform.threadId())
+                TestConfig.singleThreaded().executeWrapped(testSuite) {
+                    assertNotEquals(defaultDispatcherThreadId, testPlatform.threadId())
+                }
             }
         }
     }
@@ -90,17 +92,19 @@ class TestConfigTestsJvm {
     }
 
     @Test
-    fun mainDispatcherSetMoreThanOnce() = withTestFramework {
-        val testSuite by testSuite("testSuite") {}
+    fun mainDispatcherSetMoreThanOnce() {
+        withTestFramework {
+            val testSuite by testSuite("testSuite") {}
 
-        @OptIn(ExperimentalCoroutinesApi::class)
-        withSingleThreadedDispatcher { alternativeMainDispatcher ->
-            TestConfig.mainDispatcher(alternativeMainDispatcher).executeWrapped(testSuite) {
-                assertFailsWith<IllegalArgumentException> {
-                    TestConfig.mainDispatcher(Dispatchers.Unconfined).executeWrapped(testSuite) {
-                        // Must fail: setting a main dispatcher again
-                    }
-                }.assertMessageStartsWith("Another invocation of withMainDispatcher() is still active.")
+            @OptIn(ExperimentalCoroutinesApi::class)
+            withSingleThreadedDispatcher { alternativeMainDispatcher ->
+                TestConfig.mainDispatcher(alternativeMainDispatcher).executeWrapped(testSuite) {
+                    assertFailsWith<IllegalArgumentException> {
+                        TestConfig.mainDispatcher(Dispatchers.Unconfined).executeWrapped(testSuite) {
+                            // Must fail: setting a main dispatcher again
+                        }
+                    }.assertMessageStartsWith("Another invocation of withMainDispatcher() is still active.")
+                }
             }
         }
     }

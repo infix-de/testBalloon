@@ -70,11 +70,11 @@ public open class TestCompartment(name: String, testConfig: TestConfig) :
          */
         @Suppress("FunctionName")
         @TestBalloonExperimentalApi
-        public fun UI(
+        public fun MainDispatcher(
             mainDispatcher: CoroutineDispatcher? = null,
             testConfig: TestConfig = TestConfig
         ): TestCompartment = TestCompartment(
-            name = "UI",
+            name = "MainDispatcher",
             testConfig = TestConfig
                 .invocation(TestInvocation.SEQUENTIAL)
                 .mainDispatcher(mainDispatcher)

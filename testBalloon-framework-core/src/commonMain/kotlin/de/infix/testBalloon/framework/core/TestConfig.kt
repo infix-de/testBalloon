@@ -543,7 +543,7 @@ public suspend fun withMainDispatcher(dispatcher: CoroutineDispatcher? = null, a
         "Another invocation of withMainDispatcher() is still active." +
             " Redirecting Dispatchers.Main again would introduce a conflict in its global state.\n" +
             "\tPlease avoid concurrent changes to Dispatchers.Main by executing tests" +
-            " in isolation (e.g. in a separate UI test compartment)."
+            " in isolation (e.g. in a separate MainDispatcher test compartment)."
     }
 
     suspend fun withDispatcherOrSingleThreaded(action: suspend (mainDispatcher: CoroutineDispatcher) -> Unit) {

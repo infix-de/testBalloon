@@ -124,7 +124,7 @@ TestBalloon has a number of predefined compartments:
 | `TestCompartment.Default` | according to `TestSession`'s default configuration                         |
 | `TestCompartment.RealTime` | sequential invocation, on a real-time dispatcher, without `TestScope`      |
 | `TestCompartment.Sequential` | sequential invocation (useful if `TestSession` is configured differently) |
-| `TestCompartment.UI` | sequential invocation, with access to a multiplatform `Main` dispatcher    |
+| `TestCompartment.MainDispatcher` | sequential invocation, with access to a multiplatform `Main` dispatcher    |
 
 You can use these, or create your own compartments.
 

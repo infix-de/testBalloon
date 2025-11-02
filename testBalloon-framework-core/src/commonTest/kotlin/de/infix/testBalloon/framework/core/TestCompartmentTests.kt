@@ -174,7 +174,7 @@ class TestCompartmentTests {
     fun ui() = withTestFramework {
         val uiThreadIds = ConcurrentSet<ULong>()
 
-        val suite by testSuite("topSuite", compartment = { TestCompartment.UI(Dispatchers.Unconfined) }) {
+        val suite by testSuite("topSuite", compartment = { TestCompartment.MainDispatcher(Dispatchers.Unconfined) }) {
             for (suiteNumber in 1..3) {
                 testSuite("subSuite$suiteNumber") {
                     test("test1") {

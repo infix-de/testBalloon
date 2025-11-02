@@ -10,8 +10,8 @@ public class de/infix/testBalloon/framework/core/TestCompartment : de/infix/test
 }
 
 public final class de/infix/testBalloon/framework/core/TestCompartment$Companion {
-	public final fun UI (Lkotlinx/coroutines/CoroutineDispatcher;Lde/infix/testBalloon/framework/core/TestConfig;)Lde/infix/testBalloon/framework/core/TestCompartment;
-	public static synthetic fun UI$default (Lde/infix/testBalloon/framework/core/TestCompartment$Companion;Lkotlinx/coroutines/CoroutineDispatcher;Lde/infix/testBalloon/framework/core/TestConfig;ILjava/lang/Object;)Lde/infix/testBalloon/framework/core/TestCompartment;
+	public final fun MainDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;Lde/infix/testBalloon/framework/core/TestConfig;)Lde/infix/testBalloon/framework/core/TestCompartment;
+	public static synthetic fun MainDispatcher$default (Lde/infix/testBalloon/framework/core/TestCompartment$Companion;Lkotlinx/coroutines/CoroutineDispatcher;Lde/infix/testBalloon/framework/core/TestConfig;ILjava/lang/Object;)Lde/infix/testBalloon/framework/core/TestCompartment;
 	public final fun getConcurrent ()Lde/infix/testBalloon/framework/core/TestCompartment;
 	public final fun getDefault ()Lde/infix/testBalloon/framework/core/TestCompartment;
 	public final fun getRealTime ()Lde/infix/testBalloon/framework/core/TestCompartment;

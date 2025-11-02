@@ -110,7 +110,7 @@ open class de.infix.testBalloon.framework.core/TestCompartment : de.infix.testBa
         final val Sequential // de.infix.testBalloon.framework.core/TestCompartment.Companion.Sequential|{}Sequential[0]
             final fun <get-Sequential>(): de.infix.testBalloon.framework.core/TestCompartment // de.infix.testBalloon.framework.core/TestCompartment.Companion.Sequential.<get-Sequential>|<get-Sequential>(){}[0]
 
-        final fun UI(kotlinx.coroutines/CoroutineDispatcher? = ..., de.infix.testBalloon.framework.core/TestConfig = ...): de.infix.testBalloon.framework.core/TestCompartment // de.infix.testBalloon.framework.core/TestCompartment.Companion.UI|UI(kotlinx.coroutines.CoroutineDispatcher?;de.infix.testBalloon.framework.core.TestConfig){}[0]
+        final fun MainDispatcher(kotlinx.coroutines/CoroutineDispatcher? = ..., de.infix.testBalloon.framework.core/TestConfig = ...): de.infix.testBalloon.framework.core/TestCompartment // de.infix.testBalloon.framework.core/TestCompartment.Companion.MainDispatcher|MainDispatcher(kotlinx.coroutines.CoroutineDispatcher?;de.infix.testBalloon.framework.core.TestConfig){}[0]
     }
 }
 

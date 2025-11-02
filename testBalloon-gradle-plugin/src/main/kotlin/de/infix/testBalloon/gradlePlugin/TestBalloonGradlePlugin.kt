@@ -45,9 +45,12 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
-        extensions.create(Constants.GRADLE_EXTENSION_NAME, TestBalloonGradleExtension::class.java)
+        val testBalloonExtension = extensions.create(
+            Constants.GRADLE_EXTENSION_NAME,
+            TestBalloonGradleExtension::class.java
+        )
 
-        configureWithTestBalloon(testBalloonProperties)
+        configureWithTestBalloon(testBalloonProperties, { testBalloonExtension.environmentVariables.toList() })
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {

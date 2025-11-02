@@ -88,7 +88,7 @@ private class IncrementalCompilationTestProject(private val projectTestSuite: Te
 
                     val taskResults = taskExecution.logMessages()
                     check(taskResults.size == fileCount) {
-                        "$taskName was expected to produce $fileCount results, but produced ${taskResults.size}:\n" +
+                        "$taskName was expected to produce $fileCount result(s), but produced ${taskResults.size}:\n" +
                             "\tactual results:\n${taskResults.asIndentedText(indent = "\t\t")}\n" +
                             taskExecution.stdoutStderr()
                     }

@@ -25,9 +25,12 @@ import kotlin.io.path.writeText
 /**
  * Configures the project for TestBalloon, given the precondition that the compiler plugin artifacts are set up.
  */
-internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloonGradleProperties) {
+internal fun Project.configureWithTestBalloon(
+    testBalloonProperties: TestBalloonGradleProperties,
+    environmentVariablesFromExtension: () -> List<String> = { listOf() }
+) {
     addEntryPointSourceFile(testBalloonProperties)
-    configureTestReporting(testBalloonProperties)
+    configureTestTasks(testBalloonProperties, environmentVariablesFromExtension)
 }
 
 /**
@@ -74,9 +77,12 @@ private fun Project.addEntryPointSourceFile(testBalloonProperties: TestBalloonGr
 }
 
 /**
- * Configures the project's test reporting for TestBalloon.
+ * Configures the test tasks for TestBalloon.
  */
-private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGradleProperties) {
+private fun Project.configureTestTasks(
+    testBalloonProperties: TestBalloonGradleProperties,
+    environmentVariablesFromExtension: () -> List<String>
+) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
         "intellij" -> ReportingMode.INTELLIJ_IDEA
         "files" -> ReportingMode.FILES
@@ -145,6 +151,9 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
                 }
             }
 
+            val environmentVariableNamesToPropagate =
+                testBalloonProperties.environmentVariables + environmentVariablesFromExtension()
+
             fun KotlinJsTest.configureKarmaEnvironment() {
                 val directory = Path("${layout.projectDirectory}") / "karma.config.d"
                 val parameterConfigFile = directory / "testBalloonParameters.js"
@@ -187,14 +196,23 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
                         "Could not create directory '$directory'"
                     }
 
-                    val clientEnvLines = listOfNotNull(
-                        """${EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name}: $includePatternsJs""",
-                        """${EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name}: $excludePatternsJs""",
-                        """${EnvironmentVariable.TESTBALLOON_REPORTING.name}: "$reportingMode"""",
+                    fun environmentVariablesToPropagate(): Map<String, String> =
+                        environmentVariableNamesToPropagate.mapNotNull { variableName ->
+                            val value: String? = System.getenv(variableName)
+                            if (value != null) variableName to value else null
+                        }.toMap()
+
+                    val clientEnvLines = buildList {
+                        add("""${EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name}: $includePatternsJs""")
+                        add("""${EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name}: $excludePatternsJs""")
+                        add("""${EnvironmentVariable.TESTBALLOON_REPORTING.name}: "$reportingMode"""")
                         reportingPathLimit?.let {
-                            """${EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name}: "$it""""
+                            add("""${EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name}: "$it"""")
                         }
-                    )
+                        environmentVariablesToPropagate().forEach { (name, value) ->
+                            add("""$name: "$value"""")
+                        }
+                    }
 
                     parameterConfigFile.writeText(
                         """
@@ -220,9 +238,7 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
             /**
              * Invokes [setTestEnvironment] to set up TestBalloon environment variables.
              */
-            fun AbstractTestTask.configureEnvironment(
-                setTestEnvironment: (variable: EnvironmentVariable, value: String) -> Unit
-            ) {
+            fun AbstractTestTask.configureEnvironment(setTestEnvironment: (name: String, value: String) -> Unit) {
                 val secondaryIncludePatterns = (
                     filter.includePatterns + (filter as DefaultTestFilter).commandLineIncludePatterns
                     ).toList()
@@ -239,7 +255,7 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
                     }
 
                     setTestEnvironment(
-                        EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
+                        EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name,
                         prioritizedPatterns(
                             EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
                             EnvironmentVariable.TEST_INCLUDE,
@@ -247,23 +263,31 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
                         )
                     )
                     setTestEnvironment(
-                        EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
+                        EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name,
                         prioritizedPatterns(
                             EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
                             secondary = secondaryExcludePatterns
                         )
                     )
-                    setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING, reportingMode.name)
+                    setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING.name, reportingMode.name)
                     if (reportingPathLimit != null) {
-                        setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT, reportingPathLimit)
+                        setTestEnvironment(
+                            EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name,
+                            reportingPathLimit
+                        )
+                    }
+
+                    environmentVariableNamesToPropagate.forEach { name ->
+                        val value: String? = System.getenv(name)
+                        if (value != null) setTestEnvironment(name, value)
                     }
                 }
             }
 
             when (this) {
                 is KotlinNativeTest -> {
-                    configureEnvironment { variable, value ->
-                        environment(variable.name, value, false)
+                    configureEnvironment { name, value ->
+                        environment(name, value, false)
                     }
                 }
 
@@ -271,15 +295,15 @@ private fun Project.configureTestReporting(testBalloonProperties: TestBalloonGra
                     if (browserTestTaskRegex.containsMatchIn(name)) {
                         configureKarmaEnvironment()
                     } else {
-                        configureEnvironment { variable, value ->
-                            environment(variable.name, value)
+                        configureEnvironment { name, value ->
+                            environment(name, value)
                         }
                     }
                 }
 
                 is Test -> {
-                    configureEnvironment { variable, value ->
-                        environment(variable.name, value)
+                    configureEnvironment { name, value ->
+                        environment(name, value)
                     }
                 }
             }

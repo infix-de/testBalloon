@@ -150,7 +150,7 @@ Compose Multiplatform provides an experimental [`runComposeUiTest()`](https://ww
 ```kotlin
 @TestRegistering
 fun TestSuite.composeTest(name: String, action: suspend ComposeUiTest.() -> Unit) = test(name) {
-    @OptIn(TestBalloonExperimentalApi::class)
+    @OptIn(TestBalloonExperimentalApi::class) // required for TestBalloon's testTimeout
     runComposeUiTest(
         runTestContext = coroutineContext.minusKey(CoroutineExceptionHandler.Key),
         testTimeout = testTimeout ?: 60.seconds
@@ -198,3 +198,26 @@ The outcome:
 
 ![Flaky test results](assets/effective-testing/FlakyTests-light.png#only-light)
 ![Flaky test results](assets/effective-testing/FlakyTests-dark.png#only-dark)
+
+## Conditional tag-based testing
+
+TestBalloon provides the option of using [environment variables](../../getting-started/integration/#environment-variables) to control test execution on all Kotlin targets.(1)
+{ .annotate }
+
+1. Beyond platforms, which natively support environment variables, TestBalloon will also provide a (simulated) environment to JS browsers and Android (emulated or physical) devices. For Android device tests, you need to set them via [instrumentation arguments](../../getting-started/integration/#android-device-environment-variables).
+
+If you define tags and a `TestConfig` extension like this,
+
+```kotlin
+--8<-- "EffectiveTesting.kt:my-tags"
+```
+
+…and [enable propagation](../../getting-started/integration/#environment-variables) for a `TEST_TAGS` environment variable, you can use its value to conditionally run tests and suites at any level of the test element hierarchy:
+
+```kotlin
+--8<-- "EffectiveTesting.kt:tag-based-tests"
+```
+
+!!! note
+
+    As everything is controlled by plain Kotlin, you can devise any scheme that meets your needs. 

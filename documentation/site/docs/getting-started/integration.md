@@ -45,10 +45,11 @@ Alternatively, TestBalloon's own south-east arrow `↘` can be used, or a custom
 To use test selection with **Android device (instrumented) tests**, you have these options:
 
 1. In the IDE's run configuration, use the **instrumentation argument** `TESTBALLOON_INCLUDE_PATTERNS` with the pattern as its value.
+
 2. Pass it via Gradle's command line:
 
     ```shell
-    ./gradlew pixel2api30DebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite|inner suite|*"
+    ./gradlew "-Pandroid.testInstrumentationRunnerArguments.TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite|inner suite|*" ...
     ```
 
 3. Use the Android Gradle DSL:
@@ -56,6 +57,30 @@ To use test selection with **Android device (instrumented) tests**, you have the
     ```kotlin
     testInstrumentationRunnerArguments["TESTBALLOON_INCLUDE_PATTERNS"] = "com.example.TestSuite|inner suite|*"
     ```
+
+#### Environment variables
+
+Gradle runs tests in a separate JVM process, which does not receive the full process environment of the build process.
+
+To propagate additional environment variables into your test runs, TestBalloon provides two options:
+
+1. Set the Gradle property `testBalloon.environmentVariables` to a comma-separated list of environment variable names:
+
+    ```properties
+    testBalloon.environmentVariables=CI,TEST_TAGS
+    ```
+
+2. In a build script's `testBalloon` extension, set the parameter `environmentVariables`:
+
+    ```kotlin
+    testBalloon {
+        environmentVariables.add("CI", "TEST_TAGS")
+    }
+    ``` 
+
+!!! info
+
+    TestBalloon will also provide the (simulated) environment to JS browsers and Android (emulated or physical) devices.
 
 ### JVM
 
@@ -67,7 +92,7 @@ TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-paral
 
 TestBalloon fully supports the Kotlin Gradle Plugin's test infrastructure, including test execution via Node.js or in a browser via Karma.
 
-TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on JS-based platforms.
+TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on JS-based platforms, and provides simulated [environment variables](#environment-variables) in browser tests.
 
 ### Native
 
@@ -96,6 +121,24 @@ TestBalloon supports
 
 * JUnit 4 test rules via its `testWithJUnit4Rule()` function,
 * [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) and tests running in parallel (on an emulator or a physical device).
+
+#### Environment variables {#android-device-environment-variables}
+
+For Android device tests, TestBalloon provides simulated environment variables via instrumentation arguments. To set them, you have these options:
+
+1. In the IDE's run configuration, use the **instrumentation argument** with the variable name and value.
+
+2. Pass it via Gradle's command line:
+
+    ```shell
+    ./gradlew "-Pandroid.testInstrumentationRunnerArguments.VARIABLE_NAME=VALUE" ...
+    ```
+
+3. Use the Android Gradle DSL:
+
+    ```kotlin
+    testInstrumentationRunnerArguments["VARIABLE_NAME"] = "VALUE"
+    ```
 
 ## IntelliJ IDEA
 

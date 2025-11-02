@@ -6,6 +6,17 @@ import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 
 open class TestBalloonGradleExtension {
+    /**
+     * The list of custom environment variable names used to control testing.
+     *
+     * Example:
+     * ```
+     * environmentVariables.add("TEST_TAGS", "CI")
+     * ```
+     */
+    val environmentVariables: MutableList<String> = mutableListOf()
+
+    /** The framework-internal debug level. */
     var debugLevel: DebugLevel = DebugLevel.NONE
 
     /**

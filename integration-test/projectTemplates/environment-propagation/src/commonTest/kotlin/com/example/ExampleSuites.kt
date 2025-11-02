@@ -9,21 +9,15 @@ import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testSuite
 
 val SimpleSuite by testSuite(testConfig = TestConfig.logTestExecution()) {
-    test("test 1") {
+    test("always") {
     }
-    testSuite("suite 1") {
-        test("test s1-1") {
-        }
-        test("test s1-2") {
-        }
-        testSuite("suite 1.1", testConfig = TestConfig.onlyTagged(MyTag.CI, MyTag.SimulatedCI)) {
-            test("test s1.1-1") {
-            }
-            test("test s1.1-2") {
-            }
-        }
+    test("from property", testConfig = TestConfig.onEnvironmentVariable("FROM_PROPERTY")) {
+    }
+    test("from extension", testConfig = TestConfig.onEnvironmentVariable("FROM_EXTENSION")) {
     }
 }
+
+fun TestConfig.onEnvironmentVariable(name: String) = if (testPlatform.environment(name) == null) disable() else this
 
 private fun TestConfig.logTestExecution() = aroundEach { testElementAction ->
     testElementAction()
@@ -31,17 +25,4 @@ private fun TestConfig.logTestExecution() = aroundEach { testElementAction ->
         @OptIn(TestBalloonExperimentalApi::class)
         println("##LOG(${testPlatform.displayName} – $testElementPath: OK)LOG##")
     }
-}
-
-fun TestConfig.onlyTagged(vararg tags: MyTag) = if (tags.any { it.exists() }) this else disable()
-
-enum class MyTag {
-    CI,
-    SimulatedCI,
-    Release;
-
-    @OptIn(TestBalloonExperimentalApi::class)
-    fun value() = testPlatform.environment("TEST_TAGS")?.split(',')?.last { it == name }
-
-    fun exists() = value() != null
 }

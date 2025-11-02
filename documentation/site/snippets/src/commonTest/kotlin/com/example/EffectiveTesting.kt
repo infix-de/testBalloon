@@ -1,9 +1,12 @@
 package com.example
 
+import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestCompartment
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.aroundEachTest
+import de.infix.testBalloon.framework.core.disable
+import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlinx.coroutines.delay
@@ -339,3 +342,28 @@ private fun doSomethingFlaky() {
     }
     doSomethingFlakyInvocationCount = 0 // ready for next time
 }
+
+// --8<-- [start:my-tags]
+enum class MyTag {
+    CI,
+    SimulatedCI,
+    Release;
+
+    @OptIn(TestBalloonExperimentalApi::class) // required for testPlatform
+    fun value() =
+        testPlatform.environment("TEST_TAGS")?.split(',')?.last { it == name }
+
+    fun exists() = value() != null
+}
+
+fun TestConfig.onlyIfTagged(vararg tags: MyTag) =
+    if (tags.any { it.exists() }) this else disable()
+// --8<-- [end:my-tags]
+
+// --8<-- [start:tag-based-tests]
+val ConditionalTests by testSuite(
+    testConfig = TestConfig.onlyIfTagged(MyTag.CI, MyTag.SimulatedCI)
+) {
+    // ...
+}
+// --8<-- [end:tag-based-tests]

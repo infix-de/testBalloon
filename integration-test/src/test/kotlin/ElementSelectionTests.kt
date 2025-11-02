@@ -69,7 +69,7 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
                         println("$testElementPath: $taskName – SKIPPED")
                     } else {
                         check(taskResults.size == expectedTestCount) {
-                            "$taskName was expected to produce $expectedTestCount result," +
+                            "$taskName was expected to produce $expectedTestCount result(s)," +
                                 " but produced ${taskResults.size}:\n" +
                                 "\tactual results:\n${taskResults.asIndentedText(indent = "\t\t")}\n" +
                                 taskExecution.stdoutStderr()

@@ -9,8 +9,8 @@ Follow the Material for MkDocs instructions for [installing into a Python virtua
 ### Local usage
 
 * Update the API reference: `gradlew dokkaGenerateHtml`
-* Serve the website locally: `gradlew serveSite`
-* Build the website locally: `gradlew buildSite`
+* Serve the website locally: `gradlew docSiteServe`
+* Build the website locally: `gradlew docSiteBuild`
 
 * Run a shell session in the virtual environment: `source venv/bin/activate`
     * Serve the website locally: `mkdocs serve`

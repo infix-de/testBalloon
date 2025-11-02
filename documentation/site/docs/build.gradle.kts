@@ -54,14 +54,17 @@ tasks.named("dokkaGeneratePublicationHtml") {
     }
 }
 
-tasks.register<Exec>("serveSite") {
+fun Exec.withMkdocs(vararg arguments: String) {
     group = "documentation"
     workingDir = projectDir.parentFile
-    commandLine = listOf("$workingDir/venv/bin/mkdocs", "serve")
+    val mkdocs = "$workingDir/venv/bin/mkdocs".takeIf { File(it).exists() } ?: "mkdocs"
+    commandLine = listOf(mkdocs, *arguments)
 }
 
-tasks.register<Exec>("buildSite") {
-    group = "documentation"
-    workingDir = projectDir.parentFile
-    commandLine = listOf("$workingDir/venv/bin/mkdocs", "build")
+tasks.register<Exec>("docSiteServe") {
+    withMkdocs("serve")
+}
+
+tasks.register<Exec>("docSiteBuild") {
+    withMkdocs("build")
 }

@@ -9,7 +9,7 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 ==== Update documentation
 
 . Update the API reference: `gradlew dokkaGenerateHtml`
-. Serve the website locally: `gradlew serveSite`
+. Serve the website locally: `gradlew docSiteServe`
 . Verify the API reference contents.
 . Verify documentation contents.
 . Prepare release documentation (breaking changes, what's new, what's fixed, other).

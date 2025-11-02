@@ -1,0 +1,15 @@
+name: 'Build and publish the doc site'
+
+on: workflow_dispatch
+
+jobs:
+  build-website:
+    uses: ./.github/workflows/doc-site-build.yml
+
+  publish-website:
+    needs: [ build-website ]
+    uses: ./.github/workflows/doc-site-publish.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

@@ -31,7 +31,7 @@ val ConcurrentSuite by testSuite(
 
 // Register a test suite for UI tests. This will combine sequential execution with the presence of a Main dispatcher.
 
-@OptIn(TestBalloonExperimentalApi::class)
+@OptIn(TestBalloonExperimentalApi::class) // required for TestCompartment.UI
 val UiSuite by testSuite(
     compartment = { TestCompartment.UI() },
     testConfig = TestConfig.statisticsReport()

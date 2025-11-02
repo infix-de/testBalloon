@@ -3,7 +3,6 @@ package de.infix.testBalloon.framework.core
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-@TestBalloonExperimentalApi
 public interface TestPlatformJsHosted : TestPlatform {
     public enum class Runtime(public val displayName: String) {
         NODE("Node"),
@@ -15,7 +14,11 @@ public interface TestPlatformJsHosted : TestPlatform {
     public val runtime: Runtime
 
     override val parallelism: Int get() = 1
+
+    @TestBalloonExperimentalApi
     override fun threadId(): ULong = 0UL
+
+    @TestBalloonExperimentalApi
     override fun threadDisplayName(): String = "single"
 }
 

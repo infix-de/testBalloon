@@ -71,7 +71,6 @@ private class StatisticsReport : TestExecutionTraversal {
             val elapsedTime = reportStart.value!!.elapsedNow()
             @OptIn(TestBalloonInternalApi::class)
             printlnFixed(
-                @OptIn(TestBalloonExperimentalApi::class)
                 "${testElement.testElementPath}[${testPlatform.displayName}]: ran $testCount test(s)" +
                     " on ${threadIdsUsed.size} thread(s) in $elapsedTime," +
                     " cumulative test duration: $cumulativeTestDuration"

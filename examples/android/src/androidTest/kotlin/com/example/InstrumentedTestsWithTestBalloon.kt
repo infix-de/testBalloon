@@ -48,7 +48,7 @@ val TestsWithTestBalloon by testSuite(testConfig = TestConfig.testScope(isEnable
             testSeries()
         }
 
-        @OptIn(TestBalloonExperimentalApi::class)
+        @OptIn(TestBalloonExperimentalApi::class) // required for singleThreaded()
         testSuite(
             "single-threaded",
             testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).singleThreaded().multithreadingReport()
@@ -105,7 +105,6 @@ private class MultithreadingReport : TestExecutionTraversal {
         if (isReportRoot) {
             @OptIn(TestBalloonInternalApi::class)
             printlnFixed(
-                @OptIn(TestBalloonExperimentalApi::class)
                 "${testElement.testElementPath}[${testPlatform.displayName}]: ran $testCount test(s)" +
                     " on ${threadIdsUsed.size} thread(s)"
             )

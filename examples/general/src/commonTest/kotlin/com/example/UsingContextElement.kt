@@ -1,7 +1,6 @@
 package com.example
 
 import com.example.testLibrary.statisticsReport
-import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestInvocation
 import de.infix.testBalloon.framework.core.coroutineContext
@@ -22,7 +21,6 @@ val UsingContextElement by testSuite(
         .statisticsReport() // a custom configuration for reporting
         .chainedWith(
             // Conditionally disable the test suite on single-threaded platforms.
-            @OptIn(TestBalloonExperimentalApi::class)
             if (testPlatform.parallelism < 2) {
                 TestConfig.disable()
             } else {

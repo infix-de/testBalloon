@@ -5,7 +5,7 @@ import de.infix.testBalloon.framework.core.TestPermit
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.addPermits
 
-@OptIn(TestBalloonExperimentalApi::class)
+@OptIn(TestBalloonExperimentalApi::class) // required for permits
 class ModuleSession :
     TestSession(
         testConfig = DefaultConfiguration.addPermits(

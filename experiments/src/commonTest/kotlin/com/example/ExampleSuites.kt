@@ -1,7 +1,6 @@
 package com.example
 
 import de.infix.testBalloon.framework.core.Test
-import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.aroundEach
 import de.infix.testBalloon.framework.core.disable
@@ -28,7 +27,6 @@ val SimpleSuite by testSuite(testConfig = TestConfig.logTestExecution()) {
 private fun TestConfig.logTestExecution() = aroundEach { testElementAction ->
     testElementAction()
     if (this is Test) {
-        @OptIn(TestBalloonExperimentalApi::class)
         println("##LOG(${testPlatform.displayName} – $testElementPath: OK)LOG##")
     }
 }
@@ -40,7 +38,6 @@ enum class MyTag {
     SimulatedCI,
     Release;
 
-    @OptIn(TestBalloonExperimentalApi::class)
     fun value() = testPlatform.environment("TEST_TAGS")?.split(',')?.last { it == name }
 
     fun exists() = value() != null

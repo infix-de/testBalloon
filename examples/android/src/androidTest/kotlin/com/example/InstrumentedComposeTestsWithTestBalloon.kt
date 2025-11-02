@@ -54,7 +54,7 @@ val ComposeTestsWithTestBalloon by testSuite {
  * Registers a `Test` with a [ComposeTestContext] providing a basic `composeTestRule`.
  */
 @TestRegistering
-@OptIn(TestBalloonExperimentalApi::class)
+@OptIn(TestBalloonExperimentalApi::class) // required for testWithJUnit4Rule
 fun TestSuite.composeTest(
     name: String,
     composeTestRule: ComposeContentTestRule = createComposeRule(),
@@ -69,7 +69,7 @@ class ComposeTestContext<Rule>(val composeTestRule: Rule)
  * Registers a `Test` with a [ComposeTestContext] providing an Activity-based `composeTestRule`.
  */
 @TestRegistering
-@OptIn(TestBalloonExperimentalApi::class)
+@OptIn(TestBalloonExperimentalApi::class) // required for testWithJUnit4Rule
 inline fun <reified A : ComponentActivity> TestSuite.androidComposeTest(
     name: String,
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<A>, A> = createAndroidComposeRule<A>(),

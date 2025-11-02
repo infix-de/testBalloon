@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 /**
  * The platform executing tests.
  */
-@TestBalloonExperimentalApi
 public interface TestPlatform {
     public enum class Type { JVM, NATIVE, JS, WASM_JS, WASM_WASI }
 
@@ -19,9 +18,11 @@ public interface TestPlatform {
     public val parallelism: Int
 
     /** The ID of the current thread. NOTE: For debugging purposes only, do not make assumptions about its value. */
+    @TestBalloonExperimentalApi
     public fun threadId(): ULong
 
     /** The display name of the current thread. NOTE: For debugging purposes only, do not make assumptions about it. */
+    @TestBalloonExperimentalApi
     public fun threadDisplayName(): String
 
     /** Returns the value of the environment [variableName] if it exists, or null. */
@@ -31,7 +32,6 @@ public interface TestPlatform {
 /**
  * The [TestPlatform] currently used to execute tests.
  */
-@TestBalloonExperimentalApi
 public expect val testPlatform: TestPlatform
 
 /**

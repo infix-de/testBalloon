@@ -6,6 +6,8 @@ TestBalloon has a unified API for all Kotlin target platforms, residing in the `
 
 TestBalloon supports multi-level nesting of test suites and [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on all platforms, even where the underlying infrastructure does not.
 
+**Runtime information** and **environment variables** are available on all platforms via the global `testPlatform` variable and its [`TestPlatform`](/testBalloon/api/html/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-platform/index.html) interface.
+
 The following sections provide an overview about TestBalloon's integration with its various platforms and build tooling. They are not meant to be exhaustive, but highlight selected details.
 
 ## Kotlin Multiplatform
@@ -58,7 +60,7 @@ To use test selection with **Android device (instrumented) tests**, you have the
     testInstrumentationRunnerArguments["TESTBALLOON_INCLUDE_PATTERNS"] = "com.example.TestSuite|inner suite|*"
     ```
 
-#### Environment variables
+#### Environment variables {#gradle-environment-variables}
 
 Gradle runs tests in a separate JVM process, which does not receive the full process environment of the build process.
 
@@ -92,7 +94,7 @@ TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-paral
 
 TestBalloon fully supports the Kotlin Gradle Plugin's test infrastructure, including test execution via Node.js or in a browser via Karma.
 
-TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on JS-based platforms, and provides simulated [environment variables](#environment-variables) in browser tests.
+TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on JS-based platforms, and provides simulated [environment variables](#gradle-environment-variables) in browser tests.
 
 ### Native
 

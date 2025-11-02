@@ -32,7 +32,7 @@ val Concurrency by testSuite(testConfig = TestConfig.testScope(isEnabled = false
         testSeries()
     }
 
-    @OptIn(TestBalloonExperimentalApi::class)
+    @OptIn(TestBalloonExperimentalApi::class) // required for singleThreaded()
     testSuite(
         "concurrent (single-threaded)",
         testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).singleThreaded().statisticsReport()

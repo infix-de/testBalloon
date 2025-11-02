@@ -1,7 +1,6 @@
 package com.example
 
 import de.infix.testBalloon.framework.core.Test
-import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.aroundEach
 import de.infix.testBalloon.framework.core.testPlatform
@@ -39,7 +38,6 @@ val DisplayNameSuite by testSuite(
 private fun TestConfig.logTestExecution() = aroundEach { testElementAction ->
     testElementAction()
     if (this is Test) {
-        @OptIn(TestBalloonExperimentalApi::class)
         println("##LOG(${testPlatform.displayName} – $testElementPath: OK)LOG##")
     }
 }

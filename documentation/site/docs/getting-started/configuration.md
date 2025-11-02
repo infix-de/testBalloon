@@ -110,7 +110,7 @@ The [`TestConfig` API documentation](/testBalloon/api/html/testBalloon-framework
 
 ### Test compartments
 
-Tests may have different concurrency, isolation and environmental requirements. TestBalloon provides those via `TestCompartment`s. These group top-level test suites, with each compartment running in isolation.
+Tests may have different concurrency, isolation and environmental requirements. TestBalloon supports those via `TestCompartment`s. These group top-level test suites, with each compartment running in isolation.
 
 !!! info
 

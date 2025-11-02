@@ -13,10 +13,8 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.ObsoleteWorkersApi
 import kotlin.native.concurrent.Worker
 
-@TestBalloonExperimentalApi
 public actual val testPlatform: TestPlatform = TestPlatformNative
 
-@TestBalloonExperimentalApi
 public object TestPlatformNative : TestPlatform {
     override val type: TestPlatform.Type = TestPlatform.Type.NATIVE
 
@@ -27,7 +25,10 @@ public object TestPlatformNative : TestPlatform {
     override val parallelism: Int = Platform.getAvailableProcessors()
 
     @OptIn(ExperimentalStdlibApi::class, ObsoleteWorkersApi::class)
+    @TestBalloonExperimentalApi
     override fun threadId(): ULong = Worker.current.platformThreadId
+
+    @TestBalloonExperimentalApi
     override fun threadDisplayName(): String = threadId().toString()
 
     @OptIn(ExperimentalForeignApi::class)

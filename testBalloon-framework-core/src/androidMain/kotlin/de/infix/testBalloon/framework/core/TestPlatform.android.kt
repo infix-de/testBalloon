@@ -7,17 +7,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 
-@TestBalloonExperimentalApi
 public actual val testPlatform: TestPlatform = TestPlatformAndroid
 
-@TestBalloonExperimentalApi
 public object TestPlatformAndroid : TestPlatform {
     override val type: TestPlatform.Type = TestPlatform.Type.JVM
     override val displayName: String = "Android"
     override val parallelism: Int = Runtime.getRuntime().availableProcessors()
 
     @Suppress("DEPRECATION")
+    @TestBalloonExperimentalApi
     override fun threadId(): ULong = Thread.currentThread().id.toULong()
+
+    @TestBalloonExperimentalApi
     override fun threadDisplayName(): String = Thread.currentThread().name ?: "(thread ${threadId()})"
 
     override fun environment(variableName: String): String? = System.getenv(variableName)

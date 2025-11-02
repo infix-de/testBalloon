@@ -1,9 +1,7 @@
 package de.infix.testBalloon.framework.core
 
-@TestBalloonExperimentalApi
 public actual val testPlatform: TestPlatform = TestPlatformWasmJs
 
-@TestBalloonExperimentalApi
 public object TestPlatformWasmJs : TestPlatformJsHosted {
     override val type: TestPlatform.Type = TestPlatform.Type.WASM_JS
 

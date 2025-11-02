@@ -46,7 +46,7 @@ val JetpackComposeTests by testSuite {
  */
 // --8<-- [start:custom-dsl-extension]
 @TestRegistering
-@OptIn(TestBalloonExperimentalApi::class)
+@OptIn(TestBalloonExperimentalApi::class) // required for testWithJUnit4Rule
 fun TestSuite.composeTest(
     name: String,
     composeTestRule: ComposeContentTestRule = createComposeRule(),

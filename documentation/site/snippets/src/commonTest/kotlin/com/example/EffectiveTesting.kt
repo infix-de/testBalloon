@@ -1,6 +1,5 @@
 package com.example
 
-import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestCompartment
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
@@ -349,7 +348,6 @@ enum class MyTag {
     SimulatedCI,
     Release;
 
-    @OptIn(TestBalloonExperimentalApi::class) // required for testPlatform
     fun value() =
         testPlatform.environment("TEST_TAGS")?.split(',')?.last { it == name }
 

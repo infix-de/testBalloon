@@ -1,6 +1,10 @@
 name: 'Build and publish the doc site'
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'doc-site-deploy'
 
 jobs:
   build-website:

@@ -56,6 +56,10 @@ jobs:
       - name: 'Check ABI compatibility'
         run: ./gradlew checkLegacyAbi
 
+      - name: 'Install Chrome (Windows only)'
+        if: runner.os == 'Windows'
+        uses: browser-actions/setup-chrome@v2
+
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets
 

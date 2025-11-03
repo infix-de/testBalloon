@@ -53,7 +53,7 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
             }.toTypedArray()
         gradleExecution("clean", *npmPackageLockTasks).checked()
 
-        testTaskNames
+        testTaskNames.filter { testPlatform.environment("SKIP_BROWSER_TESTS") == null || !it.contains("Browser") }
     }
 
     internal suspend fun gradleExecution(

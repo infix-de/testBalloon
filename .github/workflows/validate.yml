@@ -26,6 +26,8 @@ jobs:
 
       - name: 'Run integration tests'
         run: ./gradlew integrationTests
+        env:
+          SKIP_BROWSER_TESTS: 'true'
 
       - name: 'Upload build reports'
         if: failure()

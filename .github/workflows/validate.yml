@@ -22,7 +22,7 @@ jobs:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: 'Environment'
-        run: set
+        run: gci env:* | sort-object name
 
       - name: 'Run integration tests'
         run: ./gradlew integrationTests

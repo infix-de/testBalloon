@@ -66,5 +66,5 @@ tasks.register<Exec>("docSiteServe") {
 }
 
 tasks.register<Exec>("docSiteBuild") {
-    withMkdocs("build")
+    withMkdocs("build", "--clean", "--strict")
 }

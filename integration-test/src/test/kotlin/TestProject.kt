@@ -53,8 +53,8 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
             }.toTypedArray()
         gradleExecution("clean", *npmPackageLockTasks).checked()
 
-        val skipBrowsers = testPlatform.environment("TEST_SKIP_BROWSERS") != null
-        testTaskNames.filter { if (skipBrowsers) !it.contains("Browser") else true }
+        val browserSkippingEnabled = skippingEnabled("browsers")
+        testTaskNames.filter { if (browserSkippingEnabled) !it.contains("Browser") else true }
     }
 
     internal suspend fun gradleExecution(
@@ -145,3 +145,6 @@ private fun log(message: String) {
 }
 
 internal fun List<String>.asIndentedText(indent: String = "\t") = joinToString(prefix = indent, separator = "\n$indent")
+
+internal fun skippingEnabled(key: String) =
+    testPlatform.environment("TEST_SKIP")?.split(',')?.any { it.trim().contains(key) } == true

@@ -1,6 +1,7 @@
 @file:OptIn(TestBalloonInternalApi::class)
 
 import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.internal.Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
@@ -61,7 +62,10 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
         "NoMatch" to 0
     )) {
         for (variant in variants) {
-            test("${variant.type}: '$pattern', $expectedTestCount test(s)") {
+            test(
+                "${variant.type}: '$pattern', $expectedTestCount test(s)",
+                testConfig = TestConfig.skipConditionally(pattern)
+            ) {
                 for (taskName in project.testTaskNames()) {
                     val taskExecution = variant.execution(taskName, pattern)
                     val taskResults = taskExecution.logMessages()
@@ -81,6 +85,11 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
         }
     }
 }
+
+private val nonAsciiPatternSkippingEnabled = skippingEnabled("non-ASCII patterns")
+
+private fun TestConfig.skipConditionally(pattern: String) =
+    if (nonAsciiPatternSkippingEnabled && pattern.any { it.code !in 32..126 }) disable() else this
 
 private fun String.capitalizedTaskName(): String = replaceFirstChar {
     if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()

@@ -53,7 +53,8 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
             }.toTypedArray()
         gradleExecution("clean", *npmPackageLockTasks).checked()
 
-        testTaskNames
+        val skipBrowsers = testPlatform.environment("TEST_SKIP_BROWSERS") != null
+        testTaskNames.filter { if (skipBrowsers) !it.contains("Browser") else true }
     }
 
     internal suspend fun gradleExecution(

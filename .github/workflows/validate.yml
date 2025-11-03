@@ -60,7 +60,14 @@ jobs:
         run: ./gradlew componentTestsAllTargets
 
       - name: 'Run integration tests'
+        if: runner.os != 'Windows'
         run: ./gradlew integrationTests
+
+      - name: 'Run integration tests, skip browsers'
+        if: runner.os == 'Windows'
+        run: ./gradlew integrationTests
+        env:
+          TEST_SKIP_BROWSERS: ''
 
       - name: 'Upload build reports'
         if: failure()

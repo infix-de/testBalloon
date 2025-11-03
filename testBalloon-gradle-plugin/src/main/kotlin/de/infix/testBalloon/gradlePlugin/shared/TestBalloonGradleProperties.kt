@@ -91,9 +91,6 @@ internal class TestBalloonGradleProperties(val project: Project) {
     @Suppress("SameParameterValue")
     private fun stringProperty(default: String) = Delegate(default) { it }
 
-    @Suppress("SameParameterValue")
-    private fun stringListProperty(default: String) = Delegate(default) { it.split(',') }
-
     private fun regexProperty(default: String) = Delegate(default) { Regex(it) }
 
     @Suppress("SameParameterValue")

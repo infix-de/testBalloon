@@ -27,10 +27,10 @@ import kotlin.io.path.writeText
  */
 internal fun Project.configureWithTestBalloon(
     testBalloonProperties: TestBalloonGradleProperties,
-    environmentVariablesFromExtension: () -> List<String> = { listOf() }
+    browserSafeEnvironmentPatternFromExtension: () -> String = { "" }
 ) {
     addEntryPointSourceFile(testBalloonProperties)
-    configureTestTasks(testBalloonProperties, environmentVariablesFromExtension)
+    configureTestTasks(testBalloonProperties, browserSafeEnvironmentPatternFromExtension)
 }
 
 /**
@@ -81,7 +81,7 @@ private fun Project.addEntryPointSourceFile(testBalloonProperties: TestBalloonGr
  */
 private fun Project.configureTestTasks(
     testBalloonProperties: TestBalloonGradleProperties,
-    environmentVariablesFromExtension: () -> List<String>
+    browserSafeEnvironmentPatternFromExtension: () -> String
 ) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
         "intellij" -> ReportingMode.INTELLIJ_IDEA
@@ -151,12 +151,37 @@ private fun Project.configureTestTasks(
                 }
             }
 
-            val environmentVariableNamesToPropagate =
-                testBalloonProperties.environmentVariables + environmentVariablesFromExtension()
+            fun testBalloonEnvironment(
+                secondaryIncludePatterns: List<String>,
+                secondaryExcludePatterns: List<String>
+            ): Map<String, String> = buildMap {
+                fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String =
+                    primary.firstNotNullOfOrNull { System.getenv(it.name)?.ifEmpty { null } }
+                        ?: secondary.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
+
+                this[EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name] =
+                    prioritizedPatterns(
+                        EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
+                        EnvironmentVariable.TEST_INCLUDE,
+                        secondary = secondaryIncludePatterns
+                    )
+
+                this[EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name] =
+                    prioritizedPatterns(
+                        EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
+                        secondary = secondaryExcludePatterns
+                    )
+
+                this[EnvironmentVariable.TESTBALLOON_REPORTING.name] = reportingMode.name
+                if (reportingPathLimit != null) {
+                    this[EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name] = reportingPathLimit
+                }
+            }
 
             fun KotlinJsTest.configureKarmaEnvironment() {
                 val directory = Path("${layout.projectDirectory}") / "karma.config.d"
                 val parameterConfigFile = directory / "testBalloonParameters.js"
+
                 val secondaryIncludePatterns = (
                     filter.includePatterns + (filter as DefaultTestFilter).commandLineIncludePatterns
                     ).toList()
@@ -164,64 +189,45 @@ private fun Project.configureTestTasks(
 
                 resetGradleTestFiltering()
 
+                val browserSafeEnvironmentPatternStrings = listOf(
+                    testBalloonProperties.browserSafeEnvironmentPattern,
+                    browserSafeEnvironmentPatternFromExtension()
+                )
+
                 doFirst {
-                    /** Returns the prioritized patterns as a JS source string. */
-                    fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
-                        val patterns = primary.firstNotNullOfOrNull {
-                            System.getenv(it.name)?.ifEmpty { null }
-                                ?.split("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
-                        } ?: secondary
-
-                        return patterns.joinToString(
-                            "${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}",
-                            prefix = "\"",
-                            postfix = "\""
-                        ) {
-                            it.replace("\"", "\\\"")
-                        }
-                    }
-
-                    val includePatternsJs = prioritizedPatterns(
-                        EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
-                        EnvironmentVariable.TEST_INCLUDE,
-                        secondary = secondaryIncludePatterns
-                    )
-                    val excludePatternsJs = prioritizedPatterns(
-                        EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
-                        secondary = secondaryExcludePatterns
-                    )
-
                     @Suppress("NewApi")
                     check(directory.exists() || directory.toFile().mkdirs()) {
                         "Could not create directory '$directory'"
                     }
 
-                    fun environmentVariablesToPropagate(): Map<String, String> =
-                        environmentVariableNamesToPropagate.mapNotNull { variableName ->
-                            val value: String? = System.getenv(variableName)
-                            if (value != null) variableName to value else null
-                        }.toMap()
-
-                    val clientEnvLines = buildList {
-                        add("""${EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name}: $includePatternsJs""")
-                        add("""${EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name}: $excludePatternsJs""")
-                        add("""${EnvironmentVariable.TESTBALLOON_REPORTING.name}: "$reportingMode"""")
-                        reportingPathLimit?.let {
-                            add("""${EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name}: "$it"""")
-                        }
-                        environmentVariablesToPropagate().forEach { (name, value) ->
-                            add("""$name: "$value"""")
-                        }
+                    val browserSafeEnvironmentPatterns = browserSafeEnvironmentPatternStrings.mapNotNull {
+                        if (it.isEmpty()) null else it.toRegex()
                     }
 
-                    parameterConfigFile.writeText(
-                        """
-                        config.client = config.client || {};
-                        config.client.env = {
-                            ${clientEnvLines.joinToString(separator = ",\n")}
-                        }
-                        """.trimStart()
-                    )
+                    // The environment propagated to the browser. TestBalloon's own entries have precedence.
+                    val browserEnvironment =
+                        System.getenv().filter { (name, _) ->
+                            browserSafeEnvironmentPatterns.any { it.matches(name) }
+                        } + testBalloonEnvironment(secondaryIncludePatterns, secondaryExcludePatterns)
+
+                    val clientConfiguration = buildList {
+                        add("config.client = config.client || {};")
+                        add("config.client.env = {")
+
+                        add(
+                            browserEnvironment.map { (name, value) ->
+                                val escapedValue = value
+                                    .replace("\\", "\\\\")
+                                    .replace("\"", "\\\"")
+                                    .filter { it.code >= 0x20 }
+                                """    $name: "$escapedValue""""
+                            }.joinToString(separator = ",\n")
+                        )
+
+                        add("}")
+                    }
+
+                    parameterConfigFile.writeText(clientConfiguration.joinToString(separator = "\n"))
                 }
 
                 doLast {
@@ -247,39 +253,8 @@ private fun Project.configureTestTasks(
                 resetGradleTestFiltering()
 
                 doFirst {
-                    fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String {
-                        val patterns = primary.firstNotNullOfOrNull { System.getenv(it.name)?.ifEmpty { null } }
-                            ?: secondary.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
-
-                        return patterns
-                    }
-
-                    setTestEnvironment(
-                        EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name,
-                        prioritizedPatterns(
-                            EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
-                            EnvironmentVariable.TEST_INCLUDE,
-                            secondary = secondaryIncludePatterns
-                        )
-                    )
-                    setTestEnvironment(
-                        EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name,
-                        prioritizedPatterns(
-                            EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
-                            secondary = secondaryExcludePatterns
-                        )
-                    )
-                    setTestEnvironment(EnvironmentVariable.TESTBALLOON_REPORTING.name, reportingMode.name)
-                    if (reportingPathLimit != null) {
-                        setTestEnvironment(
-                            EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name,
-                            reportingPathLimit
-                        )
-                    }
-
-                    environmentVariableNamesToPropagate.forEach { name ->
-                        val value: String? = System.getenv(name)
-                        if (value != null) setTestEnvironment(name, value)
+                    for ((name, value) in testBalloonEnvironment(secondaryIncludePatterns, secondaryExcludePatterns)) {
+                        setTestEnvironment(name, value)
                     }
                 }
             }

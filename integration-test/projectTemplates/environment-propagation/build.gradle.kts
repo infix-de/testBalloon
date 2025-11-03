@@ -15,7 +15,7 @@ compatPatrouille {
 }
 
 testBalloon {
-    environmentVariables.add("FROM_EXTENSION")
+    browserSafeEnvironmentPattern = "FROM_EXTENSION"
 }
 
 kotlin {

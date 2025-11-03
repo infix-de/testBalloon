@@ -27,7 +27,7 @@ val EnvironmentPropagationTests by testSuite(
                 val taskExecution = project.gradleExecution(
                     ":clean${taskName.capitalizedTaskName()}",
                     ":$taskName",
-                    "-PtestBalloon.environmentVariables=FROM_PROPERTY",
+                    "-PtestBalloon.browserSafeEnvironmentPattern=FROM_PROPERTY",
                     environment = mapOf("FROM_PROPERTY" to "yes", "FROM_EXTENSION" to "yes")
                 )
                 val taskResults = taskExecution.logMessages()

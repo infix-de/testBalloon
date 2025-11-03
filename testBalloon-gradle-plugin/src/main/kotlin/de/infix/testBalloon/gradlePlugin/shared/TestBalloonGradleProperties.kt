@@ -84,14 +84,9 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val testFilteringResetEnabled by booleanProperty("true")
 
     /**
-     * The comma-separated list of custom environment variable names used to control testing.
-     *
-     * Example:
-     * ```
-     * environmentVariables=TEST_TAGS,CI
-     * ```
+     * A regex pattern of environment variable names which are safe to export into browser's simulated environments.
      */
-    val environmentVariables by stringListProperty("")
+    val browserSafeEnvironmentPattern by stringProperty("")
 
     @Suppress("SameParameterValue")
     private fun stringProperty(default: String) = Delegate(default) { it }

@@ -201,10 +201,10 @@ The outcome:
 
 ## Conditional tag-based testing
 
-TestBalloon provides the option of using [environment variables](../../getting-started/integration/#gradle-environment-variables) to control test execution on all Kotlin targets.(1)
+TestBalloon provides the option of using environment variables to control test execution on all Kotlin targets.(1)
 { .annotate }
 
-1. JS browsers and Android (emulated or physical) devices do not natively support environment variables. TestBalloon provides a (simulated) environment for those. For Android device tests, you need to set them via [instrumentation arguments](../../getting-started/integration/#android-device-environment-variables).
+1. JS browsers and Android (emulated or physical) devices do not natively support environment variables. TestBalloon provides a (simulated) environment for those. For Android device tests, you need to set them via [instrumentation arguments](../../getting-started/integration/#android-device-environment-variables). For JS browsers, you need to declare them as [browser-safe](../../getting-started/integration/#browser-environment-variables).
 
 If you define tags(1) and a `TestConfig` extension like this,
 { .annotate }
@@ -215,7 +215,7 @@ If you define tags(1) and a `TestConfig` extension like this,
 --8<-- "EffectiveTesting.kt:my-tags"
 ```
 
-…and [enable propagation](../../getting-started/integration/#gradle-environment-variables) for a `TEST_TAGS` environment variable, you can use its value to conditionally run tests and suites at any level of the test element hierarchy:
+…you can use a `TEST_TAGS` environment variable to conditionally run tests and suites at any level of the test element hierarchy:
 
 ```kotlin
 --8<-- "EffectiveTesting.kt:tag-based-tests"

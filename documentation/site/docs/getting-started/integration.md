@@ -60,30 +60,6 @@ To use test selection with **Android device (instrumented) tests**, you have the
     testInstrumentationRunnerArguments["TESTBALLOON_INCLUDE_PATTERNS"] = "com.example.TestSuite|inner suite|*"
     ```
 
-#### Environment variables {#gradle-environment-variables}
-
-Gradle runs tests in a separate JVM process, which does not receive the full process environment of the build process.
-
-To propagate additional environment variables into your test runs, TestBalloon provides two options:
-
-1. Set the Gradle property `testBalloon.environmentVariables` to a comma-separated list of environment variable names:
-
-    ```properties
-    testBalloon.environmentVariables=CI,TEST_TAGS
-    ```
-
-2. In a build script's `testBalloon` extension, set the parameter `environmentVariables`:
-
-    ```kotlin
-    testBalloon {
-        environmentVariables.add("CI", "TEST_TAGS")
-    }
-    ``` 
-
-!!! info
-
-    TestBalloon will also provide the (simulated) environment to JS browsers and Android (emulated or physical) devices.
-
 ### JVM
 
 TestBalloon registers with Gradle, without requiring any platform-specific configuration. TestBalloon can run alongside other JUnit-based test frameworks in the same module.
@@ -92,9 +68,27 @@ TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-paral
 
 ### JS, Wasm/JS
 
-TestBalloon fully supports the Kotlin Gradle Plugin's test infrastructure, including test execution via Node.js or in a browser via Karma.
+TestBalloon fully supports the Kotlin Gradle Plugin's test infrastructure, including test execution via Node.js, or in a browser via Karma.
 
-TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on JS-based platforms, and provides simulated [environment variables](#gradle-environment-variables) in browser tests.
+TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on JS-based platforms, and provides simulated environment variables in browser tests.
+
+#### Environment variables {#browser-environment-variables}
+
+TestBalloon exports only those environment variables into a **browser's simulated environment**, which are declared browser-safe. To do so, use these options (they are cumulative):
+
+1. Set the Gradle property `testBalloon.browserSafeEnvironmentPattern` to a comma-separated list of environment variable names:
+
+    ```properties
+    testBalloon.browserSafeEnvironmentPattern=CI|TEST.*
+    ```
+
+2. In a build script's `testBalloon` extension, set the parameter `browserSafeEnvironmentPattern`:
+
+    ```kotlin
+    testBalloon {
+        browserSafeEnvironmentPattern = "CI|TEST.*"
+    }
+    ``` 
 
 ### Native
 

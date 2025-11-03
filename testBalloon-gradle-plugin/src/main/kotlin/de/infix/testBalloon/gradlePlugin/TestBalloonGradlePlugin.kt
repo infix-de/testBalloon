@@ -50,7 +50,7 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
             TestBalloonGradleExtension::class.java
         )
 
-        configureWithTestBalloon(testBalloonProperties) { testBalloonExtension.environmentVariables.toList() }
+        configureWithTestBalloon(testBalloonProperties) { testBalloonExtension.browserSafeEnvironmentPattern }
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {

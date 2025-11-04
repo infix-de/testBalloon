@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -74,17 +75,17 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.typeWithParameters
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -102,7 +103,7 @@ class CompilerPluginIrGenerationExtension(private val compilerConfiguration: Com
     IrGenerationExtension {
 
     private val messageCollector =
-        compilerConfiguration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        compilerConfiguration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         val debugLevel = Options.debugLevel.value(compilerConfiguration)
@@ -362,7 +363,7 @@ private class ModuleTransformer(
             return
         }
 
-        if (initializerCall.valueArguments[propertyFqnParameter.indexInParameters] != null) {
+        if (initializerCall.valueArguments[propertyFqnParameter.index] != null) {
             reportError(
                 "The '${initializerCallFunction.name}' invocation must not pass a value for parameter" +
                     " '${propertyFqnParameter.name}'.\n" +
@@ -395,7 +396,7 @@ private class ModuleTransformer(
                         @Suppress("DuplicatedCode")
                         irCall(originalCall.symbol).apply {
                             copyTypeAndValueArgumentsFrom(originalCall)
-                            putValueArgument(propertyFqnParameter.indexInParameters, irString(propertyFqnValue))
+                            putValueArgument(propertyFqnParameter.index, irString(propertyFqnValue))
                             if (configuration.debugLevel >= DebugLevel.CODE) {
                                 reportDebug(
                                     "${irProperty.fqName()}: Setting parameter '${propertyFqnParameter.name}'" +
@@ -574,7 +575,11 @@ private class ModuleTransformer(
             parent = entryPointFile
             superTypes = listOf(irBuiltIns.anyType)
 
-            createThisReceiverParameter()
+            thisReceiver = buildReceiverParameter(
+                parent = this,
+                origin = IrDeclarationOrigin.INSTANCE_RECEIVER,
+                type = symbol.typeWithParameters(typeParameters)
+            )
 
             addConstructor {
                 isPrimary = true

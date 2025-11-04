@@ -18,6 +18,10 @@ nav:
       - Background: getting-started/background.md
   - How to:
       - Effective testing: how-to/effective-testing.md
+      - Migrating:
+          - …from JUnit 🚧: how-to/migrating-from-junit.md
+          - …from Kotest: how-to/migrating-from-kotest.md
+          - …from kotlin-test 🚧: how-to/migrating-from-kotlin-test.md
   - Articles: articles.md
   - Support: support.md
   - API Reference: api/html/index.html

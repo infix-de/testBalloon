@@ -49,7 +49,6 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
         val npmPackageLockTasks =
             buildList {
                 if (testTaskNames.any { it.startsWith("js") }) add("kotlinUpgradePackageLock")
-                if (testTaskNames.any { it.startsWith("wasmJs") }) add("kotlinWasmUpgradePackageLock")
             }.toTypedArray()
         gradleExecution("clean", *npmPackageLockTasks).checked()
 

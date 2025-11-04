@@ -48,15 +48,17 @@ Code using Kotest's other isolation modes must change to explicit initialization
 
     ```kotlin
     class IsolatedTests : FunSpec({
-        override fun isolationMode(): IsolationMode = IsolationMode.InstancePerTest
+        isolationMode = IsolationMode.InstancePerTest // (4)!
 
         val id = UUID.randomUUID() // (1)!
 
-        test("one") {
-            println(id) // (2)!
-        }
-        test("two") {
-            println(id) // (3)!
+        init {
+            test("one") {
+                println(id) // (2)!
+            }
+            test("two") {
+                println(id) // (3)!
+            }
         }
     })
     ```
@@ -64,6 +66,7 @@ Code using Kotest's other isolation modes must change to explicit initialization
     1. The test context is initialized by re-creating the spec from its class via reflection (JVM-only).
     2. Each test prints a different ID.
     3. Each test prints a different ID.
+    4. Kotest 6 deprecates `InstancePerTest` in favor of `InstancePerRoot`, but the latter isolates only one level of tests.
 
 === "TestBalloon"
 

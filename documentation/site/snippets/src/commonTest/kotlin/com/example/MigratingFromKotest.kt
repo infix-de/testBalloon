@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalUuidApi::class)
+
 package com.example
 
 import de.infix.testBalloon.framework.core.TestConfig
@@ -8,7 +10,6 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 // --8<-- [start:isolated-tests]
-@OptIn(ExperimentalUuidApi::class)
 val IsolatedTests by testSuite {
     class Context {
         val id = Uuid.random()
@@ -16,14 +17,11 @@ val IsolatedTests by testSuite {
 
     @TestRegistering // (4)!
     fun test(name: String, action: suspend Context.() -> Unit) =
-        this.test(name) {
-            Context().action() // (1)!
-        }
+        this.test(name) { Context().action() } // (1)!
 
     test("one") {
         println(id) // (2)!
     }
-
     test("two") {
         println(id) // (3)!
     }

@@ -3,8 +3,7 @@ package de.infix.testBalloon.framework.core.internal
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
+import kotlinx.datetime.Clock
 
 @TestBalloonExperimentalApi
 public enum class LogLevel { DEBUG, INFO, ERROR }
@@ -26,7 +25,6 @@ internal fun logError(message: () -> String) {
 
 internal fun log(messageLevel: LogLevel, message: () -> String) {
     if (messageLevel >= testFrameworkLogLevel) {
-        @OptIn(ExperimentalTime::class)
         printlnFixed("${Clock.System.now()} [${testPlatform.threadId()}] ${message()}")
     }
 }

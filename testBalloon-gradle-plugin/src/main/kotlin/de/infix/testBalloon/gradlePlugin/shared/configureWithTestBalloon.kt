@@ -11,7 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
-import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
@@ -65,7 +65,7 @@ private fun Project.addEntryPointSourceFile(testBalloonProperties: TestBalloonGr
         // - If another plugin modifies the source set hierarchy in an `afterEvaluate` block, its modifications might
         //   not be picked up, depending on the order plugins are applied to the project.
 
-        extensions.configure<KotlinBaseExtension>("kotlin") {
+        extensions.configure<KotlinSourceSetContainer>("kotlin") {
             val testRootSourceSetRegex = testBalloonProperties.testRootSourceSetRegex
             sourceSets.configureEach {
                 if (testRootSourceSetRegex.containsMatchIn(name) && dependsOn.isEmpty()) {

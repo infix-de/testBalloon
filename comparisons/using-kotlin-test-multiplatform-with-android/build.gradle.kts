@@ -12,7 +12,7 @@ kotlin {
             }
         }
 
-        androidUnitTest {
+        val androidUnitTest by getting {
             dependencies {
                 // required for local tests with TestBalloon outside this project:
                 //     implementation("de.infix.testBalloon:testBalloon-framework-core-jvm:${testBalloonVersion}")
@@ -21,7 +21,7 @@ kotlin {
             }
         }
 
-        androidInstrumentedTest {
+        val androidInstrumentedTest by getting {
             dependencies {
                 // required for instrumented tests with TestBalloon outside this project:
                 //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")

@@ -1,10 +1,9 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
     kotlin("multiplatform") version "{{version:org.jetbrains.kotlin}}"
-    id("com.android.kotlin.multiplatform.library") version "{{version:android.gradle.plugin}}"
     id("com.gradleup.compat.patrouille") version "{{version:com.gradleup.compat.patrouille}}"
     id("de.infix.testBalloon") version "{{prop:version}}"
 }
@@ -45,30 +44,10 @@ kotlin {
     // Tier 3
     mingwX64()
 
-    fun androidSdkAvailable() = providers.environmentVariable("ANDROID_HOME").isPresent
-
-    androidLibrary {
-        namespace = "org.example.android.multiplatform.library"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
-
-        if (androidSdkAvailable()) {
-            withHostTestBuilder {}
-        }
-    }
-
     sourceSets {
         commonTest {
             dependencies {
                 implementation("de.infix.testBalloon:testBalloon-framework-core:{{prop:version}}")
-            }
-        }
-
-        if (androidSdkAvailable()) {
-            named("androidHostTest") {
-                dependencies {
-                    implementation("de.infix.testBalloon:testBalloon-framework-core-jvm:{{prop:version}}")
-                }
             }
         }
     }

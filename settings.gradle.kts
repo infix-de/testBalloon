@@ -17,7 +17,7 @@ include(":testBalloon-compiler-plugin")
 include(":integration-test")
 
 include(":documentation:site:docs")
-include(":documentation:site:snippets")
+// include(":documentation:site:snippets") // using Android+KMP, not supported with Kotlin 2.0.0 and AGP 8.3.2
 include(":documentation:dokka-plugin-hide-internal-api")
 
 include(":testBalloon-integration-kotest-assertions")
@@ -27,11 +27,11 @@ include(":examples:general")
 include(":examples:with-kotest-assertions")
 include(":examples:with-parameterize")
 include(":examples:android")
-include(":examples:multiplatform-library-with-android")
-include(":examples:multiplatform-with-android")
+// include(":examples:multiplatform-library-with-android") // not supported with Kotlin 2.0.0 and AGP 8.3.2
+// include(":examples:multiplatform-with-android") // not supported with Kotlin 2.0.0 and AGP 8.3.2
 
 include(":comparisons:using-kotlin-test")
 include(":comparisons:using-kotlin-test-multiplatform-with-android")
 include(":comparisons:using-testBalloon")
 
-include(":experiments")
+// include(":experiments") // using Android+KMP, not supported with Kotlin 2.0.0 and AGP 8.3.2

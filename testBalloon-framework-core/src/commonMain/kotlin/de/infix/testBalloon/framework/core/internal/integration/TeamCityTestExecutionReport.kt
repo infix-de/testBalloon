@@ -5,19 +5,17 @@ import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.printlnFixed
+import kotlinx.datetime.Instant
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.char
 import kotlin.text.iterator
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 /**
  * A [TestExecutionReport] in JetBrains' TeamCity format on stdout or via an [outputEntry] function.
  *
  * This class is a [SequencingExecutionReport] because the TeamCity protocol does not support concurrency.
  */
-@OptIn(ExperimentalTime::class)
 internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = ::printlnFixed) :
     SequencingExecutionReport() {
 
@@ -145,7 +143,7 @@ private val dateTimeFormat = DateTimeComponents.Format {
     char('-')
     monthNumber()
     char('-')
-    day()
+    dayOfMonth()
     char('T')
     hour()
     char(':')

@@ -48,7 +48,7 @@ kotlin {
                 api(projects.testBalloonFrameworkShared)
                 api(libs.org.jetbrains.kotlinx.coroutines.core)
                 api(libs.org.jetbrains.kotlinx.coroutines.test)
-                implementation(libs.org.jetbrains.kotlinx.kotlinx.datetime)
+                implementation(libs.org.jetbrains.kotlinx.datetime)
                 implementation(libs.org.jetbrains.kotlinx.atomicfu)
             }
         }

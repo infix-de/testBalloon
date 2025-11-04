@@ -2,6 +2,7 @@ import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testPlatform
+import kotlinx.datetime.Clock
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
@@ -11,8 +12,6 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.div
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
 /**
  * A test project is a Gradle project providing tests listed by a Gradle task `listTests`.
@@ -136,7 +135,7 @@ private fun log(message: String) {
         logFile.appendText("\n––– Session Starting –––\n")
     }
 
-    @OptIn(TestBalloonExperimentalApi::class, ExperimentalTime::class)
+    @OptIn(TestBalloonExperimentalApi::class)
     logFile.appendText("${Clock.System.now()} [${testPlatform.threadId()}] $message\n")
 }
 

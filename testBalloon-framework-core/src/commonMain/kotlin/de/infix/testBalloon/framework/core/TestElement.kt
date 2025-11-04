@@ -9,9 +9,8 @@ import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.safeAsInternalId
 import de.infix.testBalloon.framework.shared.internal.safelyTransformed
 import kotlinx.atomicfu.atomic
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 public sealed class TestElement(
     parent: TestSuite?,
@@ -301,7 +300,6 @@ public sealed class TestElement(
      * An event occurring as part of a test element's setup or execution.
      */
     public sealed class Event(public val element: TestElement) {
-        @ExperimentalTime
         public val instant: Instant = Clock.System.now()
 
         public class Starting(element: TestElement) : Event(element)

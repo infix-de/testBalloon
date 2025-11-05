@@ -147,7 +147,9 @@ private fun Project.configureTestTasks(
                     filter.excludePatterns.clear()
                     // Avoid Gradle error
                     //    "...no filters are applied, but the test task did not discover any tests to execute."
-                    setProperty("failOnNoDiscoveredTests", false)
+                    if (hasProperty("failOnNoDiscoveredTests")) {
+                        setProperty("failOnNoDiscoveredTests", false)
+                    }
                 }
             }
 

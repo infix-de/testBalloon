@@ -17,7 +17,7 @@ When tests execute, each test element (test, suite, compartment, session) has it
 
 ## Suspending code
 
-During execution, code can suspend in ([:testballoon: blue code](tests-and-suites.md#green-code-and-blue-code) of)
+During execution, code can suspend in ([:material-check-circle:{ .green } green code](tests-and-suites.md#green-code-and-blue-code) of)
 
 * tests,
 * test fixtures,
@@ -25,7 +25,7 @@ During execution, code can suspend in ([:testballoon: blue code](tests-and-suite
 
 !!! info
 
-    Code inside a test suite (which registers tests, suites, fixtures) cannot suspend. Registration is sequential. This enables consistent multiplatform integration, as lower-level test infrastructures require it.
+    :testballoon: Blue code inside a test suite (which registers tests, suites, fixtures) cannot suspend. Registration is sequential. This enables consistent multiplatform integration, as lower-level test infrastructures require it.
 
 ## Deep concurrency and parallelism
 

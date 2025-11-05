@@ -10,7 +10,7 @@
 
 TestBalloon is a **next generation Kotlin test framework**, built from the ground up for Kotlin Multiplatform and coroutines.
 
-TestBalloon has a unique combination of characteristics which make it powerful, blazingly fast, _and_ easy to use:
+TestBalloon has a unique combination of characteristics which make it 🌋 powerful, 🚀 blazingly fast, _and_ ☺️ so easy to use:
 
 ✅️ **State-of-the-art capabilities**: Parameterized tests, multi-level hierarchy, coroutine context inheritance, deep parallelism, fixtures, expressive names, and a scope-friendly DSL-based API.
 

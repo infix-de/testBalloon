@@ -52,7 +52,7 @@ gradlePlugin {
     plugins {
         create("testBalloonGradlePlugin") {
             id = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}"
-            displayName = "TestBalloon compiler plugin for multiplatform test discovery and invocation"
+            displayName = "TestBalloon compiler plugin for multiplatform test discovery"
             description = displayName
             implementationClass = "${project.group}.gradlePlugin.TestBalloonGradlePlugin"
         }

@@ -46,8 +46,8 @@ private class CompilerPluginTests {
             ) {
                 val packageNameDot = if (packageName.isEmpty()) "" else "$packageName."
 
-                assertTrue("Found test discoverable '${packageNameDot}TestSuiteOne'" in messages)
-                assertTrue("Found test discoverable '${packageNameDot}TestSuiteTwo'" in messages)
+                assertTrue("Found top-level test suite property '${packageNameDot}TestSuiteOne'" in messages)
+                assertTrue("Found top-level test suite class '${packageNameDot}TestSuiteTwo'" in messages)
             }
         }
     }
@@ -127,7 +127,7 @@ private class CompilerPluginTests {
             """,
             debugLevel = "DISCOVERY"
         ) {
-            assertTrue("[DEBUG] Found test discoverable 'TestSuiteOne'" in messages)
+            assertTrue("[DEBUG] Found top-level test suite property 'TestSuiteOne'" in messages)
         }
     }
 

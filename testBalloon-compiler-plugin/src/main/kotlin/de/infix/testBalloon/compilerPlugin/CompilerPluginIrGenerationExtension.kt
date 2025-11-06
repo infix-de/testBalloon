@@ -241,7 +241,7 @@ private class ModuleTransformer(
             // Consider classes with a @TestRegistering superclass.
             if (irClass.superClass?.hasAnnotation(configuration.testDiscoverableAnnotationSymbol) == true) {
                 if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
-                    reportDebug("Found test discoverable '${irClass.fqName()}'", irClass)
+                    reportDebug("Found top-level test suite class '${irClass.fqName()}'", irClass)
                 }
 
                 if (irClass.isSameOrSubTypeOf(configuration.abstractSessionSymbol)) {
@@ -280,7 +280,7 @@ private class ModuleTransformer(
 
             if (initializerCallFunction.hasAnnotation(configuration.testDiscoverableAnnotationSymbol)) {
                 if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
-                    reportDebug("Found test discoverable '${irProperty.fqNameWhenAvailable}'", irProperty)
+                    reportDebug("Found top-level test suite property '${irProperty.fqNameWhenAvailable}'", irProperty)
                 }
 
                 irProperty.addNameValueArgumentsToInitializerCallIfApplicable(
@@ -329,7 +329,7 @@ private class ModuleTransformer(
                 reportDebug(
                     "Generating code in module '${moduleFragment.name}'," +
                         " file '${entryPointFile.nameWithPackage}'," +
-                        " for  ${discoveredSuites.size} discovered suites," +
+                        " for  ${discoveredSuites.size} discovered top-level suites," +
                         " custom session: " +
                         if (customSessionClass == null) "default" else "${customSessionClass?.fqName()}",
                     moduleFragment

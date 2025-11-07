@@ -67,6 +67,8 @@ jobs:
         if: runner.os == 'Windows'
         run: ./gradlew integrationTests
         env:
+          # WORKAROUND: Browser-based tests disabled – KT-82261: Karma reporting "No binary for ChromeHeadless browser"
+          #     see https://youtrack.jetbrains.com/issue/KT-82261
           TEST_SKIP: 'browsers,non-ASCII patterns'
 
       - name: 'Upload build reports'

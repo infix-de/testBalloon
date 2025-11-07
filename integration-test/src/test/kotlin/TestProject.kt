@@ -73,16 +73,11 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
     private fun execution(vararg arguments: String, environment: Map<String, String> = emptyMap()): Execution {
         val process = ProcessBuilder(*arguments).also {
             it.environment().run {
-                val keysToRemove = keys.mapNotNull { key ->
-                    if (key in listOf("ANDROID_HOME", "JAVA_HOME", "LANG", "PATH", "SHELL", "TERM") ||
-                        key.startsWith("LC_")
-                    ) {
-                        null
-                    } else {
-                        key
-                    }
-                }
-                for (key in keysToRemove) {
+                fun String.toKeep() =
+                    this in listOf("ANDROID_HOME", "CHROME_BIN", "JAVA_HOME", "LANG", "PATH", "SHELL", "TERM") ||
+                        this.startsWith("LC_")
+
+                for (key in keys.filter { key -> !key.toKeep() }) {
                     remove(key)
                 }
                 for ((key, value) in environment) {

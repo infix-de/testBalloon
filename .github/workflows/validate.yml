@@ -63,11 +63,11 @@ jobs:
         if: runner.os != 'Windows'
         run: ./gradlew integrationTests
 
-      - name: 'Run integration tests, skip browsers, non-ASCII patterns'
+      - name: 'Run integration tests, skip non-ASCII patterns'
         if: runner.os == 'Windows'
         run: ./gradlew integrationTests
         env:
-          TEST_SKIP: 'browsers,non-ASCII patterns'
+          TEST_SKIP: 'non-ASCII patterns'
 
       - name: 'Upload build reports'
         if: failure()

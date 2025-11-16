@@ -22,7 +22,7 @@ public object TestPlatformAndroid : TestPlatform {
     override fun threadDisplayName(): String = Thread.currentThread().name ?: "(thread ${threadId()})"
 
     override fun environment(variableName: String): String? = System.getenv(variableName)
-        ?: instrumentationArguments.getString(variableName)
+        ?: instrumentationArguments?.getString(variableName)
 }
 
 public actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =
@@ -36,4 +36,6 @@ public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatch
     }
 }
 
-private val instrumentationArguments = InstrumentationRegistry.getArguments()
+private val instrumentationArguments by lazy {
+    runCatching { InstrumentationRegistry.getArguments() }.getOrNull()
+}

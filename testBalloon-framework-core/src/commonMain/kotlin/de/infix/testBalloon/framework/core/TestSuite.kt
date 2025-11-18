@@ -391,7 +391,8 @@ public open class TestSuite internal constructor(
     }
 
     override suspend fun execute(report: TestExecutionReport) {
-        if (!isIncluded) return
+        // short-circuit excluded suites, but report at least the session
+        if (!isIncluded && this !is TestSession) return
 
         executeReporting(report) {
             if (testElementIsEnabled) {

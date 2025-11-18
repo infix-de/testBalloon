@@ -117,24 +117,28 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
                                     is Test -> notifier.fireTestFinished(description)
                                 }
                             }
-
-                            if (element.testElementParent == null) return@launch
                         }
                     }
                 }
             }
 
-            TestSession.global.execute(
-                // We use a [SequencingExecutionReport] because Android's `TraceRunListener` does not support
-                // concurrency (although JUnit 4 does).
-                report = object : SequencingExecutionReport() {
-                    // A TestReport relaying each TestElementEvent to the JUnit 4 notifier.
+            // Here we stay in runBlocking on Dispatchers.Default.
 
-                    override suspend fun forward(event: TestElementEvent) {
-                        notificationChannel.send(event)
+            try {
+                TestSession.global.execute(
+                    // We use a [SequencingExecutionReport] because Android's `TraceRunListener` does not support
+                    // concurrency (although JUnit 4 could).
+                    report = object : SequencingExecutionReport() {
+                        // A TestReport relaying each TestElementEvent to the JUnit 4 notifier.
+
+                        override suspend fun forward(event: TestElementEvent) {
+                            notificationChannel.send(event)
+                        }
                     }
-                }
-            )
+                )
+            } finally {
+                notificationChannel.close()
+            }
         }
     }
 }

@@ -15,6 +15,9 @@ android-targetSdk = "36"
 # Target JDK version for Kotlin and Java compilations
 jdk = "11"
 
+# https://github.com/junit-team/junit4/releases
+junit-junit4 = "4.13.2"
+
 # https://github.com/GradleUp/compat-patrouille/releases
 com-gradleup-compat-patrouille = "0.1.0"
 
@@ -79,7 +82,7 @@ io-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", versi
 io-projectreactor-tools-blockhound = "io.projectreactor.tools:blockhound:1.0.14.RELEASE"
 
 # https://github.com/junit-team/junit4
-junit-junit4 = "junit:junit:4.13.2"
+junit-junit4 = { module = "junit:junit", version.ref = "junit-junit4" }
 
 # https://github.com/gradle/foojay-toolchains/blob/main/CHANGELOG.md
 org-gradle-toolchains-foojay-resolver = "org.gradle.toolchains:foojay-resolver:1.0.0"

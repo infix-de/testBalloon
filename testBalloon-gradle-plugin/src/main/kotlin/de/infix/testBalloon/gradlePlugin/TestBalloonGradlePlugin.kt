@@ -73,7 +73,15 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
         return project.provider {
             listOf(
                 SubpluginOption(key = "debugLevel", value = extension.debugLevel.toString()),
-                SubpluginOption(key = "jvmStandalone", value = extension.jvmStandalone.toString()),
+                SubpluginOption(
+                    key = "junit4AutoIntegrationEnabled",
+                    value = (
+                        extension.junit4AutoIntegrationEnabled
+                            ?: testBalloonProperties.junit4AutoIntegrationEnabled
+                            ?: true
+                        ).toString()
+                ),
+                SubpluginOption(key = "jvmMainFunctionEnabled", value = extension.jvmMainFunctionEnabled.toString()),
                 SubpluginOption(key = "testModuleRegex", value = testBalloonProperties.testModuleRegex)
             )
         }

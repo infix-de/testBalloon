@@ -78,9 +78,9 @@ kotlin {
         named("androidHostTest") {
             dependencies {
                 // required for local tests with TestBalloon outside this project:
-                //     implementation("de.infix.testBalloon:testBalloon-framework-core-jvm:${testBalloonVersion}")
+                //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
                 // instead of this project-internal dependency:
-                implementation(project(projects.testBalloonFrameworkCore.path, "jvmRuntimeElements"))
+                implementation(projects.testBalloonFrameworkCore)
             }
         }
 

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.lookupTracker
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
@@ -36,19 +37,23 @@ import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.IrSingleStatementBuilder
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irVararg
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -58,6 +63,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
+import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -65,18 +71,24 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -174,7 +186,9 @@ private class Configuration(
     val entryPointPackageName = Constants.ENTRY_POINT_PACKAGE_NAME
 
     val debugLevel = Options.debugLevel.value(compilerConfiguration)
-    val jvmStandaloneEnabled = Options.jvmStandalone.value(compilerConfiguration)
+    val junit4AutoIntegrationEnabled = Options.junit4AutoIntegrationEnabled.value(compilerConfiguration)
+    val jvmMainFunctionEnabled = Options.jvmMainFunctionEnabled.value(compilerConfiguration)
+
     val lookupTracker = compilerConfiguration.lookupTracker
 
     val abstractSuiteSymbol = irClassSymbol(AbstractTestSuite::class)
@@ -197,6 +211,16 @@ private class Configuration(
     }
 
     val testFrameworkDiscoveryResultPropertyName = Name.identifier(Constants.JVM_DISCOVERY_RESULT_PROPERTY)
+
+    val jUnit4RunWithAnnotationSymbol by lazy {
+        irClassSymbolOrNull("org.junit.runner.RunWith")
+    }
+
+    val testBalloonJUnit4RunnerSymbol by lazy {
+        irClassSymbolOrNull("de.infix.testBalloon.framework.core.internal.integration.TestBalloonJUnit4Runner")
+    }
+
+    val testBalloonJUnit4EntryPointName = Name.identifier("TestBalloonJUnit4EntryPoint")
 }
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -225,6 +249,11 @@ private class ModuleTransformer(
 
         if (configuration.debugLevel >= DebugLevel.BASIC) {
             reportDebug("Analyzing source file", irFile)
+        }
+
+        // For debugging only: Print the IR code from 'DumpIr.kt' anywhere in the module.
+        if (configuration.debugLevel >= DebugLevel.CODE && irFile.name == "DumpIr.kt") {
+            reportDebug("Dump from file '${irFile.name}':\n${irFile.dump().prependIndent("\t")}")
         }
 
         return super.visitFileNew(irFile)
@@ -337,27 +366,27 @@ private class ModuleTransformer(
             }
 
             val platform = pluginContext.platform
-            val entryPoint = when {
+            when {
                 platform.isJvm() -> {
-                    if (configuration.jvmStandaloneEnabled) {
-                        irSuspendMainFunction()
+                    if (configuration.jvmMainFunctionEnabled) {
+                        entryPointFile.addChild(irSuspendMainFunction())
                     } else {
-                        irTestFrameworkDiscoveryResultProperty(entryPointFile)
+                        entryPointFile.addChild(irTestFrameworkDiscoveryResultProperty(entryPointFile))
+                        irJUnit4RunnerEntryPointClass(entryPointFile)?.let { entryPointFile.addChild(it) }
                     }
                 }
 
                 platform.isJs() || platform.isWasm() -> {
-                    irSuspendMainFunction()
+                    entryPointFile.addChild(irSuspendMainFunction())
                 }
 
                 platform.isNative() -> {
-                    irTestFrameworkEntryPointProperty(entryPointFile)
+                    entryPointFile.addChild(irTestFrameworkEntryPointProperty(entryPointFile))
                 }
 
                 else -> throw UnsupportedOperationException("Cannot generate entry points for platform '$platform'")
             }
 
-            entryPointFile.addChild(entryPoint)
             if (configuration.debugLevel >= DebugLevel.CODE) {
                 reportDebug("Generated:\n${declaration.dump().prependIndent("\t")}")
             }
@@ -627,6 +656,80 @@ private class ModuleTransformer(
                     irArrayOfRootSuites()
                 )
             }
+        }
+    }
+
+    /**
+     * Returns an entry point class making JUnit 4 invoke TestBalloon's JUnit 4 runner, or null outside JUnit 4.
+     *
+     * ```
+     * @RunWith(TestBalloonJUnit4Runner::class)
+     * internal class TestBalloonJUnit4EntryPoint
+     * ```
+     */
+    private fun irJUnit4RunnerEntryPointClass(entryPointFile: IrFile): IrDeclaration? {
+        if (configuration.debugLevel > DebugLevel.NONE) {
+            val jUnit4Found = configuration.jUnit4RunWithAnnotationSymbol != null
+            val testBalloonJUnit4RunnerFound = configuration.jUnit4RunWithAnnotationSymbol != null
+            reportDebug(
+                when {
+                    jUnit4Found && testBalloonJUnit4RunnerFound -> {
+                        if (configuration.junit4AutoIntegrationEnabled) {
+                            "Integrating with JUnit 4"
+                        } else {
+                            "Suppressing JUnit 4 integration (not enabled)"
+                        }
+                    }
+
+                    jUnit4Found -> "JUnit 4 is not on the classpath"
+
+                    else -> "JUnit 4 is on the classpath, but the TestBalloon JUnit 4 runner is not"
+                }
+            )
+        }
+
+        if (!configuration.junit4AutoIntegrationEnabled) return null
+        val jUnit4RunWithAnnotationSymbol = configuration.jUnit4RunWithAnnotationSymbol ?: return null
+        val testBalloonJUnit4RunnerSymbol = configuration.testBalloonJUnit4RunnerSymbol ?: return null
+
+        return pluginContext.irFactory.buildClass {
+            name = configuration.testBalloonJUnit4EntryPointName
+            kind = ClassKind.CLASS
+            visibility = DescriptorVisibilities.INTERNAL
+        }.apply {
+            val irClass = this
+            val irBuiltIns = pluginContext.irBuiltIns
+
+            parent = entryPointFile
+            superTypes = listOf(irBuiltIns.anyType)
+
+            createThisReceiverParameter()
+
+            addConstructor {
+                isPrimary = true
+                visibility = DescriptorVisibilities.PUBLIC
+                returnType = symbol.defaultType
+            }.apply {
+                val irBuilder = DeclarationIrBuilder(pluginContext, symbol, startOffset, endOffset)
+                body = irBuilder.irBlockBody {
+                    +irDelegatingConstructorCall(irBuiltIns.anyClass.owner.constructors.single())
+                    +IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, irBuiltIns.unitType)
+                }
+            }
+
+            addFakeOverrides(IrTypeSystemContextImpl(irBuiltIns))
+
+            annotations +=
+                irConstructorCall(
+                    jUnit4RunWithAnnotationSymbol,
+                    IrClassReferenceImpl(
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET,
+                        type = irBuiltIns.kClassClass.typeWith(testBalloonJUnit4RunnerSymbol.defaultType),
+                        symbol = testBalloonJUnit4RunnerSymbol,
+                        classType = testBalloonJUnit4RunnerSymbol.defaultType
+                    )
+                )
         }
     }
 

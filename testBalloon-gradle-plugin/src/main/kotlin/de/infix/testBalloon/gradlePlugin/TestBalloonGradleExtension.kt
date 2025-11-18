@@ -20,9 +20,16 @@ open class TestBalloonGradleExtension {
     var debugLevel: DebugLevel = DebugLevel.NONE
 
     /**
-     * `jvmStandalone = true` uses a suspending `main` function to start tests on the JVM. For testing only.
+     * `junit4AutoIntegrationEnabled` controls JUnit 4 auto-integration on the JVM.
      *
-     * Otherwise, the framework will start up as a JUnit Platform test engine on the JVM.
+     * If disabled, the framework will only support JUnit Platform on the JVM.
      */
-    var jvmStandalone: Boolean = false
+    var junit4AutoIntegrationEnabled: Boolean? = null
+
+    /**
+     * `jvmMainFunctionEnabled = true` uses a suspending `main` function to start tests on the JVM. For testing only.
+     *
+     * Otherwise, the framework will start up as a JUnit 4 or JUnit Platform test engine on the JVM.
+     */
+    var jvmMainFunctionEnabled: Boolean = false
 }

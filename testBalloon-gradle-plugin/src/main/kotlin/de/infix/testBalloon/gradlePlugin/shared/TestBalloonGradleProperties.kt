@@ -47,6 +47,25 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val browserTestTaskRegex by regexProperty("""BrowserTest$""")
 
     /**
+     * Name pattern for Android local (a.k.a. host-based, a.k.a. unit) test task classes.
+     *
+     * These tasks require Android-specific JUnit 4 integration instead of JUnit platform.
+     */
+    val androidLocalTestClassRegex by regexProperty(
+        """^com\.android\.build\.gradle\.tasks\.factory\.AndroidUnitTest$"""
+    )
+
+    /**
+     * Setting to enable or disable JUnit Platform autoconfiguration for test tasks. One of `true` (default), `false`.
+     */
+    val junitPlatformAutoconfigurationEnabled by booleanProperty("true")
+
+    /**
+     * Setting to enable or disable JUnit 4 auto-integration for test tasks. One of `true` (default), `false`.
+     */
+    val junit4AutoIntegrationEnabled by booleanProperty("true")
+
+    /**
      * Test reporting mode. One of `auto` (default), `intellij`, `files`.
      *
      * The mode `intellij` supplies full test element paths to the reporting infrastructure, supporting proper

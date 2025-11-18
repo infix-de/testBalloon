@@ -211,7 +211,7 @@ private fun compilation(
             commandLineProcessors = listOf(CompilerPluginCommandLineProcessor())
             pluginOptions = listOfNotNull(
                 if (debugLevel != null) option("debugLevel", debugLevel) else null,
-                if (executionEnabled) option("jvmStandalone", "true") else null
+                if (executionEnabled) option("jvmMainFunctionEnabled", "true") else null
             )
             messageOutputStream = OutputStream.nullOutputStream()
         }.compile().run {

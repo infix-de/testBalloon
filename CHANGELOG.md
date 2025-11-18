@@ -1,3 +1,15 @@
+## Unreleased
+
+### Migration from TestBalloon 0.7.x
+
+* For Android local (host-based/unit) tests:
+    1. Remove the `-jvm` suffix from every dependency `"de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion"`.
+    2. Add a dependency on JUnit 4: `"junit:junit:4.13.2"`
+
+### Changes
+
+* Android local tests (a.k.a. host-based tests, a.k.a. unit tests) now correctly use JUnit 4 instead of JUnit platform, enabling access to JUnit 4 rules.
+
 ## TestBalloon 0.7.1 (November 5, 2025)
 
 TestBalloon release variants:

@@ -105,13 +105,15 @@ private fun Project.configureTestTasks(
         }
     }
 
+    val androidLocalTestClassRegex = testBalloonProperties.androidLocalTestClassRegex
+    val junitPlatformAutoconfigurationEnabled = testBalloonProperties.junitPlatformAutoconfigurationEnabled ?: true
+
     tasks.withType(Test::class.java).configureEach {
         // https://docs.gradle.org/current/userguide/java_testing.html
-        useJUnitPlatform()
-
-        // Ask Gradle to skip scanning for test classes. We don't need it as our compiler plugin already
-        // knows. Does this make a difference? I don't know.
-        isScanForTestClasses = false
+        val testClassName = this::class.qualifiedName?.removeSuffix("_Decorated") ?: ""
+        if (junitPlatformAutoconfigurationEnabled && !androidLocalTestClassRegex.matches(testClassName)) {
+            useJUnitPlatform()
+        }
     }
 
     val browserTestTaskRegex = testBalloonProperties.browserTestTaskRegex

@@ -23,10 +23,19 @@ internal object Options {
         }
     }
 
-    val jvmStandalone = Option(
-        optionName = "jvmStandalone",
+    val junit4AutoIntegrationEnabled = Option(
+        optionName = "junit4AutoIntegrationEnabled",
         valueDescription = "boolean",
-        description = "Enable standalone invocation without JUnit Platform on the JVM",
+        description = "Enables JUnit 4 auto-integration on the JVM",
+        defaultValue = true
+    ) { stringValue ->
+        stringValue.toBooleanStrictOrNull() ?: throwValueError(stringValue)
+    }
+
+    val jvmMainFunctionEnabled = Option(
+        optionName = "jvmMainFunctionEnabled",
+        valueDescription = "boolean",
+        description = "Enables invocation via a suspending main function on the JVM. For testing only.",
         defaultValue = false
     ) { stringValue ->
         stringValue.toBooleanStrictOrNull() ?: throwValueError(stringValue)

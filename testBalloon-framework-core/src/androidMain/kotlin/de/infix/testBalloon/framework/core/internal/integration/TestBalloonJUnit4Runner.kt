@@ -10,6 +10,7 @@ import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
 import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +18,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.runner.Description
-import org.junit.runner.RunWith
 import org.junit.runner.Runner
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
@@ -26,19 +26,14 @@ import java.util.concurrent.ConcurrentHashMap
 private val testElementDescriptions = ConcurrentHashMap<TestElement, Description>()
 
 /**
- * Entry point registering TestBalloon with JUnit 4.
- */
-@RunWith(TestBalloonJUnit4Runner::class)
-internal class TestBalloonJUnit4EntryPoint
-
-/**
  * The [Runner] interfacing with JUnit 4 (Android only).
  *
  * This class is registered via a `@RunWith`-annotated class (see above, it doesn't matter what class is used).
  * JUnit 4 will instantiate this class and invoke its methods.
  */
-internal class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : Runner() {
-    val sessionDescription by lazy {
+@TestBalloonInternalApi
+public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : Runner() {
+    internal val sessionDescription by lazy {
         // Trigger the framework's initialization by invoking the `testFrameworkDiscoveryResult` property getter
         // in the generated file-level class for `EntryPointAnchor.kt`.
         // We don't need the actual result here.
@@ -74,7 +69,7 @@ internal class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) 
 
     override fun getDescription(): Description = sessionDescription
 
-    override fun run(notifier: RunNotifier) = runBlocking(Dispatchers.Default) {
+    override fun run(notifier: RunNotifier): Unit = runBlocking(Dispatchers.Default) {
         // Why are we running on Dispatchers.Default? Because otherwise, a nested runBlocking could hang the entire
         // system due to thread starvation. See https://github.com/Kotlin/kotlinx.coroutines/issues/3983
 

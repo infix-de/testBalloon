@@ -37,7 +37,8 @@
         ```kotlin
         androidUnitTest {
             dependencies {
-                implementation("de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion")
+                implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
+                implementation("junit:junit:$junit4Version")
             }
         }
         ```
@@ -47,8 +48,8 @@
         ```kotlin
         androidInstrumentedTest {
             dependencies {
-                implementation("androidx.test:runner:$androidxRunnerVersion")
                 implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
+                implementation("androidx.test:runner:$androidxRunnerVersion")
             }
         }
         ```
@@ -57,7 +58,8 @@
 
         ```kotlin
         dependencies {
-            testImplementation("de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion")
+            testImplementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
+            testImplementation("junit:junit:$junit4Version")
         }
         ```
 
@@ -65,8 +67,8 @@
 
         ```kotlin
         dependencies {
-            androidTestImplementation("androidx.test:runner:$androidxRunnerVersion")
             androidTestImplementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
+            androidTestImplementation("androidx.test:runner:$androidxRunnerVersion")
         }
         ```
 

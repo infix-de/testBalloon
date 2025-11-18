@@ -75,9 +75,10 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     // required for local tests with TestBalloon outside this project:
-    //     testImplementation("de.infix.testBalloon:testBalloon-framework-core-jvm:${testBalloonVersion}")
+    //     testImplementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
     // instead of this project-internal dependency:
-    testImplementation(project(projects.testBalloonFrameworkCore.path, "jvmRuntimeElements"))
+    testImplementation(projects.testBalloonFrameworkCore)
+    testImplementation(libs.junit.junit4)
 
     // required for instrumented tests with TestBalloon outside this project:
     //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")

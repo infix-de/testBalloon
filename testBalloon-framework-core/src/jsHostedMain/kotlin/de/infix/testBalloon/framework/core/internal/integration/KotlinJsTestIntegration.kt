@@ -138,6 +138,9 @@ private object TestSessionRelay {
             withContext(NonCancellable) {
                 sendSessionFailure(throwable)
             }
+        } finally {
+            // Make sure that all receivers (JS framework tests) terminate, even if they never got a result.
+            resultChannels.values.forEach { it.close() }
         }
     }
 

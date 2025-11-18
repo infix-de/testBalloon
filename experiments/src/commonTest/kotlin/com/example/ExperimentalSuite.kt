@@ -1,30 +1,42 @@
 package com.example
 
-import de.infix.testBalloon.framework.core.Test
+import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestConfig
-import de.infix.testBalloon.framework.core.aroundEach
+import de.infix.testBalloon.framework.core.TestSession
+import de.infix.testBalloon.framework.core.aroundEachTest
+import de.infix.testBalloon.framework.core.internal.LogLevel
+import de.infix.testBalloon.framework.core.internal.testFrameworkLogLevel
 import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.shared.TestElementName
-import de.infix.testBalloon.framework.shared.TestRegistering
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.test.assertEquals
 
 val ExperimentalSuite1 by testSuite(testConfig = TestConfig.logTestExecution()) {
-    test("test 1") {
+    test("string length") {
+        assertEquals(8, "Test me!".length)
+    }
+
+    // Use a function call to register a nested test suite.
+    testSuite("integer operations") {
+        test("max") {
+            assertEquals(5, max(5, 3))
+        }
+
+        test("min") {
+            assertEquals(3, min(5, 3))
+        }
     }
 }
 
-val ExperimentalSuite2 by myTopLevelSuite()
-
-@TestRegistering
-fun myTopLevelSuite(@TestElementName name: String = "") =
-    testSuite(name = name, testConfig = TestConfig.logTestExecution()) {
-        test("test 1") {
-        }
-    }
-
-private fun TestConfig.logTestExecution() = aroundEach { testElementAction ->
+private fun TestConfig.logTestExecution() = aroundEachTest { testElementAction ->
     testElementAction()
-    if (this is Test) {
-        println("##LOG(${testPlatform.displayName} – $testElementPath: OK)LOG##")
+    println("${testPlatform.displayName} – $testElementPath")
+}
+
+class ModuleTestSession : TestSession() {
+    init {
+        @OptIn(TestBalloonExperimentalApi::class)
+        testFrameworkLogLevel = LogLevel.DEBUG
     }
 }

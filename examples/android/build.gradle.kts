@@ -4,7 +4,7 @@ plugins {
     id("buildLogic.android-application")
     // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
     id("org.jetbrains.kotlin.plugin.atomicfu")
-    alias(libs.plugins.org.jetbrains.kotlin.plugin.compose)
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 // The following invocation supplements the TestBalloon plugin declaration inside this project:

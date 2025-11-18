@@ -7,8 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
     id("com.gradleup.compat.patrouille")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
-    id("org.jetbrains.compose") version "1.9.1"
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
@@ -85,7 +84,6 @@ kotlin {
 
         jvmMain {
             dependencies {
-                implementation(compose.desktop.currentOs)
                 implementation(libs.org.jetbrains.kotlinx.coroutines.swing)
             }
         }
@@ -97,6 +95,9 @@ kotlin {
                 // instead of this project-internal dependency:
                 implementation(projects.testBalloonFrameworkCore)
                 implementation(libs.junit.junit4)
+
+                // The Compose compiler plugin requires a compose runtime to be present, even if not used here.
+                implementation("androidx.compose.ui:ui-test-junit4")
             }
         }
 

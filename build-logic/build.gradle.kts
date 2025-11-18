@@ -12,19 +12,19 @@ dependencies {
     // Doing so avoids issues when loading the same plugins in different subprojects, which will use separate
     // classloaders. In this case, plugins would not be able to communicate across projects via a shared build service.
     // Cf. https://discuss.gradle.org/t/why-duplicate-plugins-in-top-level-build-scripts/49087
-    implementation(libs.org.jetbrains.kotlin.gradle.plugin)
-    implementation(libs.org.jetbrains.kotlin.android.gradle.plugin)
     implementation(libs.com.android.gradle.plugin)
+    implementation(libs.com.github.gmazzo.buildconfig.gradle.plugin)
+    implementation(libs.com.gradleup.compat.patrouille.gradle.plugin)
+    implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
+    implementation(libs.org.jetbrains.dokka.gradle.plugin)
+    implementation(libs.org.jetbrains.kotlin.android.gradle.plugin)
+    implementation(libs.org.jetbrains.kotlin.assignment.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.atomicfu.gradle.plugin)
+    implementation(libs.org.jetbrains.kotlin.compose.gradle.plugin)
+    implementation(libs.org.jetbrains.kotlin.gradle.plugin)
+    implementation(libs.org.jetbrains.kotlin.sam.with.receiver.gradle.plugin)
     implementation(libs.org.jetbrains.kotlinx.kover.gradle.plugin)
     implementation(libs.org.jmailen.kotlinter.gradle.plugin)
-    implementation(libs.org.jetbrains.kotlin.atomicfu.gradle.plugin)
-    implementation(libs.org.jetbrains.dokka.gradle.plugin)
-    implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
-    implementation(libs.com.gradleup.compat.patrouille.gradle.plugin)
-    implementation(libs.com.github.gmazzo.buildconfig.gradle.plugin)
-    implementation(libs.org.jetbrains.kotlin.sam.with.receiver.gradle.plugin)
-    implementation(libs.org.jetbrains.kotlin.assignment.gradle.plugin)
 }
 
 samWithReceiver {

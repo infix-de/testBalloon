@@ -94,6 +94,7 @@ org-jetbrains-dokka-gradle-plugin = { module = "org.jetbrains.dokka:org.jetbrain
 org-jetbrains-kotlin-android-gradle-plugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-assignment-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-atomicfu-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.atomicfu:org.jetbrains.kotlin.plugin.atomicfu.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-compose-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-sam-with-receiver-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 

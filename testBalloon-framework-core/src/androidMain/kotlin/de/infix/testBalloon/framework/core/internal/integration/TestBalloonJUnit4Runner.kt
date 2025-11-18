@@ -10,6 +10,7 @@ import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
 import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
 import kotlinx.coroutines.Dispatchers
@@ -154,9 +155,16 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
 
     is Test -> {
         testElementParent as TestSuite
+
+        val displayName = if (TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA) {
+            testElementPath.qualifiedReportingName
+        } else {
+            testElementDisplayName
+        }
+
         Description.createTestDescription(
             testElementParent.testElementPath.qualifiedReportingName,
-            testElementDisplayName.replace('/', '⧸'), // A slash in the test name crashes Android Device tests
+            displayName.replace('/', '⧸'), // A slash in the test name crashes Android Device tests
             testElementPath.internalId
         )
     }

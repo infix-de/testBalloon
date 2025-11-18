@@ -220,7 +220,7 @@ private class Configuration(
         irClassSymbolOrNull("de.infix.testBalloon.framework.core.internal.integration.TestBalloonJUnit4Runner")
     }
 
-    val testBalloonJUnit4EntryPointName = Name.identifier("TestBalloonJUnit4EntryPoint")
+    val testBalloonJUnit4EntryPointName = Name.identifier("TestBalloonJUnit4")
 }
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -664,7 +664,7 @@ private class ModuleTransformer(
      *
      * ```
      * @RunWith(TestBalloonJUnit4Runner::class)
-     * internal class TestBalloonJUnit4EntryPoint
+     * internal class TestBalloonJUnit4
      * ```
      */
     private fun irJUnit4RunnerEntryPointClass(entryPointFile: IrFile): IrDeclaration? {

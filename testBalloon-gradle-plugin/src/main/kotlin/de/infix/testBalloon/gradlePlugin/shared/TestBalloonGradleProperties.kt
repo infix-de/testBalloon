@@ -22,6 +22,13 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val testCompilationRegex by regexProperty("""(^test)|Test""")
 
     /**
+     * Name pattern for test compilations in which the compiler plugin will look up test suites and a test session.
+     *
+     * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
+     */
+    val testCompileTaskRegex by regexProperty("""^compile.*Test""")
+
+    /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.
      */
     val junitPlatformLauncherDependentConfigurationRegex by regexProperty(

@@ -14,6 +14,7 @@ import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import java.nio.file.DirectoryNotEmptyException
 import kotlin.io.path.Path
@@ -31,6 +32,17 @@ internal fun Project.configureWithTestBalloon(
 ) {
     addEntryPointSourceFile(testBalloonProperties)
     configureTestTasks(testBalloonProperties, browserSafeEnvironmentPatternFromExtension)
+
+    afterEvaluate {
+        val testCompileTaskRegex = testBalloonProperties.testCompileTaskRegex
+        tasks.withType(AbstractKotlinCompile::class.java) {
+            if (testCompileTaskRegex.containsMatchIn(name)) {
+                // WORKAROUND: Incremental compilation must be disabled until compiler plugin support is sufficient.
+                //     see https://github.com/infix-de/testBalloon/issues/47
+                incremental = false
+            }
+        }
+    }
 }
 
 /**
@@ -116,7 +128,7 @@ private fun Project.configureTestTasks(
     tasks.withType(Test::class.java).configureEach {
         // https://docs.gradle.org/current/userguide/java_testing.html
         val testClassName = this::class.qualifiedName?.removeSuffix("_Decorated") ?: ""
-        if (androidLocalTestClassRegex.matches(testClassName)) {
+        if (androidLocalTestClassRegex.containsMatchIn(testClassName)) {
             if (junit4AutoIntegrationEnabled && (jvmTestBalloonTestsOnly || testBalloonPriorityIncludePatternsExist)) {
                 useJUnit {
                     includeCategories(Constants.JUNIT4_RUNNER_CLASS_NAME)

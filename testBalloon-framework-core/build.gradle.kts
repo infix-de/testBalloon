@@ -83,7 +83,7 @@ kotlin {
 tasks.withType<Test>().configureEach {
     // https://docs.gradle.org/current/userguide/java_testing.html
     useJUnitPlatform {
-        excludeEngines(Constants.JUNIT_ENGINE_NAME)
+        excludeEngines(Constants.JUNIT_ENGINE_ID) // Do not use TestBalloon in this project
     }
 }
 

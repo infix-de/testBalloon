@@ -9,6 +9,10 @@
 ### Changes
 
 * Android local tests (a.k.a. host-based tests, a.k.a. unit tests) now correctly use JUnit 4 instead of JUnit platform, enabling access to JUnit 4 rules.
+* Running individual tests from gutter icons and cross-framework test filtering is now supported with multiple test frameworks in the same module for
+    * Android local tests (coexistence with other JUnit 4 runners),
+    * JVM tests (coexistence with other JUnit Platform-based frameworks like JUnit Jupiter).
+* The consistency of file-based reports across test platforms was improved.
 
 ## TestBalloon 0.7.1 (November 5, 2025)
 

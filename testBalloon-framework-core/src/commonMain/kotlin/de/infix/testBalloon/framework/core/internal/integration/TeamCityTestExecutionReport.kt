@@ -3,8 +3,10 @@ package de.infix.testBalloon.framework.core.internal.integration
 import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestExecutionReport
+import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.printlnFixed
+import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.char
@@ -70,9 +72,21 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
     }
 
     private fun eventMessage(event: TestElementEvent, eventName: String, content: Message.() -> Unit = {}) {
-        val elementTypeName = if (event.element is Test) "test" else "testSuite"
+        val element = event.element
+        val elementTypeName = if (element is Test) "test" else "testSuite"
+        val elementName =
+            if (element.isTopLevelSuite ||
+                element is TestSuite && TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA
+            ) {
+                // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA, but
+                // duplicates path elements in XML and HTML file reports.
+                element.testElementPath.fullyQualifiedReportingName
+            } else {
+                // Simple element names below the top level work for file reports.
+                element.testElementPath.elementReportingName
+            }
         message("$elementTypeName$eventName") {
-            name(event.element.testElementPath.modeDependentReportingName)
+            name(elementName)
             timestamp(event.instant)
             content()
         }

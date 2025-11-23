@@ -143,9 +143,15 @@ The reporting stack (KGP, AGP, Gradle, IDE) exposes the following quirks in the 
 
 Gradle's https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/AbstractTestTask.html[AbstractTestTask] forms the basis of test invocations, defining test capabilities such as filtering, listeners and reporting.
 
+==== Test Filtering
+
+Gradle supports the JUnit Platform API, which allows to plug in different test frameworks. However, Gradle does its own restricted test selection, and https://github.com/gradle/gradle/blob/5b6e112c15a2764092d989dc4f661265c4bd48af/platforms/software/testing-base-infrastructure/src/main/java/org/gradle/api/internal/tasks/testing/filter/TestSelectionMatcher.java#L140-L236[assumes a restricted JUnit 4/5 test structure]. Gradle has a history of failing to fully support JUnit 4/5 test selection, as demonstrated by several issues, like https://github.com/gradle/gradle/issues/5763[#5763 (JUnit 5 @Nested)], https://github.com/gradle/gradle/issues/19897[#19897 (JUnit 5 parameterized tests)], https://github.com/gradle/gradle/issues/27572[#27572 (JUnit 4 parameterized tests)].
+
+The core problem remains: Gradle can erratically decide that no tests match patterns without even trying to invoke the registered test frameworks. The situation could improve with https://github.com/gradle/gradle/pull/29535[support for using JUnit Platform selectors], but progress is unclear.
+
 ==== Test Reporting
 
-Gradle receives test events from the underlying framework and produces https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/TestTaskReports.html[reports in HTML and/or JUnit XML formats].
+Gradle receives test events from the underlying framework and produces https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/TestTaskReports.html[reports in HTML and/or JUnit XML formats]. Gradle reports assume a restricted test structure without nesting.
 
 === JUnit Platform
 

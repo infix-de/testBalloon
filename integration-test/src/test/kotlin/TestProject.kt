@@ -108,8 +108,12 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
             it.groups[1]?.value
         }.toList()
 
-        fun stdoutStderr(indent: String = "\t") = "$indent--- stdout ---\n${stdout.prependIndent("$indent\t")}\n" +
-            "$indent--- stderr ---${stderr.prependIndent("$indent\t")}"
+        fun stdoutStderr(indent: String = "\t") = buildString {
+            appendLine("$indent--- stdout ---")
+            appendLine(stdout.prependIndent("$indent\t"))
+            appendLine("$indent--- stderr ---")
+            appendLine(stderr.prependIndent("$indent\t"))
+        }
 
         fun checked(): Execution {
             check(exitCode == 0) {

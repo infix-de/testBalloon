@@ -23,13 +23,9 @@ internal class TestBalloonGradleProperties(val project: Project) {
 
     /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.
-     *
-     * NOTE: Android local/host tests do not use JUnit Platform, yet they require a dependency on TestBalloon's JVM
-     * artifact. As this introduces an (unused) JUnit Platform dependency, we must provide a launcher in the
-     * 'androidHostTestRuntimeClasspath' configuration.
      */
     val junitPlatformLauncherDependentConfigurationRegex by regexProperty(
-        """^(test|jvmTest)RuntimeOnly|androidHostTestRuntimeClasspath$"""
+        """^(test|jvmTest)RuntimeOnly$"""
     )
 
     /**
@@ -56,14 +52,19 @@ internal class TestBalloonGradleProperties(val project: Project) {
     )
 
     /**
-     * Setting to enable or disable JUnit Platform autoconfiguration for test tasks. One of `true` (default), `false`.
+     * Setting to enable or disable JUnit Platform autoconfiguration for test tasks. `true` (default) or `false`.
      */
     val junitPlatformAutoconfigurationEnabled by booleanProperty("true")
 
     /**
-     * Setting to enable or disable JUnit 4 auto-integration for test tasks. One of `true` (default), `false`.
+     * Setting to enable or disable JUnit 4 auto-integration for test tasks. `true` (default) or `false`.
      */
     val junit4AutoIntegrationEnabled by booleanProperty("true")
+
+    /**
+     * Setting to restrict JVM test runs to TestBalloon, excluding other test frameworks. `true` or `false` (default).
+     */
+    val jvmTestBalloonTestsOnly by booleanProperty("false")
 
     /**
      * Test reporting mode. One of `auto` (default), `intellij`, `files`.
@@ -93,14 +94,19 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val reportingPathLimit by intProperty("")
 
     /**
-     * Setting to enable resetting Gradle test filtering when executing TestBalloon-recognized test tasks.
+     * Setting to enable resetting Gradle test filtering for Kotlin/JS test tasks.
      *
-     * If enabled, this prevents using the original patterns to filter in ways which are incompatible with
-     * TestBalloon's own include/exclude patterns on JS (by Mocha) and the JVM (by JUnit Platform).
-     * This might be disabled if other test frameworks exist in the same module alongside TestBalloon, and the
-     * resetting interferes with their expectations.
+     * If enabled, this prevents using TestBalloon patterns which are incompatible with Mocha.
      */
-    val testFilteringResetEnabled by booleanProperty("true")
+    val jsTestFilteringResetEnabled by booleanProperty("true")
+
+    /**
+     * Setting to enable patching Gradle test filtering on JVM test tasks.
+     *
+     * If enabled, this prevents Gradle from interpreting TestBalloon patterns and prematurely declaring
+     * "No tests found for given includes" without invoking any framework.
+     */
+    val jvmTestFilteringPatchEnabled by booleanProperty("true")
 
     /**
      * A regex pattern of environment variable names which are safe to export into browser's simulated environments.

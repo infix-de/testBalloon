@@ -216,11 +216,9 @@ private class Configuration(
         irClassSymbolOrNull("org.junit.runner.RunWith")
     }
 
-    val testBalloonJUnit4RunnerSymbol by lazy {
-        irClassSymbolOrNull("de.infix.testBalloon.framework.core.internal.integration.TestBalloonJUnit4Runner")
-    }
+    val testBalloonJUnit4RunnerSymbol by lazy { irClassSymbolOrNull(Constants.JUNIT4_RUNNER_CLASS_NAME) }
 
-    val testBalloonJUnit4EntryPointName = Name.identifier("TestBalloonJUnit4")
+    val testBalloonJUnit4EntryPointName = Name.identifier(Constants.JUNIT4_ENTRY_POINT_SIMPLE_CLASS_NAME)
 }
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)

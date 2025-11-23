@@ -106,13 +106,30 @@ private fun Project.configureTestTasks(
     }
 
     val androidLocalTestClassRegex = testBalloonProperties.androidLocalTestClassRegex
+    val junit4AutoIntegrationEnabled = testBalloonProperties.junit4AutoIntegrationEnabled ?: true
+    val testBalloonPriorityIncludePatternsExist by lazy {
+        System.getenv(EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name)?.ifEmpty { null } != null
+    }
+    val jvmTestBalloonTestsOnly = testBalloonProperties.jvmTestBalloonTestsOnly ?: true
     val junitPlatformAutoconfigurationEnabled = testBalloonProperties.junitPlatformAutoconfigurationEnabled ?: true
 
     tasks.withType(Test::class.java).configureEach {
         // https://docs.gradle.org/current/userguide/java_testing.html
         val testClassName = this::class.qualifiedName?.removeSuffix("_Decorated") ?: ""
-        if (junitPlatformAutoconfigurationEnabled && !androidLocalTestClassRegex.matches(testClassName)) {
-            useJUnitPlatform()
+        if (androidLocalTestClassRegex.matches(testClassName)) {
+            if (junit4AutoIntegrationEnabled && (jvmTestBalloonTestsOnly || testBalloonPriorityIncludePatternsExist)) {
+                useJUnit {
+                    includeCategories(Constants.JUNIT4_RUNNER_CLASS_NAME)
+                }
+            }
+        } else {
+            if (junitPlatformAutoconfigurationEnabled) {
+                useJUnitPlatform {
+                    if (jvmTestBalloonTestsOnly || testBalloonPriorityIncludePatternsExist) {
+                        includeEngines(Constants.JUNIT_ENGINE_ID)
+                    }
+                }
+            }
         }
     }
 
@@ -136,25 +153,6 @@ private fun Project.configureTestTasks(
         //   picked up, depending on the order plugins are applied to the project.
 
         tasks.withType(AbstractTestTask::class.java).configureEach {
-            /**
-             * Resets Gradle test-filtering patterns.
-             *
-             * This prevents using the original patterns to filter in ways which are incompatible with TestBalloon's
-             * own include/exclude patterns on JS (by Mocha) and the JVM (by JUnit Platform).
-             */
-            fun resetGradleTestFiltering() {
-                if (testBalloonProperties.testFilteringResetEnabled == true) {
-                    (filter as DefaultTestFilter).commandLineIncludePatterns.clear()
-                    filter.includePatterns.clear()
-                    filter.excludePatterns.clear()
-                    // Avoid Gradle error
-                    //    "...no filters are applied, but the test task did not discover any tests to execute."
-                    if (hasProperty("failOnNoDiscoveredTests")) {
-                        setProperty("failOnNoDiscoveredTests", false)
-                    }
-                }
-            }
-
             fun testBalloonEnvironment(
                 secondaryIncludePatterns: List<String>,
                 secondaryExcludePatterns: List<String>
@@ -190,8 +188,6 @@ private fun Project.configureTestTasks(
                     filter.includePatterns + (filter as DefaultTestFilter).commandLineIncludePatterns
                     ).toList()
                 val secondaryExcludePatterns = filter.excludePatterns.toList()
-
-                resetGradleTestFiltering()
 
                 val browserSafeEnvironmentPatternStrings = listOf(
                     testBalloonProperties.browserSafeEnvironmentPattern,
@@ -254,8 +250,6 @@ private fun Project.configureTestTasks(
                     ).toList()
                 val secondaryExcludePatterns = filter.excludePatterns.toList()
 
-                resetGradleTestFiltering()
-
                 doFirst {
                     for ((name, value) in testBalloonEnvironment(secondaryIncludePatterns, secondaryExcludePatterns)) {
                         setTestEnvironment(name, value)
@@ -278,11 +272,44 @@ private fun Project.configureTestTasks(
                             environment(name, value)
                         }
                     }
+
+                    // Reset Gradle test-filtering patterns in order to avoid conflicts with Mocha filtering.
+                    if (testBalloonProperties.jsTestFilteringResetEnabled == true) {
+                        (filter as DefaultTestFilter).commandLineIncludePatterns.clear()
+                        filter.includePatterns.clear()
+                        filter.excludePatterns.clear()
+                        // Avoid Gradle error
+                        //    "...no filters are applied, but the test task did not discover any tests to execute."
+                        if (hasProperty("failOnNoDiscoveredTests")) {
+                            setProperty("failOnNoDiscoveredTests", false)
+                        }
+                    }
                 }
 
                 is Test -> {
                     configureEnvironment { name, value ->
                         environment(name, value)
+                    }
+
+                    if (testBalloonProperties.jvmTestFilteringPatchEnabled == true) {
+                        with(filter as DefaultTestFilter) {
+                            for (patternSet in listOf(commandLineIncludePatterns, includePatterns)) {
+                                if (patternSet.isNotEmpty()) {
+                                    // If TestBalloon is used via JUnit 4, it would be accidentally excluded if any
+                                    // pattern is present, as such patterns are assumed to specify test classes.
+                                    // Remedy: Add a pattern for the JUnit 4 entry point just in case.
+                                    patternSet.add(Constants.JUNIT4_ENTRY_POINT_SIMPLE_CLASS_NAME)
+                                    // Work around Gradle prematurely declaring "No tests found for given includes".
+                                    // If Gradle encounters an include pattern, it tries to compare it with classes it
+                                    // loads on its own initiative. It may then decide that no class can possibly match
+                                    // without asking any framework. With non-class based patterns, Gradle can
+                                    // prematurely fail with the above error.
+                                    // Remedy: Add a fake pattern which Gradle cannot base its decision on, and which
+                                    // does not match anything.
+                                    patternSet.add("*TestBalloonGradleGuardPattern")
+                                }
+                            }
+                        }
                     }
                 }
             }

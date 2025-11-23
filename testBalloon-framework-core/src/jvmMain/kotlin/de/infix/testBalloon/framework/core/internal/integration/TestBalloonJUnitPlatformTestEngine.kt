@@ -9,13 +9,16 @@ import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
+import de.infix.testBalloon.framework.core.internal.value
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.platform.engine.DiscoveryIssue
+import org.junit.platform.engine.DiscoverySelector
 import org.junit.platform.engine.EngineDiscoveryRequest
 import org.junit.platform.engine.ExecutionRequest
 import org.junit.platform.engine.TestDescriptor
@@ -23,6 +26,7 @@ import org.junit.platform.engine.TestEngine
 import org.junit.platform.engine.TestExecutionResult
 import org.junit.platform.engine.TestSource
 import org.junit.platform.engine.UniqueId
+import org.junit.platform.engine.discovery.ClassSelector
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor
 import org.junit.platform.engine.support.descriptor.ClassSource
 import org.junit.platform.engine.support.descriptor.EngineDescriptor
@@ -38,38 +42,65 @@ private val testElementDescriptors = ConcurrentHashMap<TestElement, AbstractTest
  * JUnit Platform will instantiate it and invoke its methods.
  */
 internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
-    override fun getId(): String = Constants.JUNIT_ENGINE_NAME
+    override fun getId(): String = Constants.JUNIT_ENGINE_ID
 
     override fun discover(discoveryRequest: EngineDiscoveryRequest, uniqueId: UniqueId): TestDescriptor {
         // We use the framework's compiler plugin to discover tests. That means we are ignoring the
         // discoveryRequest's selectors and filters.
 
         val engineUniqueId = UniqueId.forEngine(id)
+        val engineDescriptor = EngineDescriptor(engineUniqueId, "${this::class.qualifiedName}")
 
         // Find the generated file-level class for `EntryPointAnchor.kt`.
         val frameworkDiscoveryResultFileClass = try {
             Class.forName(Constants.ENTRY_POINT_ANCHOR_CLASS_NAME)
         } catch (_: ClassNotFoundException) {
             // Do not initialize the test framework if the entry point anchor file class is not on the classpath.
-            return EngineDescriptor(engineUniqueId, "${this::class.qualifiedName}")
+            return engineDescriptor
         }
 
         var discoveryIssueCount = 0
 
-        fun reportDiscoveryIssue(throwable: Throwable, vararg additionalMessages: String) {
-            discoveryIssueCount++
+        fun reportDiscoveryIssue(throwable: Throwable?, vararg additionalMessages: String) {
+            if (throwable != null) {
+                discoveryIssueCount++
+            }
             discoveryRequest.discoveryListener.issueEncountered(
                 engineUniqueId,
                 DiscoveryIssue.create(
-                    DiscoveryIssue.Severity.ERROR,
+                    if (throwable != null) DiscoveryIssue.Severity.ERROR else DiscoveryIssue.Severity.INFO,
                     buildString {
                         for (message in additionalMessages) {
                             append("${message.prependIndent("\t")}\n")
                         }
-                        append(throwable.stackTraceToString().prependIndent("\t"))
+                        throwable?.let { append(it.stackTraceToString().prependIndent("\t")) }
                     }
                 )
             )
+        }
+
+        // Here we try to find out how we were invoked: Normally, we don't need to care about the discovery request,
+        // because our Gradle plugin will provide everything we need in environment variables.
+        // However, this happens to fail with tests under the following conditions:
+        // - they run via an IntelliJ IDEA run configuration,
+        // - the "Run as test" option is active,
+        // - a '--tests' argument is present.
+        // In this case, for some reason our Gradle plugin does not pick up the command line arguments and provides
+        // an empty value in 'TESTBALLOON_INCLUDE_PATTERNS'.
+        val selectorsArePresent = discoveryRequest.getSelectorsByType(DiscoverySelector::class.java).isNotEmpty()
+        // We need to differentiate this case from Gradle naively dumping all classes at us, which we can detect by
+        // checking for our entry point class, which can never be a legitimate test selector.
+        val testClassSelectorsAreGuesswork =
+            selectorsArePresent && discoveryRequest.getSelectorsByType(ClassSelector::class.java).any {
+                it.className == Constants.ENTRY_POINT_ANCHOR_CLASS_NAME
+            }
+        if (selectorsArePresent &&
+            !testClassSelectorsAreGuesswork &&
+            EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.value()?.ifEmpty { null } == null
+        ) {
+            // In this case, the invocation was triggered by an IDE plugin targeting JUnit tests. Skip it.
+            reportDiscoveryIssue(null, "Test selectors for another test engine were detected, skipping.")
+            return engineDescriptor
         }
 
         // Trigger the framework's initialization by invoking the `testFrameworkDiscoveryResult` property getter
@@ -104,10 +135,9 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
         }
 
         if (discoveryIssueCount > 0) {
-            return EngineDescriptor(engineUniqueId, "${this::class.qualifiedName}")
+            return engineDescriptor
         }
 
-        val engineDescriptor = EngineDescriptor(engineUniqueId, "${this::class.qualifiedName}")
         log { "created EngineDescriptor(${engineDescriptor.uniqueId}, ${engineDescriptor.displayName})" }
         testElementDescriptors[TestSession.global] = engineDescriptor
         for (topLevelSuite in topLevelTestSuites) {
@@ -210,7 +240,7 @@ private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestEle
     val displayName = if (TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA) {
         testElementDisplayName
     } else {
-        testElementPath.qualifiedReportingName
+        testElementPath.qualifiedReportingNameBelowTopLevel
     }
 
     return TestElementJUnitPlatformDescriptor(

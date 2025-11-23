@@ -12,7 +12,7 @@ plugins {
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 compatPatrouille {
-    java(versionFromCatalog("jdk").toInt())
+    java(versionFromCatalog("jdk").toInt().coerceAtLeast(17)) // JUnit Jupiter requires JVM 17 or higher
     kotlin(versionFromCatalog("org.jetbrains.kotlin"))
 
     checkApiDependencies(compat.patrouille.Severity.ERROR)
@@ -59,6 +59,12 @@ kotlin {
             dependencies {
                 implementation(projects.testBalloonFrameworkCore)
                 implementation(kotlin("test")) // for assertions only
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation(libs.org.junit.jupiter.engine)
             }
         }
 

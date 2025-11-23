@@ -15,6 +15,13 @@ internal open class ListsBasedElementSelection protected constructor(
     private val excludePatterns: List<Regex>,
     private val includePrefixes: List<String>
 ) : TestElement.Selection {
+    protected constructor(includePatterns: List<String>, excludePatterns: List<String>) :
+        this(
+            includePatterns = includePatterns.map { it.patternToRegex() },
+            excludePatterns = excludePatterns.map { it.patternToRegex() },
+            includePrefixes = includePatterns.map { it.patternToPrefix() }.toSet().toList()
+        )
+
     protected constructor(includePatterns: String?, excludePatterns: String?) :
         this(
             includePatterns = includePatterns.toRegexList(),
@@ -56,32 +63,32 @@ internal open class ListsBasedElementSelection protected constructor(
          *
          * The first character of each pattern may define an input separator (the default of which is '|').
          */
-        private fun String?.toRegexList(): List<Regex> = toPatternList().map {
-            try {
-                var inputElementSeparator: Char? = null
-                buildString {
-                    for (character in it) {
-                        // If the first character is not a letter, use it as an element separator, which will then
-                        // be transformed into the framework's internal separator.
-                        if (inputElementSeparator == null) {
-                            if (character.definesSeparator()) {
-                                inputElementSeparator = character
-                                continue
-                            } else {
-                                inputElementSeparator = DEFAULT_INPUT_ELEMENT_SEPARATOR
-                            }
-                        }
-                        when (character) {
-                            inputElementSeparator -> append(Constants.INTERNAL_PATH_ELEMENT_SEPARATOR)
-                            '*' -> append(".*")
-                            in REGEX_META_CHARACTERS -> append("\\$character")
-                            else -> append(character)
+        private fun String?.toRegexList(): List<Regex> = toPatternList().map { it.patternToRegex() }
+
+        private fun String.patternToRegex() = try {
+            var inputElementSeparator: Char? = null
+            buildString {
+                for (character in this@patternToRegex) {
+                    // If the first character is not a letter, use it as an element separator, which will then
+                    // be transformed into the framework's internal separator.
+                    if (inputElementSeparator == null) {
+                        if (character.definesSeparator()) {
+                            inputElementSeparator = character
+                            continue
+                        } else {
+                            inputElementSeparator = DEFAULT_INPUT_ELEMENT_SEPARATOR
                         }
                     }
-                }.toRegex()
-            } catch (throwable: Throwable) {
-                throw IllegalArgumentException("Could not convert regex pattern '$it'.", throwable)
-            }
+                    when (character) {
+                        inputElementSeparator -> append(Constants.INTERNAL_PATH_ELEMENT_SEPARATOR)
+                        '*' -> append(".*")
+                        in REGEX_META_CHARACTERS -> append("\\$character")
+                        else -> append(character)
+                    }
+                }
+            }.toRegex()
+        } catch (throwable: Throwable) {
+            throw IllegalArgumentException("Could not convert regex pattern '$this'.", throwable)
         }
 
         /**
@@ -94,8 +101,10 @@ internal open class ListsBasedElementSelection protected constructor(
          * - The first character of each pattern may define an input separator (the default of which is '|').
          * - A trailing path element separator is always dropped from a literal prefix.
          */
-        private fun String?.toPrefixList(): List<String> = toPatternList().map {
-            var result = it.substringBefore('*')
+        private fun String?.toPrefixList(): List<String> = toPatternList().map { it.patternToPrefix() }.toSet().toList()
+
+        private fun String.patternToPrefix(): String {
+            var result = substringBefore('*')
             var inputElementSeparator: Char = DEFAULT_INPUT_ELEMENT_SEPARATOR
             if (result.firstOrNull().definesSeparator()) {
                 inputElementSeparator = result.first()
@@ -103,8 +112,8 @@ internal open class ListsBasedElementSelection protected constructor(
             }
             result = result.replace(inputElementSeparator, Constants.INTERNAL_PATH_ELEMENT_SEPARATOR)
             if (result.endsWith(Constants.INTERNAL_PATH_ELEMENT_SEPARATOR)) result = result.dropLast(1)
-            result
-        }.toSet().toList()
+            return result
+        }
 
         private fun String?.toPatternList(): List<String> =
             this?.ifEmpty { null }?.split(Constants.INTERNAL_PATH_PATTERN_SEPARATOR) ?: listOf()

@@ -18,6 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.junit.experimental.categories.Category
 import org.junit.runner.Description
 import org.junit.runner.Runner
 import org.junit.runner.notification.Failure
@@ -146,7 +147,10 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
 
 private fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
-        Description.createSuiteDescription(testElementPath.qualifiedReportingName, testElementPath.internalId).apply {
+        Description.createSuiteDescription(
+            testElementPath.fullyQualifiedReportingName,
+            testElementPath.internalId
+        ).apply {
             testElementChildren.forEach {
                 addChild(it.newPlatformDescription())
             }
@@ -157,15 +161,15 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
         testElementParent as TestSuite
 
         val displayName = if (TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA) {
-            testElementPath.qualifiedReportingName
+            testElementPath.partiallyQualifiedReportingName
         } else {
             testElementDisplayName
         }
 
         Description.createTestDescription(
-            testElementParent.testElementPath.qualifiedReportingName,
-            displayName.replace('/', '⧸'), // A slash in the test name crashes Android Device tests
-            testElementPath.internalId
+            testElementParent.testElementPath.fullyQualifiedReportingName,
+            displayName.replace('/', '⧸'), // Guard against a slash crashing Android Device tests.
+            Category(TestBalloonJUnit4Runner::class) // Support JUnit 4 runner selection via 'includeCategories'.
         )
     }
 }.also {

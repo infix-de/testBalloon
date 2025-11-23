@@ -14,13 +14,13 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
     val project = TestProject(this, projectName)
 
     class TestVariant(
-        val type: String,
+        val type: VariantType,
         val execution: suspend (taskName: String, pattern: String) -> TestProject.Execution
     )
 
     val variants = listOf(
         TestVariant(
-            type = "CLI",
+            type = VariantType.CLI,
             execution = { taskName, pattern ->
                 project.gradleExecution(
                     ":clean${taskName.capitalizedTaskName()}",
@@ -31,7 +31,7 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
             }
         ),
         TestVariant(
-            type = "Environment",
+            type = VariantType.Environment,
             execution = { taskName, pattern ->
                 project.gradleExecution(
                     ":clean${taskName.capitalizedTaskName()}",
@@ -41,7 +41,7 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
             }
         ),
         TestVariant(
-            type = "Buildscript",
+            type = VariantType.Buildscript,
             execution = { taskName, pattern ->
                 project.gradleExecution(
                     ":clean${taskName.capitalizedTaskName()}",
@@ -63,28 +63,46 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
     )) {
         for (variant in variants) {
             test(
-                "${variant.type}: '$pattern', $expectedTestCount test(s)",
+                "${variant.type.name}: '$pattern', $expectedTestCount test(s)",
                 testConfig = TestConfig.skipConditionally(pattern)
             ) {
                 for (taskName in project.testTaskNames()) {
                     val taskExecution = variant.execution(taskName, pattern)
+
+                    if (expectedTestCount == 0 &&
+                        taskExecution.exitCode != 0 &&
+                        (
+                            taskExecution.stderr.contains("No tests found for given includes") ||
+                                variant.type == VariantType.Environment &&
+                                taskExecution.stderr.contains(
+                                    "There are test sources present and no filters are applied"
+                                )
+                            )
+                    ) {
+                        println("$testElementPath: $taskName – OK (NO MATCH)")
+                        continue
+                    }
+
                     val taskResults = taskExecution.logMessages()
                     if (taskName in nativeTargetsThatMayFail && taskExecution.stdout.contains(":$taskName SKIPPED")) {
                         println("$testElementPath: $taskName – SKIPPED")
-                    } else {
-                        check(taskResults.size == expectedTestCount) {
-                            "$taskName was expected to produce $expectedTestCount result(s)," +
-                                " but produced ${taskResults.size}:\n" +
-                                "\tactual results:\n${taskResults.asIndentedText(indent = "\t\t")}\n" +
-                                taskExecution.stdoutStderr()
-                        }
-                        println("$testElementPath: $taskName – OK")
+                        continue
                     }
+
+                    check(taskResults.size == expectedTestCount) {
+                        "$taskName was expected to produce $expectedTestCount result(s)," +
+                            " but produced ${taskResults.size}:\n" +
+                            "\tactual results:\n${taskResults.asIndentedText(indent = "\t\t")}\n" +
+                            taskExecution.stdoutStderr()
+                    }
+                    println("$testElementPath: $taskName – OK")
                 }
             }
         }
     }
 }
+
+private enum class VariantType { CLI, Environment, Buildscript }
 
 private val nonAsciiPatternSkippingEnabled = skippingEnabled("non-ASCII patterns")
 

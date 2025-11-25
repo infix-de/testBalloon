@@ -13,7 +13,7 @@ val EnvironmentPropagationTests by testSuite(
     val projectName = "environment-propagation"
     val project = TestProject(this, projectName)
 
-    val nativeTargetsThatMayFail = listOf("macosX64Test", "linuxX64Test", "mingwX64Test")
+    val nativeTasksThatMayFail = setOf("macosArm64Test", "linuxX64Test", "mingwX64Test")
 
     val testCases = mapOf(
         mapOf<String, String>() to 1,
@@ -31,7 +31,7 @@ val EnvironmentPropagationTests by testSuite(
                     environment = mapOf("FROM_PROPERTY" to "yes", "FROM_EXTENSION" to "yes")
                 )
                 val taskResults = taskExecution.logMessages()
-                if (taskName in nativeTargetsThatMayFail && taskExecution.stdout.contains(":$taskName SKIPPED")) {
+                if (taskName in nativeTasksThatMayFail && taskExecution.stdout.contains(":$taskName SKIPPED")) {
                     println("$testElementPath: $taskName – SKIPPED")
                 } else {
                     val expectedTestCount = 3

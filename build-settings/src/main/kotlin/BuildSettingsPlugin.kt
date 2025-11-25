@@ -47,6 +47,7 @@ class BuildSettingsPlugin : Plugin<Settings> {
             maven(url = uri("$home/.m2/local-repository"))
         }
         maven(url = uri("https://redirector.kotlinlang.org/maven/dev"))
+        maven(url = uri("https://packages.jetbrains.team/maven/p/kt/dev/org/jetbrains/kotlin/kotlin-compiler/"))
         gradlePluginPortal()
     }
 

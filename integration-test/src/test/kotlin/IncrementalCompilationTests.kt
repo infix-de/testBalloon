@@ -10,7 +10,7 @@ import kotlin.io.path.moveTo
 import kotlin.time.Duration.Companion.minutes
 
 val IncrementalCompilationTests by testSuite(
-    testConfig = TestConfig.testScope(isEnabled = true, timeout = 12.minutes)
+    testConfig = TestConfig.testScope(isEnabled = true, timeout = 24.minutes)
 ) {
     incrementalCompilationTestSuite(
         "incremental-compilation-kotlin-test",

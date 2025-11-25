@@ -22,7 +22,7 @@ junit-junit4 = "4.13.2"
 com-gradleup-compat-patrouille = "0.1.0"
 
 # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
-com-vanniktech-maven-publish = "0.34.0"
+com-vanniktech-maven-publish = "0.35.0"
 
 # https://github.com/kotest/kotest/releases
 io-kotest = "5.9.1"
@@ -32,7 +32,7 @@ org-jetbrains-dokka = "2.1.0"
 
 # https://github.com/JetBrains/kotlin/releases
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
-org-jetbrains-kotlin = "2.2.21"
+org-jetbrains-kotlin = "2.3.0-RC"
 
 # https://github.com/Kotlin/dokka/releases
 org-jetbrains-kotlin-dokka = "2.0.0"
@@ -44,7 +44,7 @@ org-jetbrains-kotlinx-coroutines = "1.10.2"
 org-jetbrains-kotlinx-kover = "0.9.3"
 
 # https://github.com/jeremymailen/kotlinter-gradle/releases
-org-jmailen-kotlinter = "5.2.0"
+org-jmailen-kotlinter = "5.3.0"
 
 # https://github.com/junit-team/junit5/releases
 org-junit-jupiter = "6.0.1"
@@ -53,7 +53,7 @@ org-junit-platform = "1.13.4"
 [libraries]
 
 # https://developer.android.com/develop/ui/compose/bom/bom-mapping
-androidx-compose-bom = "androidx.compose:compose-bom:2025.10.01"
+androidx-compose-bom = "androidx.compose:compose-bom:2025.11.01"
 
 androidx-test-core = "androidx.test:core:1.7.0"
 
@@ -61,7 +61,8 @@ androidx-test-runner = "androidx.test:runner:1.7.0"
 
 com-android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
 
-com-benwoodworth-parameterize = "com.benwoodworth.parameterize:parameterize-core:0.4.0"
+# https://github.com/BenWoodworth/Parameterize/releases
+com-benwoodworth-parameterize = "com.benwoodworth.parameterize:parameterize-core:0.4.1"
 
 # https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 com-github-gmazzo-buildconfig-gradle-plugin = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.7.0"
@@ -74,7 +75,7 @@ com-vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech:gradle-m
 de-fayard-refreshversions-gradle-plugin = "de.fayard.refreshVersions:de.fayard.refreshVersions.gradle.plugin:0.60.6"
 
 # https://github.com/ZacSweers/kotlin-compile-testing/releases
-dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.11.0"
+dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.11.1"
 
 # https://github.com/kotest/kotest/releases
 io-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest" }

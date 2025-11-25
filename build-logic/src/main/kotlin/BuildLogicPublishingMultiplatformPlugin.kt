@@ -9,10 +9,11 @@ class BuildLogicPublishingMultiplatformPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         with(pluginManager) {
             apply("buildLogic.publishing-base")
+            apply("buildLogic.dokka")
         }
 
         extensions.configure<MavenPublishBaseExtension>("mavenPublishing") {
-            configure(KotlinMultiplatform(JavadocJar.Empty(), sourcesJar = true))
+            configure(KotlinMultiplatform(JavadocJar.Dokka("dokkaGenerateHtml"), sourcesJar = true))
         }
     }
 }

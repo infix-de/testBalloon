@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 plugins {
     id("buildLogic.multiplatform-plus-android-library")
     id("buildLogic.publishing-multiplatform")
-    id("buildLogic.dokka")
 }
 
 description = "Core library for the TestBalloon framework"

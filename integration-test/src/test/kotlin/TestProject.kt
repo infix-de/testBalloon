@@ -23,6 +23,21 @@ import kotlin.time.ExperimentalTime
  */
 internal open class TestProject(projectTestSuite: TestSuite, projectName: String) {
 
+    @Suppress("SpellCheckingInspection")
+    private val environmentVariablesToKeep =
+        setOf(
+            // *nix
+            "ANDROID_HOME", "CHROME_BIN", "HOME", "JAVA_HOME", "LANG", "PATH", "PWD", "SHELL", "TERM", "TMPDIR",
+            "USER", "USERNAME",
+            // Windows
+            "ALLUSERSPROFILE", "APPDATA", "CD", "CMDCMDLINE", "CMDEXTVERSION", "CommonProgramFiles",
+            "CommonProgramFiles(x86)", "COMPUTERNAME", "COMSPEC", "DATE", "HOMEDRIVE", "HOMEPATH", "LOCALAPPDATA",
+            "LOGONSERVER", "NUMBER_OF_PROCESSORS", "OS", "PATH", "PATHEXT", "PROCESSOR_ARCHITECTURE",
+            "PROCESSOR_IDENTIFIER", "PROCESSOR_LEVEL", "PROCESSOR_REVISION", "ProgramData", "ProgramFiles",
+            "ProgramFiles(x86)", "PSModulePath", "PUBLIC", "SessionName", "SystemDrive", "SystemRoot", "TEMP", "TIME",
+            "TMP", "USERDOMAIN", "USERDOMAIN_ROAMINGPROFILE", "USERNAME", "USERPROFILE", "WINDIR"
+        )
+
     @OptIn(ExperimentalPathApi::class)
     protected val projectDirectory = projectTestSuite.testFixture {
         val commonTemplateDirectory = Path("build") / "projectTemplates" / "common"
@@ -53,8 +68,7 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
             }.toTypedArray()
         gradleExecution("clean", *npmPackageLockTasks).checked()
 
-        val browserSkippingEnabled = skippingEnabled("browsers")
-        testTaskNames.filter { if (browserSkippingEnabled) !it.contains("Browser") else true }
+        testTaskNames
     }
 
     internal suspend fun gradleExecution(
@@ -73,9 +87,7 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
     private fun execution(vararg arguments: String, environment: Map<String, String> = emptyMap()): Execution {
         val process = ProcessBuilder(*arguments).also {
             it.environment().run {
-                fun String.toKeep() =
-                    this in listOf("ANDROID_HOME", "CHROME_BIN", "JAVA_HOME", "LANG", "PATH", "SHELL", "TERM") ||
-                        this.startsWith("LC_")
+                fun String.toKeep() = this in environmentVariablesToKeep || this.startsWith("LC_")
 
                 for (key in keys.filter { key -> !key.toKeep() }) {
                     remove(key)

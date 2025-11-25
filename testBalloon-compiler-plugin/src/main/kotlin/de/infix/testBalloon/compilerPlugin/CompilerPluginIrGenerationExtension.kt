@@ -18,6 +18,7 @@ import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResu
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.fileMappingTracker
 import org.jetbrains.kotlin.config.lookupTracker
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -107,6 +109,7 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
+import java.io.File
 import kotlin.reflect.KClass
 
 class CompilerPluginIrGenerationExtension(private val compilerConfiguration: CompilerConfiguration) :
@@ -190,6 +193,7 @@ private class Configuration(
     val jvmMainFunctionEnabled = Options.jvmMainFunctionEnabled.value(compilerConfiguration)
 
     val lookupTracker = compilerConfiguration.lookupTracker
+    val fileMappingTracker = compilerConfiguration.fileMappingTracker
 
     val abstractSuiteSymbol = irClassSymbol(AbstractTestSuite::class)
     val abstractSessionSymbol = irClassSymbol(AbstractTestSession::class)
@@ -389,8 +393,12 @@ private class ModuleTransformer(
                 reportDebug("Generated:\n${declaration.dump().prependIndent("\t")}")
             }
 
-            // With incremental compilation, the compiler needs to recompile the entry point file if one of its
-            // referenced declarations change. To do so, it needs to be told about such references.
+            // With incremental compilation, the compiler needs to recompile the entry point file if
+            // - one of its referenced declarations change, or
+            // - a new declaration to be referenced appears (either in a new source or by changing an existing source).
+            // To do so, it needs to be told about such references, and it needs to know that we are collecting
+            // top-level declarations.
+            entryPointFile.fileForTopLevelPluginDeclarations = true
             // We register the entry point file referencing
             // - the custom session class (if available), and
             // - top-level suites.
@@ -834,6 +842,10 @@ private class ModuleTransformer(
                 scopeFqName = referencedDeclaration.fileParent.packageFqName.asString(),
                 scopeKind = ScopeKind.CLASSIFIER,
                 name = referencedDeclaration.name.asString()
+            )
+
+            configuration.fileMappingTracker?.recordSourceReferencedByCompilerPlugin(
+                File(referencedDeclaration.fileParent.path)
             )
         }
     }

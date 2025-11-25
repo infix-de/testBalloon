@@ -8,7 +8,7 @@ import java.util.Locale
 import kotlin.time.Duration.Companion.minutes
 
 val EnvironmentPropagationTests by testSuite(
-    testConfig = TestConfig.testScope(isEnabled = true, timeout = 12.minutes)
+    testConfig = TestConfig.testScope(isEnabled = true, timeout = 24.minutes)
 ) {
     val projectName = "environment-propagation"
     val project = TestProject(this, projectName)

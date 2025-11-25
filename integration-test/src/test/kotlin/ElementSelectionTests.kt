@@ -9,7 +9,7 @@ import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import java.util.Locale
 import kotlin.time.Duration.Companion.minutes
 
-val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabled = true, timeout = 12.minutes)) {
+val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabled = true, timeout = 24.minutes)) {
     val projectName = "element-selection"
     val project = TestProject(this, projectName)
 

@@ -53,8 +53,7 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
             }.toTypedArray()
         gradleExecution("clean", *npmPackageLockTasks).checked()
 
-        val browserSkippingEnabled = skippingEnabled("browsers")
-        testTaskNames.filter { if (browserSkippingEnabled) !it.contains("Browser") else true }
+        testTaskNames
     }
 
     internal suspend fun gradleExecution(
@@ -71,14 +70,10 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
     private val runsOnWindows = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
 
     private fun execution(vararg arguments: String, environment: Map<String, String> = emptyMap()): Execution {
-        val process = ProcessBuilder(*arguments).also {
-            it.environment().run {
-                fun String.toKeep() =
-                    this in listOf("ANDROID_HOME", "CHROME_BIN", "JAVA_HOME", "LANG", "PATH", "SHELL", "TERM") ||
-                        this.startsWith("LC_")
-
-                for (key in keys.filter { key -> !key.toKeep() }) {
-                    remove(key)
+        val process = ProcessBuilder(*arguments).also { processBuilder ->
+            processBuilder.environment().run {
+                keys.filter { it.startsWith("TEST") }.forEach {
+                    remove(it)
                 }
                 for ((key, value) in environment) {
                     this[key] = value

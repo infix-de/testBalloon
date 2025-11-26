@@ -76,7 +76,7 @@ private class IncrementalCompilationTestProject(private val projectTestSuite: Te
         gradleOptions: Array<String> = arrayOf(),
         testConfig: TestConfig = TestConfig
     ) = projectTestSuite.testSuite(name, testConfig = testConfig) {
-        suspend fun compileTaskExecution(taskName: String) = gradleExecution(taskName, *gradleOptions)
+        suspend fun gradleTaskExecution(taskName: String) = gradleExecution(taskName, *gradleOptions)
 
         val commonTestSourceDirectory = testFixture { projectDirectory() / "src" / testSourceDirectoryName }
         val enabledSourcesDirectory = testFixture { commonTestSourceDirectory() / "kotlin" }
@@ -87,7 +87,7 @@ private class IncrementalCompilationTestProject(private val projectTestSuite: Te
             val nativeTargetsThatMayFail = listOf("macosX64", "linuxX64", "mingwX64")
 
             testTaskNames().mapNotNull { taskName ->
-                val taskExecution = compileTaskExecution(taskName)
+                val taskExecution = gradleTaskExecution(taskName)
                 val targetName = taskName.removeSuffix("Test")
 
                 if (targetName in nativeTargetsThatMayFail &&
@@ -123,7 +123,7 @@ private class IncrementalCompilationTestProject(private val projectTestSuite: Te
             val expectedResults = baselineResult.filterIndexed { index, _ ->
                 index != exceptIndex
             }
-            val taskExecution = compileTaskExecution(taskName)
+            val taskExecution = gradleTaskExecution(taskName)
             val actualResults = taskExecution.logMessages()
             if (actualResults != expectedResults) {
                 throw AssertionError(

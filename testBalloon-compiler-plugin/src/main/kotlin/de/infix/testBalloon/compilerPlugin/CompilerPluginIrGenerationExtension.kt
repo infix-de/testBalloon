@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.declarations.path
@@ -82,10 +83,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.constructors
@@ -334,23 +337,14 @@ private class ModuleTransformer(
         // We have left all source files behind.
         sourceFileForReporting = null
 
-        val entryPointPackageFqName = FqName(configuration.entryPointPackageName)
-        val entryPointFile = moduleFragment.files.filter {
-            it.packageFqName == entryPointPackageFqName
-        }.singleOrElseOrNull {
-            if (it.isEmpty()) {
-                null
-            } else {
-                reportError(
-                    "At most file with a package '${configuration.entryPointPackageName}' may" +
-                        " be present, but there are ${it.size}.\n",
-                    declaration
-                )
-                it.first()
-            }
-        } ?: return moduleFragment // Do not proceed unless an entry point anchor class is present
-
-        sourceFileForReporting = entryPointFile
+        val entryPointFile = IrFileImpl(
+            NaiveSourceBasedFileEntryImpl(Constants.ENTRY_POINT_ANCHOR_FILE_NAME),
+            IrFileSymbolImpl(),
+            FqName(configuration.entryPointPackageName)
+        ).apply {
+            fileForTopLevelPluginDeclarations = true
+        }
+        moduleFragment.files += entryPointFile
 
         withErrorReporting(
             moduleFragment,
@@ -396,9 +390,7 @@ private class ModuleTransformer(
             // With incremental compilation, the compiler needs to recompile the entry point file if
             // - one of its referenced declarations change, or
             // - a new declaration to be referenced appears (either in a new source or by changing an existing source).
-            // To do so, it needs to be told about such references, and it needs to know that we are collecting
-            // top-level declarations.
-            entryPointFile.fileForTopLevelPluginDeclarations = true
+            // To do so, it needs to be told about such references.
             // We register the entry point file referencing
             // - the custom session class (if available), and
             // - top-level suites.
@@ -938,9 +930,6 @@ private fun IrClass.fqName(): String = "${packageFqName.asQualificationPrefix()}
 private fun FqName?.asQualificationPrefix(): String = if (this == null || isRoot) "" else "$this."
 
 private fun <T> Collection<T>.singleOrElse(alternative: (collection: Collection<T>) -> T): T =
-    singleOrNull() ?: alternative(this)
-
-private fun <T> Collection<T>.singleOrElseOrNull(alternative: (collection: Collection<T>) -> T?): T? =
     singleOrNull() ?: alternative(this)
 
 private const val PLUGIN_DISPLAY_NAME = "Plugin $PROJECT_COMPILER_PLUGIN_ID"

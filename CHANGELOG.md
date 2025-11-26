@@ -14,6 +14,11 @@
     * JVM tests (coexistence with other JUnit Platform-based frameworks like JUnit Jupiter).
 * The consistency of file-based reports across test platforms was improved.
 
+### Fixes
+
+* (JVM-only projects) Incremental compilation will no longer miss tests. (#47)
+* (Android) Display name length limiting in test reports now works correctly. (#44)
+
 ## TestBalloon 0.7.1 (November 5, 2025)
 
 TestBalloon release variants:

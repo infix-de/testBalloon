@@ -105,10 +105,11 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
             }
         }
 
-        private companion object {
+        internal companion object {
             private const val ESCAPED_SPACE = '\u00a0' // non-breaking space
             private const val ESCAPED_DOT = "·" // middle dot
             private const val REPORTING_SEPARATOR: String = "$ESCAPED_SPACE↘$ESCAPED_SPACE"
+            internal const val REPORTING_SEPARATOR_LENGTH = REPORTING_SEPARATOR.length
             private const val INTERNAL_PATH_ELEMENT_SEPARATOR_STRING = "${Constants.INTERNAL_PATH_ELEMENT_SEPARATOR}"
         }
     }
@@ -231,16 +232,19 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     }
 
     private fun String.lengthLimited(): String {
-        val originalPathLength = (testElementParent?.testElementPath?.fullyQualifiedReportingName?.length ?: 0) + length
-        if (originalPathLength <= reportingPathLimit) return this
-        val newLength = originalPathLength - reportingPathLimit - TestSuite.UNIQUE_APPENDIX_LENGTH_LIMIT - 1
-        require(newLength >= 0) {
+        val parentPathPlusSeparatorLength = testElementParent?.testElementPath?.fullyQualifiedReportingName?.length
+            ?.plus(Path.REPORTING_SEPARATOR_LENGTH)
+            ?: 0
+        val originalUniquePathLength = parentPathPlusSeparatorLength + length + TestSuite.UNIQUE_APPENDIX_LENGTH_LIMIT
+        if (originalUniquePathLength <= reportingPathLimit) return this
+        val newSafeNameLength = length - (originalUniquePathLength - reportingPathLimit) - 1 /* ellipsis */
+        require(newSafeNameLength >= 0) {
             "Could not produce a test element name observing the length limit" +
                 " of $reportingPathLimit for its element path.\n" +
                 "\tParent path: ${testElementParent?.testElementPath}\n" +
                 "\tElement name: '$this'"
         }
-        return this.dropLast(originalPathLength - reportingPathLimit - 1) + "…"
+        return this.dropLast(length - newSafeNameLength) + "…"
     }
 
     override fun toString(): String = "${this::class.simpleName}($testElementPath)"

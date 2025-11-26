@@ -70,12 +70,10 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
     private val runsOnWindows = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
 
     private fun execution(vararg arguments: String, environment: Map<String, String> = emptyMap()): Execution {
-        val process = ProcessBuilder(*arguments).also {
-            it.environment().run {
-                for (key in keys) {
-                    if (key.startsWith("TEST")) {
-                        remove(key)
-                    }
+        val process = ProcessBuilder(*arguments).also { processBuilder ->
+            processBuilder.environment().run {
+                keys.filter { it.startsWith("TEST") }.forEach {
+                    remove(it)
                 }
                 for ((key, value) in environment) {
                     this[key] = value

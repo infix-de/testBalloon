@@ -148,7 +148,7 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
 private fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
         Description.createSuiteDescription(
-            testElementPath.fullyQualifiedReportingName,
+            testElementPath.fullyQualifiedReportingName.printable(),
             testElementPath.internalId
         ).apply {
             testElementChildren.forEach {
@@ -161,19 +161,31 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
         testElementParent as TestSuite
 
         val displayName = if (TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA) {
-            testElementPath.partiallyQualifiedReportingName
+            testElementPath.partiallyQualifiedReportingName.printable()
         } else {
-            testElementDisplayName
+            testElementDisplayName.printable()
         }
 
         Description.createTestDescription(
-            testElementParent.testElementPath.fullyQualifiedReportingName,
-            displayName.replace('/', '⧸'), // Guard against a slash crashing Android Device tests.
+            testElementParent.testElementPath.fullyQualifiedReportingName.printable(),
+            displayName.printable(), // Guard against a slash crashing Android Device tests.
             Category(TestBalloonJUnit4Runner::class) // Support JUnit 4 runner selection via 'includeCategories'.
         )
     }
 }.also {
     testElementDescriptions[this] = it
+}
+
+private fun String.printable(): String = buildString(length) {
+    for (character in this@printable) {
+        append(
+            when {
+                character.code < 32 -> '�'
+                character == '/' -> '⧸'
+                else -> character
+            }
+        )
+    }
 }
 
 internal val TestElement.platformDescription: Description

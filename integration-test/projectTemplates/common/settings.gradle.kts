@@ -22,5 +22,6 @@ fun RepositoryHandler.projectRepositories() {
         maven(url = uri("$home/.m2/local-repository"))
     }
     maven("https://redirector.kotlinlang.org/maven/dev")
+    maven("https://packages.jetbrains.team/maven/p/kt/dev/org/jetbrains/kotlin/kotlin-compiler/")
     gradlePluginPortal()
 }

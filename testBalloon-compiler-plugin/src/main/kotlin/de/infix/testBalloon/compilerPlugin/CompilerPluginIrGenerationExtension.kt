@@ -30,10 +30,12 @@ import org.jetbrains.kotlin.config.fileMappingTracker
 import org.jetbrains.kotlin.config.lookupTracker
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -113,6 +115,8 @@ import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 import kotlin.reflect.KClass
 
 class CompilerPluginIrGenerationExtension(private val compilerConfiguration: CompilerConfiguration) :
@@ -189,7 +193,7 @@ private class Configuration(
 ) : CapableOfSymbolResolving {
 
     val coreInternalPackageName = Constants.CORE_INTERNAL_PACKAGE_NAME
-    val entryPointPackageName = Constants.ENTRY_POINT_PACKAGE_NAME
+    val entryPointPackageName = FqName(Constants.ENTRY_POINT_PACKAGE_NAME)
 
     val debugLevel = Options.debugLevel.value(compilerConfiguration)
     val junit4AutoIntegrationEnabled = Options.junit4AutoIntegrationEnabled.value(compilerConfiguration)
@@ -338,9 +342,12 @@ private class ModuleTransformer(
         sourceFileForReporting = null
 
         val entryPointFile = IrFileImpl(
-            NaiveSourceBasedFileEntryImpl(Constants.ENTRY_POINT_ANCHOR_FILE_NAME),
-            IrFileSymbolImpl(),
-            FqName(configuration.entryPointPackageName)
+            NaiveSourceBasedFileEntryImpl(Path(Constants.ENTRY_POINT_ANCHOR_FILE_NAME).absolutePathString()),
+            IrFileSymbolImpl(
+                @OptIn(ObsoleteDescriptorBasedAPI::class)
+                EmptyPackageFragmentDescriptor(pluginContext.moduleDescriptor, configuration.entryPointPackageName)
+            ),
+            configuration.entryPointPackageName
         ).apply {
             fileForTopLevelPluginDeclarations = true
         }
@@ -365,7 +372,7 @@ private class ModuleTransformer(
             when {
                 platform.isJvm() -> {
                     if (configuration.jvmMainFunctionEnabled) {
-                        entryPointFile.addChild(irSuspendMainFunction())
+                        entryPointFile.addChild(irSuspendMainFunction(entryPointFile))
                     } else {
                         entryPointFile.addChild(irTestFrameworkDiscoveryResultProperty(entryPointFile))
                         irJUnit4RunnerEntryPointClass(entryPointFile)?.let { entryPointFile.addChild(it) }
@@ -373,7 +380,7 @@ private class ModuleTransformer(
                 }
 
                 platform.isJs() || platform.isWasm() -> {
-                    entryPointFile.addChild(irSuspendMainFunction())
+                    entryPointFile.addChild(irSuspendMainFunction(entryPointFile))
                 }
 
                 platform.isNative() -> {
@@ -568,11 +575,12 @@ private class ModuleTransformer(
      * }
      * ```
      */
-    private fun irSuspendMainFunction(): IrSimpleFunction = pluginContext.irFactory.buildFun {
+    private fun irSuspendMainFunction(entryPointFile: IrFile): IrSimpleFunction = pluginContext.irFactory.buildFun {
         name = Name.identifier("main")
         isSuspend = true
         returnType = pluginContext.irBuiltIns.unitType
     }.apply {
+        parent = entryPointFile
         val irArgumentsValueParameter = addValueParameter(
             "arguments",
             pluginContext.irBuiltIns.arrayClass.typeWith(pluginContext.irBuiltIns.stringType),

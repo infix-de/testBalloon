@@ -7,7 +7,7 @@ plugins {
     id("com.gradleup.compat.patrouille") version "{{version:com.gradleup.compat.patrouille}}"
 }
 
-compatPatrouille {
+tapmoc {
     java("{{version:jdk}}".toInt())
     kotlin("{{version:org.jetbrains.kotlin}}")
 }

@@ -1,4 +1,4 @@
-import buildLogic.withCompatPatrouille
+import buildLogic.withTapmoc
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 @Suppress("unused")
 class BuildLogicMultiplatformBasePlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
-        withCompatPatrouille {
+        withTapmoc {
             apply("buildLogic.common")
             apply("org.jetbrains.kotlin.multiplatform")
             apply("org.jetbrains.kotlin.plugin.atomicfu")

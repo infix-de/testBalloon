@@ -6,21 +6,22 @@ import buildLogic.versionFromCatalog
 import org.gradle.api.internal.artifacts.dependencies.DefaultFileCollectionDependency
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import tapmoc.Severity
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
-    id("com.gradleup.compat.patrouille")
+    id("com.gradleup.tapmoc")
 }
 
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
-compatPatrouille {
+tapmoc {
     java(versionFromCatalog("jdk").toInt())
     kotlin(versionFromCatalog("org.jetbrains.kotlin"))
 
-    checkApiDependencies(compat.patrouille.Severity.ERROR)
-    checkRuntimeDependencies(compat.patrouille.Severity.ERROR)
+    checkApiDependencies(Severity.ERROR)
+    checkRuntimeDependencies(Severity.ERROR)
 }
 
 kotlin {

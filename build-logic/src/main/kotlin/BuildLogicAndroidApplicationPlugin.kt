@@ -1,11 +1,11 @@
-import buildLogic.withCompatPatrouille
+import buildLogic.withTapmoc
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 @Suppress("unused")
 class BuildLogicAndroidApplicationPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
-        withCompatPatrouille {
+        withTapmoc {
             apply("com.android.application")
             apply("org.jetbrains.kotlin.android")
         }

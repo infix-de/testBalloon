@@ -1,4 +1,4 @@
-import buildLogic.withCompatPatrouille
+import buildLogic.withTapmoc
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 @Suppress("unused")
 class BuildLogicJvmPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
-        withCompatPatrouille {
+        withTapmoc {
             apply("buildLogic.common")
             apply("org.jetbrains.kotlin.jvm")
         }

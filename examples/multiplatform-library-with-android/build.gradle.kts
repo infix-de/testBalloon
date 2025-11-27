@@ -1,22 +1,23 @@
 import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.versionFromCatalog
+import tapmoc.Severity
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
-    id("com.gradleup.compat.patrouille")
+    id("com.gradleup.tapmoc")
     // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
 }
 
 // The following invocation supplements the TestBalloon plugin declaration inside this project:
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
-compatPatrouille {
+tapmoc {
     java(versionFromCatalog("jdk").toInt().coerceAtLeast(17)) // JUnit Jupiter requires JVM 17 or higher
     kotlin(versionFromCatalog("org.jetbrains.kotlin"))
 
-    checkApiDependencies(compat.patrouille.Severity.ERROR)
-    checkRuntimeDependencies(compat.patrouille.Severity.ERROR)
+    checkApiDependencies(Severity.ERROR)
+    checkRuntimeDependencies(Severity.ERROR)
 }
 
 kotlin {

@@ -32,7 +32,7 @@ org-jetbrains-dokka = "2.1.0"
 
 # https://github.com/JetBrains/kotlin/releases
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
-org-jetbrains-kotlin = "2.3.0-RC"
+org-jetbrains-kotlin = "2.3.20-dev-4294"
 
 # https://github.com/Kotlin/dokka/releases
 org-jetbrains-kotlin-dokka = "2.0.0"

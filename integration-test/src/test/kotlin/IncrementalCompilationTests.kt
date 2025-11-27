@@ -69,7 +69,7 @@ private class IncrementalCompilationTestProject(private val projectTestSuite: Te
 
             val baselineResults = testFixture {
                 val fileCount = 2
-                val nativeTargetsThatMayFail = listOf("macosX64", "linuxX64", "mingwX64")
+                val nativeTargetsThatMayFail = listOf("macosArm64", "linuxX64", "mingwX64")
 
                 testTaskNames().mapNotNull { taskName ->
                     val taskExecution = compileTaskExecution(taskName)

@@ -52,7 +52,7 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
         )
     )
 
-    val nativeTargetsThatMayFail = listOf("macosX64Test", "linuxX64Test", "mingwX64Test")
+    val nativeTargetsThatMayFail = listOf("macosArm64Test", "linuxX64Test", "mingwX64Test")
 
     for ((pattern, expectedTestCount) in mapOf(
         "com.example.SimpleSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1,

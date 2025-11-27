@@ -13,7 +13,7 @@ val EnvironmentPropagationTests by testSuite(
     val projectName = "environment-propagation"
     val project = TestProject(this, projectName)
 
-    val nativeTargetsThatMayFail = listOf("macosX64Test", "linuxX64Test", "mingwX64Test")
+    val nativeTargetsThatMayFail = listOf("macosArm64Test", "linuxX64Test", "mingwX64Test")
 
     val testCases = mapOf(
         mapOf<String, String>() to 1,

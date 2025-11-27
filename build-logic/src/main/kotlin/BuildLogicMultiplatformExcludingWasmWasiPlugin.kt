@@ -1,7 +1,7 @@
 import buildLogic.applyHierarchy
 import buildLogic.jsTargets
 import buildLogic.nativeTargets
-import buildLogic.withCompatPatrouille
+import buildLogic.withTapmoc
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 @Suppress("unused")
 class BuildLogicMultiplatformExcludingWasmWasiPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
-        withCompatPatrouille {
+        withTapmoc {
             apply("buildLogic.multiplatform-base")
         }
 

@@ -1,11 +1,11 @@
 package buildLogic
 
-import compat.patrouille.CompatPatrouilleExtension
-import compat.patrouille.Severity
-import compat.patrouille.configureJavaCompatibility
-import compat.patrouille.configureKotlinCompatibility
 import org.gradle.api.Project
 import org.gradle.api.plugins.PluginManager
+import tapmoc.Severity
+import tapmoc.TapmocExtension
+import tapmoc.configureJavaCompatibility
+import tapmoc.configureKotlinCompatibility
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -14,27 +14,27 @@ import java.util.concurrent.ConcurrentHashMap
  * Multiple nested invocations are possible. This function makes sure that CompatPatrouille configures the
  * plugins at the outermost level.
  */
-fun Project.withCompatPatrouille(applyPlugins: PluginManager.() -> Unit) {
+fun Project.withTapmoc(applyPlugins: PluginManager.() -> Unit) {
     @Suppress("newApi")
-    val nestingLevel = configurationNestingLevels.compute(this) { key, value ->
+    val nestingLevel = configurationNestingLevels.compute(this) { _, value ->
         value?.plus(1) ?: 0
     }
 
     pluginManager.applyPlugins()
-    pluginManager.apply("com.gradleup.compat.patrouille")
+    pluginManager.apply("com.gradleup.tapmoc")
 
     if (nestingLevel == 0) {
-        configureWithCompatPatrouille()
+        configureWithTapmoc()
 
         configurationNestingLevels.remove(this)
     }
 }
 
-fun Project.configureWithCompatPatrouille() {
+fun Project.configureWithTapmoc() {
     configureJavaCompatibility(versionFromCatalog("jdk").toInt())
     configureKotlinCompatibility(versionFromCatalog("org.jetbrains.kotlin"))
 
-    extensions.configure<CompatPatrouilleExtension>("compatPatrouille") {
+    extensions.configure<TapmocExtension>("tapmoc") {
         checkApiDependencies(Severity.ERROR)
         checkRuntimeDependencies(Severity.ERROR)
     }

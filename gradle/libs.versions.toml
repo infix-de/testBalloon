@@ -18,8 +18,8 @@ jdk = "11"
 # https://github.com/junit-team/junit4/releases
 junit-junit4 = "4.13.2"
 
-# https://github.com/GradleUp/compat-patrouille/releases
-com-gradleup-compat-patrouille = "0.1.0"
+# https://github.com/GradleUp/Tapmoc/releases
+com-gradleup-tapmoc = "0.2.0"
 
 # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
 com-vanniktech-maven-publish = "0.35.0"
@@ -67,7 +67,7 @@ com-benwoodworth-parameterize = "com.benwoodworth.parameterize:parameterize-core
 # https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 com-github-gmazzo-buildconfig-gradle-plugin = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.7.0"
 
-com-gradleup-compat-patrouille-gradle-plugin = { module = "com.gradleup.compat.patrouille:compat-patrouille-gradle-plugin", version.ref = "com-gradleup-compat-patrouille" }
+com-gradleup-tapmoc-gradle-plugin = { module = "com.gradleup.tapmoc:tapmoc-gradle-plugin", version.ref = "com-gradleup-tapmoc" }
 
 com-vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "com-vanniktech-maven-publish" }
 
@@ -127,7 +127,7 @@ com-android-application = { id = "com.android.application", version.ref = "andro
 
 com-android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "android-gradle-plugin" }
 
-com-gradleup-compat-patrouille = { id = "com.gradleup.compat.patrouille", version.ref = "com-gradleup-compat-patrouille" }
+com-gradleup-tapmoc = { id = "com.gradleup.tapmoc", version.ref = "com-gradleup-tapmoc" }
 
 com-vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "com-vanniktech-maven-publish" }
 

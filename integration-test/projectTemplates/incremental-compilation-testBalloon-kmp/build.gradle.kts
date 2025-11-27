@@ -4,11 +4,11 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
     kotlin("multiplatform") version "{{version:org.jetbrains.kotlin}}"
-    id("com.gradleup.compat.patrouille") version "{{version:com.gradleup.compat.patrouille}}"
+    id("com.gradleup.tapmoc") version "{{version:com.gradleup.tapmoc}}"
     id("de.infix.testBalloon") version "{{prop:version}}"
 }
 
-compatPatrouille {
+tapmoc {
     java("{{version:jdk}}".toInt())
     kotlin("{{version:org.jetbrains.kotlin}}")
 }

@@ -23,7 +23,7 @@ val ExperimentalSuite1 by testSuite(testConfig = TestConfig.logTestExecution()) 
             assertEquals(5, max(5, 3))
         }
 
-        test("min") {
+        test("min1") {
             assertEquals(3, min(5, 3))
         }
     }

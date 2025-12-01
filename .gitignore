@@ -2,9 +2,8 @@
 ### Project
 ###
 
-documentation/site/build
-documentation/site/venv
-documentation/site/docs/api
+documentation/website/distribution/dev/
+documentation/website/distribution/apiVersions/dev/
 
 ###
 ### Kotlin

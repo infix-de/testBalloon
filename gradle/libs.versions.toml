@@ -27,6 +27,9 @@ com-vanniktech-maven-publish = "0.35.0"
 # https://github.com/kotest/kotest/releases
 io-kotest = "5.9.1"
 
+# https://github.com/ktorio/ktor/releases
+io-ktor = "3.3.3"
+
 # https://github.com/Kotlin/dokka/releases
 org-jetbrains-dokka = "2.1.0"
 
@@ -79,6 +82,9 @@ dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.11.1"
 
 # https://github.com/kotest/kotest/releases
 io-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest" }
+
+io-ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "io-ktor" }
+io-ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "io-ktor" }
 
 # https://github.com/reactor/BlockHound/releases
 io-projectreactor-tools-blockhound = "io.projectreactor.tools:blockhound:1.0.14.RELEASE"

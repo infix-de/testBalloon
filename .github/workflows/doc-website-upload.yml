@@ -1,0 +1,25 @@
+name: "Provide the documentation's website artifact"
+
+on: [ workflow_call ]
+
+jobs:
+  upload:
+    if: github.repository == 'infix-de/testBalloon'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Check out the project'
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Update the documentation's 'dev' version"
+        run: ./gradlew documentationWebsiteUpdate
+
+      - name: 'Upload the GitHub Pages artifact'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: documentation/website/distribution

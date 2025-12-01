@@ -3,7 +3,7 @@
 ### Migration from TestBalloon 0.7.x
 
 * For Android local (host-based/unit) tests:
-    1. Remove the `-jvm` suffix from every dependency `"de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion"`.
+    1. Remove the `-jvm` suffix from each dependency `"de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion"`.
     2. Add a dependency on JUnit 4: `"junit:junit:4.13.2"`
 
 ### Changes
@@ -49,7 +49,7 @@ TestBalloon release variants:
 
 * A lot of effort has been invested into making this release even more robust: TestBalloon has mastered **intensive internal edge-case testing** and **real-world test sets of several hundred thousand up to almost 2 million tests**.
 
-* An **extensive documentation site** is available at https://infix-de.github.io/testBalloon/ along with guidance on [effective testing](https://infix-de.github.io/testBalloon/how-to/effective-testing/).
+* An **extensive documentation site** is available at https://infix-de.github.io/testBalloon/ along with guidance on [effective testing](https://infix-de.github.io/testBalloon/0.7.0/how-to/effective-testing/).
 
 * The **API** has been undergone some scrutiny to use more precise language and make everything **as intuitive as possible**. As a result, there is some migration required.
 
@@ -128,9 +128,9 @@ The normal operation is to choose one or the other, depending on whether tests r
 
 #### Conditional tag-based testing
 
-Custom environment variables can now control test runs on all targets. This also enables [conditional tag-based test selection](https://infix-de.github.io/testBalloon/how-to/effective-testing/#conditional-tag-based-testing).
+Custom environment variables can now control test runs on all targets. This also enables [conditional tag-based test selection](https://infix-de.github.io/testBalloon/0.7.0/how-to/effective-testing/#conditional-tag-based-testing).
 
-Environment variables will also be propagated to browsers [if they are declared browser-safe](https://infix-de.github.io/testBalloon/getting-started/integration/#browser-environment-variables).
+Environment variables will also be propagated to browsers [if they are declared browser-safe](https://infix-de.github.io/testBalloon/0.7.0/getting-started/integration/#browser-environment-variables).
 
 #### Other
 
@@ -138,7 +138,7 @@ Environment variables will also be propagated to browsers [if they are declared 
 * Test suites without children now trigger an error. `TestConfig.addPermits(TestPermit.SUITE_WITHOUT_CHILDREN)` suppresses the error.
 * Test element wrappers which do not invoke their inner element action now trigger an error. `TestConfig.addPermits(TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION)` suppresses the error.
 * Test filtering now _removes_ test elements from the hierarchy instead of _disabling_ them. This greatly speeds up running selected tests from very large test sets, as the reporting infrastructure (IntelliJ, Gradle) previously slowed things down.
-* The `testTimeout` property set via [TestConfig.testScope](https://infix-de.github.io/testBalloon/api/html/testBalloon-framework-core/de.infix.testBalloon.framework.core/test-scope.html)'s `timeout` parameter is now accessible (experimental). This makes it possible to create a [Compose Multiplatform test function](https://infix-de.github.io/testBalloon/how-to/effective-testing/#a-ui-test-with-compose-multiplatform) which conveniently inherits the timeout.
+* The `testTimeout` property set via [TestConfig.testScope](https://infix-de.github.io/testBalloon/0.7.0/api/testBalloon-framework-core/de.infix.testBalloon.framework.core/test-scope.html)'s `timeout` parameter is now accessible (experimental). This makes it possible to create a [Compose Multiplatform test function](https://infix-de.github.io/testBalloon/0.7.0/how-to/effective-testing/#a-ui-test-with-compose-multiplatform) which conveniently inherits the timeout.
 
 ### Fixes
 

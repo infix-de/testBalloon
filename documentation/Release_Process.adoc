@@ -8,11 +8,15 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 
 ==== Update documentation
 
-. Update the API reference: `gradlew dokkaGenerateHtml`
-. Serve the website locally: `gradlew docSiteServe`
+. Update the version in xref:../gradle.properties[gradle.properties].
+. Update documentation contents.
+. Update the xref:../CHANGELOG.md[CHANGELOG].
+. Update the documentation website: `gradlew documentationWebsiteUpdate -Plocal.documentation.useProjectVersion=true`
+. Serve the website locally: `gradlew documentationWebsiteServiceStart`
 . Verify the API reference contents.
 . Verify documentation contents.
-. Prepare release documentation (breaking changes, what's new, what's fixed, other).
+. Migrate the documentation to the actual version: `gradlew documentationWebsiteMigrateVersion`
+. Update the documentation website (next `dev` version): `gradlew documentationWebsiteUpdate`
 
 ==== Prepare a release branch for a Kotlin version
 

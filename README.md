@@ -20,22 +20,22 @@ TestBalloon has a unique combination of characteristics which make it 🌋 power
 
 For details and quick start information, please visit [TestBalloon's documentation](https://infix-de.github.io/testBalloon/).
 
-To find out more about why to use TestBalloon, [look here](https://infix-de.github.io/testBalloon/overview/why/).
+To find out more about why to use TestBalloon, [look here](https://infix-de.github.io/testBalloon/latest/overview/why/).
 
-See also these [tips on how to test effectively](https://infix-de.github.io/testBalloon/how-to/effective-testing/).
+See also these [tips on how to test effectively](https://infix-de.github.io/testBalloon/latest/how-to/effective-testing/).
 
 ### Kotlin Multiplatform
 
-![TestBalloon example test run – Kotlin Multiplatform](documentation/site/docs/overview/assets/example-test-run-kmp-light.png#gh-light-mode-only)
-![TestBalloon example test run – Kotlin Multiplatform](documentation/site/docs/overview/assets/example-test-run-kmp-dark.png#gh-dark-mode-only)
+![TestBalloon example test run – Kotlin Multiplatform](documentation/website/docs/overview/assets/example-test-run-kmp-light.png#gh-light-mode-only)
+![TestBalloon example test run – Kotlin Multiplatform](documentation/website/docs/overview/assets/example-test-run-kmp-dark.png#gh-dark-mode-only)
 
 ### Android Device test
 
 <details>
   <summary>Android Device test example</summary>
 
-![TestBalloon example test run – Android Device](documentation/site/docs/overview/assets/example-test-run-android-device-light.png#gh-light-mode-only)
-![TestBalloon example test run – Android Device](documentation/site/docs/overview/assets/example-test-run-android-device-dark.png#gh-dark-mode-only)
+![TestBalloon example test run – Android Device](documentation/website/docs/overview/assets/example-test-run-android-device-light.png#gh-light-mode-only)
+![TestBalloon example test run – Android Device](documentation/website/docs/overview/assets/example-test-run-android-device-dark.png#gh-dark-mode-only)
 </details>
 
 ### Android Local test
@@ -43,15 +43,15 @@ See also these [tips on how to test effectively](https://infix-de.github.io/test
 <details>
   <summary>Android Local test example</summary>
 
-![TestBalloon example test run – Android Local](documentation/site/docs/overview/assets/example-test-run-android-local-light.png#gh-light-mode-only)
-![TestBalloon example test run – Android Local](documentation/site/docs/overview/assets/example-test-run-android-local-dark.png#gh-dark-mode-only)
+![TestBalloon example test run – Android Local](documentation/website/docs/overview/assets/example-test-run-android-local-light.png#gh-light-mode-only)
+![TestBalloon example test run – Android Local](documentation/website/docs/overview/assets/example-test-run-android-local-dark.png#gh-dark-mode-only)
 </details>
 
 ## Documentation
 
 Please visit [TestBalloon's documentation](https://infix-de.github.io/testBalloon/) with
 
-* [quick start information](https://infix-de.github.io/testBalloon/getting-started/first-steps/),
-* a [how-to guide](https://infix-de.github.io/testBalloon/how-to/effective-testing/),
-* a [complete API reference](https://infix-de.github.io/testBalloon/api/html/),
+* [quick start information](https://infix-de.github.io/testBalloon/latest/getting-started/first-steps/),
+* a [how-to guide](https://infix-de.github.io/testBalloon/latest/how-to/effective-testing/),
+* a [complete API reference](https://infix-de.github.io/testBalloon/latest/api/),
 * and more.

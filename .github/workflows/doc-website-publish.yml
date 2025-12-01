@@ -1,4 +1,4 @@
-name: 'Publish the doc site'
+name: 'Publish the documentation website artifact'
 on: [ workflow_call ]
 
 concurrency:
@@ -6,7 +6,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  publish:
     if: github.repository == 'infix-de/testBalloon'
 
     runs-on: ubuntu-latest
@@ -16,6 +16,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: 'Deploy to GitHub Pages'
+      - name: 'Deploy uploaded artifact to GitHub Pages'
         id: deployment
         uses: actions/deploy-pages@v4

@@ -120,7 +120,7 @@ Kotest has 44 mechanisms to track and influence tests:
 * 14 "simple extensions", and
 * 16 "advanced extensions".
 
-TestBalloon's [TestConfig builder](/testBalloon/api/html/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html) provides 4 mechanisms which achieve the same:
+TestBalloon's [TestConfig builder](../../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html) provides 4 mechanisms which achieve the same:
 
 * two functions: `aroundEach()` and `traversal()`,
 * two convenience variants: `aroundAll()` and `aroundEachTest()`.

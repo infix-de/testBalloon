@@ -35,6 +35,6 @@ This documentation is organized as follows:
 
 * [Getting started](getting-started/first-steps.md) introduces TestBalloon's capabilities one by one.
 * The [How-to guide](how-to/effective-testing.md) contains guidance about effective testing and migrating to TestBalloon.
-* The [API Reference](api/html) provides comprehensive documentation for TestBalloon's public API.
+* The [API Reference](api/index.html) provides comprehensive documentation for TestBalloon's public API.
 
 There are [Support](support.md) touchpoints and an incubating selection of [Articles](articles.md) on TestBalloon.

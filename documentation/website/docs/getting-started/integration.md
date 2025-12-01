@@ -6,7 +6,7 @@ TestBalloon has a unified API for all Kotlin target platforms, residing in the `
 
 TestBalloon supports multi-level nesting of test suites and [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on all platforms, even where the underlying infrastructure does not.
 
-**Runtime information** and **environment variables** are available on all platforms via the global `testPlatform` variable and its [`TestPlatform`](/testBalloon/api/html/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-platform/index.html) interface.
+**Runtime information** and **environment variables** are available on all platforms via the global `testPlatform` variable and its [`TestPlatform`](../../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-platform/index.html) interface.
 
 The following sections provide an overview about TestBalloon's integration with its various platforms and build tooling. They are not meant to be exhaustive, but highlight selected details.
 

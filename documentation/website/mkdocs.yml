@@ -1,5 +1,5 @@
 site_name: TestBalloon
-site_dir: build
+site_dir: distribution/dev
 site_url: https://infix-de.github.io/testBalloon/
 site_description: 'TestBalloon – a next generation Kotlin Multiplatform test framework'
 
@@ -24,7 +24,7 @@ nav:
           - …from kotlin-test 🚧: how-to/migrating-from-kotlin-test.md
   - Articles: articles.md
   - Support: support.md
-  - API Reference: api/html/index.html
+  - API Reference: api/index.html
 
 theme:
   name: material
@@ -69,7 +69,7 @@ theme:
 
 repo_url: https://github.com/infix-de/testBalloon
 repo_name: infix-de/testBalloon
-edit_uri: edit/main/documentation/site/docs/
+edit_uri: edit/main/documentation/website/docs/
 
 copyright: >
   Copyright &copy; 2025 infix Software-Systeme GmbH –

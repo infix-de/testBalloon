@@ -1,0 +1,21 @@
+name: 'Deploy the documentation website'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'documentation/website/distribution/**'
+
+jobs:
+  upload:
+    uses: ./.github/workflows/doc-website-upload.yml
+
+  publish:
+    needs: [ upload ]
+    uses: ./.github/workflows/doc-website-publish.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

@@ -6,7 +6,9 @@ on:
     branches:
       - 'main'
     paths:
-      - 'documentation/website/distribution/**'
+      - 'documentation/website/**'
+      - 'testBalloon-framework-core/**'
+      - 'testBalloon-framework-shared/**'
 
 jobs:
   upload:

@@ -149,7 +149,7 @@ tasks {
         }
     }
 
-    val documentationWebsiteUpdate by registering(Exec::class) {
+    register<Exec>("documentationWebsiteUpdate") {
         group = "documentation"
         description = "Updates 'distribution' with main documentation and the API reference."
 
@@ -202,7 +202,7 @@ tasks {
             linkSource.deleteIfExists()
             Files.createSymbolicLink(linkSource, Path("../$apiVersionsName") / newApiVersion)
 
-            println("The API reference was created for version '$newApiVersion'.")
+            println("The API reference will be created for version '$newApiVersion'.")
         }
     }
 

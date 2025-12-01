@@ -1,0 +1,9 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:testBalloon-framework-core
+de.infix.testBalloon.framework.core
+de.infix.testBalloon.framework.core.internal
+module:testBalloon-framework-shared
+de.infix.testBalloon.framework.shared
+de.infix.testBalloon.framework.shared.internal

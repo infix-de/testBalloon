@@ -12,7 +12,7 @@ TestBalloon combines
 
 1. Parameterized tests, multi-level hierarchy, coroutine context inheritance, deep parallelism, fixtures, expressive names, and a scope-friendly DSL-based API.
 2. TestBalloon integrates thoroughly with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
-3. TestBalloon supports all Kotlin target platforms (JVM, JS, WebAssembly, Android local tests, Android device tests, Linux, Windows, iOS, macOS and other Apple targets).
+3. TestBalloon supports all Kotlin target platforms (JVM, JS, WebAssembly, Android host-side tests, Android device-side tests, Linux, Windows, iOS, macOS and other Apple targets).
 
 ## Empowering
 

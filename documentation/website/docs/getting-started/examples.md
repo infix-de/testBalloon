@@ -8,11 +8,11 @@ The TestBalloon repository contains examples covering typical use cases:
     * concurrency,
     * other configurations available via `TestConfig`.
 * [Using TestBalloon for an **Android app**](https://github.com/infix-de/testBalloon/tree/main/examples/android/build.gradle.kts), containing
-    * local tests (a.k.a. host-based tests, unit tests),
-    * device tests (a.k.a. instrumented tests),
+    * host-side tests (a.k.a. unit tests),
+    * device-side tests (a.k.a. instrumented tests),
     * using JUnit 4 rules, and
     * a [**Jetpack Compose** UI test](https://github.com/infix-de/testBalloon/tree/main/examples/android/src/androidTest/kotlin/com/example/InstrumentedComposeTestsWithTestBalloon.kt).
 * [Using TestBalloon for a **Kotlin Multiplatform _plus_ Android library**](https://github.com/infix-de/testBalloon/tree/main/examples/multiplatform-library-with-android), containing
-    * local (host-based, unit) tests,
-    * device (instrumented) tests.
+    * host-side tests (a.k.a. unit tests),
+    * device-side tests (a.k.a. instrumented tests).
 * [Using TestBalloon with **Kotest assertions**](https://github.com/infix-de/testBalloon/tree/main/examples/with-kotest-assertions).

@@ -168,7 +168,7 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
 
         Description.createTestDescription(
             testElementParent.testElementPath.fullyQualifiedReportingName.printable(),
-            displayName.printable(), // Guard against a slash crashing Android Device tests.
+            displayName.printable(), // Guard against a slash crashing Android device-side tests.
             Category(TestBalloonJUnit4Runner::class) // Support JUnit 4 runner selection via 'includeCategories'.
         )
     }

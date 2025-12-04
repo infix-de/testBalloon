@@ -74,13 +74,13 @@ dependencies {
     // Material Design 3
     implementation("androidx.compose.material3:material3")
 
-    // required for local tests with TestBalloon outside this project:
+    // required for host-side tests with TestBalloon outside this project:
     //     testImplementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
     // instead of this project-internal dependency:
     testImplementation(projects.testBalloonFrameworkCore)
     testImplementation(libs.junit.junit4)
 
-    // required for instrumented tests with TestBalloon outside this project:
+    // required for device-side tests with TestBalloon outside this project:
     //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
     // instead of this project-internal dependency:
     androidTestImplementation(projects.testBalloonFrameworkCore)

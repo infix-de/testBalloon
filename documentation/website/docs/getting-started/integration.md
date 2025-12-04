@@ -27,10 +27,10 @@ TestBalloon fully integrates with the Kotlin Gradle Plugin ([Multiplatform](http
 
 #### Test selection (filtering)
 
-TestBalloon supports the usual [Gradle test task filtering](https://docs.gradle.org/current/userguide/java_testing.html#test_filtering) options for all Kotlin Multiplatform targets plus Android local (host-based) tests.(1)
+TestBalloon supports the usual [Gradle test task filtering](https://docs.gradle.org/current/userguide/java_testing.html#test_filtering) options for all Kotlin Multiplatform targets plus Android host-side (unit) tests.(1)
 { .annotate }
 
-1. Android device (instrumented) tests do not use Gradle's filtering options since the AGP provides them as _verification_ tasks, not _test_ tasks.
+1. Android device-side (instrumented) tests do not use Gradle's filtering options since the AGP provides them as _verification_ tasks, not _test_ tasks.
 
 Test selection accepts the pipe `|` character to separate test elements. This is a valid test invocation:
 
@@ -44,7 +44,7 @@ Alternatively, TestBalloon's own south-east arrow `↘` can be used, or a custom
 
     IntelliJ IDEA's run configurations mess with test filtering via `--tests`. In this case, use the `TESTBALLOON_INCLUDE_PATTERNS` environment variable instead, like `TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite|inner suite|*`.
 
-To use test selection with **Android device (instrumented) tests**, you have these options:
+To use test selection with **Android device-side (instrumented) tests**, you have these options:
 
 1. In the IDE's run configuration, use the **instrumentation argument** `TESTBALLOON_INCLUDE_PATTERNS` with the pattern as its value.
 
@@ -100,18 +100,18 @@ TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-paral
 
 TestBalloon integrates with Android's test infrastructure, the [Android Gradle Plugin (AGP)](https://developer.android.com/build/releases/gradle-plugin), and the [Android Gradle Library Plugin for KMP](https://developer.android.com/kotlin/multiplatform/plugin).
 
-### Local tests
+### Host-side (unit) tests
 
-TestBalloon supports Android local (host-based) tests via Android's JUnit 4 runner. Other (non-TestBalloon) JUnit-based tests can execute alongside TestBalloon in the same module.
+TestBalloon supports Android host-side (unit) tests via Android's JUnit 4 runner. Other (non-TestBalloon) JUnit-based tests can execute alongside TestBalloon in the same module.
 
 TestBalloon supports
 
 * JUnit 4 test rules via its `testWithJUnit4Rule()` function,
 * [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) and tests running in parallel.
 
-### Device (instrumented) tests
+### Device-side (instrumented) tests
 
-TestBalloon supports Android device tests via Android's JUnit 4 runner. Other (non-TestBalloon) JUnit-based tests can execute alongside TestBalloon in the same module.
+TestBalloon supports Android device-side tests via Android's JUnit 4 runner. Other (non-TestBalloon) JUnit-based tests can execute alongside TestBalloon in the same module.
 
 TestBalloon supports
 
@@ -120,7 +120,7 @@ TestBalloon supports
 
 #### Environment variables {#android-device-environment-variables}
 
-For Android device tests, TestBalloon provides simulated environment variables via instrumentation arguments. To set them, you have these options:
+For Android device-side tests, TestBalloon provides simulated environment variables via instrumentation arguments. To set them, you have these options:
 
 1. In the IDE's run configuration, use the **instrumentation argument** with the variable name and value.
 

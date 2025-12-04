@@ -70,7 +70,7 @@ kotlin {
 
         named("androidHostTest") {
             dependencies {
-                // required for local tests with TestBalloon outside this project:
+                // required for host-side tests with TestBalloon outside this project:
                 //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
                 // instead of this project-internal dependency:
                 implementation(projects.testBalloonFrameworkCore)
@@ -80,7 +80,7 @@ kotlin {
 
         named("androidDeviceTest") {
             dependencies {
-                // required for instrumented tests with TestBalloon outside this project:
+                // required for device-side tests with TestBalloon outside this project:
                 //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
                 // instead of this project-internal dependency:
                 implementation(projects.testBalloonFrameworkCore)

@@ -117,7 +117,7 @@ private fun Project.configureTestTasks(
         }
     }
 
-    val androidLocalTestClassRegex = testBalloonProperties.androidLocalTestClassRegex
+    val androidLocalTestClassRegex = testBalloonProperties.androidHostSideTestClassRegex
     val junit4AutoIntegrationEnabled = testBalloonProperties.junit4AutoIntegrationEnabled ?: true
     val testBalloonPriorityIncludePatternsExist by lazy {
         System.getenv(EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name)?.ifEmpty { null } != null

@@ -2,15 +2,15 @@
 
 ### Migration from TestBalloon 0.7.x
 
-* For Android local (host-based/unit) tests:
+* For Android host-side (unit) tests:
     1. Remove the `-jvm` suffix from each dependency `"de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion"`.
     2. Add a dependency on JUnit 4: `"junit:junit:4.13.2"`
 
 ### Changes
 
-* Android local tests (a.k.a. host-based tests, a.k.a. unit tests) now correctly use JUnit 4 instead of JUnit platform, enabling access to JUnit 4 rules.
+* Android host-side tests (a.k.a. unit tests) now correctly use JUnit 4 instead of JUnit platform, enabling access to JUnit 4 rules.
 * Running individual tests from gutter icons and cross-framework test filtering is now supported with multiple test frameworks in the same module for
-    * Android local tests (coexistence with other JUnit 4 runners),
+    * Android host-side tests (coexistence with other JUnit 4 runners),
     * JVM tests (coexistence with other JUnit Platform-based frameworks like JUnit Jupiter).
 * The consistency of file-based reports across test platforms was improved.
 * Configuring concurrent invocation now disables `TestScope`, avoiding possible hangups due to thread starvation. (#49)

@@ -50,11 +50,11 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val browserTestTaskRegex by regexProperty("""BrowserTest$""")
 
     /**
-     * Name pattern for Android local (a.k.a. host-based, a.k.a. unit) test task classes.
+     * Name pattern for Android host-side (a.k.a. unit) test task classes.
      *
      * These tasks require Android-specific JUnit 4 integration instead of JUnit platform.
      */
-    val androidLocalTestClassRegex by regexProperty(
+    val androidHostSideTestClassRegex by regexProperty(
         """^com\.android\.build\.gradle\.tasks\.factory\.AndroidUnitTest$"""
     )
 

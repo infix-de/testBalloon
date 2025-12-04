@@ -204,7 +204,7 @@ The outcome:
 TestBalloon provides the option of using environment variables to control test execution on all Kotlin targets.(1)
 { .annotate }
 
-1. JS browsers and Android (emulated or physical) devices do not natively support environment variables. TestBalloon provides a (simulated) environment for those. For Android device tests, you need to set them via [instrumentation arguments](../getting-started/integration.md/#android-device-environment-variables). For JS browsers, you need to declare them as [browser-safe](../getting-started/integration.md/#browser-environment-variables).
+1. JS browsers and Android (emulated or physical) devices do not natively support environment variables. TestBalloon provides a (simulated) environment for those. For Android device-side tests, you need to set them via [instrumentation arguments](../getting-started/integration.md/#android-device-environment-variables). For JS browsers, you need to declare them as [browser-safe](../getting-started/integration.md/#browser-environment-variables).
 
 If you define tags(1) and a `TestConfig` extension like this,
 { .annotate }

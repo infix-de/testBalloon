@@ -32,7 +32,7 @@
 
 3. Add extra dependencies for Android (optional):
 
-    === "Kotlin Multiplatform with Android local tests"
+    === "Kotlin Multiplatform with Android host-side tests"
 
         ```kotlin
         named("androidHostTest") { // (1)!
@@ -45,7 +45,7 @@
 
         1. Using the `com.android.kotlin.multiplatform.library` plugin.
 
-    === "Kotlin Multiplatform with Android instrumented tests"
+    === "Kotlin Multiplatform with Android device-side tests"
 
         ```kotlin
         named("androidDeviceTest") { // (1)!
@@ -58,7 +58,7 @@
 
         1. Using the `com.android.kotlin.multiplatform.library` plugin.
 
-    === "Android-only local tests"
+    === "Android-only host-side tests"
 
         ```kotlin
         dependencies {
@@ -67,7 +67,7 @@
         }
         ```
 
-    === "Android-only instrumented tests"
+    === "Android-only device-side tests"
 
         ```kotlin
         dependencies {

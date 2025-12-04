@@ -16,7 +16,7 @@ TestBalloon has a unique combination of characteristics which make it 🌋 power
 
 ✅️ **Deep native integration** with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
 
-✅️ Support for **all Kotlin target platforms**: JVM, JS, WebAssembly, Native (Linux, Windows, iOS, macOS and other Apple targets), Android local tests, Android device tests.
+✅️ Support for **all Kotlin target platforms**: JVM, JS, WebAssembly, Native (Linux, Windows, iOS, macOS and other Apple targets), Android host-side tests, Android device-side tests.
 
 For details and quick start information, please visit [TestBalloon's documentation](https://infix-de.github.io/testBalloon/).
 
@@ -29,22 +29,22 @@ See also these [tips on how to test effectively](https://infix-de.github.io/test
 ![TestBalloon example test run – Kotlin Multiplatform](documentation/website/docs/overview/assets/example-test-run-kmp-light.png#gh-light-mode-only)
 ![TestBalloon example test run – Kotlin Multiplatform](documentation/website/docs/overview/assets/example-test-run-kmp-dark.png#gh-dark-mode-only)
 
-### Android Device test
+### Android device-side test
 
 <details>
-  <summary>Android Device test example</summary>
+  <summary>Android device-side test example</summary>
 
 ![TestBalloon example test run – Android Device](documentation/website/docs/overview/assets/example-test-run-android-device-light.png#gh-light-mode-only)
 ![TestBalloon example test run – Android Device](documentation/website/docs/overview/assets/example-test-run-android-device-dark.png#gh-dark-mode-only)
 </details>
 
-### Android Local test
+### Android host-side test
 
 <details>
-  <summary>Android Local test example</summary>
+  <summary>Android host-side test example</summary>
 
-![TestBalloon example test run – Android Local](documentation/website/docs/overview/assets/example-test-run-android-local-light.png#gh-light-mode-only)
-![TestBalloon example test run – Android Local](documentation/website/docs/overview/assets/example-test-run-android-local-dark.png#gh-dark-mode-only)
+![TestBalloon example test run – Android Host](documentation/website/docs/overview/assets/example-test-run-android-host-light.png#gh-light-mode-only)
+![TestBalloon example test run – Android Host](documentation/website/docs/overview/assets/example-test-run-android-host-dark.png#gh-dark-mode-only)
 </details>
 
 ## Documentation

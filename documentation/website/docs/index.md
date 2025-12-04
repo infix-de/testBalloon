@@ -6,7 +6,7 @@ TestBalloon has a unique combination of characteristics which make it powerful, 
 
 - [x] **State-of-the-art capabilities**: Parameterized tests, multi-level hierarchy, coroutine context inheritance, deep parallelism, fixtures, expressive names, and a scope-friendly DSL-based API.
 - [x] **Deep native integration** with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
-- [x] Support for **all Kotlin target platforms** (JVM, JS, WebAssembly, Native(1), Android local tests, Android device tests).
+- [x] Support for **all Kotlin target platforms** (JVM, JS, WebAssembly, Native(1), Android host-side tests, Android device-side tests).
 
 </div>
 
@@ -22,10 +22,10 @@ TestBalloon has a unique combination of characteristics which make it powerful, 
     ![TestBalloon example test run – Android Device](overview/assets/example-test-run-android-device-light.png#only-light)
     ![TestBalloon example test run – Android Device](overview/assets/example-test-run-android-device-dark.png#only-dark)
 
-=== "Android Local"
+=== "Android Host"
 
-    ![TestBalloon example test run – Android Local](overview/assets/example-test-run-android-local-light.png#only-light)
-    ![TestBalloon example test run – Android Local](overview/assets/example-test-run-android-local-dark.png#only-dark)
+    ![TestBalloon example test run – Android Host](overview/assets/example-test-run-android-host-light.png#only-light)
+    ![TestBalloon example test run – Android Host](overview/assets/example-test-run-android-host-dark.png#only-dark)
 
 To find out more about why to use TestBalloon, [look here](overview/why.md).
 

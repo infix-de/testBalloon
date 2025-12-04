@@ -19,7 +19,7 @@ KGP's and AGP's test tasks are structured as follows:
 * `AbstractTestTask` – provides test filtering, progress notifications, progress listeners, logging, reporting in HTML and JUnit XML formats
 ** https://docs.gradle.org/current/userguide/java_testing.html[`Test`] (Gradle) – invokes specific JVM test frameworks like JUnit 4, JUnit Platform
 *** https://github.com/JetBrains/kotlin/blob/b5da7ecd937518adc7859c62be855727560f0b44/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/jvm/tasks/KotlinJvmTest.kt[`KotlinJvmTest`] – uses Gradle ``Test``'s invocation and reporting, but appends `[$targetName]` to a test's display name and replaces `$` signs with `.` in class names
-*** `AndroidUnitTest` – runs https://developer.android.com/training/testing/local-tests[Android local tests] (a.k.a. host-side tests, a.k.a. unit tests) with an https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#access-context[application Context] a https://developer.android.com/training/testing/local-tests#mockable-library[mockable Android library] via JUnit 4
+*** `AndroidUnitTest` – runs https://developer.android.com/training/testing/local-tests[Android host-side tests] (a.k.a. host-side tests, a.k.a. unit tests) with an https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#access-context[application Context] a https://developer.android.com/training/testing/local-tests#mockable-library[mockable Android library] via JUnit 4
 ** https://github.com/JetBrains/kotlin/blob/8b9a990587b1afeb938a77ab096602bcb56848a6/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/tasks/KotlinTest.kt[`KotlinTest`]
 *** https://github.com/JetBrains/kotlin/blob/8b9a990587b1afeb938a77ab096602bcb56848a6/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest.kt[`KotlinJsTest`] – runs JS and Wasm tests locally via an engine like Node.js, or remotely via https://karma-runner.github.io/6.4/intro/how-it-works.html[Karma]
 *** https://github.com/JetBrains/kotlin/blob/8b9a990587b1afeb938a77ab096602bcb56848a6/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeTest.kt[`KotlinNativeTest`]
@@ -33,13 +33,13 @@ KGP's and AGP's test tasks are structured as follows:
 * `KotlinKarma` – invokes a Web browser, runs JS tests there via https://mochajs.org/[Mocha]
 * `KotlinMocha` – runs JS tests on Node.js via Mocha
 
-===== Android Device Tests (a.k.a. Instrumented Tests)
+===== Android Device-Side Tests (a.k.a. Instrumented Tests)
 
-For device tests, AGP uses tasks outside Gradle's `AbstractTestTask` class hierarchy:
+For device-side tests, AGP uses tasks outside Gradle's `AbstractTestTask` class hierarchy:
 
 * `AndroidTestTask`
-** `DeviceProviderInstrumentTestTask` – runs Android device tests (instrumented tests) on a connected device
-** `ManagedDeviceInstrumentationTestTask` – runs Android device tests (instrumented tests) on a Gradle-managed device
+** `DeviceProviderInstrumentTestTask` – runs Android device-side tests (instrumented tests) on a connected device
+** `ManagedDeviceInstrumentationTestTask` – runs Android device-side tests (instrumented tests) on a Gradle-managed device
 
 ==== Test Reporting
 
@@ -128,7 +128,7 @@ The reporting stack (KGP, AGP, Gradle, IDE) exposes the following quirks in the 
 |⚠️
 |⚠️
 
-|Android Local (Unit)
+|Android Host (Unit)
 |🚫
 |🚫
 |

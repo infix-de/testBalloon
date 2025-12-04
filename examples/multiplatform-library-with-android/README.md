@@ -10,7 +10,7 @@
 
 * `gradlew :examples:multiplatform-library-with-android:cleanJvmTest :examples:multiplatform-library-with-android:jvmTest --tests "*pass" --rerun-tasks`
 
-### Android local
+### Android Host
 
 * `gradlew :examples:multiplatform-library-with-android:cleanTestAndroidHostTest :examples:multiplatform-library-with-android:testAndroidHostTest --rerun-tasks`
 

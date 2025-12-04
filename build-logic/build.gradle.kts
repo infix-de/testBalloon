@@ -45,7 +45,6 @@ gradlePlugin {
             "buildLogic.multiplatform" to "BuildLogicMultiplatformPlugin",
             "buildLogic.multiplatform-excluding-wasm-wasi" to "BuildLogicMultiplatformExcludingWasmWasiPlugin",
             "buildLogic.multiplatform-plus-android-library" to "BuildLogicMultiplatformPlusAndroidLibraryPlugin",
-            "buildLogic.multiplatform-plus-android-application" to "BuildLogicMultiplatformAndroidApplicationPlugin",
             "buildLogic.android-application" to "BuildLogicAndroidApplicationPlugin",
             "buildLogic.publishing-base" to "BuildLogicPublishingBasePlugin",
             "buildLogic.publishing-jvm" to "BuildLogicPublishingJvmPlugin",

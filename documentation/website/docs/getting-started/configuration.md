@@ -102,7 +102,7 @@ You'll be basing a custom extension on one or more existing `TestConfig` functio
 * `TestConfig.aroundEach`
 * `TestConfig.aroundEachTest`
 
-The [`TestConfig` API documentation](../../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html) provides a complete list.
+The [`TestConfig` API documentation](../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html) provides a complete list.
 
 ## Global configuration
 

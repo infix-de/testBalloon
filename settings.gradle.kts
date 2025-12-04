@@ -29,10 +29,8 @@ include(":examples:with-parameterize")
 include(":examples:android")
 include(":examples:jvm-only")
 include(":examples:multiplatform-library-with-android")
-include(":examples:multiplatform-with-android")
 
 include(":comparisons:using-kotlin-test")
-include(":comparisons:using-kotlin-test-multiplatform-with-android")
 include(":comparisons:using-testBalloon")
 
 include(":experiments")

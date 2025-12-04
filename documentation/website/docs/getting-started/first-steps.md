@@ -35,7 +35,7 @@
     === "Kotlin Multiplatform with Android local tests"
 
         ```kotlin
-        androidUnitTest {
+        named("androidHostTest") { // (1)!
             dependencies {
                 implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
                 implementation("junit:junit:$junit4Version")
@@ -43,16 +43,20 @@
         }
         ```
 
+        1. Using the `com.android.kotlin.multiplatform.library` plugin.
+
     === "Kotlin Multiplatform with Android instrumented tests"
 
         ```kotlin
-        androidInstrumentedTest {
+        named("androidDeviceTest") { // (1)!
             dependencies {
                 implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
                 implementation("androidx.test:runner:$androidxRunnerVersion")
             }
         }
         ```
+
+        1. Using the `com.android.kotlin.multiplatform.library` plugin.
 
     === "Android-only local tests"
 
@@ -74,11 +78,7 @@
 
     !!! info
 
-        The repository contains configuration examples for [Android](https://github.com/infix-de/testBalloon/tree/main/examples/android/build.gradle.kts), [Multiplatform with Android](https://github.com/infix-de/testBalloon/tree/main/examples/multiplatform-with-android/build.gradle.kts) and [Multiplatform library with Android](https://github.com/infix-de/testBalloon/tree/main/examples/multiplatform-library-with-android/build.gradle.kts).
-
-    !!! note
-
-        Google is deprecating the `com.android.application` plugin in favor of `com.android.kotlin.multiplatform.library`. Android-KMP integration is currently a moving target and there are multiple issues, so please test if it meets your needs.
+        The repository contains configuration examples for [Android](https://github.com/infix-de/testBalloon/tree/main/examples/android/build.gradle.kts) and [Multiplatform library with Android](https://github.com/infix-de/testBalloon/tree/main/examples/multiplatform-library-with-android/build.gradle.kts).
 
 4. Add a dependency for the assertions library of your choice:
 

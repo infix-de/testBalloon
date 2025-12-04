@@ -8,7 +8,7 @@ Like Kotest, TestBalloon is DSL-based and offers a choice of assertion libraries
 
         [TestBalloon Addons](https://github.com/a-sit-plus/testballoon-addons) by A-SIT Plus is a ready-to-use library which provides a translation for `FreeSpec`.
 
-* You can **keep your assertion library** (if it is Kotest Assertions, TestBalloon has [an integration for it](../../getting-started/first-steps/#kotest-assertions)).
+* You can **keep your assertion library** (if it is Kotest Assertions, TestBalloon has [an integration for it](../getting-started/first-steps.md/#kotest-assertions)).
 
 ## What needs to change
 
@@ -81,7 +81,7 @@ Code using Kotest's other isolation modes must change to explicit initialization
 
 !!! note
 
-    When migrating existing code, please remember the concepts of [Green code and blue code](../../getting-started/tests-and-suites#green-code-and-blue-code) and [TestBalloon's golden rule](../../getting-started/tests-and-suites#testballoons-golden-rule).
+    When migrating existing code, please remember the concepts of [Green code and blue code](../getting-started/tests-and-suites.md#green-code-and-blue-code) and [TestBalloon's golden rule](../getting-started/tests-and-suites.md#testballoons-golden-rule).
 
 !!! tip
 

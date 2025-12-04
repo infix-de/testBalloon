@@ -68,7 +68,7 @@ To conveniently share state among tests, use a fixture and define a custom DSL f
 ```
 
 1. Use a local class to define a test-specific context.
-2. We can use mutable state here. This is [green code](../../getting-started/tests-and-suites#green-code-and-blue-code) which exists exclusively at test execution time, preserving [TestBalloon's golden rule](../../getting-started/tests-and-suites#testballoons-golden-rule).
+2. We can use mutable state here. This is [green code](../getting-started/tests-and-suites.md#green-code-and-blue-code) which exists exclusively at test execution time, preserving [TestBalloon's golden rule](../getting-started/tests-and-suites.md#testballoons-golden-rule).
 3. Tell the IDE plugin to put test run gutters at the function's call sites.
 4. Redefine the test function locally to use the test-specific context.
 5. Provide the fixture as a context to each test action.
@@ -204,7 +204,7 @@ The outcome:
 TestBalloon provides the option of using environment variables to control test execution on all Kotlin targets.(1)
 { .annotate }
 
-1. JS browsers and Android (emulated or physical) devices do not natively support environment variables. TestBalloon provides a (simulated) environment for those. For Android device tests, you need to set them via [instrumentation arguments](../../getting-started/integration/#android-device-environment-variables). For JS browsers, you need to declare them as [browser-safe](../../getting-started/integration/#browser-environment-variables).
+1. JS browsers and Android (emulated or physical) devices do not natively support environment variables. TestBalloon provides a (simulated) environment for those. For Android device tests, you need to set them via [instrumentation arguments](../getting-started/integration.md/#android-device-environment-variables). For JS browsers, you need to declare them as [browser-safe](../getting-started/integration.md/#browser-environment-variables).
 
 If you define tags(1) and a `TestConfig` extension like this,
 { .annotate }

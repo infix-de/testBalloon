@@ -112,6 +112,7 @@ public final class de/infix/testBalloon/framework/core/TestInvocation : java/lan
 
 public final class de/infix/testBalloon/framework/core/TestPermit : java/lang/Enum {
 	public static final field SUITE_WITHOUT_CHILDREN Lde/infix/testBalloon/framework/core/TestPermit;
+	public static final field TEST_SCOPE_WITH_CONCURRENT_INVOCATION Lde/infix/testBalloon/framework/core/TestPermit;
 	public static final field WRAPPER_WITHOUT_INNER_INVOCATION Lde/infix/testBalloon/framework/core/TestPermit;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lde/infix/testBalloon/framework/core/TestPermit;

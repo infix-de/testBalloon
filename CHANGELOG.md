@@ -13,6 +13,7 @@
     * Android local tests (coexistence with other JUnit 4 runners),
     * JVM tests (coexistence with other JUnit Platform-based frameworks like JUnit Jupiter).
 * The consistency of file-based reports across test platforms was improved.
+* Configuring concurrent invocation now disables `TestScope`, avoiding possible hangups due to thread starvation. (#49)
 
 ### Fixes
 

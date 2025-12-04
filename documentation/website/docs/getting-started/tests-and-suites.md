@@ -86,7 +86,7 @@ graph LR
 The :testballoon: **test registration phase** is part of TestBalloon's setup: It creates the test element hierarchy, registering test suites, tests and fixtures, and configuring test elements. At the end, it knows exactly what to run. (1)
 { .annotate }
 
-1. TestBalloon is fast to register tests. It can register and configure 1.7 million tests in 7 seconds on a decent Laptop. It also knows shortcuts if only parts of the test element hierarchy have been selected.
+1. TestBalloon is fast to register tests. It can register and configure 1.7 million tests in 7 seconds on a decent Laptop. It also knows shortcuts if only parts of the test element hierarchy have been selected for execution.
 
 !!! info
 

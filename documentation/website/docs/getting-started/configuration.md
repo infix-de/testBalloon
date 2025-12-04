@@ -118,13 +118,13 @@ Tests may have different concurrency, isolation and environmental requirements. 
 
 TestBalloon has a number of predefined compartments:
 
-| Predefined compartment | Configuration of top-level test suites inside the compartment              |
-|--|----------------------------------------------------------------------------|
-| `TestCompartment.Concurrent` | concurrent/parallel invocation                                             |
-| `TestCompartment.Default` | according to `TestSession`'s default configuration                         |
-| `TestCompartment.RealTime` | sequential invocation, on a real-time dispatcher, without `TestScope`      |
-| `TestCompartment.Sequential` | sequential invocation (useful if `TestSession` is configured differently) |
-| `TestCompartment.MainDispatcher` | sequential invocation, with access to a multiplatform `Main` dispatcher    |
+| Predefined compartment           | Configuration of top-level test suites inside the compartment             |
+|----------------------------------|---------------------------------------------------------------------------|
+| `TestCompartment.Concurrent`     | concurrent/parallel invocation, without `TestScope`                       |
+| `TestCompartment.Default`        | according to `TestSession`'s default configuration                        |
+| `TestCompartment.RealTime`       | sequential invocation, on a real-time dispatcher, without `TestScope`     |
+| `TestCompartment.Sequential`     | sequential invocation (useful if `TestSession` is configured differently) |
+| `TestCompartment.MainDispatcher` | sequential invocation, with access to a multiplatform `Main` dispatcher   |
 
 You can use these, or create your own compartments.
 
@@ -166,7 +166,7 @@ The `testConfig` parameter defines the global configuration for the entire compi
 
 Alternatively, or additionally, you can change the test session's `defaultCompartment`.
 
-If all tests only mutate local state(1), you can speed up test execution greatly by choosing `TestCompartment.Concurrent`:
+If all tests only mutate local state(1) and don't need a `TestScope`, you can speed up test execution greatly by choosing `TestCompartment.Concurrent`:
 { .annotate }
 
 1. Ascertain that tests do not share mutable state among each other and do not access global mutable state.

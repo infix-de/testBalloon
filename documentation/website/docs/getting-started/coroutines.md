@@ -52,4 +52,8 @@ All tests use kotlinx.coroutines' [TestScope] by default, including its virtual 
 
     `TestConfig.testScope` can configure the presence of a `TestScope` (and its timeout) for all or part of a test element hierarchy. You can always choose to execute your tests on a standard or custom dispatcher, and with real-time behavior.
 
+!!! warning
+
+    `TestScope` uses `runBlocking` internally, which is incompatible with concurrent execution on a dispatcher using a limited number of threads. The combination can [cause hangups due to thread starvation](https://github.com/Kotlin/kotlinx.coroutines/issues/4579).
+
 [TestScope]: https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/-test-scope.html

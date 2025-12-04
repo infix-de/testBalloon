@@ -407,9 +407,14 @@ private suspend inline fun <SpecificTestElement : TestElement> TestElementExecut
 /**
  * Returns a test configuration which specifies an invocation [mode] for all [TestSuite]s of a [TestElement] hierarchy.
  *
+ * Setting [mode] to [TestInvocation.CONCURRENT] will disable a `TestScope` for the [TestElement] hierarchy.
+ * This is necessary to protect against hangups caused by thread starvation (see issue #49).
+ *
  * Child elements inherit this [mode], unless configured otherwise.
  */
-public fun TestConfig.invocation(mode: TestInvocation): TestConfig = coroutineContext(InvocationContext(mode))
+public fun TestConfig.invocation(mode: TestInvocation): TestConfig = coroutineContext(InvocationContext(mode)).run {
+    if (mode == TestInvocation.CONCURRENT) testScope(isEnabled = false) else this
+}
 
 /**
  * The mode in which a [TestSuite] executes its child [TestElement]s.
@@ -470,7 +475,15 @@ public enum class TestPermit {
     SUITE_WITHOUT_CHILDREN,
 
     /** Accept a wrapper not invoking its inner action, effectively blocking everything inside. */
-    WRAPPER_WITHOUT_INNER_INVOCATION
+    WRAPPER_WITHOUT_INNER_INVOCATION,
+
+    /**
+     * Accept enabling `TestScope` inside a hierarchy with [TestInvocation.CONCURRENT], risking hangups.
+     *
+     * Using `TestScope` with concurrent invocation on a dispatcher with a limited number of threads it known to
+     * cause hangups due to thread starvation (see issue #49).
+     */
+    TEST_SCOPE_WITH_CONCURRENT_INVOCATION
 }
 
 /**
@@ -494,7 +507,7 @@ public fun TestConfig.singleThreaded(): TestConfig = executionWrapping { element
  *
  * Note: Only one main dispatcher may exist at any point in time. Therefore,
  * – this configuration may not be overridden at lower levels of the [TestElement] hierarchy, and
- * - multiple [TestElement] hierarchys with a [mainDispatcher] configuration may not execute concurrently.
+ * - multiple [TestElement] hierarchies with a [mainDispatcher] configuration may not execute concurrently.
  * Child elements inherit the main dispatcher as part of their [CoroutineContext].
  */
 @TestBalloonExperimentalApi
@@ -506,7 +519,7 @@ public fun TestConfig.mainDispatcher(dispatcher: CoroutineDispatcher? = null): T
     }
 
 /**
- * Returns a test configuration which enables/disables a [kotlinx.coroutines.test.TestScope] for a [TestElement] hierarchy.
+ * Returns a test configuration which enables/disables a `TestScope` for a [TestElement] hierarchy.
  *
  * If [isEnabled] is true, [Test]s will run in a [kotlinx.coroutines.test.TestScope] with the given [timeout].
  * Setting [isEnabled] to false will disable a previously enabled `TestScope` setting.
@@ -514,7 +527,17 @@ public fun TestConfig.mainDispatcher(dispatcher: CoroutineDispatcher? = null): T
  * Child elements inherit this setting, unless configured otherwise.
  */
 public fun TestConfig.testScope(isEnabled: Boolean, timeout: Duration = 60.seconds): TestConfig =
-    coroutineContext(TestScopeContext(isEnabled, timeout))
+    executionWrapping { elementAction ->
+        if (isEnabled && TestInvocation.current() == TestInvocation.CONCURRENT) {
+            require(TestPermit.TEST_SCOPE_WITH_CONCURRENT_INVOCATION in parameters.permits) {
+                "$this: an attempt was made to enable a 'TestScope' in combination with concurrent execution.\n" +
+                    "\tThis can cause hangups due to to thread starvation (see issue #49)."
+            }
+        }
+        withContext(TestScopeContext(isEnabled, timeout)) {
+            elementAction()
+        }
+    }
 
 /**
  * A context element, which, when present and enabled, makes a test execute in [kotlinx.coroutines.test.TestScope].

@@ -36,6 +36,7 @@ final enum class de.infix.testBalloon.framework.core/TestInvocation : kotlin/Enu
 
 final enum class de.infix.testBalloon.framework.core/TestPermit : kotlin/Enum<de.infix.testBalloon.framework.core/TestPermit> { // de.infix.testBalloon.framework.core/TestPermit|null[0]
     enum entry SUITE_WITHOUT_CHILDREN // de.infix.testBalloon.framework.core/TestPermit.SUITE_WITHOUT_CHILDREN|null[0]
+    enum entry TEST_SCOPE_WITH_CONCURRENT_INVOCATION // de.infix.testBalloon.framework.core/TestPermit.TEST_SCOPE_WITH_CONCURRENT_INVOCATION|null[0]
     enum entry WRAPPER_WITHOUT_INNER_INVOCATION // de.infix.testBalloon.framework.core/TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION|null[0]
 
     final val entries // de.infix.testBalloon.framework.core/TestPermit.entries|#static{}entries[0]

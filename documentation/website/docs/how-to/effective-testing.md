@@ -57,7 +57,7 @@ To conveniently provide each test with that fresh state, available as a context 
 
 !!! tip
 
-    In this case, tests are fully isolated from each other. They are ideal candidates for concurrent execution.
+    In this case, tests are fully isolated from each other, and don't need a `TestScope`. They are ideal candidates for concurrent execution.
 
 ## Use shared state across multiple tests
 
@@ -81,7 +81,7 @@ To conveniently share state among tests, use a fixture and define a custom DSL f
 
 ### …if all tests avoid non-local mutable state
 
-If you have a module where all tests only mutate local state(1), you can speed up test execution greatly by running them concurrently. To do so, put this declaration anywhere in your test module:
+If you have a module where all tests only mutate local state(1) and don't need a `TestScope`, you can speed up test execution greatly by running them concurrently. To do so, put this declaration anywhere in your test module:
 { .annotate }
 
 1. Ascertain that tests do not share mutable state among each other and do not access global mutable state.
@@ -102,7 +102,7 @@ If you have a module where all tests only mutate local state(1), you can speed u
 
     1. For technical reasons, a compartment assignment must be done lazily.
 
-2. Put top-level test suites, whose test's access non-local mutable state, in the predefined `Sequential` compartment:
+2. Put top-level test suites, whose test's access non-local mutable state or need a `TestScope`, in the predefined `Sequential` compartment:
 
     ```kotlin
     --8<-- "EffectiveTesting.kt:test-suite-with-sequential-compartment"
@@ -114,7 +114,7 @@ TestBalloon will now execute tests in the `Sequential` compartment sequentially,
 
 ### …if only some tests can run concurrently
 
-Put top-level test suites, whose test's can run concurrently, in the predefined `Concurrent` compartment:
+Put top-level test suites, whose test's can run concurrently and don't need a `TestScope`, in the predefined `Concurrent` compartment:
 
 ```kotlin
 --8<-- "EffectiveTesting.kt:test-suite-with-concurrent-compartment"
@@ -122,7 +122,7 @@ Put top-level test suites, whose test's can run concurrently, in the predefined 
 
 1. For technical reasons, a compartment assignment must be done lazily.
 
-TestBalloon will now execute most tests sequentially (by default), and isolate them from those in the `Concurrent` compartment, which run concurrently.
+TestBalloon will now execute most tests sequentially (by default), and isolate them from those in the `Concurrent` compartment, where they run concurrently.
 
 ## A UI test with Jetpack Compose
 

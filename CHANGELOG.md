@@ -15,6 +15,7 @@
 * The consistency of file-based reports across test platforms was improved.
 * Configuring concurrent invocation now disables `TestScope`, avoiding possible hangups due to thread starvation. (#49)
 * Removed examples using the deprecated combination of `com.android.application` and `org.jetbrains.kotlin.multiplatform` Gradle plugins.
+* Migrated to Kotlin 2.3.0-RC2.
 
 ### Fixes
 

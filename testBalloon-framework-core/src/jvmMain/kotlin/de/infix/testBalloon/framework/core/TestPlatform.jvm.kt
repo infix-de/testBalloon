@@ -23,6 +23,7 @@ public object TestPlatformJvm : TestPlatform {
     override fun environment(variableName: String): String? = System.getenv(variableName)
 }
 
+@Deprecated("This function has no compelling use case in testing. Scheduled for removal in TestBalloon 0.8.")
 public actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =
     Dispatchers.IO.limitedParallelism(parallelism)
 

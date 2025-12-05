@@ -8,11 +8,11 @@ import de.infix.testBalloon.framework.core.TestInvocation
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.aroundEachTest
 import de.infix.testBalloon.framework.core.coroutineContext
-import de.infix.testBalloon.framework.core.dispatcherWithParallelism
 import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.TestRegistering
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
@@ -68,13 +68,16 @@ class Database(coroutineScope: CoroutineScope) : AutoCloseable {
 
 fun TestConfig.statisticsReport(): TestConfig = this
 
+private val MyCoroutineContextElement =
+    CoroutineName("MyCoroutineContextElement")
+
 val Other by testSuite {
 // --8<-- [start:concurrency]
     testSuite(
         "let's test concurrency",
         testConfig = TestConfig
             .invocation(TestInvocation.CONCURRENT) // (1)!
-            .coroutineContext(dispatcherWithParallelism(4)) // (2)!
+            .coroutineContext(MyCoroutineContextElement) // (2)!
             .statisticsReport() // (3)!
     ) {
         // ...
@@ -84,7 +87,7 @@ val Other by testSuite {
     // --8<-- [start:custom-test-config-function]
     fun TestConfig.onFourThreadsWithStatistics() = this // (1)!
         .invocation(TestInvocation.CONCURRENT)
-        .coroutineContext(dispatcherWithParallelism(4))
+        .coroutineContext(MyCoroutineContextElement)
         .statisticsReport()
     // --8<-- [end:custom-test-config-function]
 

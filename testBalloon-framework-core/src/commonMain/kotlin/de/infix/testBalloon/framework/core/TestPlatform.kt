@@ -39,6 +39,7 @@ public expect val testPlatform: TestPlatform
  *
  * Use this utility function for testing special cases.
  */
+@Deprecated("This function has no compelling use case in testing. Scheduled for removal in TestBalloon 0.8.")
 public expect fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher
 
 /**

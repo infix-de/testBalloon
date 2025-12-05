@@ -17,6 +17,10 @@
 * Removed examples using the deprecated combination of `com.android.application` and `org.jetbrains.kotlin.multiplatform` Gradle plugins.
 * Migrated to Kotlin 2.3.0-RC2.
 
+### Deprecations
+
+* `dispatcherWithParallelism()` – No compelling use case in testing. Scheduled for removal in TestBalloon 0.8.
+
 ### Fixes
 
 * (JVM-only projects) Incremental compilation will no longer miss tests. (#47)

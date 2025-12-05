@@ -5,19 +5,21 @@ import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestInvocation
 import de.infix.testBalloon.framework.core.coroutineContext
 import de.infix.testBalloon.framework.core.disable
-import de.infix.testBalloon.framework.core.dispatcherWithParallelism
 import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testSuite
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 // Combine concurrent invocation and multithreading by chaining configuration elements.
 
+private val MyCoroutineContextElement = CoroutineName("MyCoroutineContextElement")
+
 val UsingContextElement by testSuite(
     testConfig = TestConfig
         .invocation(TestInvocation.CONCURRENT)
-        .coroutineContext(dispatcherWithParallelism(4))
+        .coroutineContext(MyCoroutineContextElement)
         .statisticsReport() // a custom configuration for reporting
         .chainedWith(
             // Conditionally disable the test suite on single-threaded platforms.

@@ -27,6 +27,10 @@ import kotlin.coroutines.CoroutineContext
  *     // test suite content
  * }
  * ```
+ *
+ * Note: [name] and [displayName] are usually initialized by the compiler plugin, with [name] being the
+ * fully qualified name of the corresponding property and [displayName] being the simple name of that property.
+ * If you provide a [name] explicitly, you are responsible for making it unique within the compilation module.
  */
 @TestRegistering
 public fun testSuite(
@@ -54,6 +58,10 @@ public fun testSuite(
  *     // test suite content
  * }
  * ```
+ *
+ * Note: [name] and [displayName] are usually initialized by the compiler plugin, with [name] being the
+ * fully qualified name of the corresponding property and [displayName] being the simple name of that property.
+ * If you provide a [name] explicitly, you are responsible for making it unique within the compilation module.
  */
 @TestRegistering
 public fun testSuite(

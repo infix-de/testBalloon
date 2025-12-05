@@ -14,7 +14,7 @@ public annotation class TestBalloonInternalApi
 /**
  * Indicates that the function or constructor is invoked by framework-generated code.
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
 @TestBalloonInternalApi
 public annotation class InvokedByGeneratedCode

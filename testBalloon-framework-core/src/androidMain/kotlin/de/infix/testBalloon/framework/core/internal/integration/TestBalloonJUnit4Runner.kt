@@ -10,6 +10,7 @@ import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
 import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.InvokedByGeneratedCode
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
@@ -30,10 +31,11 @@ private val testElementDescriptions = ConcurrentHashMap<TestElement, Description
 /**
  * The [Runner] interfacing with JUnit 4 (Android only).
  *
- * This class is registered via a `@RunWith`-annotated class (see above, it doesn't matter what class is used).
+ * This class is registered via a `@RunWith`-annotated class by compiler-plugin-generated entry point code.
  * JUnit 4 will instantiate this class and invoke its methods.
  */
 @TestBalloonInternalApi
+@InvokedByGeneratedCode
 public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : Runner() {
     internal val sessionDescription by lazy {
         // Trigger the framework's initialization by invoking the `testFrameworkDiscoveryResult` property getter

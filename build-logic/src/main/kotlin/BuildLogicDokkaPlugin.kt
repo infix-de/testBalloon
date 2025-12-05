@@ -23,5 +23,8 @@ class BuildLogicDokkaPlugin : Plugin<Project> {
                 }
             }
         }
+
+        dependencies.add("dokkaPlugin", project(":documentation:dokka-plugin-internal-api-hiding"))
+        dependencies.add("dokkaPlugin", project(":documentation:dokka-plugin-navigation-node-hiding"))
     }
 }

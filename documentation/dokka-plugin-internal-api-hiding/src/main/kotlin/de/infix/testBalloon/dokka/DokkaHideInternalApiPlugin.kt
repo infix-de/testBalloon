@@ -11,17 +11,20 @@ import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
 import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 
-@Suppress("unused")
-class DokkaPluginHideInternalApi : DokkaPlugin() {
+/**
+ * A Dokka plugin which hides symbols annotated with `@TestBalloonInternalApi`.
+ */
+class InternalApiHidingDokkaPlugin : DokkaPlugin() {
+    @Suppress("unused")
     val myFilterExtension by extending {
-        plugin<DokkaBase>().preMergeDocumentableTransformer providing ::HideInternalApiTransformer
+        plugin<DokkaBase>().preMergeDocumentableTransformer providing ::InternalApiHidingTransformer
     }
 
     @DokkaPluginApiPreview
     override fun pluginApiPreviewAcknowledgement() = PluginApiPreviewAcknowledgement
 }
 
-private class HideInternalApiTransformer(context: DokkaContext) :
+private class InternalApiHidingTransformer(context: DokkaContext) :
     SuppressedByConditionDocumentableFilterTransformer(context) {
 
     override fun shouldBeSuppressed(d: Documentable): Boolean {

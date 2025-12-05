@@ -85,7 +85,3 @@ tasks.withType<Test>().configureEach {
         excludeEngines(Constants.JUNIT_ENGINE_ID) // Do not use TestBalloon in this project
     }
 }
-
-dependencies {
-    dokkaPlugin(project(":documentation:dokka-plugin-hide-internal-api"))
-}

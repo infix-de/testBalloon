@@ -18,7 +18,8 @@ include(":integration-test")
 
 include(":documentation:website")
 include(":documentation:website:snippets")
-include(":documentation:dokka-plugin-hide-internal-api")
+include(":documentation:dokka-plugin-internal-api-hiding")
+include(":documentation:dokka-plugin-navigation-node-hiding")
 
 include(":testBalloon-integration-kotest-assertions")
 include(":testBalloon-integration-blocking-detection")

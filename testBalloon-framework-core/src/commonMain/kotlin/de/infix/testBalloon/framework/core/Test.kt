@@ -13,7 +13,9 @@ import kotlinx.coroutines.test.TestScope
 import kotlin.time.Duration
 
 /**
- * A test containing a test [action] which raises assertion errors on failure. The [action] may suspend.
+ * A test containing a test [action] which raises assertion errors on failure.
+ *
+ * The test action runs in a [TestExecutionScope] and may suspend.
  */
 public class Test internal constructor(
     parent: TestSuite,
@@ -73,6 +75,9 @@ public class Test internal constructor(
     }
 }
 
+/**
+ * A coroutine scope in which a single [Test] action executes.
+ */
 public class TestExecutionScope internal constructor(
     internal val test: Test,
     scope: CoroutineScope,
@@ -86,8 +91,8 @@ public class TestExecutionScope internal constructor(
         get() = testScopeOrNull
             ?: throw IllegalStateException("$test is not executing in a TestScope.")
 
+    /** The test timeout if set by [TestConfig.testScope], or null. */
     @Suppress("CanBePrimaryConstructorProperty")
     @TestBalloonExperimentalApi
-    /** The test timeout if set by [TestConfig.testScope], or null. */
     public val testTimeout: Duration? = testTimeout
 }

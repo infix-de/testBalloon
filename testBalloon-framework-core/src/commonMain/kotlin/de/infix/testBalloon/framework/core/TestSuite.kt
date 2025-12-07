@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.TestSuite.Companion.UNIQUE_APPENDIX_LENGTH_LIMIT
 import de.infix.testBalloon.framework.core.internal.GuardedBy
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
@@ -463,55 +464,292 @@ public open class TestSuite internal constructor(
     }
 
     /**
-     * Registers a fixture, a state holder for a lazily initialized [Value] with a lifetime of `this` test suite.
+     * Registers a fixture, a state holder for a lazily initialized [Value] to be used in tests.
      *
-     * Characteristics:
-     * - The fixture is lazily initialized on first use by the [value] lambda.
-     * - If [Value] is an [AutoCloseable], the fixture will call `close` at the end of its lifetime, otherwise
-     *   `closeWith` can specify an action to be called on close.
-     * - All test elements within its suite share the same fixture value.
-     *
-     * Usage:
-     *
-     * Register a fixture at the suite level like this:
-     * ```
-     * val repository = testFixture { MyRepository(this) } closeWith { disconnect() }
-     * ```
-     *
-     * Use its value in the suite's child elements by invoking the fixture like this:
-     * ```
-     * repository().getScore(...)
-     * ```
+     * For details, see [Fixture].
      */
     public fun <Value : Any> testFixture(value: suspend TestSuite.() -> Value): Fixture<Value> = Fixture(this, value)
 
     /**
-     * A fixture is a state holder for a lazily initialized [Value] with a lifetime of the test suite registering it.
+     * A fixture is a state holder for a lazily initialized [Value] to be used in tests.
      *
-     * If [Value] is an [AutoCloseable], the fixture will call [close] at the end of its lifetime, otherwise
-     * [closeWith] can register a specific action to be called on close.
+     * Fixtures come in two flavors:
+     *
+     * A **suite-level fixture** provides a value with a lifetime of the test suite it was registered in.
+     * Its value is
+     *
+     * - obtained by [invoking][invoke] the fixture, or
+     * - passed as a context (receiver) to tests in the scope of [asContextForAll], or
+     * - passed as a parameter to tests in the scope of [asParameterForAll].
+     *
+     * All test elements within its suite share the same value from a suite-level fixture.
+     *
+     * A **test-level fixture** provides its value to each single test with a lifetime of that test. Its value is
+     * passed
+     *
+     * - as a context (receiver) to tests in the scope of [asContextForEach], or
+     * - as a parameter to tests in the scope of [asParameterForEach].
+     *
+     * Each test gets its own fresh value from a test-level fixture.
+     *
+     * Common characteristics:
+     * - The fixture lazily initializes its value on first use via the [value] lambda.
+     * - If [Value] is an [AutoCloseable], the fixture will call `close` at the end of its lifetime, otherwise
+     *   [closeWith] can specify an action to be called on close.
+     * - A fixture can be used either as a suite-level fixture, or as a test-level fixture, but not both.
+     *
+     * Usage:
+     * - For a suite-level fixture, see [invoke], [asContextForAll] and [asParameterForAll].
+     * - For a test-level fixture, see [asContextForEach] and [asParameterForEach].
      */
     public class Fixture<Value : Any> internal constructor(
         private val suite: TestSuite,
         private val newValue: suspend TestSuite.() -> Value
     ) {
+        internal enum class Level {
+            Suite,
+            Test
+        }
+
+        private var level: Level? = null
+
+        // The following two properties are only relevant if this is a suite-level fixture.
         @GuardedBy("valueMutex")
         private var value: Value? = null
         private val valueMutex = Mutex()
 
         private var close: suspend Value.() -> Unit = { (this as? AutoCloseable)?.close() }
 
-        /** Returns the fixture's value, instantiating it on first use. */
-        public suspend operator fun invoke(): Value {
-            valueMutex.withLock {
-                if (value == null) {
-                    value = suite.newValue()
-                    suite.fixturesMutex.withLock {
-                        suite.fixtures.add(0, this)
+        /**
+         * Returns the value of `this` fixture, which is implied to be a suite-level fixture.
+         *
+         * The fixture's value will be instantiated on first use, then shared on subsequent invocations and across
+         * tests. It has a lifetime of the suite it was registered in.
+         *
+         * Usage:
+         *
+         * Register a suite-level fixture like this:
+         * ```
+         * val repository = testFixture { MyRepository(this) } closeWith { disconnect() }
+         * ```
+         *
+         * Use its value in the suite's tests by invoking the fixture like this:
+         * ```
+         * repository().getScore(...)
+         * ```
+         */
+        public suspend operator fun invoke(): Value = suiteLevelValue()
+
+        /**
+         * Provides the value from `this` fixture as a context for all tests declared in the [content]'s scope.
+         *
+         * The fixture is implied to be a suite-level fixture. Its value will be instantiated on first use, then
+         * shared across tests. It has a lifetime of the suite it was registered in.
+         *
+         * Note: As the context for tests in this scope is the fixture's value, the usual [TestExecutionScope] is
+         * unavailable as a context. [TestExecutionScope] is, however, provided as a parameter to each test.
+         *
+         * Usage:
+         *
+         * ```
+         * testFixture {
+         *     MyRepository(this)
+         * } asContextForAll {
+         *     test("verify score") {
+         *         getScore(...)          // call a method of MyRepository
+         *     }
+         * }
+         * ```
+         */
+        public infix fun asContextForAll(
+            content: Scope<suspend Value.(testExecutionScope: TestExecutionScope) -> Unit>.() -> Unit
+        ): Fixture<Value> {
+            Scope<suspend Value.(testExecutionScope: TestExecutionScope) -> Unit>(
+                suite = suite,
+                scopingAction = { fixtureScopedAction ->
+                    suiteLevelValue().fixtureScopedAction(this)
+                }
+            ).content()
+
+            return this
+        }
+
+        /**
+         * Provides the value from `this` fixture as a parameter for all tests declared in the [content]'s scope.
+         *
+         * The fixture is implied to be a suite-level fixture. Its value will be instantiated on first use, then
+         * shared across tests. It has a lifetime of the suite it was registered in.
+         *
+         * Usage:
+         *
+         * ```
+         * testFixture {
+         *     MyRepository(this)
+         * } asContextForAll {
+         *     test("verify score") { repository ->
+         *         repository.getScore(...)
+         *     }
+         * }
+         * ```
+         */
+        public infix fun asParameterForAll(
+            content: Scope<suspend TestExecutionScope.(value: Value) -> Unit>.() -> Unit
+        ): Fixture<Value> {
+            Scope<suspend TestExecutionScope.(value: Value) -> Unit>(
+                suite = suite,
+                scopingAction = { fixtureScopedAction ->
+                    fixtureScopedAction(suiteLevelValue())
+                }
+            ).content()
+
+            return this
+        }
+
+        /**
+         * Provides a fresh value from `this` fixture as a context for each test declared in the [content]'s scope.
+         *
+         * Using this function implies a test-level fixture, whose value will be instantiated per test, and has
+         * a lifetime of that test. This is safe for concurrent test invocation, because values are isolated.
+         *
+         * Note: As the context for tests in this scope is the fixture's value, the usual [TestExecutionScope] is
+         * unavailable as a context. [TestExecutionScope] is, however, provided as a parameter to each test.
+         *
+         * Usage:
+         *
+         * ```
+         * testFixture {
+         *     object {
+         *         var balance = 42.0
+         *         fun add(value: Double) {
+         *             balance += value
+         *         }
+         *     }
+         * } asContextForEach {
+         *     test("add 11.0") {
+         *         add(11.0)
+         *         assertEquals(53.0, balance)
+         *     }
+         *     test("add -11.0") {
+         *         add(-11.0)
+         *         assertEquals(31.0, balance)
+         *     }
+         * }
+         * ```
+         */
+        public infix fun asContextForEach(
+            content: Scope<suspend Value.(testExecutionScope: TestExecutionScope) -> Unit>.() -> Unit
+        ): Fixture<Value> {
+            Scope<suspend Value.(testExecutionScope: TestExecutionScope) -> Unit>(
+                suite = suite,
+                scopingAction = { fixtureScopedAction ->
+                    withTestLevelValue { value ->
+                        value.fixtureScopedAction(this)
                     }
                 }
-                return value!!
+            ).content()
+
+            return this
+        }
+
+        /**
+         * Provides a fresh value from `this` fixture as a parameter for each test declared in the [content]'s scope.
+         *
+         * Using this function implies a test-level fixture, whose value will be instantiated per test, and has
+         * a lifetime of that test. This is safe for concurrent test invocation, because values are isolated.
+         *
+         * Usage:
+         *
+         * ```
+         * testFixture {
+         *     Account().apply { setBalance(42.0) }
+         * } asParameterForEach {
+         *     test("add 10.0") { account ->
+         *         account.add(10.0)
+         *         assertEquals(52.0, account.balance)
+         *     }
+         *     test("add -10.0") { account ->
+         *         account.add(-10.0)
+         *         assertEquals(32.0, account.balance)
+         *     }
+         * }
+         * ```
+         */
+        public infix fun asParameterForEach(
+            content: Scope<suspend TestExecutionScope.(value: Value) -> Unit>.() -> Unit
+        ): Fixture<Value> {
+            Scope<suspend TestExecutionScope.(value: Value) -> Unit>(
+                suite = suite,
+                scopingAction = { fixtureScopedAction ->
+                    withTestLevelValue { value ->
+                        fixtureScopedAction(value)
+                    }
+                }
+            ).content()
+
+            return this
+        }
+
+        @DslMarker
+        private annotation class ScopeDsl
+
+        /**
+         * A scope where tests receive a fixture-provided value.
+         */
+        @ScopeDsl
+        public class Scope<FixtureScopedAction>(
+            internal val suite: TestSuite,
+            private val scopingAction: suspend TestExecutionScope.(fixtureScopedAction: FixtureScopedAction) -> Unit
+        ) {
+            /**
+             * Registers an [executionWrappingAction] which wraps the execution actions of this scope's test suite.
+             *
+             * See [TestSuite.aroundAll] for details.
+             */
+            @Deprecated(
+                "Please use the test suite's parameter testConfig = TestConfig.aroundAll { ... } instead." +
+                    " Scheduled for removal in TestBalloon 0.8."
+            )
+            public fun aroundAll(executionWrappingAction: TestSuiteExecutionWrappingAction) {
+                suite.aroundAll(executionWrappingAction)
             }
+
+            /**
+             * Registers a [TestSuite] as a child of the scope's test suite.
+             */
+            @TestRegistering
+            public fun testSuite(
+                @TestElementName name: String,
+                @TestDisplayName displayName: String = name,
+                testConfig: TestConfig = TestConfig,
+                content: Scope<FixtureScopedAction>.() -> Unit
+            ) {
+                suite.testSuite(name = name, displayName = displayName, testConfig = testConfig) {
+                    Scope(this, scopingAction).content()
+                }
+            }
+
+            /**
+             * Registers a [Test] as a child of the scope's test suite.
+             */
+            @TestRegistering
+            public fun test(
+                @TestElementName name: String,
+                @TestDisplayName displayName: String = name,
+                testConfig: TestConfig = TestConfig,
+                fixtureScopedAction: FixtureScopedAction
+            ) {
+                suite.test(name = name, displayName = displayName, testConfig = testConfig) {
+                    scopingAction(fixtureScopedAction)
+                }
+            }
+
+            /**
+             * Registers a fixture, a state holder for a lazily initialized [Value].
+             *
+             * For details, see [Fixture].
+             */
+            public fun <Value : Any> testFixture(value: suspend TestSuite.() -> Value): Fixture<Value> =
+                suite.testFixture(value)
         }
 
         /** Registers [action] to be called when this fixture's lifetime ends. */
@@ -525,6 +763,72 @@ public open class TestSuite internal constructor(
                 value = null
                 it.close()
             }
+        }
+
+        /**
+         * Returns the value of `this` fixture, which is implied to be a suite-level fixture.
+         */
+        private suspend fun suiteLevelValue(): Value {
+            when (level) {
+                null -> level = Level.Suite
+
+                Level.Suite -> {}
+
+                Level.Test -> throw IllegalStateException(
+                    "An attempt was detected to reuse a test-level fixture as a suite-level fixture" +
+                        " in ${suite.testElementPath}."
+                )
+            }
+
+            valueMutex.withLock {
+                if (value == null) {
+                    value = suite.newValue()
+                    suite.fixturesMutex.withLock {
+                        suite.fixtures.add(0, this)
+                    }
+                }
+                return value!!
+            }
+        }
+
+        /**
+         * Invokes [action] with a fresh value from `this` fixture, which is implied to be a test-level fixture.
+         */
+        private suspend fun withTestLevelValue(action: suspend (value: Value) -> Unit) {
+            when (level) {
+                null -> level = Level.Test
+
+                Level.Test -> {}
+
+                Level.Suite -> throw IllegalStateException(
+                    "An attempt was detected to reuse a suite-level fixture as a test-level fixture" +
+                        " in ${suite.testElementPath}."
+                )
+            }
+
+            var actionException: Throwable? = null
+            var value: Value? = null
+
+            try {
+                value = suite.newValue()
+                action(value)
+            } catch (exception: Throwable) {
+                actionException = exception
+            } finally {
+                withContext(NonCancellable) {
+                    try {
+                        value?.close()
+                    } catch (closeException: Throwable) {
+                        if (actionException == null) {
+                            actionException = closeException
+                        } else {
+                            actionException.addSuppressed(closeException)
+                        }
+                    }
+                }
+            }
+
+            if (actionException != null) throw actionException
         }
     }
 
@@ -554,9 +858,7 @@ public open class TestSuite internal constructor(
 
             this@TestSuite.executionContext = null
 
-            if (actionException != null) {
-                throw actionException
-            }
+            if (actionException != null) throw actionException
         }
     }
 }

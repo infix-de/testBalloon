@@ -192,8 +192,20 @@ public class de/infix/testBalloon/framework/core/TestSuite : de/infix/testBalloo
 }
 
 public final class de/infix/testBalloon/framework/core/TestSuite$Fixture {
+	public final fun asContextForEach (Lkotlin/jvm/functions/Function1;)Lde/infix/testBalloon/framework/core/TestSuite$Fixture;
+	public final fun asParameterForEach (Lkotlin/jvm/functions/Function1;)Lde/infix/testBalloon/framework/core/TestSuite$Fixture;
 	public final fun closeWith (Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestSuite$Fixture;
 	public final fun invoke (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class de/infix/testBalloon/framework/core/TestSuite$Fixture$Scope {
+	public fun <init> (Lde/infix/testBalloon/framework/core/TestSuite;Lkotlin/jvm/functions/Function3;)V
+	public final fun aroundAll (Lkotlin/jvm/functions/Function2;)V
+	public final fun test (Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/Object;)V
+	public static synthetic fun test$default (Lde/infix/testBalloon/framework/core/TestSuite$Fixture$Scope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/Object;ILjava/lang/Object;)V
+	public final fun testFixture (Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestSuite$Fixture;
+	public final fun testSuite (Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun testSuite$default (Lde/infix/testBalloon/framework/core/TestSuite$Fixture$Scope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public final class de/infix/testBalloon/framework/core/TestSuiteKt {
@@ -204,6 +216,7 @@ public final class de/infix/testBalloon/framework/core/TestSuiteKt {
 }
 
 public final class de/infix/testBalloon/framework/core/TestSuite_androidKt {
+	public static final fun testWithJUnit4Rule (Lde/infix/testBalloon/framework/core/TestSuite$Fixture$Scope;Ljava/lang/String;Lorg/junit/rules/TestRule;Lkotlin/jvm/functions/Function2;)V
 	public static final fun testWithJUnit4Rule (Lde/infix/testBalloon/framework/core/TestSuite;Ljava/lang/String;Lorg/junit/rules/TestRule;Lkotlin/jvm/functions/Function2;)V
 }
 

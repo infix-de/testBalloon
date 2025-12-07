@@ -9,10 +9,12 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 import kotlin.time.Duration.Companion.milliseconds
@@ -375,31 +377,16 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testFixture() = withTestFramework {
+    fun suiteLevelFixture() = withTestFramework {
         val trace = ConcurrentList<String>()
 
-        val suite1 by testSuite("suite1") {
+        val invocationSuite by testSuite("invocationSuite") {
             val outerFixture =
                 testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
                     { trace.add("$testElementPath fixture closing") }
 
             test("test1") {
-                outerFixture().add("$testElementPath")
-            }
-
-            testSuite("innerSuite") {
-                test("test1") {
-                    outerFixture().add("$testElementPath")
-                }
-            }
-        }
-
-        val suite2 by testSuite("suite2") {
-            val outerFixture =
-                testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
-                    { trace.add("$testElementPath fixture closing") }
-
-            test("test1") {
+                // The fixture must not be created here, as there is no invocation.
                 trace.add("$testElementPath")
             }
 
@@ -410,17 +397,59 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1, suite2) {
+        val parameterSuite by testSuite("parameterSuite") {
+            testFixture {
+                trace.also { it.add("$testElementPath fixture creating") }
+            } closeWith {
+                trace.add("$testElementPath fixture closing")
+            } asParameterForAll {
+                test("test1") {
+                    // The fixture must be created here, although its value is not used.
+                    trace.add("$testElementPath")
+                }
+
+                testSuite("innerSuite") {
+                    test("test1") {
+                        it.add("$testElementPath")
+                    }
+                }
+            }
+        }
+
+        val contextSuite by testSuite("contextSuite") {
+            testFixture {
+                trace.also { it.add("$testElementPath fixture creating") }
+            } closeWith {
+                trace.add("$testElementPath fixture closing")
+            } asContextForAll {
+                test("test1") { executionScope ->
+                    // The fixture must be created here, although its value is not used.
+                    trace.add("${executionScope.testElementPath}")
+                }
+
+                testSuite("innerSuite") {
+                    test("test1") { executionScope ->
+                        trace.add("${executionScope.testElementPath}")
+                    }
+                }
+            }
+        }
+
+        withTestReport(invocationSuite, parameterSuite, contextSuite) {
             assertContentEquals(
                 listOf(
-                    "«suite1» fixture creating",
-                    "«suite1${iSep}test1»",
-                    "«suite1${iSep}innerSuite${iSep}test1»",
-                    "«suite1» fixture closing",
-                    "«suite2${iSep}test1»",
-                    "«suite2» fixture creating",
-                    "«suite2${iSep}innerSuite${iSep}test1»",
-                    "«suite2» fixture closing"
+                    "«invocationSuite${iSep}test1»",
+                    "«invocationSuite» fixture creating",
+                    "«invocationSuite${iSep}innerSuite${iSep}test1»",
+                    "«invocationSuite» fixture closing",
+                    "«parameterSuite» fixture creating",
+                    "«parameterSuite${iSep}test1»",
+                    "«parameterSuite${iSep}innerSuite${iSep}test1»",
+                    "«parameterSuite» fixture closing",
+                    "«contextSuite» fixture creating",
+                    "«contextSuite${iSep}test1»",
+                    "«contextSuite${iSep}innerSuite${iSep}test1»",
+                    "«contextSuite» fixture closing"
                 ),
                 trace.elements()
             )
@@ -428,7 +457,117 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testFixtureWithTestSuiteAroundAll() = withTestFramework {
+    fun testLevelFixture() = withTestFramework {
+        val trace = ConcurrentList<String>()
+
+        val parameterSuite by testSuite("parameterSuite") {
+            testFixture {
+                trace.also { it.add("$testElementPath fixture creating") }
+            } closeWith {
+                trace.add("$testElementPath fixture closing")
+            } asParameterForEach {
+                test("test1") {
+                    // The fixture must be created here, although its value is not used.
+                    trace.add("$testElementPath")
+                }
+
+                testSuite("innerSuite") {
+                    test("test1") {
+                        it.add("$testElementPath")
+                    }
+                }
+            }
+        }
+
+        val contextSuite by testSuite("contextSuite") {
+            testFixture {
+                trace.also { it.add("$testElementPath fixture creating") }
+            } closeWith {
+                trace.add("$testElementPath fixture closing")
+            } asContextForEach {
+                test("test1") { executionScope ->
+                    // The fixture must be created here, although its value is not used.
+                    trace.add("${executionScope.testElementPath}")
+                }
+
+                testSuite("innerSuite") {
+                    test("test1") { executionScope ->
+                        trace.add("${executionScope.testElementPath}")
+                    }
+                }
+            }
+        }
+
+        withTestReport(parameterSuite, contextSuite) {
+            assertContentEquals(
+                listOf(
+                    "«parameterSuite» fixture creating",
+                    "«parameterSuite${iSep}test1»",
+                    "«parameterSuite» fixture closing",
+                    "«parameterSuite» fixture creating",
+                    "«parameterSuite${iSep}innerSuite${iSep}test1»",
+                    "«parameterSuite» fixture closing",
+                    "«contextSuite» fixture creating",
+                    "«contextSuite${iSep}test1»",
+                    "«contextSuite» fixture closing",
+                    "«contextSuite» fixture creating",
+                    "«contextSuite${iSep}innerSuite${iSep}test1»",
+                    "«contextSuite» fixture closing"
+                ),
+                trace.elements()
+            )
+        }
+    }
+
+    @Test
+    fun testLevelToSuiteLevelFixture() = withTestFramework {
+        val suite1 by testSuite("suite1") {
+            val fixture1 = testFixture {
+            } asParameterForEach {
+                test("test1") {
+                }
+            }
+
+            test("test2") {
+                assertEquals(fixture1(), Unit)
+            }
+        }
+        withTestReport(suite1) { frameworkFailure ->
+            assertNull(frameworkFailure)
+            with(finishedTestEvents()) {
+                assertEquals(2, size)
+                assertTrue(this[0].succeeded)
+                assertTrue(this[1].failed)
+                assertContains(this[1].throwable?.message!!, "reuse a test-level fixture as a suite-level fixture")
+            }
+        }
+    }
+
+    @Test
+    fun suiteLevelToTestLevelFixture() = withTestFramework {
+        val suite1 by testSuite("suite1") {
+            testFixture {
+            } asParameterForAll {
+                test("test1") {
+                }
+            } asParameterForEach {
+                test("test2") {
+                }
+            }
+        }
+        withTestReport(suite1) { frameworkFailure ->
+            assertNull(frameworkFailure)
+            with(finishedTestEvents()) {
+                assertEquals(2, size)
+                assertTrue(this[0].succeeded)
+                assertTrue(this[1].failed)
+                assertContains(this[1].throwable?.message!!, "reuse a suite-level fixture as a test-level fixture")
+            }
+        }
+    }
+
+    @Test
+    fun suiteLevelFixtureWithTestSuiteAroundAll() = withTestFramework {
         val trace = ConcurrentList<String>()
 
         val suite1 by testSuite("suite1") {
@@ -469,7 +608,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testFixtureWithTestConfigAroundAll() = withTestFramework {
+    fun suiteLevelFixtureWithTestConfigAroundAll() = withTestFramework {
         val trace = ConcurrentList<String>()
 
         val suite1 by testSuite(
@@ -511,7 +650,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testFixtureWithDisabledElements() = withTestFramework {
+    fun suiteLevelFixtureWithDisabledElements() = withTestFramework {
         val trace = ConcurrentList<String>()
 
         val suite1 by testSuite("suite1") {
@@ -573,7 +712,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testFixtureWithFailedTest() = withTestFramework {
+    fun suiteLevelFixtureWithFailedTest() = withTestFramework {
         val trace = ConcurrentList<String>()
 
         val suite1 by testSuite("suite1") {
@@ -610,7 +749,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testFixtureActionFailure() = withTestFramework {
+    fun suiteLevelFixtureActionFailure() = withTestFramework {
         var failCount = 0
         var closeCount = 0
 
@@ -641,7 +780,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testFixtureWithSetupFailures() = withTestFramework {
+    fun suiteLevelFixtureWithSetupFailures() = withTestFramework {
         val trace = ConcurrentList<String>()
 
         val suite1 by testSuite("suite1") {
@@ -729,7 +868,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testFixtureConcurrency() = assertSuccessfulSuite {
+    fun suiteLevelFixtureConcurrency() = assertSuccessfulSuite {
         val instanceCount = atomic(0)
 
         testSuite("suite1", testConfig = TestConfig.invocation(TestInvocation.CONCURRENT)) {

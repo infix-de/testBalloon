@@ -1,12 +1,17 @@
 ## Unreleased
 
+### Highlights
+
+* **Test-level fixtures**, providing fresh state per test, are now supported in addition to suite-level fixtures.
+* **Fixtures** can now provide their value **as a context or a parameter** to tests. See the documentation of [TestSuite.Fixture](https://infix-de.github.io/testBalloon/dev/api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-suite/-fixture/index.html) for an overview, and the documentation of its new `asContext*()` and `asParameter*()` functions for usage examples.
+
 ### Migration from TestBalloon 0.7.x
 
 * For Android host-side (unit) tests:
     1. Remove the `-jvm` suffix from each dependency `"de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion"`.
     2. Add a dependency on JUnit 4: `"junit:junit:4.13.2"`
 
-### Changes
+### Other Changes
 
 * Android host-side tests (a.k.a. unit tests) now correctly use JUnit 4 instead of JUnit platform, enabling access to JUnit 4 rules.
 * Running individual tests from gutter icons and cross-framework test filtering is now supported with multiple test frameworks in the same module for

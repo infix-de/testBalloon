@@ -25,3 +25,16 @@ public fun <Rule : TestRule> TestSuite.testWithJUnit4Rule(name: String, rule: Ru
         ).evaluate()
     }
 }
+
+/**
+ * Registers a [Test] wrapped by a JUnit 4 [TestRule].
+ */
+@TestRegistering
+@TestBalloonExperimentalApi
+public fun <Rule : TestRule, FixtureScopedAction> TestSuite.Fixture.Scope<FixtureScopedAction>.testWithJUnit4Rule(
+    name: String,
+    rule: Rule,
+    action: suspend (Rule) -> Unit
+) {
+    suite.testWithJUnit4Rule(name, rule, action)
+}

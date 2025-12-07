@@ -20,6 +20,7 @@
 ### Deprecations
 
 * `dispatcherWithParallelism()` – No compelling use case in testing. Scheduled for removal in TestBalloon 0.8.
+* `aroundAll` – Use `testConfig = TestConfig.aroundAll { ... }` instead. Scheduled for removal in TestBalloon 0.8.
 
 ### Fixes
 

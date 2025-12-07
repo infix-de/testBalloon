@@ -328,6 +328,10 @@ public open class TestSuite internal constructor(
      *     }
      * ```
      */
+    @Deprecated(
+        "Please use the test suite's parameter testConfig = TestConfig.aroundAll { ... } instead." +
+            " Scheduled for removal in TestBalloon 0.8."
+    )
     public fun aroundAll(executionWrappingAction: TestSuiteExecutionWrappingAction) {
         privateConfiguration = privateConfiguration.aroundAll { elementAction ->
             executionWrappingAction { elementAction() }

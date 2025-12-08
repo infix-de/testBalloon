@@ -2,6 +2,7 @@
 
 package de.infix.testBalloon.compilerPlugin
 
+import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -9,47 +10,77 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.plugin.createTopLevelClass
 import org.jetbrains.kotlin.fir.plugin.createTopLevelFunction
 import org.jetbrains.kotlin.fir.plugin.createTopLevelProperty
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 
 @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
 class CompilerPluginFrontendExtension(session: FirSession) : FirDeclarationGenerationExtension(session) {
 
-    companion object {
-        object Key : GeneratedDeclarationKey()
+    private companion object {
+        object PluginKey : GeneratedDeclarationKey()
 
-        var authoritativeExtensionFound = false
+        val jvmEntryPointClassId = ClassId.topLevel(FqName(Constants.JVM_ENTRY_POINT_CLASS_NAME))
     }
 
+    private val platform = session.moduleData.platform
+    private val platformIsJsOrWasm = platform.isJs() || platform.isWasm()
+
+    private var jvmEntryPointClassSymbol: FirClassSymbol<*>? = null
+
+    override fun getTopLevelClassIds(): Set<ClassId> = setOf(jvmEntryPointClassId)
+
+    override fun getTopLevelCallableIds(): Set<CallableId> = setOf(mainFunctionId, nativeEntryPointPropertyId)
+
+    override fun hasPackage(packageFqName: FqName): Boolean = packageFqName == entryPointPackageFqName
+
     /**
-     * Specifies whether this extension is authoritative to create top-level symbols.
-     *
-     * KMP creates multiple FIR sessions. Only the first one is authoritative. This avoids creating the same
-     * symbol multiple times.
+     * Returns a top-level class `JvmEntryPoint` for JVM targets.
      */
-    val isAuthoritative = if (!authoritativeExtensionFound) {
-        authoritativeExtensionFound = true
-        true
-    } else {
-        false
-    }
+    override fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? =
+        if (platform.isJvm() && classId == jvmEntryPointClassId) {
+            createTopLevelClass(classId = jvmEntryPointClassId, key = PluginKey) {
+                visibility = Visibilities.Internal
+            }.symbol.also {
+                jvmEntryPointClassSymbol = it
+            }
+        } else {
+            null
+        }
 
     /**
-     * Creates a top-level `suspend fun main()`, whose parameter list and body is to be initialized in IR.
+     * Returns a static `testFrameworkDiscoveryResult` method for the top-level `class JvmEntryPoint` for JVM targets.
+     */
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> =
+        if (platform.isJvm() && classSymbol == jvmEntryPointClassSymbol) {
+            setOf(Name.identifier(Constants.JVM_DISCOVERY_RESULT_METHOD_NAME))
+        } else {
+            emptySet()
+        }
+
+    /**
+     * Returns a top-level function `suspend fun main(): Unit` for JS and Wasm targets.
      */
     override fun generateFunctions(
         callableId: CallableId,
         context: MemberGenerationContext?
-    ): List<FirNamedFunctionSymbol> {
-        if (!isAuthoritative || callableId != mainCallableId) return emptyList()
-
+    ): List<FirNamedFunctionSymbol> = if (platformIsJsOrWasm && callableId == mainFunctionId) {
         val mainFunction = createTopLevelFunction(
-            Key,
-            mainCallableId,
+            key = PluginKey,
+            callableId = mainFunctionId,
             returnType = session.builtinTypes.unitType.coneType
         ) {
             visibility = Visibilities.Public
@@ -58,21 +89,23 @@ class CompilerPluginFrontendExtension(session: FirSession) : FirDeclarationGener
             }
         }
 
-        return listOf(mainFunction.symbol)
+        listOf(mainFunction.symbol)
+    } else {
+        emptyList()
     }
 
     /**
-     * Creates a top-level `val testFrameworkEntryPoint: Unit`, which is to be initialized in IR.
+     * Returns a top-level property `val testFrameworkNativeEntryPoint: Unit` for Native targets.
      */
     override fun generateProperties(
         callableId: CallableId,
         context: MemberGenerationContext?
     ): List<FirPropertySymbol> {
-        if (!isAuthoritative || callableId != entryPointPropertyCallableId) return emptyList()
+        if (!platform.isNative() || callableId != nativeEntryPointPropertyId) return emptyList()
 
         val entryPointProperty = createTopLevelProperty(
-            Key,
-            entryPointPropertyCallableId,
+            key = PluginKey,
+            callableId = nativeEntryPointPropertyId,
             returnType = session.builtinTypes.unitType.coneType
         ) {
             visibility = Visibilities.Private
@@ -80,9 +113,4 @@ class CompilerPluginFrontendExtension(session: FirSession) : FirDeclarationGener
 
         return listOf(entryPointProperty.symbol)
     }
-
-    override fun getTopLevelCallableIds(): Set<CallableId> =
-        if (isAuthoritative) setOf(mainCallableId, entryPointPropertyCallableId) else emptySet()
-
-    override fun hasPackage(packageFqName: FqName): Boolean = packageFqName == entryPointPackageFqName
 }

@@ -5,18 +5,16 @@ package de.infix.testBalloon.framework.shared.internal
  */
 @TestBalloonInternalApi
 public object Constants {
-    public const val CORE_PACKAGE_NAME: String = "de.infix.testBalloon.framework.core"
+    private const val FRAMEWORK_PACKAGE_NAME: String = "de.infix.testBalloon.framework"
+
+    public const val CORE_PACKAGE_NAME: String = "$FRAMEWORK_PACKAGE_NAME.core"
     public const val CORE_INTERNAL_PACKAGE_NAME: String = "$CORE_PACKAGE_NAME.internal"
-
-    public const val SHARED_PACKAGE_NAME: String = "de.infix.testBalloon.framework.shared"
+    public const val SHARED_PACKAGE_NAME: String = "$FRAMEWORK_PACKAGE_NAME.shared"
     public const val SHARED_INTERNAL_PACKAGE_NAME: String = "$SHARED_PACKAGE_NAME.internal"
-
     public const val ENTRY_POINT_PACKAGE_NAME: String = "$SHARED_INTERNAL_PACKAGE_NAME.entryPoint"
-    public const val ENTRY_POINT_ANCHOR_FILE_NAME: String = "EntryPointAnchor.kt"
-    public const val ENTRY_POINT_ANCHOR_CLASS_NAME: String = "$ENTRY_POINT_PACKAGE_NAME.EntryPointAnchorKt"
 
-    public const val JVM_DISCOVERY_RESULT_PROPERTY: String = "testFrameworkDiscoveryResult"
-    public const val JVM_DISCOVERY_RESULT_PROPERTY_GETTER: String = "getTestFrameworkDiscoveryResult"
+    public const val JVM_ENTRY_POINT_CLASS_NAME: String = "$ENTRY_POINT_PACKAGE_NAME.JvmEntryPoint"
+    public const val JVM_DISCOVERY_RESULT_METHOD_NAME: String = "testFrameworkDiscoveryResult"
 
     public const val JUNIT4_ENTRY_POINT_SIMPLE_CLASS_NAME: String = "TestBalloonJUnit4"
     public const val JUNIT4_RUNNER_CLASS_NAME: String =

@@ -25,11 +25,4 @@ open class TestBalloonGradleExtension {
      * If disabled, the framework will only support JUnit Platform on the JVM.
      */
     var junit4AutoIntegrationEnabled: Boolean? = null
-
-    /**
-     * `jvmMainFunctionEnabled = true` uses a suspending `main` function to start tests on the JVM. For testing only.
-     *
-     * Otherwise, the framework will start up as a JUnit 4 or JUnit Platform test engine on the JVM.
-     */
-    var jvmMainFunctionEnabled: Boolean = false
 }

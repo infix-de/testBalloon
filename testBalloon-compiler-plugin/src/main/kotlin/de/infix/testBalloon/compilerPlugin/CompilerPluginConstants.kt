@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.name.Name
 
 val entryPointPackageFqName = FqName(Constants.ENTRY_POINT_PACKAGE_NAME)
 
-val mainCallableId = CallableId(
+val mainFunctionId = CallableId(
     packageName = entryPointPackageFqName,
     callableName = Name.identifier("main")
 )
 
-val entryPointPropertyCallableId = CallableId(
+val nativeEntryPointPropertyId = CallableId(
     packageName = entryPointPackageFqName,
-    callableName = Name.identifier("testFrameworkEntryPoint")
+    callableName = Name.identifier("testFrameworkNativeEntryPoint")
 )

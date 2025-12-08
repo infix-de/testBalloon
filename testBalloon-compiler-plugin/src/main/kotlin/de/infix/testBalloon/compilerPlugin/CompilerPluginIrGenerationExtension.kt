@@ -18,7 +18,6 @@ import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResu
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -29,21 +28,19 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.fileMappingTracker
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.IrSingleStatementBuilder
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -63,7 +60,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -81,12 +77,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.constructors
@@ -101,6 +95,7 @@ import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.superClass
+import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -111,8 +106,6 @@ import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import java.io.File
-import kotlin.io.path.Path
-import kotlin.io.path.absolutePathString
 import kotlin.reflect.KClass
 
 class CompilerPluginIrGenerationExtension(private val compilerConfiguration: CompilerConfiguration) :
@@ -192,7 +185,6 @@ private class Configuration(
 
     val debugLevel = Options.debugLevel.value(compilerConfiguration)
     val junit4AutoIntegrationEnabled = Options.junit4AutoIntegrationEnabled.value(compilerConfiguration)
-    val jvmMainFunctionEnabled = Options.jvmMainFunctionEnabled.value(compilerConfiguration)
 
     val fileMappingTracker = compilerConfiguration.fileMappingTracker
 
@@ -203,7 +195,7 @@ private class Configuration(
     val testDisplayNameAnnotationSymbol = irClassSymbol(TestDisplayName::class)
 
     @OptIn(TestBalloonInternalApi::class)
-    val testFrameworkDiscoveryResultSymbol by lazy { irClassSymbol(TestFrameworkDiscoveryResult::class) }
+    val testFrameworkDiscoveryResultClassSymbol by lazy { irClassSymbol(TestFrameworkDiscoveryResult::class) }
 
     val initializeTestFrameworkFunctionSymbol by lazy {
         irFunctionSymbol(coreInternalPackageName, "initializeTestFramework")
@@ -215,7 +207,7 @@ private class Configuration(
         irFunctionSymbol(coreInternalPackageName, "setUpAndExecuteTestsBlocking")
     }
 
-    val testFrameworkDiscoveryResultPropertyName = Name.identifier(Constants.JVM_DISCOVERY_RESULT_PROPERTY)
+    val jvmEntryPointClassSymbol by lazy { irClassSymbol(Constants.JVM_ENTRY_POINT_CLASS_NAME) }
 
     val jUnit4RunWithAnnotationSymbol by lazy {
         irClassSymbolOrNull("org.junit.runner.RunWith")
@@ -353,34 +345,8 @@ private class ModuleTransformer(
             val entryPointFile: IrFile
             when {
                 platform.isJvm() -> {
-                    if (configuration.jvmMainFunctionEnabled) {
-                        entryPointFile = irSuspendMainFunction().fileParent
-                    } else {
-                        // TODO: Ideally we would re-use the FIR-created entry point file, but this breaks on the JVM.
-                        val breakHere = false
-                        if (breakHere) {
-                            entryPointFile = irTestFrameworkEntryPointProperty(false).fileParent
-                        } else {
-                            entryPointFile = IrFileImpl(
-                                NaiveSourceBasedFileEntryImpl(
-                                    Path(Constants.ENTRY_POINT_ANCHOR_FILE_NAME).absolutePathString()
-                                ),
-                                IrFileSymbolImpl(
-                                    @OptIn(ObsoleteDescriptorBasedAPI::class)
-                                    EmptyPackageFragmentDescriptor(
-                                        pluginContext.moduleDescriptor,
-                                        entryPointPackageFqName
-                                    )
-                                ),
-                                entryPointPackageFqName
-                            ).apply {
-                                fileForTopLevelPluginDeclarations = true
-                            }
-                            moduleFragment.files += entryPointFile
-                        }
-                        entryPointFile.addChild(irTestFrameworkDiscoveryResultProperty(entryPointFile))
-                        irJUnit4RunnerEntryPointClass(entryPointFile)?.let { entryPointFile.addChild(it) }
-                    }
+                    entryPointFile = irJvmEntryPointClass().fileParent
+                    irJUnit4RunnerEntryPointClass(entryPointFile)?.let { entryPointFile.addChild(it) }
                 }
 
                 platform.isJs() || platform.isWasm() -> {
@@ -570,7 +536,7 @@ private class ModuleTransformer(
     private fun IrProperty.fqName(): String = fqNameWhenAvailable.toString()
 
     /**
-     * Creates the body for a `main` function declaration for [discoveredSuites] returning s1...sn:
+     * Returns a completed `main` function for [discoveredSuites] returning s1...sn:
      *
      * ```
      * suspend fun main(arguments: Array<String>) {
@@ -580,7 +546,7 @@ private class ModuleTransformer(
      * ```
      */
     private fun irSuspendMainFunction(): IrSimpleFunction {
-        val symbol = irFunctionSymbol(mainCallableId)
+        val symbol = irFunctionSymbol(mainFunctionId)
 
         with(symbol.owner) {
             val irArgumentsValueParameter = addValueParameter(
@@ -600,8 +566,36 @@ private class ModuleTransformer(
                 )
             }
 
-            if (configuration.debugLevel >= DebugLevel.CODE) {
-                reportDebug("Generated main function:\n${dump().prependIndent("\t")}")
+            return this
+        }
+    }
+
+    /**
+     * Returns a `testFrameworkNativeEntryPoint` property for [discoveredSuites] returning s1...sn:
+     *
+     * ```
+     * @EagerInitialization
+     * private val testFrameworkNativeEntryPoint: Unit = run {
+     *     initializeTestFramework(customSessionOrNull)
+     *     setUpAndExecuteTestsBlocking(arrayOf(s1, ..., sn))
+     * }
+     * ```
+     */
+    private fun irTestFrameworkEntryPointProperty(): IrProperty {
+        val symbol = irPropertySymbol(nativeEntryPointPropertyId)
+
+        with(symbol.owner) {
+            annotations += irConstructorCall(irClassSymbol("kotlin.native.EagerInitialization"))
+
+            initializeWith(nativeEntryPointPropertyId.callableName, pluginContext.irBuiltIns.unitType) {
+                +irSimpleFunctionCall(
+                    configuration.initializeTestFrameworkFunctionSymbol,
+                    customSessionClass?.let { irConstructorCall(it.symbol) }
+                )
+                +irSimpleFunctionCall(
+                    configuration.setUpAndExecuteTestsBlockingFunctionSymbol,
+                    irArrayOfRootSuites()
+                )
             }
 
             return this
@@ -609,73 +603,52 @@ private class ModuleTransformer(
     }
 
     /**
-     * Returns a `testFrameworkEntryPoint` property declaration for [discoveredSuites] returning s1...sn:
+     * Returns a completed `JvmEntryPoint` class for [discoveredSuites] s1...sn:
      *
      * ```
-     * @EagerInitialization
-     * private val testFrameworkEntryPoint: Unit = run {
-     *     initializeTestFramework(customSessionOrNull)
-     *     setUpAndExecuteTestsBlocking(arrayOf(s1, ..., sn))
+     * companion object {
+     *     internal fun testFrameworkDiscoveryResult(): TestFrameworkDiscoveryResult {
+     *         initializeTestFramework(customSessionOrNull)
+     *         return TestFrameworkDiscoveryResult(arrayOf(s1, ..., sn))
+     *     }
      * }
      * ```
-     *
-     * If [nativeInitializationEnabled] = false, the property will not be annotated and have an empty
-     * initialization block.
      */
-    private fun irTestFrameworkEntryPointProperty(nativeInitializationEnabled: Boolean = true): IrProperty {
-        val symbol = irPropertySymbol(entryPointPropertyCallableId)
+    private fun irJvmEntryPointClass(): IrDeclaration {
+        val classSymbol = configuration.jvmEntryPointClassSymbol
 
-        with(symbol.owner) {
-            if (nativeInitializationEnabled) {
-                annotations += irConstructorCall(irClassSymbol("kotlin.native.EagerInitialization"))
-            }
+        with(classSymbol.owner) {
+            addFunction(
+                name = Constants.JVM_DISCOVERY_RESULT_METHOD_NAME,
+                returnType = configuration.testFrameworkDiscoveryResultClassSymbol.defaultType,
+                visibility = DescriptorVisibilities.INTERNAL,
+                isStatic = true
+            ).apply {
+                parent = classSymbol.owner
+                annotations += irConstructorCall(
+                    irClassSymbol(JvmName::class.qualifiedName!!),
+                    Constants.JVM_DISCOVERY_RESULT_METHOD_NAME.toIrConst(pluginContext.irBuiltIns.stringType)
+                )
 
-            initializeWith(entryPointPropertyCallableId.callableName, pluginContext.irBuiltIns.unitType) {
-                if (nativeInitializationEnabled) {
+                body = DeclarationIrBuilder(pluginContext, symbol).irBlockBody {
                     +irSimpleFunctionCall(
                         configuration.initializeTestFrameworkFunctionSymbol,
                         customSessionClass?.let { irConstructorCall(it.symbol) }
                     )
-                    +irSimpleFunctionCall(
-                        configuration.setUpAndExecuteTestsBlockingFunctionSymbol,
-                        irArrayOfRootSuites()
+                    +IrReturnImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        configuration.testFrameworkDiscoveryResultClassSymbol.defaultType,
+                        symbol,
+                        irConstructorCall(
+                            configuration.testFrameworkDiscoveryResultClassSymbol,
+                            irArrayOfRootSuites()
+                        )
                     )
                 }
             }
 
             return this
-        }
-    }
-
-    /**
-     * Returns a `testFrameworkDiscoveryResult` property declaration for [discoveredSuites] returning s1...sn:
-     *
-     * ```
-     * internal val testFrameworkDiscoveryResult: TestFrameworkDiscoveryResult = run {
-     *     initializeTestFramework(customSessionOrNull)
-     *     TestFrameworkDiscoveryResult(arrayOf(s1, ..., sn))
-     * }
-     * ```
-     */
-    private fun irTestFrameworkDiscoveryResultProperty(entryPointFile: IrFile): IrProperty {
-        val propertyName = configuration.testFrameworkDiscoveryResultPropertyName
-
-        return pluginContext.irFactory.buildProperty {
-            name = propertyName
-            visibility = DescriptorVisibilities.INTERNAL
-        }.apply {
-            parent = entryPointFile
-
-            initializeWith(propertyName, configuration.testFrameworkDiscoveryResultSymbol.owner.defaultType) {
-                +irSimpleFunctionCall(
-                    configuration.initializeTestFrameworkFunctionSymbol,
-                    customSessionClass?.let { irConstructorCall(it.symbol) }
-                )
-                +irConstructorCall(
-                    configuration.testFrameworkDiscoveryResultSymbol,
-                    irArrayOfRootSuites()
-                )
-            }
         }
     }
 

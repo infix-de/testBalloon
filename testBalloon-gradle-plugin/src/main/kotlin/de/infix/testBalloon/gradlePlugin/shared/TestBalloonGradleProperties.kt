@@ -9,11 +9,6 @@ import kotlin.reflect.KProperty
 
 internal class TestBalloonGradleProperties(val project: Project) {
 
-    /** Name pattern for test root source sets which will receive generated entry point code. */
-    val testRootSourceSetRegex by regexProperty(
-        """^(test$|commonTest$|androidTest|androidInstrumentedTest)"""
-    )
-
     /**
      * Name pattern for test compilations in which the compiler plugin will look up test suites and a test session.
      *
@@ -22,11 +17,12 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val testCompilationRegex by regexProperty("""(^test)|Test""")
 
     /**
-     * Name pattern for test compilations in which the compiler plugin will look up test suites and a test session.
+     * Name pattern for test compile tasks in which the compiler plugin will disable incremental compilation.
      *
-     * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
+     * WORKAROUND: Kotlin IC on JS does not support compiler plugins generating top-level declarations
+     *     https://youtrack.jetbrains.com/issue/KT-82395
      */
-    val testCompileTaskRegex by regexProperty("""^compile.*Test""")
+    val nonIncrementalTestCompileTaskRegex by regexProperty("""^compileTestKotlin(Js|Wasm)""")
 
     /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.

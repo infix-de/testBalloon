@@ -36,13 +36,13 @@ private val testElementDescriptions = ConcurrentHashMap<TestElement, Description
 @TestBalloonInternalApi
 public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : Runner() {
     internal val sessionDescription by lazy {
-        // Trigger the framework's initialization by invoking the `testFrameworkDiscoveryResult` property getter
-        // in the generated file-level class for `EntryPointAnchor.kt`.
+        // Trigger the framework's initialization by invoking the `testFrameworkDiscoveryResult` function
+        // in the generated `JvmEntryPoint` class.
         // We don't need the actual result here.
         try {
             Class
-                .forName(Constants.ENTRY_POINT_ANCHOR_CLASS_NAME)
-                .getMethod(Constants.JVM_DISCOVERY_RESULT_PROPERTY_GETTER).invoke(null)
+                .forName(Constants.JVM_ENTRY_POINT_CLASS_NAME)
+                .getMethod(Constants.JVM_DISCOVERY_RESULT_METHOD_NAME).invoke(null)
                 as TestFrameworkDiscoveryResult
         } catch (throwable: Throwable) {
             throw TestBalloonInitializationError(

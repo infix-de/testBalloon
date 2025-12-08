@@ -13,6 +13,8 @@ import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import java.nio.file.DirectoryNotEmptyException
 import kotlin.io.path.Path
@@ -29,6 +31,19 @@ internal fun Project.configureWithTestBalloon(
     browserSafeEnvironmentPatternFromExtension: () -> String = { "" }
 ) {
     configureTestTasks(testBalloonProperties, browserSafeEnvironmentPatternFromExtension)
+
+    afterEvaluate {
+        val nonIncrementalTestCompileTaskRegex = testBalloonProperties.nonIncrementalTestCompileTaskRegex
+        tasks.withType(AbstractKotlinCompile::class.java).configureEach {
+            if (nonIncrementalTestCompileTaskRegex.containsMatchIn(name)) {
+                incremental = false
+                if (this is Kotlin2JsCompile) {
+                    @Suppress("INVISIBLE_REFERENCE")
+                    incrementalJsKlib = false
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -40,7 +55,9 @@ private fun Project.configureTestTasks(
 ) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
         "intellij" -> ReportingMode.INTELLIJ_IDEA
+
         "files" -> ReportingMode.FILES
+
         else -> if (providers.systemProperty("idea.active").isPresent) {
             ReportingMode.INTELLIJ_IDEA
         } else {

@@ -32,15 +32,6 @@ internal object Options {
         stringValue.toBooleanStrictOrNull() ?: throwValueError(stringValue)
     }
 
-    val jvmMainFunctionEnabled = Option(
-        optionName = "jvmMainFunctionEnabled",
-        valueDescription = "boolean",
-        description = "Enables invocation via a suspending main function on the JVM. For testing only.",
-        defaultValue = false
-    ) { stringValue ->
-        stringValue.toBooleanStrictOrNull() ?: throwValueError(stringValue)
-    }
-
     val testModuleRegex = Option(
         optionName = "testModuleRegex",
         valueDescription = "string",

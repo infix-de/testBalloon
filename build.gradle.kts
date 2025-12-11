@@ -1,7 +1,6 @@
 plugins {
     id("buildLogic.common").apply(false)
     id("buildLogic.dokka")
-    alias(libs.plugins.de.infix.gradle.plugins.kotlin.multiplatform.js)
 }
 
 tasks {

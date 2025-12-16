@@ -1,6 +1,4 @@
 import buildLogic.addTestBalloonPluginFromProject
-import buildLogic.jsTargets
-import buildLogic.nativeTargets
 import buildLogic.versionFromCatalog
 import tapmoc.Severity
 
@@ -14,7 +12,7 @@ plugins {
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 tapmoc {
-    java(versionFromCatalog("jdk").toInt())
+    java(versionFromCatalog("jdk").toInt().coerceAtLeast(17)) // JUnit Jupiter requires JVM 17 or higher
     kotlin(versionFromCatalog("org.jetbrains.kotlin"))
 
     checkApiDependencies(Severity.ERROR)
@@ -27,8 +25,6 @@ kotlin {
     }
 
     jvm()
-    jsTargets()
-    nativeTargets()
 
     // @OptIn(ExperimentalWasmDsl::class)
     // wasmWasi {
@@ -73,18 +69,18 @@ kotlin {
                 implementation(projects.testBalloonFrameworkCore)
                 implementation(kotlin("test")) // for assertions only
                 implementation(libs.com.benwoodworth.parameterize)
-            }
-        }
 
-        androidMain {
-            dependencies {
                 implementation(composeBom)
+
+                // Material Design 3
+                implementation("androidx.compose.material3:material3")
             }
         }
 
-        jvmMain {
+        jvmTest {
             dependencies {
                 implementation(libs.org.jetbrains.kotlinx.coroutines.swing)
+                implementation(libs.org.junit.jupiter.engine)
             }
         }
 

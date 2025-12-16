@@ -42,31 +42,31 @@ Kotest's specs become TestBalloon's top-level test suites:
 
 You can keep all code in Kotest's default _Single Instance_ mode.
 
-Code using Kotest's other isolation modes must change to explicit initialization:
+For Kotest's `InstancePerRoot` and `InstancePerLeaf` isolation modes, keep tests as they are, but wrap them into a [test-level fixture](../getting-started/fixtures.md#test-level-fixtures):
 
 === "Kotest"
 
     ```kotlin
     class IsolatedTests : FunSpec({
-        isolationMode = IsolationMode.InstancePerTest // (4)!
+        isolationMode = IsolationMode.InstancePerLeaf // (1)!
 
-        val id = UUID.randomUUID() // (1)!
+        val id = UUID.randomUUID() // (2)!
 
         init {
             test("one") {
-                println(id) // (2)!
+                println(id) // (3)!
             }
             test("two") {
-                println(id) // (3)!
+                println(id) // (4)!
             }
         }
     })
     ```
 
-    1. The test context is initialized by re-creating the spec from its class via reflection (JVM-only).
-    2. Each test prints a different ID.
+    1. Kotest 6 deprecates `InstancePerLeaf` in favor of `InstancePerRoot`, but the latter isolates only one level of tests.
+    2. The test context is initialized by re-creating the spec from its class via reflection (JVM-only).
     3. Each test prints a different ID.
-    4. Kotest 6 deprecates `InstancePerTest` in favor of `InstancePerRoot`, but the latter isolates only one level of tests.
+    4. Each test prints a different ID.
 
 === "TestBalloon"
 
@@ -74,10 +74,10 @@ Code using Kotest's other isolation modes must change to explicit initialization
     --8<-- "MigratingFromKotest.kt:isolated-tests"
     ```
 
-    1. The test context is initialized explicitly (multiplatform-compatible).
-    2. Each test prints a different ID.
+    1. The fixture's value can be any Kotlin type. You can also use an object expression with multiple properties.
+    2. This test-level fixture provides a fresh, isolated parameter for each test.
     3. Each test prints a different ID.
-    4. A helper function declaring a custom test, as explained in the [effective testing](effective-testing.md#supply-fresh-state-to-multiple-tests) guide.
+    4. Each test prints a different ID.
 
 !!! note
 
@@ -85,7 +85,7 @@ Code using Kotest's other isolation modes must change to explicit initialization
 
 !!! tip
 
-    Sharing state via TestBalloon's fixtures may help you squeeze complexity out of existing code, which did not have access to this mechanism.
+    Sharing state via TestBalloon's [suite-level fixtures](../getting-started/fixtures.md#suite-level-fixtures) may help you squeeze complexity out of existing code, which did not have access to this mechanism.
 
 ### Lifecycle Hooks
 
@@ -120,9 +120,9 @@ Kotest has 44 mechanisms to track and influence tests:
 * 14 "simple extensions", and
 * 16 "advanced extensions".
 
-TestBalloon's [TestConfig builder](../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html) provides 4 mechanisms which achieve the same:
+TestBalloon's [TestConfig builder](../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html) provides 4 functional mechanisms which achieve the same:
 
-* two functions: `aroundEach()` and `traversal()`,
+* two universal functions: `aroundEach()` and `traversal()`,
 * two convenience variants: `aroundAll()` and `aroundEachTest()`.
 
 !!! note

@@ -8,19 +8,19 @@ TestBalloon provides two mechanisms to adapt the testing process to your needs v
 
     === "Single test"
 
-        ![A single test in the test element hierarchy](assets/configuration/test-element-hierarchy-test.svg){ width="600" }
+        ![A single test in the test element hierarchy](assets/configuration/test-element-hierarchy-test.png){ width="600" }
 
     === "Test suite"
 
-        ![A test suite in the test element hierarchy](assets/configuration/test-element-hierarchy-test-suite.svg){ width="600" }
+        ![A test suite in the test element hierarchy](assets/configuration/test-element-hierarchy-test-suite.png){ width="600" }
 
     === "Test compartment"
 
-        ![A test compartment in the test element hierarchy](assets/configuration/test-element-hierarchy-compartment.svg){ width="600" }
+        ![A test compartment in the test element hierarchy](assets/configuration/test-element-hierarchy-compartment.png){ width="600" }
 
     === "Test session"
 
-        ![A test session in the test element hierarchy](assets/configuration/test-element-hierarchy-session.svg){ width="600" }
+        ![A test session in the test element hierarchy](assets/configuration/test-element-hierarchy-session.png){ width="600" }
 
 !!! note
 

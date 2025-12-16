@@ -3,7 +3,9 @@
 ### Highlights
 
 * **Test-level fixtures**, providing fresh state per test, are now supported in addition to suite-level fixtures.
-* **Fixtures** can now provide their value **as a context or a parameter** to tests. See the documentation of [TestSuite.Fixture](https://infix-de.github.io/testBalloon/dev/api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-suite/-fixture/index.html) for an overview, and the documentation of its new `asContext*()` and `asParameter*()` functions for usage examples.
+* **Fixtures** can now provide their value **as a context or a parameter** to tests. See the documentation of [TestSuite.Fixture](https://infix-de.github.io/testBalloon/dev/getting-started/fixtures/) for an overview, and the documentation of its new `asContext*()` and `asParameter*()` functions for usage examples.
+* The **documentation** now contains a comprehensive section on **fixture usage**.
+* **Migration documentation** is provided for class-based test setups using **JUnit 4/5/6** and **kotlin.test**.
 
 ### Migration from TestBalloon 0.7.x
 
@@ -13,13 +15,19 @@
 
 ### Other Changes
 
+#### Android
+
 * Android host-side tests (a.k.a. unit tests) now correctly use JUnit 4 instead of JUnit platform, enabling access to JUnit 4 rules.
+* Concurrent/parallel invocation is now ignored for Android tests, as it apparently conflicts with the Android test infrastructure's handling of Activities, leading to delays and potential hangups.
+* Examples using the deprecated combination of `com.android.application` and `org.jetbrains.kotlin.multiplatform` Gradle plugins were removed.
+
+#### General
+
 * Running individual tests from gutter icons and cross-framework test filtering is now supported with multiple test frameworks in the same module for
     * Android host-side tests (coexistence with other JUnit 4 runners),
     * JVM tests (coexistence with other JUnit Platform-based frameworks like JUnit Jupiter).
 * The consistency of file-based reports across test platforms was improved.
 * Configuring concurrent invocation now disables `TestScope`, avoiding possible hangups due to thread starvation. (#49)
-* Removed examples using the deprecated combination of `com.android.application` and `org.jetbrains.kotlin.multiplatform` Gradle plugins.
 * Migrated to Kotlin 2.3.0-RC2.
 
 ### Deprecations
@@ -131,6 +139,7 @@ Most users can migrate in one to three steps:
 #### Test reporting
 
 Test reporting (XML, HTML) now operates in two reporting modes, tailored for
+
 - (a) best display (and speed) in IntelliJ, or
 - (b) safe file name lengths for file-based reports.
 
@@ -228,7 +237,7 @@ TestBalloon release variants:
 
 ### Fixes
 
-* Gradle plugin: Fix build failure when TestBallon plugin is specifed before KGP (#18)
+* Gradle plugin: Fix build failure when TestBallon plugin is specified before KGP (#18)
 * Gradle plugin: Fix configuration cache misses (#20)
 
 ## TestBalloon 0.3.3-K2.2.0 (June 23, 2025)

@@ -51,9 +51,22 @@ ktlint_standard_function-naming = disabled
 
 max_line_length = 80
 
-[*.{md,adoc,toml,api}]
+[{*.ad,*.adoc,*.asciidoc,.asciidoctorconfig}]
 
 max_line_length = off
+
+ij_asciidoc_one_sentence_per_line = false
+
+[*.{md,toml}]
+
+max_line_length = off
+
+[*.{api,json,svg}]
+
+max_line_length = off
+indent_style = unset
+ktlint = disabled
+ij_formatter_enabled = false
 
 # region – WORKAROUND https://github.com/jeremymailen/kotlinter-gradle/issues/474
 [**/build/generated/**/*.kt]

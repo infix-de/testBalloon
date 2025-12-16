@@ -4,7 +4,7 @@ import com.example.testLibrary.statisticsReport
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestInvocation
-import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.singleThreaded
 import de.infix.testBalloon.framework.core.testScope
@@ -53,7 +53,7 @@ val Concurrency by testSuite(testConfig = TestConfig.testScope(isEnabled = false
 }
 
 // Define your own test series builder.
-private fun TestSuite.testSeries() {
+private fun TestSuiteScope.testSeries() {
     for (testId in 1..10) {
         test("test $testId") {
             delay(10.milliseconds)

@@ -33,4 +33,4 @@ Follow the Material for MkDocs instructions for [installing into a Python virtua
     * [SuperFences](https://facelessuser.github.io/pymdown-extensions/extensions/superfences/)
         * [Highlighting Lines](https://facelessuser.github.io/pymdown-extensions/extensions/superfences#highlighting-lines)
     * [toc – Table of Contents](https://github.com/Python-Markdown/markdown/blob/master/docs/extensions/toc.md)
-* [Mermaid Flowcharts](https://mermaid.js.org/syntax/flowchart.html)
+* Do not use [Mermaid](https://mermaid.js.org/syntax/flowchart.html), it doesn't work with locally generated sites.

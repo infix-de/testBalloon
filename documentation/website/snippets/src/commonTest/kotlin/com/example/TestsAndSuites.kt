@@ -3,7 +3,7 @@
 package com.example
 
 import de.infix.testBalloon.framework.core.TestExecutionScope
-import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testSuite
 import kotlinx.coroutines.delay
 import kotlin.math.max
@@ -33,7 +33,7 @@ val ExampleTests by testSuite { // (1)!
 // --8<-- [end:ExampleTests]
 
 // --8<-- [start:TestSuite-test]
-fun TestSuite.test(
+fun TestSuiteScope.test( // (1)!
     name: String,
     iterations: Int,
     action: suspend TestExecutionScope.() -> Unit
@@ -153,9 +153,10 @@ val CalculatorTests by testSuite {
 // --8<-- [end:CalculatorTests-Healthy]
 }
 
-private class Calculator {
-    var result: Int = 0
+// --8<-- [start:calculator]
+class Calculator(var result: Int = 0) {
     fun add(operand: Int) {
         result += operand
     }
 }
+// --8<-- [end:calculator]

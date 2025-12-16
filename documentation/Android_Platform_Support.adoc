@@ -6,7 +6,7 @@
 
 Starting with 0.6.0 releases, TestBalloon fully supports Android host-side tests (a.k.a. unit tests) and Android device-side tests (a.k.a. instrumented tests). Releases 0.7.0 and above support using JUnit 4 rules in TestBalloon tests.
 
-All TestBalloon capabilities work on Android. In particular, TestBalloon supports nested, concurrent and parallel tests on the Android platform, even where the underlying test infrastructure does not.
+All TestBalloon capabilities work on Android, except concurrent/parallel test invocation (which apparently conflicts with the Android test infrastructure's handling of Activities). Nested test suites are supported.
 
 Existing tests based on JUnit 4 continue to function and run alongside TestBalloon tests.
 

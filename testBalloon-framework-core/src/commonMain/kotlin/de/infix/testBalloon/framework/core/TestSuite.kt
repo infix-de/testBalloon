@@ -1,6 +1,5 @@
 package de.infix.testBalloon.framework.core
 
-import de.infix.testBalloon.framework.core.TestSuite.Companion.UNIQUE_APPENDIX_LENGTH_LIMIT
 import de.infix.testBalloon.framework.core.internal.GuardedBy
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
@@ -15,7 +14,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.JvmName
 
 /**
  * Registers a top-level [TestSuite].
@@ -81,7 +82,90 @@ public fun testSuite(
 }
 
 /**
- * A test suite containing child [TestElement]s (tests and/or suites). A suite may not contain test logic.
+ * A [TestSuite]-based scope, which can register tests, test suites and fixtures, but may not contain test logic.
+ *
+ * The most direct [TestSuiteScope] is the [TestSuite] itself. In addition, there are scopes for fixtures and
+ * custom scopes. These are not test suites in their own right, but delegate to one.
+ */
+public interface TestSuiteScope {
+    /**
+     * The closest test suite in scope. Use this to refer to the test suite when creating custom tests or test suites.
+     */
+    public val testSuiteInScope: TestSuite
+
+    /**
+     * Registers a [TestSuite] as a child of the [testSuiteInScope].
+     */
+    // Note: The extra TestSuiteScope extension receiver serves to prioritize overloads from derivative scopes.
+    @TestRegistering
+    public fun TestSuiteScope.testSuite(
+        @TestElementName name: String,
+        @TestDisplayName displayName: String = name,
+        testConfig: TestConfig = TestConfig,
+        content: TestSuite.() -> Unit
+    ) {
+        TestSuite(testSuiteInScope, name = name, displayName = displayName, testConfig = testConfig, content = content)
+    }
+
+    /**
+     * Registers a [Test] as a child of the [testSuiteInScope].
+     */
+    // Note: The extra TestSuiteScope extension receiver serves to prioritize overloads from derivative scopes.
+    @TestRegistering
+    public fun TestSuiteScope.test(
+        @TestElementName name: String,
+        @TestDisplayName displayName: String = name,
+        testConfig: TestConfig = TestConfig,
+        action: suspend TestExecutionScope.() -> Unit
+    ) {
+        Test(testSuiteInScope, name = name, displayName = displayName, testConfig = testConfig, action)
+    }
+
+    /**
+     * Registers a fixture, a state holder for a lazily initialized [Value] to be used in tests.
+     *
+     * For details, see [TestSuite.Fixture].
+     */
+    public fun <Value : Any> testFixture(value: suspend TestSuite.() -> Value): TestSuite.Fixture<Value> =
+        TestSuite.Fixture(testSuiteInScope, value)
+
+    /**
+     * Registers an [executionWrappingAction] which wraps the execution actions of this test suite.
+     *
+     * [executionWrappingAction] wraps around the [TestElement]'s primary `testSuiteAction`, which accumulates
+     * the execution actions of its children.
+     * The wrapping action will be invoked only if at least one (direct or indirect) child [Test] executes.
+     * See also [TestElementExecutionWrappingAction] for requirements.
+     *
+     * Note: [TestSuite.aroundAll] will not wrap around fixtures registered in its [TestSuite]. Fixtures (which are
+     * lazily created on their first invocation) will close _after_ any [aroundAll] actions registered in their
+     * [TestSuite]. Use the suite's `testConfig` parameter with `TestConfig.aroundAll` to register an action which
+     * also wraps around the suite's fixtures.
+     *
+     * Usage:
+     * ```
+     *     aroundAll { testSuiteAction ->
+     *         withContext(CoroutineName("parent coroutine configured by aroundAll")) {
+     *             testSuiteAction()
+     *         }
+     *     }
+     * ```
+     */
+    @Deprecated(
+        "Please use the test suite's parameter testConfig = TestConfig.aroundAll { ... } instead." +
+            " Scheduled for removal in TestBalloon 0.8."
+    )
+    public fun TestSuite.aroundAll(executionWrappingAction: TestSuiteExecutionWrappingAction) {
+        testSuiteInScope.aroundAllInternally { elementAction ->
+            executionWrappingAction { elementAction() }
+        }
+    }
+}
+
+/**
+ * A test suite containing child [TestElement]s (tests and/or suites).
+ *
+ * Please see [TestSuiteScope] for details.
  */
 @TestRegistering
 public open class TestSuite internal constructor(
@@ -91,7 +175,10 @@ public open class TestSuite internal constructor(
     testConfig: TestConfig = TestConfig,
     private val content: TestSuite.() -> Unit = {}
 ) : TestElement(parent, name = name, displayName = displayName, testConfig),
-    AbstractTestSuite {
+    AbstractTestSuite,
+    TestSuiteScope {
+
+    override val testSuiteInScope: TestSuite get() = this
 
     internal val testElementChildren: Iterable<TestElement> by ::children
 
@@ -108,13 +195,14 @@ public open class TestSuite internal constructor(
     /**
      * The test suite's [CoroutineScope], valid only during the suite's execution.
      *
-     * Use [testSuiteScope] to launch coroutines in test fixtures. Such coroutines must complete or be canceled
-     * explicitly when their fixture closes. The test suite execution will wait for coroutines in [testSuiteScope]
-     * before completing.
+     * Use [testSuiteCoroutineScope] to launch additional coroutines in test fixtures. Such coroutines must complete
+     * or be canceled explicitly when their fixture closes. The test suite execution will wait for coroutines in
+     * [testSuiteCoroutineScope] to finish before completing.
      */
-    public val testSuiteScope: CoroutineScope
-        get() = executionContext?.let { CoroutineScope(it) }
-            ?: throw IllegalStateException("$testElementPath: testSuiteScope is only available during execution")
+    public val testSuiteCoroutineScope: CoroutineScope
+        get() = executionContext?.let { CoroutineScope(it) } ?: throw IllegalStateException(
+            "$testElementPath: testSuiteCoroutineScope is only available during execution"
+        )
 
     /** The [CoroutineContext] used by this suite during execution. */
     private var executionContext: CoroutineContext? = null
@@ -307,62 +395,10 @@ public open class TestSuite internal constructor(
         }
     }
 
-    /**
-     * Registers an [executionWrappingAction] which wraps the execution actions of this test suite.
-     *
-     * [executionWrappingAction] wraps around the [TestElement]'s primary `testSuiteAction`, which accumulates
-     * the execution actions of its children.
-     * The wrapping action will be invoked only if at least one (direct or indirect) child [Test] executes.
-     * See also [TestElementExecutionWrappingAction] for requirements.
-     *
-     * Note: [TestSuite.aroundAll] will not wrap around fixtures registered in its [TestSuite]. Fixtures (which are
-     * lazily created on their first invocation) will close _after_ any [aroundAll] actions registered in their
-     * [TestSuite]. Use the suite's `testConfig` parameter with `TestConfig.aroundAll` to register an action which
-     * also wraps around the suite's fixtures.
-     *
-     * Usage:
-     * ```
-     *     aroundAll { testSuiteAction ->
-     *         withContext(CoroutineName("parent coroutine configured by aroundAll")) {
-     *             testSuiteAction()
-     *         }
-     *     }
-     * ```
-     */
-    @Deprecated(
-        "Please use the test suite's parameter testConfig = TestConfig.aroundAll { ... } instead." +
-            " Scheduled for removal in TestBalloon 0.8."
-    )
-    public fun aroundAll(executionWrappingAction: TestSuiteExecutionWrappingAction) {
+    internal fun aroundAllInternally(executionWrappingAction: TestSuiteExecutionWrappingAction) {
         privateConfiguration = privateConfiguration.aroundAll { elementAction ->
             executionWrappingAction { elementAction() }
         }
-    }
-
-    /**
-     * Registers a [TestSuite] as a child of this test suite.
-     */
-    @TestRegistering
-    public fun testSuite(
-        @TestElementName name: String,
-        @TestDisplayName displayName: String = name,
-        testConfig: TestConfig = TestConfig,
-        content: TestSuite.() -> Unit
-    ) {
-        TestSuite(this, name = name, displayName = displayName, testConfig = testConfig, content = content)
-    }
-
-    /**
-     * Registers a [Test] as a child of this test suite.
-     */
-    @TestRegistering
-    public fun test(
-        @TestElementName name: String,
-        @TestDisplayName displayName: String = name,
-        testConfig: TestConfig = TestConfig,
-        action: suspend TestExecutionScope.() -> Unit
-    ) {
-        Test(this, name = name, displayName = displayName, testConfig = testConfig, action)
     }
 
     override fun setUp(selection: Selection, report: TestSetupReport) {
@@ -464,13 +500,6 @@ public open class TestSuite internal constructor(
     }
 
     /**
-     * Registers a fixture, a state holder for a lazily initialized [Value] to be used in tests.
-     *
-     * For details, see [Fixture].
-     */
-    public fun <Value : Any> testFixture(value: suspend TestSuite.() -> Value): Fixture<Value> = Fixture(this, value)
-
-    /**
      * A fixture is a state holder for a lazily initialized [Value] to be used in tests.
      *
      * Fixtures come in two flavors:
@@ -494,6 +523,10 @@ public open class TestSuite internal constructor(
      *
      * Common characteristics:
      * - The fixture lazily initializes its value on first use via the [value] lambda.
+     * - The [value] lambda can return any Kotlin object. The `object` expression can be used to return an anonymous
+     *   composite value.
+     * - The [value] lambda is suspending. To create additional coroutines inside, see
+     *   [TestSuite.testSuiteCoroutineScope] for details.
      * - If [Value] is an [AutoCloseable], the fixture will call `close` at the end of its lifetime, otherwise
      *   [closeWith] can specify an action to be called on close.
      * - A fixture can be used either as a suite-level fixture, or as a test-level fixture, but not both.
@@ -504,8 +537,10 @@ public open class TestSuite internal constructor(
      */
     public class Fixture<Value : Any> internal constructor(
         private val suite: TestSuite,
-        private val newValue: suspend TestSuite.() -> Value
+        value: suspend TestSuite.() -> Value
     ) {
+        private val newValue = value
+
         internal enum class Level {
             Suite,
             Test
@@ -514,9 +549,9 @@ public open class TestSuite internal constructor(
         private var level: Level? = null
 
         // The following two properties are only relevant if this is a suite-level fixture.
-        @GuardedBy("valueMutex")
-        private var value: Value? = null
-        private val valueMutex = Mutex()
+        @GuardedBy("suiteLevelValueMutex")
+        private var suiteLevelValue: Value? = null
+        private val suiteLevelValueMutex = Mutex()
 
         private var close: suspend Value.() -> Unit = { (this as? AutoCloseable)?.close() }
 
@@ -565,9 +600,10 @@ public open class TestSuite internal constructor(
             content: Scope<suspend Value.(testExecutionScope: TestExecutionScope) -> Unit>.() -> Unit
         ): Fixture<Value> {
             Scope<suspend Value.(testExecutionScope: TestExecutionScope) -> Unit>(
-                suite = suite,
-                scopingAction = { fixtureScopedAction ->
-                    suiteLevelValue().fixtureScopedAction(this)
+                testSuiteInScope = suite,
+                envelopeValue = null,
+                scopingAction = { testExecutionScope, fixtureScopedAction ->
+                    suiteLevelValue().fixtureScopedAction(testExecutionScope)
                 }
             ).content()
 
@@ -585,7 +621,7 @@ public open class TestSuite internal constructor(
          * ```
          * testFixture {
          *     MyRepository(this)
-         * } asContextForAll {
+         * } asParameterForAll {
          *     test("verify score") { repository ->
          *         repository.getScore(...)
          *     }
@@ -596,9 +632,10 @@ public open class TestSuite internal constructor(
             content: Scope<suspend TestExecutionScope.(value: Value) -> Unit>.() -> Unit
         ): Fixture<Value> {
             Scope<suspend TestExecutionScope.(value: Value) -> Unit>(
-                suite = suite,
-                scopingAction = { fixtureScopedAction ->
-                    fixtureScopedAction(suiteLevelValue())
+                testSuiteInScope = suite,
+                envelopeValue = null,
+                scopingAction = { testExecutionScope, fixtureScopedAction ->
+                    fixtureScopedAction(testExecutionScope, suiteLevelValue())
                 }
             ).content()
 
@@ -640,10 +677,11 @@ public open class TestSuite internal constructor(
             content: Scope<suspend Value.(testExecutionScope: TestExecutionScope) -> Unit>.() -> Unit
         ): Fixture<Value> {
             Scope<suspend Value.(testExecutionScope: TestExecutionScope) -> Unit>(
-                suite = suite,
-                scopingAction = { fixtureScopedAction ->
+                testSuiteInScope = suite,
+                envelopeValue = { newTestLevelValue() },
+                scopingAction = { testExecutionScope, fixtureScopedAction ->
                     withTestLevelValue { value ->
-                        value.fixtureScopedAction(this)
+                        value.fixtureScopedAction(testExecutionScope)
                     }
                 }
             ).content()
@@ -678,10 +716,11 @@ public open class TestSuite internal constructor(
             content: Scope<suspend TestExecutionScope.(value: Value) -> Unit>.() -> Unit
         ): Fixture<Value> {
             Scope<suspend TestExecutionScope.(value: Value) -> Unit>(
-                suite = suite,
-                scopingAction = { fixtureScopedAction ->
+                testSuiteInScope = suite,
+                envelopeValue = { newTestLevelValue() },
+                scopingAction = { testExecutionScope, fixtureScopedAction ->
                     withTestLevelValue { value ->
-                        fixtureScopedAction(value)
+                        fixtureScopedAction(testExecutionScope, value)
                     }
                 }
             ).content()
@@ -689,42 +728,34 @@ public open class TestSuite internal constructor(
             return this
         }
 
-        @DslMarker
-        private annotation class ScopeDsl
-
         /**
-         * A scope where tests receive a fixture-provided value.
+         * A scope inside which tests receive a fixture-provided value.
+         *
+         * The fixture-provided value normally lives inside the [scopingAction]'s `fixtureScopedAction`. For
+         * test-level fixtures, [envelopeValue] provides this value early for examination before the test is
+         * executed. For details and motivation, see [TestEnvelopeContext].
          */
-        @ScopeDsl
-        public class Scope<FixtureScopedAction>(
-            internal val suite: TestSuite,
-            private val scopingAction: suspend TestExecutionScope.(fixtureScopedAction: FixtureScopedAction) -> Unit
-        ) {
-            /**
-             * Registers an [executionWrappingAction] which wraps the execution actions of this scope's test suite.
-             *
-             * See [TestSuite.aroundAll] for details.
-             */
-            @Deprecated(
-                "Please use the test suite's parameter testConfig = TestConfig.aroundAll { ... } instead." +
-                    " Scheduled for removal in TestBalloon 0.8."
-            )
-            public fun aroundAll(executionWrappingAction: TestSuiteExecutionWrappingAction) {
-                suite.aroundAll(executionWrappingAction)
-            }
-
+        public class Scope<FixtureScopedAction> internal constructor(
+            override val testSuiteInScope: TestSuite,
+            private val envelopeValue: (suspend () -> Any)?,
+            private val scopingAction: suspend (
+                testExecutionScope: TestExecutionScope,
+                fixtureScopedAction: FixtureScopedAction
+            ) -> Unit
+        ) : TestSuiteScope {
             /**
              * Registers a [TestSuite] as a child of the scope's test suite.
              */
             @TestRegistering
+            @JvmName("testSuiteFixtureScoped")
             public fun testSuite(
                 @TestElementName name: String,
                 @TestDisplayName displayName: String = name,
                 testConfig: TestConfig = TestConfig,
                 content: Scope<FixtureScopedAction>.() -> Unit
             ) {
-                suite.testSuite(name = name, displayName = displayName, testConfig = testConfig) {
-                    Scope(this, scopingAction).content()
+                testSuiteInScope.testSuite(name = name, displayName = displayName, testConfig = testConfig) {
+                    Scope(this.testSuiteInScope, envelopeValue, scopingAction).content()
                 }
             }
 
@@ -732,24 +763,57 @@ public open class TestSuite internal constructor(
              * Registers a [Test] as a child of the scope's test suite.
              */
             @TestRegistering
+            @JvmName("testFixtureScoped")
             public fun test(
                 @TestElementName name: String,
                 @TestDisplayName displayName: String = name,
                 testConfig: TestConfig = TestConfig,
                 fixtureScopedAction: FixtureScopedAction
             ) {
-                suite.test(name = name, displayName = displayName, testConfig = testConfig) {
-                    scopingAction(fixtureScopedAction)
+                testSuiteInScope.test(
+                    name = name,
+                    displayName = displayName,
+                    testConfig = testConfig.envelopeContext(envelopeValue)
+                ) {
+                    scopingAction(this, fixtureScopedAction)
                 }
             }
 
-            /**
-             * Registers a fixture, a state holder for a lazily initialized [Value].
-             *
-             * For details, see [Fixture].
-             */
-            public fun <Value : Any> testFixture(value: suspend TestSuite.() -> Value): Fixture<Value> =
-                suite.testFixture(value)
+            private fun TestConfig.envelopeContext(envelopeValue: (suspend () -> Any)?): TestConfig =
+                if (envelopeValue != null) coroutineContext(TestEnvelopeContext(envelopeValue)) else this
+        }
+
+        /**
+         * A test execution envelope wrapping a test action with blocking code.
+         *
+         * This construct is intended to push unavoidable blocking operations, which wrap coroutines, down to the
+         * lowest level possible, in order to avoid multiple switches between coroutines and blocking worlds.
+         */
+        internal interface BlockingEnvelope {
+            /** Executes the envelope's blocking code, and the [elementAction] wrapped inside. */
+            fun execute(test: Test, elementAction: () -> Unit)
+        }
+
+        /**
+         * A context element providing a test execution envelope value.
+         *
+         * Normally, a fixture value is captured directly into the inner test lambda, without the test being aware
+         * of it. For a [BlockingEnvelope], this is insufficient, as it needs to be examined outside the execution of
+         * the inner test lambda. This coroutine context element, inserted via the test's [TestConfig], provides
+         * the envelope directly to its test for examination before execution.
+         */
+        internal class TestEnvelopeContext(private val newValue: suspend () -> Any) :
+            AbstractCoroutineContextElement(Key) {
+
+            private var envelopeValue: Any? = null
+
+            internal suspend fun envelopeValue(): Any = envelopeValue ?: newValue().also { envelopeValue = it }
+
+            companion object {
+                private val Key = object : CoroutineContext.Key<TestEnvelopeContext> {}
+
+                suspend fun current() = currentCoroutineContext()[Key]
+            }
         }
 
         /** Registers [action] to be called when this fixture's lifetime ends. */
@@ -759,8 +823,10 @@ public open class TestSuite internal constructor(
         }
 
         internal suspend fun close() {
-            value?.let {
-                value = null
+            require(level != Level.Test) { "$suite: close() cannot be used with a test-level fixture." }
+
+            suiteLevelValue?.let {
+                suiteLevelValue = null
                 it.close()
             }
         }
@@ -780,21 +846,21 @@ public open class TestSuite internal constructor(
                 )
             }
 
-            valueMutex.withLock {
-                if (value == null) {
-                    value = suite.newValue()
+            suiteLevelValueMutex.withLock {
+                if (suiteLevelValue == null) {
+                    suiteLevelValue = suite.newValue()
                     suite.fixturesMutex.withLock {
                         suite.fixtures.add(0, this)
                     }
                 }
-                return value!!
+                return suiteLevelValue!!
             }
         }
 
         /**
-         * Invokes [action] with a fresh value from `this` fixture, which is implied to be a test-level fixture.
+         * Returns a fresh value from `this` fixture, which is implied to be a test-level fixture.
          */
-        private suspend fun withTestLevelValue(action: suspend (value: Value) -> Unit) {
+        private suspend fun newTestLevelValue(): Value {
             when (level) {
                 null -> level = Level.Test
 
@@ -806,11 +872,26 @@ public open class TestSuite internal constructor(
                 )
             }
 
-            var actionException: Throwable? = null
-            var value: Value? = null
+            return suite.newValue()
+        }
 
+        /**
+         * Invokes [action] with a fresh value from `this` fixture, which is implied to be a test-level fixture.
+         */
+        private suspend fun withTestLevelValue(action: suspend (value: Value) -> Unit) {
+            require(level == Level.Test) {
+                "A test-level invocation was expected in ${suite.testElementPath} with an actual level of $level."
+            }
+
+            var actionException: Throwable? = null
+
+            var value: Value? = null
             try {
-                value = suite.newValue()
+                val testEnvelopeContext = TestEnvelopeContext.current() ?: throw IllegalStateException(
+                    "A test parameter was expected, but unavailable in the coroutine context."
+                )
+                @Suppress("UNCHECKED_CAST")
+                value = testEnvelopeContext.envelopeValue() as Value
                 action(value)
             } catch (exception: Throwable) {
                 actionException = exception
@@ -868,4 +949,5 @@ public open class TestSuite internal constructor(
  *
  * See also [TestElementExecutionWrappingAction] for requirements.
  */
+@Deprecated("Will become obsolete with TestSuiteScope.aroundAll(). Scheduled for removal in TestBalloon 0.8.")
 public typealias TestSuiteExecutionWrappingAction = suspend (testSuiteAction: suspend TestSuite.() -> Unit) -> Unit

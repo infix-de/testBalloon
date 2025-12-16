@@ -43,3 +43,7 @@ internal actual fun handleFrameworkLevelError(throwable: Throwable) {
 // characters for a hierarchy of depth 3, reduced by 4 characters per extra hierarchy level.
 // Not knowing the hierarchy depth here, we try to be safe and stay well below the maximum possible number.
 internal actual val defaultReportingPathLimit: Int? = 200
+
+// The Android test infrastructure uses `RunListener`s to finish activities. The entire mechanism is thread-based
+// and expects test events to appear synchronously.
+internal actual val testInfrastructureSupportsConcurrency: Boolean = false

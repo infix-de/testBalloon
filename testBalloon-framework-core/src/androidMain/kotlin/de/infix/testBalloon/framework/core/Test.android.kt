@@ -9,4 +9,4 @@ import org.junit.runner.Description
  * This property exists to support integration of JUnit 4-based libraries.
  */
 @TestBalloonExperimentalApi
-public val TestExecutionScope.jUnit4Description: Description get() = test.platformDescription
+public val Test.jUnit4Description: Description get() = platformDescription

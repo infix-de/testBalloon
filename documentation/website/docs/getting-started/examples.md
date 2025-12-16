@@ -11,7 +11,7 @@ The TestBalloon repository contains examples covering typical use cases:
     * host-side tests (a.k.a. unit tests),
     * device-side tests (a.k.a. instrumented tests),
     * using JUnit 4 rules, and
-    * a [**Jetpack Compose** UI test](https://github.com/infix-de/testBalloon/tree/main/examples/android/src/androidTest/kotlin/com/example/InstrumentedComposeTestsWithTestBalloon.kt).
+    * a [**Jetpack Compose** UI test](https://github.com/infix-de/testBalloon/tree/main/examples/android/src/androidTest/kotlin/com/example/ComposeTestsWithTestBalloon.kt).
 * [Using TestBalloon for a **Kotlin Multiplatform _plus_ Android library**](https://github.com/infix-de/testBalloon/tree/main/examples/multiplatform-library-with-android), containing
     * host-side tests (a.k.a. unit tests),
     * device-side tests (a.k.a. instrumented tests).

@@ -1,37 +1,39 @@
 package com.example
 
+import de.infix.testBalloon.framework.core.JUnit4RulesContext
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
-import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.core.testWithJUnit4Rule
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 val TestsWithTestBalloon by testSuite {
-    val testMethodLoggingRule = TestMethodLoggingRule()
-
-    fun TestSuite.test2(name: String, action: suspend () -> Unit) =
+    testFixture {
         @OptIn(TestBalloonExperimentalApi::class)
-        this.testWithJUnit4Rule(name, testMethodLoggingRule) { action() }
-
-    test2("expected to pass") {
-        println("inside $testElementPath")
-        check(4 == 2 + 2)
-    }
-
-    test2("expected to fail") {
-        check(5 == 2 + 2)
-    }
-
-    testSuite("Nested Suite") {
-        test2("expected to pass") {
+        object : JUnit4RulesContext() {
+            init {
+                rule(TestMethodLoggingRule())
+            }
+        }
+    } asContextForEach {
+        test("expected to pass") {
             println("inside $testElementPath")
             check(4 == 2 + 2)
         }
 
-        test2("expected to fail") {
+        test("expected to fail") {
             check(5 == 2 + 2)
+        }
+
+        testSuite("Nested Suite") {
+            test("expected to pass") {
+                println("inside $testElementPath")
+                check(4 == 2 + 2)
+            }
+
+            test("expected to fail") {
+                check(5 == 2 + 2)
+            }
         }
     }
 }

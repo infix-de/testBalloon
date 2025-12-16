@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.TestSuite.Fixture.TestEnvelopeContext
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.runTestAwaitingCompletion
 import de.infix.testBalloon.framework.shared.AbstractTest
@@ -10,7 +11,10 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
+import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * A test containing a test [action] which raises assertion errors on failure.
@@ -41,13 +45,24 @@ public class Test internal constructor(
             if (testElementIsEnabled) {
                 @Suppress("DEPRECATION")
                 testConfig.executeWrapped(this) {
+                    val blockingEnvelope =
+                        TestEnvelopeContext.current()?.envelopeValue() as? TestSuite.Fixture.BlockingEnvelope
                     val testScopeContext = TestScopeContext.current()
 
-                    if (testScopeContext != null) {
-                        executeInTestScope(testScopeContext)
+                    if (blockingEnvelope != null) {
+                        val inheritableContext = inheritableContext()
+                        blockingEnvelope.execute(test = this@Test) {
+                            runTest(inheritableContext, timeout = testScopeContext?.timeout ?: 60.seconds) {
+                                TestExecutionScope(this@Test, this).action()
+                            }
+                        }
                     } else {
-                        coroutineScope {
-                            TestExecutionScope(this@Test, this).action()
+                        if (testScopeContext != null) {
+                            executeInTestScope(testScopeContext)
+                        } else {
+                            coroutineScope {
+                                TestExecutionScope(this@Test, this).action()
+                            }
                         }
                     }
                 }
@@ -59,11 +74,7 @@ public class Test internal constructor(
      * Executes the test action in [kotlinx.coroutines.test.TestScope].
      */
     private suspend fun Test.executeInTestScope(testScopeContext: TestScopeContext) {
-        var inheritableContext = currentCoroutineContext().minusKey(Job)
-        if (inheritableContext[CoroutineDispatcher] !is TestDispatcher) {
-            inheritableContext = inheritableContext.minusKey(CoroutineDispatcher)
-        }
-        TestScope(inheritableContext)
+        TestScope(inheritableContext())
             .runTestAwaitingCompletion(timeout = testScopeContext.timeout) TestScope@{
                 TestExecutionScope(
                     this@Test,
@@ -72,6 +83,14 @@ public class Test internal constructor(
                     testScopeContext.timeout
                 ).action()
             }
+    }
+
+    private suspend fun inheritableContext(): CoroutineContext = currentCoroutineContext().minusKey(Job).let {
+        if (it[CoroutineDispatcher] is TestDispatcher) {
+            it
+        } else {
+            it.minusKey(CoroutineDispatcher)
+        }
     }
 }
 

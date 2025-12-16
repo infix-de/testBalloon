@@ -2,18 +2,14 @@ package com.example
 
 import de.infix.testBalloon.framework.core.TestCompartment
 import de.infix.testBalloon.framework.core.TestConfig
-import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.aroundEachTest
 import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.shared.TestRegistering
-import kotlinx.coroutines.delay
 import kotlin.math.round
 import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.time.Duration.Companion.seconds
 
 val EffectiveTesting by testSuite {
     testSuite("Use expressive test names") {
@@ -27,82 +23,52 @@ val EffectiveTesting by testSuite {
 
 // --8<-- [start:multiple-tests-with-fresh-state]
     testSuite("Multiple tests with fresh state") {
-        @TestRegistering // (2)!
-        fun test(name: String, action: suspend Service.() -> Unit) = // (3)!
-            this.test(name) {
-// --8<-- [start:multiple-tests-with-fresh-state-init]
-                val service = Service().apply {
-                    signIn(userName = "siobhan", password = "ask") // (1)!
-                }
-// --8<-- [end:multiple-tests-with-fresh-state-init]
-                service.action() // (4)!
-                // cleanup...
+        testFixture {
+            Service().apply {
+                signIn(userName = "siobhan", password = "ask") // (1)!
+            } // (2)!
+        } closeWith {
+            signOut() // (3)!
+        } asParameterForEach {
+            test("deposit") { service ->
+                service.deposit(Amount(20.0))
+                assertEquals(Amount(40.99), service.accountBalance())
             }
 
-        test("deposit") {
-            deposit(Amount(20.0)) // (5)!
-            assertEquals(Amount(40.99), accountBalance()) // (6)!
-        }
-
-        test("withdraw") {
-            withdraw(Amount(20.0))
-            assertEquals(Amount(0.99), accountBalance())
+            test("withdraw") { service ->
+                service.withdraw(Amount(20.0))
+                assertEquals(Amount(0.99), service.accountBalance())
+            }
         }
     }
 // --8<-- [end:multiple-tests-with-fresh-state]
 
 // --8<-- [start:multiple-tests-sharing-state]
     testSuite("Multiple tests sharing state") {
-        class Context { // (1)!
-            val service = Service().apply {
-                signIn(userName = "siobhan", password = "ask")
+        testFixture {
+            object {
+                val service = Service().apply {
+                    signIn(userName = "siobhan", password = "ask")
+                }
+                var expectedCount = 0 // (1)!
             }
-            var expectedTransactionCount = 0 // (2)!
-        }
+        } closeWith {
+            service.signOut()
+        } asContextForAll {
+            test("deposit") {
+                service.deposit(Amount(20.0))
+                assertEquals(Amount(40.99), service.accountBalance())
+                assertEquals(++expectedCount, service.transactionCount())
+            }
 
-        val context = testFixture { Context() }
-
-        @TestRegistering // (3)!
-        fun test(name: String, action: suspend Context.() -> Unit) = // (4)!
-            this.test(name) { context().action() } // (5)!
-
-        test("deposit") {
-            service.deposit(Amount(20.0))
-            assertEquals(Amount(40.99), service.accountBalance())
-            assertEquals(++expectedTransactionCount, service.transactionCount())
-        }
-
-        test("withdraw") {
-            service.withdraw(Amount(20.0))
-            assertEquals(Amount(20.99), service.accountBalance())
-            assertEquals(++expectedTransactionCount, service.transactionCount())
+            test("withdraw") {
+                service.withdraw(Amount(20.0))
+                assertEquals(Amount(20.99), service.accountBalance())
+                assertEquals(++expectedCount, service.transactionCount())
+            }
         }
     }
 // --8<-- [end:multiple-tests-sharing-state]
-
-    // TODO: Replace with the real thing
-    fun <Value : Any> TestSuite.testScopedFixture(
-        value: suspend TestSuite.() -> Value
-    ): TestSuite.Fixture<Value> = testFixture(value)
-
-    testSuite("Multiple tests with fresh state") {
-        val service = testScopedFixture {
-            Service().apply {
-                signIn(userName = "siobhan", password = "guesswork")
-            }
-        }
-
-        test("deposit") {
-            service().deposit(Amount(20.0))
-            assertEquals(Amount(40.99), service().accountBalance())
-        }
-
-        test("withdraw") {
-            service().withdraw(Amount(20.0))
-            delay(10.seconds)
-            assertEquals(Amount(0.99), service().accountBalance())
-        }
-    }
 }
 
 private class Service {

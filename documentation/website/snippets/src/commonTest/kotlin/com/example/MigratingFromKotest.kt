@@ -1,3 +1,4 @@
+@file:Suppress("ktlint:standard:function-literal")
 @file:OptIn(ExperimentalUuidApi::class)
 
 package com.example
@@ -5,25 +6,20 @@ package com.example
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.aroundEachTest
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 // --8<-- [start:isolated-tests]
 val IsolatedTests by testSuite {
-    class Context {
-        val id = Uuid.random()
-    }
-
-    @TestRegistering // (4)!
-    fun test(name: String, action: suspend Context.() -> Unit) =
-        this.test(name) { Context().action() } // (1)!
-
-    test("one") {
-        println(id) // (2)!
-    }
-    test("two") {
-        println(id) // (3)!
+    testFixture {
+        Uuid.random() // (1)!
+    } asParameterForEach { // (2)!
+        test("one") { uuid ->
+            println(uuid) // (3)!
+        }
+        test("two") { uuid ->
+            println(uuid) // (4)!
+        }
     }
 }
 // --8<-- [end:isolated-tests]

@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.internal.testInfrastructureSupportsConcurrency
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -407,13 +408,23 @@ private suspend inline fun <SpecificTestElement : TestElement> TestElementExecut
 /**
  * Returns a test configuration which specifies an invocation [mode] for all [TestSuite]s of a [TestElement] hierarchy.
  *
- * Setting [mode] to [TestInvocation.CONCURRENT] will disable a `TestScope` for the [TestElement] hierarchy.
- * This is necessary to protect against hangups caused by thread starvation (see issue #49).
+ * Notes:
+ *
+ * - Setting [mode] to [TestInvocation.CONCURRENT] will disable a `TestScope` for the [TestElement] hierarchy.
+ *   This is necessary to protect against hangups caused by thread starvation (see issue #49).
+ * - On platforms whose test infrastructure relies on sequential execution (like Android), setting [mode] to
+ *   [TestInvocation.CONCURRENT] will be quietly ignored. This behavior is intentional to guarantee safe execution
+ *   on all platforms and still allow cross-platform configurations to request execution to be as concurrent as
+ *   possible.
  *
  * Child elements inherit this [mode], unless configured otherwise.
  */
-public fun TestConfig.invocation(mode: TestInvocation): TestConfig = coroutineContext(InvocationContext(mode)).run {
-    if (mode == TestInvocation.CONCURRENT) testScope(isEnabled = false) else this
+public fun TestConfig.invocation(mode: TestInvocation): TestConfig = if (testInfrastructureSupportsConcurrency) {
+    coroutineContext(InvocationContext(mode)).run {
+        if (mode == TestInvocation.CONCURRENT) testScope(isEnabled = false) else this
+    }
+} else {
+    this
 }
 
 /**

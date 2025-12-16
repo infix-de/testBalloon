@@ -403,14 +403,14 @@ class TestSuiteTests {
             } closeWith {
                 trace.add("$testElementPath fixture closing")
             } asParameterForAll {
-                test("test1") {
+                test("test1") { fixture ->
                     // The fixture must be created here, although its value is not used.
                     trace.add("$testElementPath")
                 }
 
                 testSuite("innerSuite") {
-                    test("test1") {
-                        it.add("$testElementPath")
+                    test("test1") { fixture ->
+                        fixture.add("$testElementPath")
                     }
                 }
             }
@@ -466,14 +466,14 @@ class TestSuiteTests {
             } closeWith {
                 trace.add("$testElementPath fixture closing")
             } asParameterForEach {
-                test("test1") {
+                test("test1") { fixture ->
                     // The fixture must be created here, although its value is not used.
                     trace.add("$testElementPath")
                 }
 
                 testSuite("innerSuite") {
-                    test("test1") {
-                        it.add("$testElementPath")
+                    test("test1") { fixture ->
+                        fixture.add("$testElementPath")
                     }
                 }
             }
@@ -520,11 +520,95 @@ class TestSuiteTests {
     }
 
     @Test
+    fun testLevelFixtureNested() = withTestFramework {
+        val trace = ConcurrentList<String>()
+
+        val parameterSuite by testSuite("parameterSuite") {
+            testFixture {
+                1.also { trace.add("$testElementPath fixture '$it' creating") }
+            } closeWith {
+                trace.add("$testElementPath fixture '$this' closing")
+            } asParameterForEach {
+                test("test1") { fixture ->
+                    trace.add("$testElementPath fixture '$fixture'")
+                }
+
+                testFixture {
+                    2.also { trace.add("$testElementPath fixture '$it' creating") }
+                } closeWith {
+                    trace.add("$testElementPath fixture '$this' closing")
+                } asParameterForEach {
+                    test("test2") { fixture ->
+                        trace.add("$testElementPath fixture '$fixture'")
+                    }
+                }
+
+                test("test3") { fixture ->
+                    trace.add("$testElementPath fixture '$fixture'")
+                }
+            }
+        }
+
+        val contextSuite by testSuite("contextSuite") {
+            testFixture {
+                1.also { trace.add("$testElementPath fixture '$it' creating") }
+            } closeWith {
+                trace.add("$testElementPath fixture '$this' closing")
+            } asContextForEach {
+                test("test1") { executionScope ->
+                    // The fixture must be created here, although its value is not used.
+                    trace.add("${executionScope.testElementPath} fixture '$this'")
+                }
+
+                testFixture {
+                    2.also { trace.add("$testElementPath fixture '$it' creating") }
+                } closeWith {
+                    trace.add("$testElementPath fixture '$this' closing")
+                } asContextForEach {
+                    test("test2") { executionScope ->
+                        trace.add("${executionScope.testElementPath} fixture '$this'")
+                    }
+                }
+
+                test("test3") { executionScope ->
+                    trace.add("${executionScope.testElementPath} fixture '$this'")
+                }
+            }
+        }
+
+        withTestReport(parameterSuite, contextSuite) {
+            assertContentEquals(
+                listOf(
+                    "«parameterSuite» fixture '1' creating",
+                    "«parameterSuite${iSep}test1» fixture '1'",
+                    "«parameterSuite» fixture '1' closing",
+                    "«parameterSuite» fixture '2' creating",
+                    "«parameterSuite${iSep}test2» fixture '2'",
+                    "«parameterSuite» fixture '2' closing",
+                    "«parameterSuite» fixture '1' creating",
+                    "«parameterSuite${iSep}test3» fixture '1'",
+                    "«parameterSuite» fixture '1' closing",
+                    "«contextSuite» fixture '1' creating",
+                    "«contextSuite${iSep}test1» fixture '1'",
+                    "«contextSuite» fixture '1' closing",
+                    "«contextSuite» fixture '2' creating",
+                    "«contextSuite${iSep}test2» fixture '2'",
+                    "«contextSuite» fixture '2' closing",
+                    "«contextSuite» fixture '1' creating",
+                    "«contextSuite${iSep}test3» fixture '1'",
+                    "«contextSuite» fixture '1' closing"
+                ),
+                trace.elements()
+            )
+        }
+    }
+
+    @Test
     fun testLevelToSuiteLevelFixture() = withTestFramework {
         val suite1 by testSuite("suite1") {
             val fixture1 = testFixture {
             } asParameterForEach {
-                test("test1") {
+                test("test1") { fixture ->
                 }
             }
 
@@ -548,10 +632,10 @@ class TestSuiteTests {
         val suite1 by testSuite("suite1") {
             testFixture {
             } asParameterForAll {
-                test("test1") {
+                test("test1") { fixture ->
                 }
             } asParameterForEach {
-                test("test2") {
+                test("test2") { fixture ->
                 }
             }
         }

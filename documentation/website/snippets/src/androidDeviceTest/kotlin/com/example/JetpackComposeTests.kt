@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:max-line-length", "LongLine")
 
-package com.example.com.example
+package com.example
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -9,15 +9,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import de.infix.testBalloon.framework.core.JUnit4RulesContext
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
-import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.core.testWithJUnit4Rule
-import de.infix.testBalloon.framework.shared.TestRegistering
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.runners.model.Statement
 
 @Composable
 private fun ComposableUnderTest() {
@@ -28,9 +29,16 @@ private fun ComposableUnderTest() {
     Text(text)
 }
 
-// --8<-- [start:composeTest-click]
-val JetpackComposeTests by testSuite {
-    composeTest("click") {
+// --8<-- [start:junit-jetpackCompose]
+class JetpackComposeWithJUnit4 {
+    @get:Rule
+    val composeTestRule = createComposeRule()
+
+    @get:Rule
+    val myCustomRule = myCustomRule()
+
+    @Test
+    fun click() {
         composeTestRule.setContent {
             ComposableUnderTest()
         }
@@ -39,21 +47,39 @@ val JetpackComposeTests by testSuite {
         composeTestRule.onNodeWithText("Success").assertExists()
     }
 }
-// --8<-- [end:composeTest-click]
+// --8<-- [end:junit-jetpackCompose]
 
-/**
- * Registers a `Test` with a [ComposeTestContext] providing a basic `composeTestRule`.
- */
-// --8<-- [start:custom-dsl-extension]
-@TestRegistering
-@OptIn(TestBalloonExperimentalApi::class) // required for testWithJUnit4Rule
-fun TestSuite.composeTest(
-    name: String,
-    composeTestRule: ComposeContentTestRule = createComposeRule(),
-    action: suspend ComposeTestContext<ComposeContentTestRule>.() -> Unit
-) = testWithJUnit4Rule(name, composeTestRule) {
-    ComposeTestContext(composeTestRule).action()
+@Suppress("ktlint:standard:annotation-spacing")
+@OptIn(TestBalloonExperimentalApi::class)
+// --8<-- [start:testballoon-jetpackCompose]
+val JetpackComposeWithTestBalloon by testSuite {
+    testFixture {
+        object : JUnit4RulesContext() { // (1)!
+            val composeTestRule = rule(createComposeRule()) // (2)!
+            val myCustomRule = rule(myCustomRule())
+        }
+    } asContextForEach {
+        test("click") {
+            composeTestRule.setContent {
+                ComposableUnderTest()
+            }
+
+            composeTestRule.onNodeWithText("Button").performClick()
+            composeTestRule.onNodeWithText("Success").assertExists()
+        }
+    }
 }
+// --8<-- [end:testballoon-jetpackCompose]
 
-class ComposeTestContext<Rule>(val composeTestRule: Rule)
-// --8<-- [end:custom-dsl-extension]
+private fun myCustomRule(): TestRule = TestRule { base, description ->
+    object : Statement() {
+        override fun evaluate() {
+            println("Before test: $description")
+            try {
+                base.evaluate()
+            } finally {
+                println("After test: $description")
+            }
+        }
+    }
+}

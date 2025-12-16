@@ -34,26 +34,15 @@ One test per sample documents which tests were actually run:
 
 ## Supply fresh state to multiple tests
 
-Suppose a number of tests needs fresh state like this:
+To conveniently provide each test with fresh state, available as a context via `this`, use a fixture and provide its value as a context for each test:
 
 ```kotlin
---8<-- "EffectiveTesting.kt:multiple-tests-with-fresh-state-init"
-```
-
-1. Note that `signIn` can be a suspending function.
-
-To conveniently provide each test with that fresh state, available as a context via `this`, define a custom DSL function:
-
-```kotlin hl_lines="2-4 8-10"
 --8<-- "EffectiveTesting.kt:multiple-tests-with-fresh-state"
 ```
 
 1. `signIn` can be a suspending function.
-2. Tell the IDE plugin to put test run gutters at the function's call sites.
-3. Redefine the `test()` function locally to use a service as an extension receiver.
-4. Provide the context to each test action.
-5. `deposit()` is a method of the `Service` extension receiver.
-6. `accountBalance()` is a method of the `Service` extension receiver.
+2. If you want to provide multiple values, use an `object`  expression inside the fixture and `asContextForEach`.
+3. `signOut` may also suspend.
 
 !!! tip
 
@@ -61,17 +50,13 @@ To conveniently provide each test with that fresh state, available as a context 
 
 ## Use shared state across multiple tests
 
-To conveniently share state among tests, use a fixture and define a custom DSL function providing it as a context:
+To conveniently share state among tests, use a fixture's value as a shared context for all tests:
 
 ```kotlin
 --8<-- "EffectiveTesting.kt:multiple-tests-sharing-state"
 ```
 
-1. Use a local class to define a test-specific context.
-2. We can use mutable state here. This is [green code](../getting-started/tests-and-suites.md#green-code-and-blue-code) which exists exclusively at test execution time, preserving [TestBalloon's golden rule](../getting-started/tests-and-suites.md#testballoons-golden-rule).
-3. Tell the IDE plugin to put test run gutters at the function's call sites.
-4. Redefine the test function locally to use the test-specific context.
-5. Provide the fixture as a context to each test action.
+1. We can use mutable state here. This is [green code](../getting-started/tests-and-suites.md#green-code-and-blue-code) which exists exclusively at test execution time, preserving [TestBalloon's golden rule](../getting-started/tests-and-suites.md#testballoons-golden-rule).
 
 !!! tip
 
@@ -126,19 +111,18 @@ TestBalloon will now execute most tests sequentially (by default), and isolate t
 
 ## A UI test with Jetpack Compose
 
-TestBalloon does not bundle Compose dependencies, but it does provide a `testWithJUnit4Rule()` function. With that, you can create a custom DSL function:
+TestBalloon does not bundle Compose dependencies, but it does provide a `JUnit4RulesContext` to create test-level fixtures supporting JUnit 4 rules.
+
+With it, you can use Jetpack Compose tests inside TestBalloon via `composeTestRule`, [as shown in the Google documentation](https://developer.android.com/develop/ui/compose/testing):
 
 ```kotlin
---8<-- "JetpackComposeTests.kt:custom-dsl-extension"
+--8<-- "JetpackComposeTests.kt:testballoon-jetpackCompose"
 ```
 
-Having done this, you can use Jetpack Compose tests inside TestBalloon via `composeTestRule`, [as shown in the Google documentation](https://developer.android.com/develop/ui/compose/testing):
+1. Deriving a fixture value from `JUnit4RulesContext` enables support for JUnit 4 rules.
+2. Instead of annotations, use the `rule()` function to register a `TestRule`.
 
-```kotlin
---8<-- "JetpackComposeTests.kt:composeTest-click"
-```
-
-For a complete example, see [**Jetpack Compose** UI test](https://github.com/infix-de/testBalloon/tree/main/examples/android/src/androidTest/kotlin/com/example/InstrumentedComposeTestsWithTestBalloon.kt).
+See complete code in this [**Jetpack Compose** test example](https://github.com/infix-de/testBalloon/tree/main/examples/android/src/androidTest/kotlin/com/example/ComposeTestsWithTestBalloon.kt).
 
 ## A UI test with Compose Multiplatform
 
@@ -149,7 +133,7 @@ Compose Multiplatform provides an experimental [`runComposeUiTest()`](https://ww
 
 ```kotlin
 @TestRegistering
-fun TestSuite.composeTest(name: String, action: suspend ComposeUiTest.() -> Unit) = test(name) {
+fun TestSuiteScope.composeTest(name: String, action: suspend ComposeUiTest.() -> Unit) = test(name) {
     @OptIn(TestBalloonExperimentalApi::class) // required for TestBalloon's testTimeout
     runComposeUiTest(
         runTestContext = coroutineContext.minusKey(CoroutineExceptionHandler.Key),

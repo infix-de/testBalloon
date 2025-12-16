@@ -3,6 +3,7 @@ package de.infix.testBalloon.framework.core.internal.integration
 import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.TestElementEvent
+import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.EnvironmentBasedElementSelection
@@ -14,10 +15,7 @@ import de.infix.testBalloon.framework.shared.internal.InvokedByGeneratedCode
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.experimental.categories.Category
 import org.junit.runner.Description
@@ -73,76 +71,59 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
 
     override fun getDescription(): Description = sessionDescription
 
-    override fun run(notifier: RunNotifier): Unit = runBlocking(Dispatchers.Default) {
+    override fun run(notifier: RunNotifier): Unit = runBlocking {
         // Why are we running on Dispatchers.Default? Because otherwise, a nested runBlocking could hang the entire
         // system due to thread starvation. See https://github.com/Kotlin/kotlinx.coroutines/issues/3983
 
         @OptIn(ExperimentalCoroutinesApi::class)
-        withSingleThreadedDispatcher { notificationDispatcher ->
-
+        withSingleThreadedDispatcher {
             // Android's `TraceRunListener`, which is invoked by `RunNotifier`, requires each event's start and
-            // finish notifications to be reported on the same thread. We guarantee this by using a dedicated thread
-            // for reporting. In addition, we use a channel to avoid CPU context switches.
-            // NOTE: The channel size determines the number of events which can be generated before tests are
-            // stalled by a slow reporting infrastructure. SequencingExecutionReport can deal with stalling and
-            // will not deadlock.
-            val notificationChannel = Channel<TestElementEvent>(10_000)
+            // finish notifications to be reported on the same thread.
+            // Also, the Android test infrastructure uses `RunListener`s to finish activities. This should occur in
+            // order, so we cannot not use any concurrency or delayed reporting here (like using
+            // `SequencingExecutionReport`).
 
-            launch(notificationDispatcher) {
-                for (event in notificationChannel) {
-                    val element = event.element
-                    val description = element.platformDescription
+            TestSession.global.execute(
+                report = object : TestExecutionReport() {
+                    // A TestReport relaying each TestElementEvent to the JUnit 4 run notifier.
 
-                    when (event) {
-                        is TestElementEvent.Starting -> {
-                            if (element.testElementIsEnabled) {
-                                log { "$description: $element starting" }
-                                when (element) {
-                                    is TestSuite -> notifier.fireTestSuiteStarted(description)
-                                    is Test -> notifier.fireTestStarted(description)
-                                }
-                            } else {
-                                if (element is Test) {
-                                    log { "$description: $element ignored" }
-                                    notifier.fireTestIgnored(description)
+                    override suspend fun add(event: TestElementEvent) {
+                        val element = event.element
+                        val description = element.platformDescription
+
+                        when (event) {
+                            is TestElementEvent.Starting -> {
+                                if (element.testElementIsEnabled) {
+                                    log { "$description: $element starting" }
+                                    when (element) {
+                                        is TestSuite -> notifier.fireTestSuiteStarted(description)
+                                        is Test -> notifier.fireTestStarted(description)
+                                    }
+                                } else {
+                                    if (element is Test) {
+                                        log { "$description: $element ignored" }
+                                        notifier.fireTestIgnored(description)
+                                    }
                                 }
                             }
-                        }
 
-                        is TestElementEvent.Finished -> {
-                            if (element.testElementIsEnabled) {
-                                val throwable = event.throwable
-                                log { "$description: $element finished, result=$throwable)" }
-                                if (throwable != null) {
-                                    notifier.fireTestFailure(Failure(description, throwable))
-                                }
-                                when (element) {
-                                    is TestSuite -> notifier.fireTestSuiteFinished(description)
-                                    is Test -> notifier.fireTestFinished(description)
+                            is TestElementEvent.Finished -> {
+                                if (element.testElementIsEnabled) {
+                                    val throwable = event.throwable
+                                    log { "$description: $element finished, result=$throwable)" }
+                                    if (throwable != null) {
+                                        notifier.fireTestFailure(Failure(description, throwable))
+                                    }
+                                    when (element) {
+                                        is TestSuite -> notifier.fireTestSuiteFinished(description)
+                                        is Test -> notifier.fireTestFinished(description)
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-
-            // Here we stay in runBlocking on Dispatchers.Default.
-
-            try {
-                TestSession.global.execute(
-                    // We use a [SequencingExecutionReport] because Android's `TraceRunListener` does not support
-                    // concurrency (although JUnit 4 could).
-                    report = object : SequencingExecutionReport() {
-                        // A TestReport relaying each TestElementEvent to the JUnit 4 notifier.
-
-                        override suspend fun forward(event: TestElementEvent) {
-                            notificationChannel.send(event)
-                        }
-                    }
-                )
-            } finally {
-                notificationChannel.close()
-            }
+            )
         }
     }
 }

@@ -2,7 +2,7 @@ package com.example.testLibrary
 
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestExecutionScope
-import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +13,7 @@ import kotlin.time.Duration
 /**
  * Registers a test with a [timeout] as defined in kotlinx.coroutines [withTimeout].
  */
-fun TestSuite.test(name: String, timeout: Duration, action: suspend TestExecutionScope.() -> Unit) =
+fun TestSuiteScope.test(name: String, timeout: Duration, action: suspend TestExecutionScope.() -> Unit) =
     test(name, testConfig = TestConfig.testScope(isEnabled = false)) {
         try {
             withTimeout(timeout) {
@@ -27,7 +27,7 @@ fun TestSuite.test(name: String, timeout: Duration, action: suspend TestExecutio
 /**
  * Registers a test series with a number of [iterations].
  */
-fun TestSuite.testSeries(name: String, iterations: Int, action: suspend TestExecutionScope.() -> Unit) {
+fun TestSuiteScope.testSeries(name: String, iterations: Int, action: suspend TestExecutionScope.() -> Unit) {
     for (iteration in 1..iterations) {
         test("$name $iteration") {
             action()
@@ -42,7 +42,7 @@ fun TestSuite.testSeries(name: String, iterations: Int, action: suspend TestExec
  * a test.
  */
 @TestRegistering
-fun TestSuite.databaseTest(name: String, action: suspend Database.() -> Unit) {
+fun TestSuiteScope.databaseTest(name: String, action: suspend Database.() -> Unit) {
     test(name) {
         Database(this).use {
             it.action()

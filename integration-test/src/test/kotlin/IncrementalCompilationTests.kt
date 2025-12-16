@@ -1,5 +1,6 @@
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
@@ -14,7 +15,7 @@ val IncrementalCompilationTests by testSuite(
 ) {
     incrementalCompilationTestSuite(
         "incremental-compilation-kotlin-test",
-        testConfig = TestConfig.disable() // enable to observe IC with kotlin-test
+        testConfig = TestConfig.disable() // enable to observe IC with kotlin.test
     ) {
         testSeries("incremental compilation")
     }
@@ -36,7 +37,7 @@ val IncrementalCompilationTests by testSuite(
 }
 
 @TestRegistering
-private fun TestSuite.incrementalCompilationTestSuite(
+private fun TestSuiteScope.incrementalCompilationTestSuite(
     projectName: String,
     testConfig: TestConfig = TestConfig,
     action: IncrementalCompilationTestProject.() -> Unit
@@ -44,7 +45,7 @@ private fun TestSuite.incrementalCompilationTestSuite(
     IncrementalCompilationTestProject(this, projectName).action()
 }
 
-private class IncrementalCompilationTestProject(private val projectTestSuite: TestSuite, projectName: String) :
+private class IncrementalCompilationTestProject(projectTestSuite: TestSuite, projectName: String) :
     TestProject(projectTestSuite, projectName) {
 
     /**
@@ -60,7 +61,7 @@ private class IncrementalCompilationTestProject(private val projectTestSuite: Te
      */
     @TestRegistering
     fun testSeries(name: String, gradleOptions: Array<String> = arrayOf(), testConfig: TestConfig = TestConfig) =
-        projectTestSuite.testSuite(name, testConfig = testConfig) {
+        testSuite(name, testConfig = testConfig) {
             suspend fun compileTaskExecution(taskName: String) = gradleExecution(taskName, *gradleOptions)
 
             val commonTestSourceDirectory = testFixture { projectDirectory() / "src" / "commonTest" }

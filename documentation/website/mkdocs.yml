@@ -10,7 +10,7 @@ nav:
   - Getting started:
       - First steps: getting-started/first-steps.md
       - Tests and suites: getting-started/tests-and-suites.md
-      - Fixtures (shared state): getting-started/fixtures.md
+      - Fixtures: getting-started/fixtures.md
       - Coroutines: getting-started/coroutines.md
       - Configuration: getting-started/configuration.md
       - Integration: getting-started/integration.md
@@ -19,9 +19,9 @@ nav:
   - How to:
       - Effective testing: how-to/effective-testing.md
       - Migrating:
-          - …from JUnit 🚧: how-to/migrating-from-junit.md
+          - …from JUnit: how-to/migrating-from-junit.md
           - …from Kotest: how-to/migrating-from-kotest.md
-          - …from kotlin-test 🚧: how-to/migrating-from-kotlin-test.md
+          - …from kotlin.test: how-to/migrating-from-kotlin-test.md
   - Articles: articles.md
   - Support: support.md
   - API Reference: api/index.html
@@ -127,15 +127,13 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets:
       base_path:
-        - snippets/src/commonTest/kotlin/com/example
         - snippets/src/androidDeviceTest/kotlin/com/example
+        - snippets/src/androidHostTest/kotlin/com/example
+        - snippets/src/commonTest/kotlin/com/example
+        - snippets/src/jvmTest/kotlin/com/example
       check_paths: true
       dedent_subsections: true
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify

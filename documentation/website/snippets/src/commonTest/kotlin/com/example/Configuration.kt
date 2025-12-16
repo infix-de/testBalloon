@@ -5,7 +5,7 @@ package com.example
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestExecutionScope
 import de.infix.testBalloon.framework.core.TestInvocation
-import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.aroundEachTest
 import de.infix.testBalloon.framework.core.coroutineContext
 import de.infix.testBalloon.framework.core.invocation
@@ -19,7 +19,7 @@ import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration
 
 // --8<-- [start:test-with-timeout]
-fun TestSuite.test(
+fun TestSuiteScope.test(
     name: String,
     timeout: Duration,
     action: suspend TestExecutionScope.() -> Unit
@@ -38,7 +38,7 @@ fun TestSuite.test(
 // --8<-- [end:test-with-timeout]
 
 // --8<-- [start:test-series]
-fun TestSuite.testSeries(
+fun TestSuiteScope.testSeries(
     name: String,
     iterations: Int,
     action: suspend TestExecutionScope.() -> Unit
@@ -53,7 +53,10 @@ fun TestSuite.testSeries(
 
 // --8<-- [start:test-with-database-context]
 @TestRegistering // (1)!
-fun TestSuite.databaseTest(name: String, action: suspend Database.() -> Unit) {
+fun TestSuiteScope.databaseTest(
+    name: String,
+    action: suspend Database.() -> Unit
+) {
     test(name) {
         Database(this).use { // (2)!
             it.action() // (3)!

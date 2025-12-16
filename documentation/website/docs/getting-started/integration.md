@@ -4,7 +4,7 @@ TestBalloon has a unified API for all Kotlin target platforms, residing in the `
 
     TestBalloon integrates thoroughly with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
 
-TestBalloon supports multi-level nesting of test suites and [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on all platforms, even where the underlying infrastructure does not.
+TestBalloon supports multi-level nesting of test suites and [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on platforms whose test infrastructure can handle concurrent test execution.
 
 **Runtime information** and **environment variables** are available on all platforms via the global `testPlatform` variable and its [`TestPlatform`](../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-platform/index.html) interface.
 
@@ -42,7 +42,7 @@ Alternatively, TestBalloon's own south-east arrow `↘` can be used, or a custom
 
 !!! warning
 
-    IntelliJ IDEA's run configurations mess with test filtering via `--tests`. In this case, use the `TESTBALLOON_INCLUDE_PATTERNS` environment variable instead, like `TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite|inner suite|*`.
+    IntelliJ IDEA's run configurations can mess with test filtering via `--tests`. In this case, use the `TESTBALLOON_INCLUDE_PATTERNS` environment variable instead, like `TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite|inner suite|*`.
 
 To use test selection with **Android device-side (instrumented) tests**, you have these options:
 
@@ -76,7 +76,7 @@ TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-paral
 
 TestBalloon exports only those environment variables into a **browser's simulated environment**, which are declared browser-safe. To do so, use these options (they are cumulative):
 
-1. Set the Gradle property `testBalloon.browserSafeEnvironmentPattern` to a comma-separated list of environment variable names:
+1. Set the Gradle property `testBalloon.browserSafeEnvironmentPattern` to regular expression pattern for environment variable names:
 
     ```properties
     testBalloon.browserSafeEnvironmentPattern=CI|TEST.*
@@ -100,25 +100,18 @@ TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-paral
 
 TestBalloon integrates with Android's test infrastructure, the [Android Gradle Plugin (AGP)](https://developer.android.com/build/releases/gradle-plugin), and the [Android Gradle Library Plugin for KMP](https://developer.android.com/kotlin/multiplatform/plugin).
 
-### Host-side (unit) tests
+TestBalloon supports Android's JUnit 4 runner with
 
-TestBalloon supports Android host-side (unit) tests via Android's JUnit 4 runner. Other (non-TestBalloon) JUnit-based tests can execute alongside TestBalloon in the same module.
+* Android **host-side (unit) tests**,
+* **device-side (instrumented) tests**,
+* **JUnit 4 test rules** via [test fixtures](fixtures.md) with values of type `JUnit4RulesContext`,
+* other (non-TestBalloon) JUnit-based tests executing alongside TestBalloon in the same module.
 
-TestBalloon supports
+!!! note
 
-* JUnit 4 test rules via its `testWithJUnit4Rule()` function,
-* [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) and tests running in parallel.
+    Although Android supports multithreading, TestBalloon will not run tests in parallel on that platform. Android's test infrastructure assumes sequential execution and can cause hangups with tests executing asynchronously.
 
-### Device-side (instrumented) tests
-
-TestBalloon supports Android device-side tests via Android's JUnit 4 runner. Other (non-TestBalloon) JUnit-based tests can execute alongside TestBalloon in the same module.
-
-TestBalloon supports
-
-* JUnit 4 test rules via its `testWithJUnit4Rule()` function,
-* [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) and tests running in parallel (on an emulator or a physical device).
-
-#### Environment variables {#android-device-environment-variables}
+### Environment variables in device-side (instrumented) tests {#android-device-environment-variables}
 
 For Android device-side tests, TestBalloon provides simulated environment variables via instrumentation arguments. To set them, you have these options:
 

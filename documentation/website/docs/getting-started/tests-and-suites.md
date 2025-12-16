@@ -22,7 +22,7 @@ Tests and test suites accept strings as names.
 
 1. Registers a top-level test suite. TestBalloon will automatically use the property's fully qualified name unless you provide an explicit name.
 2. Registers a test.
-3. An assertion from `kotlin-test`.
+3. An assertion from `kotlin.test`.
 4. Registers a nested test suite.
 5. A suspend function call.
 
@@ -33,6 +33,8 @@ You can define your own types of tests and test suites, like this test variant w
 ```kotlin
 --8<-- "TestsAndSuites.kt:TestSuite-test"
 ```
+
+1. Using `TestSuiteScope` as the extension receiver makes your test function universally compatible with all scopes using a test suite, like fixture scopes or custom scopes (e.g. a test series).
 
 !!! tip
 
@@ -78,10 +80,7 @@ Value sources help cover **test edge cases and/or random samples** without repet
 
 TestBalloon has two primary runtime phases:
 
-```mermaid
-graph LR
-    A("`**Test registration**<br/>(always sequential)`") --> B("`**Test execution**<br/>(sequential or concurrent)`")
-```
+![Runtime phases "Test Registration" and "Test Execution"](assets/tests-and-suites/runtime-phases.png){ width="600" }
 
 The :testballoon: **test registration phase** is part of TestBalloon's setup: It creates the test element hierarchy, registering test suites, tests and fixtures, and configuring test elements. At the end, it knows exactly what to run. (1)
 { .annotate }

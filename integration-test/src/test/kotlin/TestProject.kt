@@ -1,5 +1,6 @@
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testPlatform
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.io.path.ExperimentalPathApi
@@ -21,10 +22,12 @@ import kotlin.time.ExperimentalTime
  * The test project autoconfigures itself for the available test tasks, preparing a clean build with
  * a fresh set of JS and Wasm package lock files (if JS and/or Wasm tests are available).
  */
-internal open class TestProject(projectTestSuite: TestSuite, projectName: String) {
+internal open class TestProject(projectTestSuite: TestSuite, projectName: String) : TestSuiteScope {
+
+    override val testSuiteInScope: TestSuite = projectTestSuite
 
     @OptIn(ExperimentalPathApi::class)
-    protected val projectDirectory = projectTestSuite.testFixture {
+    protected val projectDirectory = testFixture {
         val commonTemplateDirectory = Path("build") / "projectTemplates" / "common"
         val projectTemplateDirectory = Path("build") / "projectTemplates" / projectName
         val projectDirectory = Path("build") / "projects" / projectName
@@ -38,7 +41,7 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
         projectDirectory
     }
 
-    internal val testTaskNames = projectTestSuite.testFixture {
+    internal val testTaskNames = testFixture {
         val listTestsResultRegex = Regex("""##TEST\((.*?)\)##""")
 
         val testTaskNames = gradleExecution("listTests").checkedStdout().let { stdout ->

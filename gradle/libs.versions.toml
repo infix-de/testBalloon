@@ -12,6 +12,9 @@ android-compileSdk = "36"
 android-minSdk = "26"
 android-targetSdk = "36"
 
+# https://developer.android.com/jetpack/androidx/versions/all-channel
+androidx-test = "1.7.0"
+
 # Target JDK version for Kotlin and Java compilations
 jdk = "11"
 
@@ -58,9 +61,9 @@ org-junit-platform = "1.13.4"
 # https://developer.android.com/develop/ui/compose/bom/bom-mapping
 androidx-compose-bom = "androidx.compose:compose-bom:2025.12.00"
 
-androidx-test-core = "androidx.test:core:1.7.0"
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test" }
 
-androidx-test-runner = "androidx.test:runner:1.7.0"
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-test" }
 
 com-android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
 

@@ -82,7 +82,7 @@
 
 4. Add a dependency for the assertions library of your choice:
 
-    === "kotlin-test assertions"
+    === "kotlin.test assertions"
 
         ```kotlin
         implementation(kotlin("test"))

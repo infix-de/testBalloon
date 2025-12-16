@@ -119,3 +119,5 @@ internal val reportingPathLimit: Int =
     }
         ?: defaultReportingPathLimit
         ?: Int.MAX_VALUE
+
+internal expect val testInfrastructureSupportsConcurrency: Boolean

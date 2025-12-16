@@ -2,7 +2,7 @@
 
 TestBalloon arranges test suites and tests in the **test element hierarchy**.
 
-![Image title](assets/coroutines/test-element-hierarchy.svg){ width="600" }
+![Image title](assets/coroutines/test-element-hierarchy.png){ width="600" }
 /// caption
 A test element hierarchy comprised of test suites and tests. Test compartments and the test session configure the top-level test suites.
 ///
@@ -32,7 +32,7 @@ During execution, code can suspend in ([:material-check-circle:{ .green } green 
 TestBalloon can be [configured](configuration.md#testconfig) to execute tests concurrently or in parallel(1) at any level of the test hierarchy. This means that it can run all tests concurrently, or run selected tests concurrently and others sequentially.
 { .annotate }
 
-1. Parallel execution requires a multithreaded platform like the JVM, Native, or Android.
+1. Parallel execution is available on multithreaded platforms whose test infrastructure can handle concurrent test execution. Currently, this applies to the JVM and Native platforms.
 
 Wherever TestBalloon runs tests concurrently, it does so with **deep concurrency** by default: It uses a common coroutine dispatcher to govern concurrency across the chosen parts of the test element hierarchy. This optimally distributes load across CPU cores.
 

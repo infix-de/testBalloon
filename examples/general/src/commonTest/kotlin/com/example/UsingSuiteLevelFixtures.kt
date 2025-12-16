@@ -2,7 +2,7 @@
 
 package com.example
 
-import de.infix.testBalloon.framework.core.TestSuite
+import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testSuite
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -115,7 +115,7 @@ private class StarRepository {
 }
 
 // A fixture can be defined outside a particular test suite for re-use.
-private fun TestSuite.userRepository() = testFixture { UserRepository(testSuiteScope) }
+private fun TestSuiteScope.userRepository() = testFixture { UserRepository(testSuiteCoroutineScope) }
 
 private class UserRepository(scope: CoroutineScope) : AutoCloseable {
     val clientJob = scope.launch {

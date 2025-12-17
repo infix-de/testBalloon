@@ -40,12 +40,13 @@
 * (JVM-only projects) Incremental compilation will no longer miss tests. (#47)
 * (Android) Display name length limiting in test reports now works correctly. (#44)
 
-## TestBalloon 0.7.1 (November 5, 2025)
+## TestBalloon 0.7.1 (November 5, 2025, updated for K2.3.0 on December 17, 2025)
 
 TestBalloon release variants:
 
 | TestBalloon version | Supported Kotlin versions |
 |---------------------|---------------------------|
+| 0.7.1-K2.3.0        | 2.3.0                     |
 | 0.7.1-K2.2.21       | 2.2.21 … 2.3.0-Beta2      |
 | 0.7.1-K2.2.0        | 2.2.0 … 2.2.20            |
 | 0.7.1-K2.1.20       | 2.1.20 … 2.1.21           |

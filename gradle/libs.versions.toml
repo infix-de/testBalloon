@@ -22,12 +22,13 @@ jdk = "11"
 junit-junit4 = "4.13.2"
 
 # https://github.com/GradleUp/Tapmoc/releases
-com-gradleup-tapmoc = "0.2.0"
+com-gradleup-tapmoc = "0.3.1"
 
 # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
 com-vanniktech-maven-publish = "0.35.0"
 
 # https://github.com/kotest/kotest/releases
+# Do not force an update onto consumers unless necessary
 io-kotest = "5.9.1"
 
 # https://github.com/ktorio/ktor/releases
@@ -38,7 +39,7 @@ org-jetbrains-dokka = "2.1.0"
 
 # https://github.com/JetBrains/kotlin/releases
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
-org-jetbrains-kotlin = "2.3.0-RC2"
+org-jetbrains-kotlin = "2.3.0"
 
 # https://github.com/Kotlin/dokka/releases
 org-jetbrains-kotlin-dokka = "2.0.0"
@@ -47,7 +48,7 @@ org-jetbrains-kotlin-dokka = "2.0.0"
 org-jetbrains-kotlinx-coroutines = "1.10.2"
 
 # https://github.com/Kotlin/kotlinx-kover/releases
-org-jetbrains-kotlinx-kover = "0.9.3"
+org-jetbrains-kotlinx-kover = "0.9.4"
 
 # https://github.com/jeremymailen/kotlinter-gradle/releases
 org-jmailen-kotlinter = "5.3.0"
@@ -71,6 +72,7 @@ com-android-gradle-plugin = { module = "com.android.tools.build:gradle", version
 com-benwoodworth-parameterize = "com.benwoodworth.parameterize:parameterize-core:0.4.1"
 
 # https://github.com/gmazzo/gradle-buildconfig-plugin/releases
+# Do not update: https://github.com/gmazzo/gradle-buildconfig-plugin/issues/343
 com-github-gmazzo-buildconfig-gradle-plugin = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.7.0"
 
 com-gradleup-tapmoc-gradle-plugin = { module = "com.gradleup.tapmoc:tapmoc-gradle-plugin", version.ref = "com-gradleup-tapmoc" }

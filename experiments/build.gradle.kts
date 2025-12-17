@@ -20,8 +20,7 @@ tapmoc {
     java(versionFromCatalog("jdk").toInt())
     kotlin(versionFromCatalog("org.jetbrains.kotlin"))
 
-    checkApiDependencies(Severity.ERROR)
-    checkRuntimeDependencies(Severity.ERROR)
+    checkDependencies(Severity.ERROR)
 }
 
 kotlin {

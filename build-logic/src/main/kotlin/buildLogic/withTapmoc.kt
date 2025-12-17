@@ -35,8 +35,7 @@ fun Project.configureWithTapmoc() {
     configureKotlinCompatibility(versionFromCatalog("org.jetbrains.kotlin"))
 
     extensions.configure<TapmocExtension>("tapmoc") {
-        checkApiDependencies(Severity.ERROR)
-        checkRuntimeDependencies(Severity.ERROR)
+        checkDependencies(Severity.ERROR)
     }
 }
 

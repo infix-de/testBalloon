@@ -15,8 +15,7 @@ tapmoc {
     java(versionFromCatalog("jdk").toInt().coerceAtLeast(17)) // JUnit Jupiter requires JVM 17 or higher
     kotlin(versionFromCatalog("org.jetbrains.kotlin"))
 
-    checkApiDependencies(Severity.ERROR)
-    checkRuntimeDependencies(Severity.ERROR)
+    checkDependencies(Severity.ERROR)
 }
 
 kotlin {

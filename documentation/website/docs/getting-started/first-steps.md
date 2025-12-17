@@ -28,7 +28,7 @@
 
     !!! info
 
-        The repository contains a [Multiplatform configuration example](https://github.com/infix-de/testBalloon/tree/main/examples/general/build.gradle.kts).
+        The repository contains a [Multiplatform configuration example]({{ repo.main_url }}/examples/general/build.gradle.kts).
 
 3. Add extra dependencies for Android (optional):
 
@@ -78,7 +78,7 @@
 
     !!! info
 
-        The repository contains configuration examples for [Android](https://github.com/infix-de/testBalloon/tree/main/examples/android/build.gradle.kts) and [Multiplatform library with Android](https://github.com/infix-de/testBalloon/tree/main/examples/multiplatform-library-with-android/build.gradle.kts).
+        The repository contains configuration examples for [Android]({{ repo.main_url }}/examples/android/build.gradle.kts) and [Multiplatform library with Android]({{ repo.main_url }}/examples/multiplatform-library-with-android/build.gradle.kts).
 
 4. Add a dependency for the assertions library of your choice:
 

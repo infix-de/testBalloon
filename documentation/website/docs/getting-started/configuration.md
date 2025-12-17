@@ -94,7 +94,7 @@ You can configure a custom `TestConfig` extension providing a test timeout:
 2. Enable real time.
 3. Wrap around each test `action()`. By default, you must invoke it at some point, or configure an exception to that rule via `TestConfig.addPermits()`.
 
-The example in [StatisticsReport.kt](https://github.com/infix-de/testBalloon/tree/main/examples/general/src/commonTest/kotlin/com/example/testLibrary/StatisticsReport.kt) shows how to create a more complex custom `TestConfig` extension based on the existing `traversal` function.
+The example in [StatisticsReport.kt]({{ repo.main_url }}/examples/general/src/commonTest/kotlin/com/example/testLibrary/StatisticsReport.kt) shows how to create a more complex custom `TestConfig` extension based on the existing `traversal` function.
 
 You'll be basing a custom extension on one or more existing `TestConfig` functions. The wrappers are good candidates:
 

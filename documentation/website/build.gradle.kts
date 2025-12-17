@@ -16,6 +16,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.div
 import kotlin.io.path.exists
 import kotlin.io.path.moveTo
+import kotlin.io.path.writeText
 
 plugins {
     kotlin("jvm") apply false
@@ -144,8 +145,33 @@ tasks {
 
             if (!(Path(pythonVirtualenvDirectory) / "bin").exists()) {
                 run("python3", "-m", "venv", pythonVirtualenvDirectory)
-                run("$pythonVirtualenvDirectory/bin/pip3", "install", "mkdocs-material", "mkdocs-material[imaging]")
+                run(
+                    "$pythonVirtualenvDirectory/bin/pip3",
+                    "install",
+                    "mkdocs-material",
+                    "mkdocs-material[imaging]",
+                    "mkdocs-markdownextradata-plugin"
+                )
             }
+        }
+    }
+
+    val generateDocumentationVariables by registering {
+        val generatedVariablesDirectory = layout.buildDirectory.dir("generated/documentationVariables")
+        outputs.dir(generatedVariablesDirectory)
+
+        val projectVariables = mapOf("version" to newApiVersion)
+
+        doLast {
+            val directory = Path("${generatedVariablesDirectory.get()}")
+            check(directory.exists() || directory.toFile().mkdirs()) { "Could not create directory '$directory'" }
+            (directory / "project.yaml").writeText(
+                buildString {
+                    for ((name, value) in projectVariables) {
+                        appendLine("$name: \"$value\"")
+                    }
+                }
+            )
         }
     }
 
@@ -156,6 +182,7 @@ tasks {
         workingDir = projectDir
 
         inputs.files(installMkdocs)
+        inputs.files(generateDocumentationVariables)
         finalizedBy(dokkaGeneratePublicationHtml)
 
         commandLine = listOf("$pythonVirtualenvDirectory/bin/mkdocs", "build", "--clean")

@@ -122,7 +122,7 @@ With it, you can use Jetpack Compose tests inside TestBalloon via `composeTestRu
 1. Deriving a fixture value from `JUnit4RulesContext` enables support for JUnit 4 rules.
 2. Instead of annotations, use the `rule()` function to register a `TestRule`.
 
-See complete code in this [**Jetpack Compose** test example](https://github.com/infix-de/testBalloon/tree/main/examples/android/src/androidTest/kotlin/com/example/ComposeTestsWithTestBalloon.kt).
+See complete code in this [**Jetpack Compose** test example]({{ repo.main_url }}/examples/android/src/androidTest/kotlin/com/example/ComposeTestsWithTestBalloon.kt).
 
 ## A UI test with Compose Multiplatform
 

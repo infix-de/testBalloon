@@ -8,11 +8,11 @@ Finally, there is a brief [introduction to development].
 
 For the curious:
 
-* Read what needs to be considered when [integrating with Kotlin-related build tooling and the IDE](https://github.com/infix-de/testBalloon/blob/main/documentation/Kotlin_IDE_and_Build_Tool_Interoperability.adoc).
-* Some [details about Android platform support](https://github.com/infix-de/testBalloon/blob/main/documentation/Android_Platform_Support.adoc).
+* Read what needs to be considered when [integrating with Kotlin-related build tooling and the IDE]({{ repo.main_url }}/documentation/Kotlin_IDE_and_Build_Tool_Interoperability.adoc).
+* Some [details about Android platform support]({{ repo.main_url }}/documentation/Android_Platform_Support.adoc).
 
-[background]: https://github.com/infix-de/testBalloon/tree/main/documentation/Background.adoc
+[background]: {{ repo.main_url }}/documentation/Background.adoc
 
-[design considerations]: https://github.com/infix-de/testBalloon/tree/main/documentation/Design_Considerations.adoc
+[design considerations]: {{ repo.main_url }}/documentation/Design_Considerations.adoc
 
-[introduction to development]: https://github.com/infix-de/testBalloon/tree/main/documentation/Development.adoc
+[introduction to development]: {{ repo.main_url }}/documentation/Development.adoc

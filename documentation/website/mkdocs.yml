@@ -80,8 +80,15 @@ plugins:
   - social
   - search
   - privacy
+  - markdownextradata:
+      data: build/generated/documentationVariables
+      jinja_options:
+        comment_start_string: __NON_MATCHING_JINJA_COMMENT_START__
 
 extra:
+  repo:
+    base_url: https://github.com/infix-de/testBalloon
+    main_url: https://github.com/infix-de/testBalloon/blob/main
   social:
     - icon: fontawesome/solid/earth-europe
       link: https://infix.de

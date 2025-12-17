@@ -1,4 +1,4 @@
-## Upgrading from TestBalloon 0.7.x
+## Upgrading from TestBalloon 0.7.x to {{ project.version }}
 
 ### Android host-side (unit) tests
 
@@ -35,7 +35,7 @@
     }
     ```
 
-=== "Current"
+=== "TestBalloon {{ project.version }}"
 
     ```kotlin
     testSuite("Multiple tests with fresh state") {

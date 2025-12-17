@@ -4,7 +4,7 @@ You have questions, or you would like to discuss something?
 
 You have ideas, or found a bug?
 
-* [x] Visit TestBalloon's [GitHub issue tracker](https://github.com/infix-de/testBalloon/issues).
+* [x] Visit TestBalloon's [GitHub issue tracker]({{ repo.base_url }}/issues).
 
 You need professional support?
 

@@ -2,7 +2,7 @@
 
 ### Upgrading
 
-Please see the [migration notes for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/dev/how-to/upgrading/).
+Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/dev/how-to/upgrading/).
 
 ### Highlights
 

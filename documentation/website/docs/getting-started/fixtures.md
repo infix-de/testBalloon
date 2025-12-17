@@ -33,11 +33,16 @@ testFixture {
 
 ## Test-level fixtures
 
-A fixture becomes a test-level fixture by invoking one of the following functions, assuming this class:
+A fixture becomes a test-level fixture by invoking one of the following functions(1):
+{ .annotate }
 
-```kotlin
---8<-- "Fixtures.kt:test-level-class"
-```
+1. The examples use this class declaration:
+
+    ```kotlin
+    --8<-- "Fixtures.kt:test-level-class"
+    ```
+
+<div markdown>
 
 1. `asParameterForEach` provides a fresh fixture value as a **parameter** for each test in its scope:
 
@@ -55,17 +60,24 @@ A fixture becomes a test-level fixture by invoking one of the following function
 
         Choose a **context** along with an `object` expression to provide multiple properties to tests.
 
+</div>
+
 !!!info
 
     Choose a **test-level fixture** if you want each test to start with the same defined state. This helps to isolate tests from each other. It also makes tests ideal candidates for parallel execution.
 
 ## Suite-level fixtures
 
-A fixture becomes a suite-level fixture by invoking one of the following functions, assuming this class:
+A fixture becomes a suite-level fixture by invoking one of the following functions(1):
+{ .annotate }
 
-```kotlin
---8<-- "Fixtures.kt:suite-level-class"
-```
+1. The examples use this class declaration:
+    
+    ```kotlin
+    --8<-- "Fixtures.kt:suite-level-class"
+    ```
+
+<div markdown>
 
 1. `asParameterForAll` provides the same fixture value as a **parameter** for all tests in its scope:
 
@@ -99,6 +111,8 @@ A fixture becomes a suite-level fixture by invoking one of the following functio
     !!!tip
 
         Invoking the suite-level fixture is practical to provide its value to a test-level fixture. See [this example on mixing test-level setup and shared state](../how-to/migrating-from-junit.md#mixing-test-level-setup-and-shared-state).
+
+</div>
 
 !!!info
 

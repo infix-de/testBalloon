@@ -111,6 +111,17 @@ TestBalloon supports Android's JUnit 4 runner with
 
     Although Android supports multithreading, TestBalloon will not run tests in parallel on that platform. Android's test infrastructure assumes sequential execution and can cause hangups with tests executing asynchronously.
 
+### Using JUnit 4 test rules
+
+The following Jetpack Compose test example demonstrates using JUnit 4 rules in TestBalloon:
+
+```kotlin
+--8<-- "JetpackComposeTests.kt:testballoon-jetpackCompose"
+```
+
+1. Deriving a fixture value from `JUnit4RulesContext` enables support for JUnit 4 rules.
+2. Instead of annotations, use the `rule()` function to register a `TestRule`.
+
 ### Environment variables in device-side (instrumented) tests {#android-device-environment-variables}
 
 For Android device-side tests, TestBalloon provides simulated environment variables via instrumentation arguments. To set them, you have these options:

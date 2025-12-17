@@ -11,6 +11,7 @@ import org.gradle.util.internal.VersionNumber
 import java.nio.file.Files
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
+import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.div
@@ -183,7 +184,7 @@ tasks {
 
         inputs.files(installMkdocs)
         inputs.files(generateDocumentationVariables)
-        finalizedBy(dokkaGeneratePublicationHtml)
+        dependsOn(dokkaGeneratePublicationHtml)
 
         commandLine = listOf("$pythonVirtualenvDirectory/bin/mkdocs", "build", "--clean")
 
@@ -192,6 +193,8 @@ tasks {
         val devVersion = devVersion
         val latestVersionAlias = latestVersionAlias
         val regularVersions = previousVersions
+        val apiVersionsName = apiVersionsDirectory.asFile.name
+        val newApiVersion = newApiVersion
 
         doFirst {
             // Update the mkdocs versions file with all existing versions, plus 'dev'.
@@ -218,18 +221,15 @@ tasks {
                 aliasLink.deleteIfExists()
                 Files.createSymbolicLink(aliasLink, Path(latestVersion))
             }
-        }
 
-        val apiVersionsName = apiVersionsDirectory.asFile.name
-        val newApiVersion = newApiVersion
-
-        doLast {
             // Create or update the api link.
-            var linkSource = distributionDirectory / devVersion / "api"
+            var linkDirectory = distributionDirectory / devVersion
+            if (!linkDirectory.exists()) linkDirectory.createDirectory()
+            var linkSource = linkDirectory / "api"
             linkSource.deleteIfExists()
             Files.createSymbolicLink(linkSource, Path("../$apiVersionsName") / newApiVersion)
 
-            println("The API reference will be created for version '$newApiVersion'.")
+            println("The API reference was created for version '$newApiVersion'.")
         }
     }
 

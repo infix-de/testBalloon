@@ -3,7 +3,6 @@ package com.example
 import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestElement
-import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.executionReport
@@ -39,10 +38,10 @@ private class DisabledTestsExecutionReport : TestExecutionReport() {
     private val lock = reentrantLock()
     private val disabledTestPaths = mutableListOf<TestElement.Path>() // guarded by lock
 
-    override suspend fun add(event: TestElementEvent) {
+    override suspend fun add(event: TestElement.Event) {
         rootElement.compareAndSet(null, event.element)
 
-        if (event !is TestElementEvent.Finished) return
+        if (event !is TestElement.Event.Finished) return
 
         val element = event.element
 

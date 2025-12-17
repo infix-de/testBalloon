@@ -248,7 +248,7 @@ class TestSuiteTests {
     fun aroundAllWithoutInnerInvocationPermitted() = withTestFramework {
         val suite1 by testSuite(
             "suite1",
-            testConfig = TestConfig.permits(TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION).aroundAll {}
+            testConfig = TestConfig.permits(TestConfig.Permit.WrapperWithoutInnerInvocation).aroundAll {}
         ) {
             test("test1") {}
         }
@@ -270,7 +270,7 @@ class TestSuiteTests {
 
     @Test
     fun suiteWithoutChildrenPermitted() = withTestFramework {
-        val suite1 by testSuite("suite1", testConfig = TestConfig.permits(TestPermit.SUITE_WITHOUT_CHILDREN)) {
+        val suite1 by testSuite("suite1", testConfig = TestConfig.permits(TestConfig.Permit.SuiteWithoutChildren)) {
         }
 
         withTestReport(suite1) {
@@ -881,7 +881,7 @@ class TestSuiteTests {
                 }
             )
 
-            suspend fun TestExecutionScope.traceWithFixtureAccess() {
+            suspend fun Test.ExecutionScope.traceWithFixtureAccess() {
                 trace.add("$testElementPath begin")
                 fixtures.forEach { it() }
                 trace.add("$testElementPath end")
@@ -955,7 +955,7 @@ class TestSuiteTests {
     fun suiteLevelFixtureConcurrency() = assertSuccessfulSuite {
         val instanceCount = atomic(0)
 
-        testSuite("suite1", testConfig = TestConfig.invocation(TestInvocation.CONCURRENT)) {
+        testSuite("suite1", testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent)) {
             val fixture1 = testFixture { instanceCount.incrementAndGet() }
 
             repeat(100) { index ->
@@ -1065,7 +1065,7 @@ class TestSuiteTests {
         val eventLog = mutableListOf<String>()
 
         class AdditionalExecutionReport(val name: String) : TestExecutionReport() {
-            override suspend fun add(event: TestElementEvent) {
+            override suspend fun add(event: TestElement.Event) {
                 eventLog.add("$name: $event${if (!event.element.testElementIsEnabled) " [*]" else ""}")
             }
         }

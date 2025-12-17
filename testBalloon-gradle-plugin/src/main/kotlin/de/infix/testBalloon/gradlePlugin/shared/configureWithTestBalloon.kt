@@ -96,16 +96,16 @@ private fun Project.configureTestTasks(
     browserSafeEnvironmentPatternFromExtension: () -> String
 ) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
-        "intellij" -> ReportingMode.INTELLIJ_IDEA
-        "files" -> ReportingMode.FILES
+        "intellij" -> ReportingMode.IntellijIdea
+        "files" -> ReportingMode.Files
         else -> if (providers.systemProperty("idea.active").isPresent) {
-            ReportingMode.INTELLIJ_IDEA
+            ReportingMode.IntellijIdea
         } else {
-            ReportingMode.FILES
+            ReportingMode.Files
         }
     }
 
-    val reportsEnabled = testBalloonProperties.reportsEnabled ?: (reportingMode == ReportingMode.FILES)
+    val reportsEnabled = testBalloonProperties.reportsEnabled ?: (reportingMode == ReportingMode.Files)
 
     if (!reportsEnabled) {
         tasks.withType(AbstractTestTask::class.java).configureEach {

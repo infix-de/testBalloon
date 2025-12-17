@@ -2,9 +2,8 @@
 
 package com.example
 
+import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestConfig
-import de.infix.testBalloon.framework.core.TestExecutionScope
-import de.infix.testBalloon.framework.core.TestInvocation
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.aroundEachTest
 import de.infix.testBalloon.framework.core.coroutineContext
@@ -22,7 +21,7 @@ import kotlin.time.Duration
 fun TestSuiteScope.test(
     name: String,
     timeout: Duration,
-    action: suspend TestExecutionScope.() -> Unit
+    action: suspend Test.ExecutionScope.() -> Unit
 ) = test(
     "$name (timeout: $timeout)",
     testConfig = TestConfig.testScope(false)
@@ -41,7 +40,7 @@ fun TestSuiteScope.test(
 fun TestSuiteScope.testSeries(
     name: String,
     iterations: Int,
-    action: suspend TestExecutionScope.() -> Unit
+    action: suspend Test.ExecutionScope.() -> Unit
 ) {
     for (iteration in 1..iterations) {
         test("$name $iteration") {
@@ -79,7 +78,7 @@ val Other by testSuite {
     testSuite(
         "let's test concurrency",
         testConfig = TestConfig
-            .invocation(TestInvocation.CONCURRENT) // (1)!
+            .invocation(TestConfig.Invocation.Concurrent) // (1)!
             .coroutineContext(MyCoroutineContextElement) // (2)!
             .statisticsReport() // (3)!
     ) {
@@ -89,7 +88,7 @@ val Other by testSuite {
 
     // --8<-- [start:custom-test-config-function]
     fun TestConfig.onFourThreadsWithStatistics() = this // (1)!
-        .invocation(TestInvocation.CONCURRENT)
+        .invocation(TestConfig.Invocation.Concurrent)
         .coroutineContext(MyCoroutineContextElement)
         .statisticsReport()
     // --8<-- [end:custom-test-config-function]

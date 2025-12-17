@@ -29,23 +29,13 @@ ij_continuation_indent_size = 4
 ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
 
-# noinspection EditorConfigKeyCorrectness
 ktlint_code_style = intellij_idea
-
-# noinspection EditorConfigKeyCorrectness
 ktlint_standard_filename = disabled
-
-# noinspection EditorConfigKeyCorrectness
 ktlint_standard_no-empty-first-line-in-class-body = disabled
-
-# noinspection EditorConfigKeyCorrectness
 ktlint_standard_discouraged-comment-location = disabled
-
-# noinspection EditorConfigKeyCorrectness
 ktlint_standard_value-parameter-comment = disabled
-
-# noinspection EditorConfigKeyCorrectness
 ktlint_standard_function-naming = disabled
+ktlint_standard_mixed-condition-operators = disabled
 
 [**/snippets/**/*.kt]
 
@@ -65,7 +55,7 @@ max_line_length = off
 
 max_line_length = off
 indent_style = unset
-ktlint = disabled
+
 ij_formatter_enabled = false
 
 # region – WORKAROUND https://github.com/jeremymailen/kotlinter-gradle/issues/474

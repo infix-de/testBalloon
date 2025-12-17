@@ -2,7 +2,6 @@ package com.example
 
 import com.example.testLibrary.statisticsReport
 import de.infix.testBalloon.framework.core.TestConfig
-import de.infix.testBalloon.framework.core.TestInvocation
 import de.infix.testBalloon.framework.core.coroutineContext
 import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.invocation
@@ -18,7 +17,7 @@ private val MyCoroutineContextElement = CoroutineName("MyCoroutineContextElement
 
 val UsingContextElement by testSuite(
     testConfig = TestConfig
-        .invocation(TestInvocation.CONCURRENT)
+        .invocation(TestConfig.Invocation.Concurrent)
         .coroutineContext(MyCoroutineContextElement)
         .statisticsReport() // a custom configuration for reporting
         .chainedWith(

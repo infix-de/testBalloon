@@ -1,7 +1,7 @@
 package de.infix.testBalloon.framework.core.internal.integration
 
 import de.infix.testBalloon.framework.core.Test
-import de.infix.testBalloon.framework.core.TestElementEvent
+import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
@@ -26,7 +26,7 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
     /**
      * Forwards an event downstream.
      */
-    override suspend fun forward(event: TestElementEvent) {
+    override suspend fun forward(event: TestElement.Event) {
         val element = event.element
         val elementParent = element.testElementParent
         val isIgnoredTest = !element.testElementIsEnabled && element is Test
@@ -34,7 +34,7 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
         if (element.isSessionOrCompartment) return
 
         when (event) {
-            is TestElementEvent.Starting -> {
+            is TestElement.Event.Starting -> {
                 if (isIgnoredTest) {
                     eventMessage(event, eventName = "Ignored")
                     // Note: TeamCity does not recognize an ignored suite, so all suites are reported normally.
@@ -51,7 +51,7 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
                 }
             }
 
-            is TestElementEvent.Finished -> {
+            is TestElement.Event.Finished -> {
                 if (!isIgnoredTest) {
                     if (element is TestSuite) {
                         message(messageName = "flowFinished") {
@@ -71,12 +71,12 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
         }
     }
 
-    private fun eventMessage(event: TestElementEvent, eventName: String, content: Message.() -> Unit = {}) {
+    private fun eventMessage(event: TestElement.Event, eventName: String, content: Message.() -> Unit = {}) {
         val element = event.element
         val elementTypeName = if (element is Test) "test" else "testSuite"
         val elementName =
             if (element.isTopLevelSuite ||
-                element is TestSuite && TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA
+                element is TestSuite && TestSession.global.reportingMode == ReportingMode.IntellijIdea
             ) {
                 // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA, but
                 // duplicates path elements in XML and HTML file reports.
@@ -129,10 +129,15 @@ private fun CharSequence.asAttributeValue() = buildString {
     for (c in this@asAttributeValue) {
         when (c) {
             '\'' -> append("|'")
+
             '\n' -> append("|n")
+
             '\r' -> append("|r")
+
             '|' -> append("||")
+
             '[' -> append("|[")
+
             ']' -> append("|]")
 
             in SAFE_ATTRIBUTE_VALUE_CHAR_SET -> append(c)

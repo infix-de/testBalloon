@@ -48,7 +48,7 @@ internal actual fun CoroutineScope.testFunctionPromise(testFunction: suspend () 
     promise { testFunction() }
 
 internal actual fun processArguments(): Array<String>? {
-    if (TestPlatformWasmJs.runtime != TestPlatformJsHosted.Runtime.NODE) return null
+    if (TestPlatformWasmJs.runtime != TestPlatformJsHosted.Runtime.Node) return null
     val rawArguments = nodeProcessArguments()
     return Array(rawArguments.length) { rawArguments[it].toString() }
 }

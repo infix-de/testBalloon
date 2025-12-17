@@ -16,7 +16,7 @@ import kotlin.native.concurrent.Worker
 public actual val testPlatform: TestPlatform = TestPlatformNative
 
 public object TestPlatformNative : TestPlatform {
-    override val type: TestPlatform.Type = TestPlatform.Type.NATIVE
+    override val type: TestPlatform.Type = TestPlatform.Type.Native
 
     @OptIn(ExperimentalNativeApi::class)
     override val displayName: String = "Native/${Platform.cpuArchitecture.name}/${Platform.osFamily.name}"

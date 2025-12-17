@@ -3,7 +3,6 @@ package de.infix.testBalloon.framework.core.internal.integration
 import de.infix.testBalloon.framework.core.FailFastException
 import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestElement
-import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
@@ -122,8 +121,8 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
 
             TestSession.global.setUp(
                 report = object : TestSetupReport() {
-                    override fun add(event: TestElementEvent) {
-                        if (event is TestElementEvent.Finished && event.throwable != null) {
+                    override fun add(event: TestElement.Event) {
+                        if (event is TestElement.Event.Finished && event.throwable != null) {
                             reportDiscoveryIssue(
                                 event.throwable,
                                 "Could not configure ${event.element.testElementPath}"
@@ -163,16 +162,16 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
 
             TestSession.global.execute(
                 report = object : TestExecutionReport() {
-                    // A TestReport relaying each TestElementEvent to the JUnit listener.
+                    // A TestReport relaying each TestElement.Event to the JUnit listener.
 
-                    override suspend fun add(event: TestElementEvent) {
+                    override suspend fun add(event: TestElement.Event) {
                         if (event.element.isSessionOrCompartment) {
                             log { "$event: skipping session or compartment" }
                             return
                         }
 
                         when (event) {
-                            is TestElementEvent.Starting -> {
+                            is TestElement.Event.Starting -> {
                                 if (event.element.testElementIsEnabled) {
                                     log { "${event.element.platformDescriptor}: ${event.element} starting" }
                                     jUnitListener.executionStarted(event.element.platformDescriptor)
@@ -186,7 +185,7 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
                                 }
                             }
 
-                            is TestElementEvent.Finished -> {
+                            is TestElement.Event.Finished -> {
                                 if (event.element.testElementIsEnabled) {
                                     log {
                                         "${event.element.platformDescriptor}: ${event.element} finished," +
@@ -227,6 +226,7 @@ private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestEle
 
     val segmentType = when (element) {
         is Test -> "test"
+
         is TestSuite -> {
             if (isTopLevelSuite) {
                 source = ClassSource.from(testElementName)
@@ -237,7 +237,7 @@ private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestEle
         }
     }
     uniqueId = parentUniqueId.append(segmentType, testElementName)
-    val displayName = if (TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA) {
+    val displayName = if (TestSession.global.reportingMode == ReportingMode.IntellijIdea) {
         testElementDisplayName
     } else {
         testElementPath.qualifiedReportingNameBelowTopLevel
@@ -261,7 +261,7 @@ private val TestElement.platformDescriptor: AbstractTestDescriptor
     get() =
         checkNotNull(testElementDescriptors[this]) { "$this is missing its TestDescriptor" }
 
-private val TestElementEvent.Finished.executionResult: TestExecutionResult
+private val TestElement.Event.Finished.executionResult: TestExecutionResult
     get() =
         when (throwable) {
             null -> TestExecutionResult.successful()

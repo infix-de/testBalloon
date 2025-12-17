@@ -10,7 +10,7 @@ import kotlinx.coroutines.newSingleThreadContext
 public actual val testPlatform: TestPlatform = TestPlatformAndroid
 
 public object TestPlatformAndroid : TestPlatform {
-    override val type: TestPlatform.Type = TestPlatform.Type.JVM
+    override val type: TestPlatform.Type = TestPlatform.Type.Jvm
     override val displayName: String = "Android"
     override val parallelism: Int = Runtime.getRuntime().availableProcessors()
 

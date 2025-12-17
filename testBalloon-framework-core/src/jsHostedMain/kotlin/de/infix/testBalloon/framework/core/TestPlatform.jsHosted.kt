@@ -5,8 +5,8 @@ import kotlinx.coroutines.Dispatchers
 
 public interface TestPlatformJsHosted : TestPlatform {
     public enum class Runtime(public val displayName: String) {
-        NODE("Node"),
-        BROWSER("Browser");
+        Node("Node"),
+        Browser("Browser");
 
         override fun toString(): String = displayName
     }

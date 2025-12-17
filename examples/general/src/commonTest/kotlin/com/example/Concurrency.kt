@@ -3,7 +3,6 @@ package com.example
 import com.example.testLibrary.statisticsReport
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestConfig
-import de.infix.testBalloon.framework.core.TestInvocation
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.singleThreaded
@@ -20,14 +19,14 @@ val Concurrency by testSuite(testConfig = TestConfig.testScope(isEnabled = false
 
     testSuite(
         "sequential",
-        testConfig = TestConfig.invocation(TestInvocation.SEQUENTIAL).statisticsReport()
+        testConfig = TestConfig.invocation(TestConfig.Invocation.Sequential).statisticsReport()
     ) {
         testSeries()
     }
 
     testSuite(
         "concurrent (default)",
-        testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).statisticsReport()
+        testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent).statisticsReport()
     ) {
         testSeries()
     }
@@ -35,14 +34,14 @@ val Concurrency by testSuite(testConfig = TestConfig.testScope(isEnabled = false
     @OptIn(TestBalloonExperimentalApi::class) // required for singleThreaded()
     testSuite(
         "concurrent (single-threaded)",
-        testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).singleThreaded().statisticsReport()
+        testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent).singleThreaded().statisticsReport()
     ) {
         testSeries()
     }
 
     testSuite(
         "concurrent",
-        testConfig = TestConfig.invocation(TestInvocation.CONCURRENT).statisticsReport()
+        testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent).statisticsReport()
     ) {
         for (suiteId in 1..10) {
             testSuite("suite $suiteId") {

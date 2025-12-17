@@ -53,7 +53,7 @@ public open class TestSession protected constructor(
                     )
                 }
             }
-            ?: ReportingMode.FILES
+            ?: ReportingMode.Files
 
     init {
         if (singleton != null) {
@@ -91,7 +91,7 @@ public open class TestSession protected constructor(
          * inside tests.
          */
         public val DefaultConfiguration: TestConfig =
-            TestConfig.invocation(TestInvocation.SEQUENTIAL)
+            TestConfig.invocation(TestConfig.Invocation.Sequential)
                 .coroutineContext(Dispatchers.Default)
                 .testScope(true)
 

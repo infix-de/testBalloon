@@ -2,7 +2,7 @@
 
 package com.example
 
-import de.infix.testBalloon.framework.core.TestExecutionScope
+import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testSuite
 import kotlinx.coroutines.delay
@@ -36,7 +36,7 @@ val ExampleTests by testSuite { // (1)!
 fun TestSuiteScope.test( // (1)!
     name: String,
     iterations: Int,
-    action: suspend TestExecutionScope.() -> Unit
+    action: suspend Test.ExecutionScope.() -> Unit
 ) = test(name) {
     for (iteration in 1..iterations) {
         action()

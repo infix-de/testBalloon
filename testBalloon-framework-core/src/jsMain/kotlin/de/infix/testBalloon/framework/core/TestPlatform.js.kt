@@ -3,10 +3,10 @@ package de.infix.testBalloon.framework.core
 public actual val testPlatform: TestPlatform = TestPlatformJs
 
 public object TestPlatformJs : TestPlatformJsHosted {
-    override val type: TestPlatform.Type = TestPlatform.Type.JS
+    override val type: TestPlatform.Type = TestPlatform.Type.Js
 
     override val runtime: TestPlatformJsHosted.Runtime =
-        if (runtimeIsNodeJs()) TestPlatformJsHosted.Runtime.NODE else TestPlatformJsHosted.Runtime.BROWSER
+        if (runtimeIsNodeJs()) TestPlatformJsHosted.Runtime.Node else TestPlatformJsHosted.Runtime.Browser
 
     override val displayName: String = "JS/$runtime"
 

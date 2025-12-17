@@ -2,7 +2,6 @@ package de.infix.testBalloon.framework.core.internal
 
 import de.infix.testBalloon.framework.core.ConcurrentList
 import de.infix.testBalloon.framework.core.TestElement
-import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.assertContainsInOrder
@@ -24,10 +23,10 @@ class TeamCityTestExecutionReportTests {
     private val iSepEsc = "|0x2198" // escaped internal separator
 
     @Test
-    fun basicOutputIntelliJ() = basicOutputTest(ReportingMode.INTELLIJ_IDEA, "topSuite$rSepEsc")
+    fun basicOutputIntelliJ() = basicOutputTest(ReportingMode.IntellijIdea, "topSuite$rSepEsc")
 
     @Test
-    fun basicOutputFiles() = basicOutputTest(ReportingMode.FILES, "")
+    fun basicOutputFiles() = basicOutputTest(ReportingMode.Files, "")
 
     private fun basicOutputTest(reportingMode: ReportingMode, extraPath: String) =
         withTestFramework(TestSession(reportingMode = reportingMode)) {
@@ -88,7 +87,7 @@ class TeamCityTestExecutionReportTests {
         }
 
     @Test
-    fun concurrentOutput() = withTestFramework(TestSession(reportingMode = ReportingMode.FILES)) {
+    fun concurrentOutput() = withTestFramework(TestSession(reportingMode = ReportingMode.Files)) {
         val suite by testSuite("concurrent") {
             test("test1") {}
             test("test2") {}
@@ -110,11 +109,11 @@ class TeamCityTestExecutionReportTests {
         val output = ConcurrentList<String>()
         val report = TeamCityTestExecutionReport { output.add(it) }
 
-        val sessionStartingEvent = TestElementEvent.Starting(TestSession.global).also { report.add(it) }
+        val sessionStartingEvent = TestElement.Event.Starting(TestSession.global).also { report.add(it) }
         val compartmentStartingEvent =
-            TestElementEvent.Starting(TestSession.global.defaultCompartment).also { report.add(it) }
+            TestElement.Event.Starting(TestSession.global.defaultCompartment).also { report.add(it) }
 
-        val startingEvents = mutableMapOf<TestElement, TestElementEvent.Starting>()
+        val startingEvents = mutableMapOf<TestElement, TestElement.Event.Starting>()
         listOf(
             "/S",
             "suite-1/S",
@@ -136,18 +135,20 @@ class TeamCityTestExecutionReportTests {
                 (element as TestSuite).testElementChildren.first { it.testElementName == childName }
             }
             when (suffix) {
-                "S" -> report.add(TestElementEvent.Starting(element).also { startingEvents[element] = it })
-                "F" -> report.add(TestElementEvent.Finished(element, startingEvents[element]!!))
+                "S" -> report.add(TestElement.Event.Starting(element).also { startingEvents[element] = it })
+
+                "F" -> report.add(TestElement.Event.Finished(element, startingEvents[element]!!))
+
                 else -> {
-                    val startingEvent = TestElementEvent.Starting(element)
+                    val startingEvent = TestElement.Event.Starting(element)
                     report.add(startingEvent)
-                    report.add(TestElementEvent.Finished(element, startingEvent))
+                    report.add(TestElement.Event.Finished(element, startingEvent))
                 }
             }
         }
 
-        report.add(TestElementEvent.Finished(compartmentStartingEvent.element, compartmentStartingEvent))
-        report.add(TestElementEvent.Finished(sessionStartingEvent.element, sessionStartingEvent))
+        report.add(TestElement.Event.Finished(compartmentStartingEvent.element, compartmentStartingEvent))
+        report.add(TestElement.Event.Finished(sessionStartingEvent.element, sessionStartingEvent))
 
         output.comparableElements().assertContainsInOrder(
             listOf(

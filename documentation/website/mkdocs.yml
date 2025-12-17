@@ -18,6 +18,7 @@ nav:
       - Background: getting-started/background.md
   - How to:
       - Effective testing: how-to/effective-testing.md
+      - Upgrading: how-to/upgrading.md
       - Migrating:
           - …from JUnit: how-to/migrating-from-junit.md
           - …from Kotest: how-to/migrating-from-kotest.md

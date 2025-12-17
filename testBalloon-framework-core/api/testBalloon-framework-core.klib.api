@@ -23,33 +23,6 @@ final enum class de.infix.testBalloon.framework.core.internal/LogLevel : kotlin/
     final fun values(): kotlin/Array<de.infix.testBalloon.framework.core.internal/LogLevel> // de.infix.testBalloon.framework.core.internal/LogLevel.values|values#static(){}[0]
 }
 
-final enum class de.infix.testBalloon.framework.core/TestInvocation : kotlin/Enum<de.infix.testBalloon.framework.core/TestInvocation> { // de.infix.testBalloon.framework.core/TestInvocation|null[0]
-    enum entry CONCURRENT // de.infix.testBalloon.framework.core/TestInvocation.CONCURRENT|null[0]
-    enum entry SEQUENTIAL // de.infix.testBalloon.framework.core/TestInvocation.SEQUENTIAL|null[0]
-
-    final val entries // de.infix.testBalloon.framework.core/TestInvocation.entries|#static{}entries[0]
-        final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework.core/TestInvocation> // de.infix.testBalloon.framework.core/TestInvocation.entries.<get-entries>|<get-entries>#static(){}[0]
-
-    final fun valueOf(kotlin/String): de.infix.testBalloon.framework.core/TestInvocation // de.infix.testBalloon.framework.core/TestInvocation.valueOf|valueOf#static(kotlin.String){}[0]
-    final fun values(): kotlin/Array<de.infix.testBalloon.framework.core/TestInvocation> // de.infix.testBalloon.framework.core/TestInvocation.values|values#static(){}[0]
-}
-
-final enum class de.infix.testBalloon.framework.core/TestPermit : kotlin/Enum<de.infix.testBalloon.framework.core/TestPermit> { // de.infix.testBalloon.framework.core/TestPermit|null[0]
-    enum entry SUITE_WITHOUT_CHILDREN // de.infix.testBalloon.framework.core/TestPermit.SUITE_WITHOUT_CHILDREN|null[0]
-    enum entry TEST_SCOPE_WITH_CONCURRENT_INVOCATION // de.infix.testBalloon.framework.core/TestPermit.TEST_SCOPE_WITH_CONCURRENT_INVOCATION|null[0]
-    enum entry WRAPPER_WITHOUT_INNER_INVOCATION // de.infix.testBalloon.framework.core/TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION|null[0]
-
-    final val entries // de.infix.testBalloon.framework.core/TestPermit.entries|#static{}entries[0]
-        final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework.core/TestPermit> // de.infix.testBalloon.framework.core/TestPermit.entries.<get-entries>|<get-entries>#static(){}[0]
-
-    final fun valueOf(kotlin/String): de.infix.testBalloon.framework.core/TestPermit // de.infix.testBalloon.framework.core/TestPermit.valueOf|valueOf#static(kotlin.String){}[0]
-    final fun values(): kotlin/Array<de.infix.testBalloon.framework.core/TestPermit> // de.infix.testBalloon.framework.core/TestPermit.values|values#static(){}[0]
-}
-
-abstract interface de.infix.testBalloon.framework.core/TestExecutionTraversal { // de.infix.testBalloon.framework.core/TestExecutionTraversal|null[0]
-    abstract suspend fun aroundEach(de.infix.testBalloon.framework.core/TestElement, kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/TestElement, kotlin/Unit>) // de.infix.testBalloon.framework.core/TestExecutionTraversal.aroundEach|aroundEach(de.infix.testBalloon.framework.core.TestElement;kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.TestElement,kotlin.Unit>){}[0]
-}
-
 abstract interface de.infix.testBalloon.framework.core/TestPlatform { // de.infix.testBalloon.framework.core/TestPlatform|null[0]
     abstract val displayName // de.infix.testBalloon.framework.core/TestPlatform.displayName|{}displayName[0]
         abstract fun <get-displayName>(): kotlin/String // de.infix.testBalloon.framework.core/TestPlatform.displayName.<get-displayName>|<get-displayName>(){}[0]
@@ -63,11 +36,11 @@ abstract interface de.infix.testBalloon.framework.core/TestPlatform { // de.infi
     abstract fun threadId(): kotlin/ULong // de.infix.testBalloon.framework.core/TestPlatform.threadId|threadId(){}[0]
 
     final enum class Type : kotlin/Enum<de.infix.testBalloon.framework.core/TestPlatform.Type> { // de.infix.testBalloon.framework.core/TestPlatform.Type|null[0]
-        enum entry JS // de.infix.testBalloon.framework.core/TestPlatform.Type.JS|null[0]
-        enum entry JVM // de.infix.testBalloon.framework.core/TestPlatform.Type.JVM|null[0]
-        enum entry NATIVE // de.infix.testBalloon.framework.core/TestPlatform.Type.NATIVE|null[0]
-        enum entry WASM_JS // de.infix.testBalloon.framework.core/TestPlatform.Type.WASM_JS|null[0]
-        enum entry WASM_WASI // de.infix.testBalloon.framework.core/TestPlatform.Type.WASM_WASI|null[0]
+        enum entry Js // de.infix.testBalloon.framework.core/TestPlatform.Type.Js|null[0]
+        enum entry Jvm // de.infix.testBalloon.framework.core/TestPlatform.Type.Jvm|null[0]
+        enum entry Native // de.infix.testBalloon.framework.core/TestPlatform.Type.Native|null[0]
+        enum entry WasmJs // de.infix.testBalloon.framework.core/TestPlatform.Type.WasmJs|null[0]
+        enum entry WasmWasi // de.infix.testBalloon.framework.core/TestPlatform.Type.WasmWasi|null[0]
 
         final val entries // de.infix.testBalloon.framework.core/TestPlatform.Type.entries|#static{}entries[0]
             final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework.core/TestPlatform.Type> // de.infix.testBalloon.framework.core/TestPlatform.Type.entries.<get-entries>|<get-entries>#static(){}[0]
@@ -82,30 +55,47 @@ abstract interface de.infix.testBalloon.framework.core/TestSuiteScope { // de.in
         abstract fun <get-testSuiteInScope>(): de.infix.testBalloon.framework.core/TestSuite // de.infix.testBalloon.framework.core/TestSuiteScope.testSuiteInScope.<get-testSuiteInScope>|<get-testSuiteInScope>(){}[0]
 
     open fun (de.infix.testBalloon.framework.core/TestSuite).aroundAll(kotlin.coroutines/SuspendFunction1<kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/TestSuite, kotlin/Unit>, kotlin/Unit>) // de.infix.testBalloon.framework.core/TestSuiteScope.aroundAll|aroundAll@de.infix.testBalloon.framework.core.TestSuite(kotlin.coroutines.SuspendFunction1<kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.TestSuite,kotlin.Unit>,kotlin.Unit>){}[0]
-    open fun (de.infix.testBalloon.framework.core/TestSuiteScope).test(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework.core/TestConfig = ..., kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/TestExecutionScope, kotlin/Unit>) // de.infix.testBalloon.framework.core/TestSuiteScope.test|test@de.infix.testBalloon.framework.core.TestSuiteScope(kotlin.String;kotlin.String;de.infix.testBalloon.framework.core.TestConfig;kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.TestExecutionScope,kotlin.Unit>){}[0]
+    open fun (de.infix.testBalloon.framework.core/TestSuiteScope).test(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework.core/TestConfig = ..., kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/Test.ExecutionScope, kotlin/Unit>) // de.infix.testBalloon.framework.core/TestSuiteScope.test|test@de.infix.testBalloon.framework.core.TestSuiteScope(kotlin.String;kotlin.String;de.infix.testBalloon.framework.core.TestConfig;kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.Test.ExecutionScope,kotlin.Unit>){}[0]
     open fun (de.infix.testBalloon.framework.core/TestSuiteScope).testSuite(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework.core/TestConfig = ..., kotlin/Function1<de.infix.testBalloon.framework.core/TestSuite, kotlin/Unit>) // de.infix.testBalloon.framework.core/TestSuiteScope.testSuite|testSuite@de.infix.testBalloon.framework.core.TestSuiteScope(kotlin.String;kotlin.String;de.infix.testBalloon.framework.core.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.core.TestSuite,kotlin.Unit>){}[0]
-    open fun <#A1: kotlin/Any> testFixture(kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/TestSuite, #A1>): de.infix.testBalloon.framework.core/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework.core/TestSuiteScope.testFixture|testFixture(kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.TestSuite,0:0>){0§<kotlin.Any>}[0]
+    open fun <#A1: kotlin/Any> testFixture(kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/TestSuite, #A1>): de.infix.testBalloon.framework.core/TestFixture<#A1> // de.infix.testBalloon.framework.core/TestSuiteScope.testFixture|testFixture(kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.TestSuite,0:0>){0§<kotlin.Any>}[0]
 }
 
 abstract class de.infix.testBalloon.framework.core/TestExecutionReport { // de.infix.testBalloon.framework.core/TestExecutionReport|null[0]
     constructor <init>() // de.infix.testBalloon.framework.core/TestExecutionReport.<init>|<init>(){}[0]
 
-    abstract suspend fun add(de.infix.testBalloon.framework.core/TestElementEvent) // de.infix.testBalloon.framework.core/TestExecutionReport.add|add(de.infix.testBalloon.framework.core.TestElementEvent){}[0]
+    abstract suspend fun add(de.infix.testBalloon.framework.core/TestElement.Event) // de.infix.testBalloon.framework.core/TestExecutionReport.add|add(de.infix.testBalloon.framework.core.TestElement.Event){}[0]
 }
 
-final class de.infix.testBalloon.framework.core/Test : de.infix.testBalloon.framework.core/TestElement, de.infix.testBalloon.framework.shared/AbstractTest // de.infix.testBalloon.framework.core/Test|null[0]
+final class <#A: kotlin/Any> de.infix.testBalloon.framework.core/TestFixture { // de.infix.testBalloon.framework.core/TestFixture|null[0]
+    final fun asContextForAll(kotlin/Function1<de.infix.testBalloon.framework.core/TestFixture.Scope<kotlin.coroutines/SuspendFunction2<#A, de.infix.testBalloon.framework.core/Test.ExecutionScope, kotlin/Unit>>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestFixture<#A> // de.infix.testBalloon.framework.core/TestFixture.asContextForAll|asContextForAll(kotlin.Function1<de.infix.testBalloon.framework.core.TestFixture.Scope<kotlin.coroutines.SuspendFunction2<1:0,de.infix.testBalloon.framework.core.Test.ExecutionScope,kotlin.Unit>>,kotlin.Unit>){}[0]
+    final fun asContextForEach(kotlin/Function1<de.infix.testBalloon.framework.core/TestFixture.Scope<kotlin.coroutines/SuspendFunction2<#A, de.infix.testBalloon.framework.core/Test.ExecutionScope, kotlin/Unit>>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestFixture<#A> // de.infix.testBalloon.framework.core/TestFixture.asContextForEach|asContextForEach(kotlin.Function1<de.infix.testBalloon.framework.core.TestFixture.Scope<kotlin.coroutines.SuspendFunction2<1:0,de.infix.testBalloon.framework.core.Test.ExecutionScope,kotlin.Unit>>,kotlin.Unit>){}[0]
+    final fun asParameterForAll(kotlin/Function1<de.infix.testBalloon.framework.core/TestFixture.Scope<kotlin.coroutines/SuspendFunction2<de.infix.testBalloon.framework.core/Test.ExecutionScope, #A, kotlin/Unit>>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestFixture<#A> // de.infix.testBalloon.framework.core/TestFixture.asParameterForAll|asParameterForAll(kotlin.Function1<de.infix.testBalloon.framework.core.TestFixture.Scope<kotlin.coroutines.SuspendFunction2<de.infix.testBalloon.framework.core.Test.ExecutionScope,1:0,kotlin.Unit>>,kotlin.Unit>){}[0]
+    final fun asParameterForEach(kotlin/Function1<de.infix.testBalloon.framework.core/TestFixture.Scope<kotlin.coroutines/SuspendFunction2<de.infix.testBalloon.framework.core/Test.ExecutionScope, #A, kotlin/Unit>>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestFixture<#A> // de.infix.testBalloon.framework.core/TestFixture.asParameterForEach|asParameterForEach(kotlin.Function1<de.infix.testBalloon.framework.core.TestFixture.Scope<kotlin.coroutines.SuspendFunction2<de.infix.testBalloon.framework.core.Test.ExecutionScope,1:0,kotlin.Unit>>,kotlin.Unit>){}[0]
+    final fun closeWith(kotlin.coroutines/SuspendFunction1<#A, kotlin/Unit>): de.infix.testBalloon.framework.core/TestFixture<#A> // de.infix.testBalloon.framework.core/TestFixture.closeWith|closeWith(kotlin.coroutines.SuspendFunction1<1:0,kotlin.Unit>){}[0]
+    final suspend fun invoke(): #A // de.infix.testBalloon.framework.core/TestFixture.invoke|invoke(){}[0]
 
-final class de.infix.testBalloon.framework.core/TestExecutionScope : de.infix.testBalloon.framework.shared/AbstractTest, kotlinx.coroutines/CoroutineScope { // de.infix.testBalloon.framework.core/TestExecutionScope|null[0]
-    final val coroutineContext // de.infix.testBalloon.framework.core/TestExecutionScope.coroutineContext|{}coroutineContext[0]
-        final fun <get-coroutineContext>(): kotlin.coroutines/CoroutineContext // de.infix.testBalloon.framework.core/TestExecutionScope.coroutineContext.<get-coroutineContext>|<get-coroutineContext>(){}[0]
-    final val testElementIsEnabled // de.infix.testBalloon.framework.core/TestExecutionScope.testElementIsEnabled|{}testElementIsEnabled[0]
-        final fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework.core/TestExecutionScope.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
-    final val testElementPath // de.infix.testBalloon.framework.core/TestExecutionScope.testElementPath|{}testElementPath[0]
-        final fun <get-testElementPath>(): de.infix.testBalloon.framework.shared/AbstractTestElement.Path // de.infix.testBalloon.framework.core/TestExecutionScope.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
-    final val testScope // de.infix.testBalloon.framework.core/TestExecutionScope.testScope|{}testScope[0]
-        final fun <get-testScope>(): kotlinx.coroutines.test/TestScope // de.infix.testBalloon.framework.core/TestExecutionScope.testScope.<get-testScope>|<get-testScope>(){}[0]
-    final val testTimeout // de.infix.testBalloon.framework.core/TestExecutionScope.testTimeout|{}testTimeout[0]
-        final fun <get-testTimeout>(): kotlin.time/Duration? // de.infix.testBalloon.framework.core/TestExecutionScope.testTimeout.<get-testTimeout>|<get-testTimeout>(){}[0]
+    final class <#A1: kotlin/Any?> Scope : de.infix.testBalloon.framework.core/TestSuiteScope { // de.infix.testBalloon.framework.core/TestFixture.Scope|null[0]
+        final val testSuiteInScope // de.infix.testBalloon.framework.core/TestFixture.Scope.testSuiteInScope|{}testSuiteInScope[0]
+            final fun <get-testSuiteInScope>(): de.infix.testBalloon.framework.core/TestSuite // de.infix.testBalloon.framework.core/TestFixture.Scope.testSuiteInScope.<get-testSuiteInScope>|<get-testSuiteInScope>(){}[0]
+
+        final fun test(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework.core/TestConfig = ..., #A1) // de.infix.testBalloon.framework.core/TestFixture.Scope.test|test(kotlin.String;kotlin.String;de.infix.testBalloon.framework.core.TestConfig;1:0){}[0]
+        final fun testSuite(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework.core/TestConfig = ..., kotlin/Function1<de.infix.testBalloon.framework.core/TestFixture.Scope<#A1>, kotlin/Unit>) // de.infix.testBalloon.framework.core/TestFixture.Scope.testSuite|testSuite(kotlin.String;kotlin.String;de.infix.testBalloon.framework.core.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.core.TestFixture.Scope<1:0>,kotlin.Unit>){}[0]
+    }
+}
+
+final class de.infix.testBalloon.framework.core/Test : de.infix.testBalloon.framework.core/TestElement, de.infix.testBalloon.framework.shared/AbstractTest { // de.infix.testBalloon.framework.core/Test|null[0]
+    final class ExecutionScope : de.infix.testBalloon.framework.shared/AbstractTest, kotlinx.coroutines/CoroutineScope { // de.infix.testBalloon.framework.core/Test.ExecutionScope|null[0]
+        final val coroutineContext // de.infix.testBalloon.framework.core/Test.ExecutionScope.coroutineContext|{}coroutineContext[0]
+            final fun <get-coroutineContext>(): kotlin.coroutines/CoroutineContext // de.infix.testBalloon.framework.core/Test.ExecutionScope.coroutineContext.<get-coroutineContext>|<get-coroutineContext>(){}[0]
+        final val testElementIsEnabled // de.infix.testBalloon.framework.core/Test.ExecutionScope.testElementIsEnabled|{}testElementIsEnabled[0]
+            final fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework.core/Test.ExecutionScope.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
+        final val testElementPath // de.infix.testBalloon.framework.core/Test.ExecutionScope.testElementPath|{}testElementPath[0]
+            final fun <get-testElementPath>(): de.infix.testBalloon.framework.shared/AbstractTestElement.Path // de.infix.testBalloon.framework.core/Test.ExecutionScope.testElementPath.<get-testElementPath>|<get-testElementPath>(){}[0]
+        final val testScope // de.infix.testBalloon.framework.core/Test.ExecutionScope.testScope|{}testScope[0]
+            final fun <get-testScope>(): kotlinx.coroutines.test/TestScope // de.infix.testBalloon.framework.core/Test.ExecutionScope.testScope.<get-testScope>|<get-testScope>(){}[0]
+        final val testTimeout // de.infix.testBalloon.framework.core/Test.ExecutionScope.testTimeout|{}testTimeout[0]
+            final fun <get-testTimeout>(): kotlin.time/Duration? // de.infix.testBalloon.framework.core/Test.ExecutionScope.testTimeout.<get-testTimeout>|<get-testTimeout>(){}[0]
+    }
 }
 
 open class de.infix.testBalloon.framework.core/TestCompartment : de.infix.testBalloon.framework.core/TestSuite { // de.infix.testBalloon.framework.core/TestCompartment|null[0]
@@ -127,6 +117,33 @@ open class de.infix.testBalloon.framework.core/TestCompartment : de.infix.testBa
 
 open class de.infix.testBalloon.framework.core/TestConfig { // de.infix.testBalloon.framework.core/TestConfig|null[0]
     final fun chainedWith(de.infix.testBalloon.framework.core/TestConfig): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/TestConfig.chainedWith|chainedWith(de.infix.testBalloon.framework.core.TestConfig){}[0]
+
+    final enum class Invocation : kotlin/Enum<de.infix.testBalloon.framework.core/TestConfig.Invocation> { // de.infix.testBalloon.framework.core/TestConfig.Invocation|null[0]
+        enum entry Concurrent // de.infix.testBalloon.framework.core/TestConfig.Invocation.Concurrent|null[0]
+        enum entry Sequential // de.infix.testBalloon.framework.core/TestConfig.Invocation.Sequential|null[0]
+
+        final val entries // de.infix.testBalloon.framework.core/TestConfig.Invocation.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework.core/TestConfig.Invocation> // de.infix.testBalloon.framework.core/TestConfig.Invocation.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): de.infix.testBalloon.framework.core/TestConfig.Invocation // de.infix.testBalloon.framework.core/TestConfig.Invocation.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<de.infix.testBalloon.framework.core/TestConfig.Invocation> // de.infix.testBalloon.framework.core/TestConfig.Invocation.values|values#static(){}[0]
+    }
+
+    final enum class Permit : kotlin/Enum<de.infix.testBalloon.framework.core/TestConfig.Permit> { // de.infix.testBalloon.framework.core/TestConfig.Permit|null[0]
+        enum entry SuiteWithoutChildren // de.infix.testBalloon.framework.core/TestConfig.Permit.SuiteWithoutChildren|null[0]
+        enum entry TestScopeWithConcurrentInvocation // de.infix.testBalloon.framework.core/TestConfig.Permit.TestScopeWithConcurrentInvocation|null[0]
+        enum entry WrapperWithoutInnerInvocation // de.infix.testBalloon.framework.core/TestConfig.Permit.WrapperWithoutInnerInvocation|null[0]
+
+        final val entries // de.infix.testBalloon.framework.core/TestConfig.Permit.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework.core/TestConfig.Permit> // de.infix.testBalloon.framework.core/TestConfig.Permit.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): de.infix.testBalloon.framework.core/TestConfig.Permit // de.infix.testBalloon.framework.core/TestConfig.Permit.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<de.infix.testBalloon.framework.core/TestConfig.Permit> // de.infix.testBalloon.framework.core/TestConfig.Permit.values|values#static(){}[0]
+    }
+
+    abstract interface ExecutionTraversal { // de.infix.testBalloon.framework.core/TestConfig.ExecutionTraversal|null[0]
+        abstract suspend fun aroundEach(de.infix.testBalloon.framework.core/TestElement, kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/TestElement, kotlin/Unit>) // de.infix.testBalloon.framework.core/TestConfig.ExecutionTraversal.aroundEach|aroundEach(de.infix.testBalloon.framework.core.TestElement;kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.TestElement,kotlin.Unit>){}[0]
+    }
 
     final object Companion : de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/TestConfig.Companion|null[0]
 }
@@ -155,23 +172,6 @@ open class de.infix.testBalloon.framework.core/TestSuite : de.infix.testBalloon.
         open fun <get-testElementIsEnabled>(): kotlin/Boolean // de.infix.testBalloon.framework.core/TestSuite.testElementIsEnabled.<get-testElementIsEnabled>|<get-testElementIsEnabled>(){}[0]
     open val testSuiteInScope // de.infix.testBalloon.framework.core/TestSuite.testSuiteInScope|{}testSuiteInScope[0]
         open fun <get-testSuiteInScope>(): de.infix.testBalloon.framework.core/TestSuite // de.infix.testBalloon.framework.core/TestSuite.testSuiteInScope.<get-testSuiteInScope>|<get-testSuiteInScope>(){}[0]
-
-    final class <#A1: kotlin/Any> Fixture { // de.infix.testBalloon.framework.core/TestSuite.Fixture|null[0]
-        final fun asContextForAll(kotlin/Function1<de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope<kotlin.coroutines/SuspendFunction2<#A1, de.infix.testBalloon.framework.core/TestExecutionScope, kotlin/Unit>>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework.core/TestSuite.Fixture.asContextForAll|asContextForAll(kotlin.Function1<de.infix.testBalloon.framework.core.TestSuite.Fixture.Scope<kotlin.coroutines.SuspendFunction2<1:0,de.infix.testBalloon.framework.core.TestExecutionScope,kotlin.Unit>>,kotlin.Unit>){}[0]
-        final fun asContextForEach(kotlin/Function1<de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope<kotlin.coroutines/SuspendFunction2<#A1, de.infix.testBalloon.framework.core/TestExecutionScope, kotlin/Unit>>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework.core/TestSuite.Fixture.asContextForEach|asContextForEach(kotlin.Function1<de.infix.testBalloon.framework.core.TestSuite.Fixture.Scope<kotlin.coroutines.SuspendFunction2<1:0,de.infix.testBalloon.framework.core.TestExecutionScope,kotlin.Unit>>,kotlin.Unit>){}[0]
-        final fun asParameterForAll(kotlin/Function1<de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope<kotlin.coroutines/SuspendFunction2<de.infix.testBalloon.framework.core/TestExecutionScope, #A1, kotlin/Unit>>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework.core/TestSuite.Fixture.asParameterForAll|asParameterForAll(kotlin.Function1<de.infix.testBalloon.framework.core.TestSuite.Fixture.Scope<kotlin.coroutines.SuspendFunction2<de.infix.testBalloon.framework.core.TestExecutionScope,1:0,kotlin.Unit>>,kotlin.Unit>){}[0]
-        final fun asParameterForEach(kotlin/Function1<de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope<kotlin.coroutines/SuspendFunction2<de.infix.testBalloon.framework.core/TestExecutionScope, #A1, kotlin/Unit>>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework.core/TestSuite.Fixture.asParameterForEach|asParameterForEach(kotlin.Function1<de.infix.testBalloon.framework.core.TestSuite.Fixture.Scope<kotlin.coroutines.SuspendFunction2<de.infix.testBalloon.framework.core.TestExecutionScope,1:0,kotlin.Unit>>,kotlin.Unit>){}[0]
-        final fun closeWith(kotlin.coroutines/SuspendFunction1<#A1, kotlin/Unit>): de.infix.testBalloon.framework.core/TestSuite.Fixture<#A1> // de.infix.testBalloon.framework.core/TestSuite.Fixture.closeWith|closeWith(kotlin.coroutines.SuspendFunction1<1:0,kotlin.Unit>){}[0]
-        final suspend fun invoke(): #A1 // de.infix.testBalloon.framework.core/TestSuite.Fixture.invoke|invoke(){}[0]
-
-        final class <#A2: kotlin/Any?> Scope : de.infix.testBalloon.framework.core/TestSuiteScope { // de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope|null[0]
-            final val testSuiteInScope // de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope.testSuiteInScope|{}testSuiteInScope[0]
-                final fun <get-testSuiteInScope>(): de.infix.testBalloon.framework.core/TestSuite // de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope.testSuiteInScope.<get-testSuiteInScope>|<get-testSuiteInScope>(){}[0]
-
-            final fun test(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework.core/TestConfig = ..., #A2) // de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope.test|test(kotlin.String;kotlin.String;de.infix.testBalloon.framework.core.TestConfig;1:0){}[0]
-            final fun testSuite(kotlin/String, kotlin/String = ..., de.infix.testBalloon.framework.core/TestConfig = ..., kotlin/Function1<de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope<#A2>, kotlin/Unit>) // de.infix.testBalloon.framework.core/TestSuite.Fixture.Scope.testSuite|testSuite(kotlin.String;kotlin.String;de.infix.testBalloon.framework.core.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.core.TestSuite.Fixture.Scope<1:0>,kotlin.Unit>){}[0]
-        }
-    }
 }
 
 sealed class de.infix.testBalloon.framework.core/TestElement : de.infix.testBalloon.framework.shared/AbstractTestElement { // de.infix.testBalloon.framework.core/TestElement|null[0]
@@ -189,33 +189,33 @@ sealed class de.infix.testBalloon.framework.core/TestElement : de.infix.testBall
     final class Path : de.infix.testBalloon.framework.shared/AbstractTestElement.Path { // de.infix.testBalloon.framework.core/TestElement.Path|null[0]
         final fun toString(): kotlin/String // de.infix.testBalloon.framework.core/TestElement.Path.toString|toString(){}[0]
     }
-}
 
-sealed class de.infix.testBalloon.framework.core/TestElementEvent { // de.infix.testBalloon.framework.core/TestElementEvent|null[0]
-    final val element // de.infix.testBalloon.framework.core/TestElementEvent.element|{}element[0]
-        final fun <get-element>(): de.infix.testBalloon.framework.core/TestElement // de.infix.testBalloon.framework.core/TestElementEvent.element.<get-element>|<get-element>(){}[0]
-    final val instant // de.infix.testBalloon.framework.core/TestElementEvent.instant|{}instant[0]
-        final fun <get-instant>(): kotlin.time/Instant // de.infix.testBalloon.framework.core/TestElementEvent.instant.<get-instant>|<get-instant>(){}[0]
+    sealed class Event { // de.infix.testBalloon.framework.core/TestElement.Event|null[0]
+        final val element // de.infix.testBalloon.framework.core/TestElement.Event.element|{}element[0]
+            final fun <get-element>(): de.infix.testBalloon.framework.core/TestElement // de.infix.testBalloon.framework.core/TestElement.Event.element.<get-element>|<get-element>(){}[0]
+        final val instant // de.infix.testBalloon.framework.core/TestElement.Event.instant|{}instant[0]
+            final fun <get-instant>(): kotlin.time/Instant // de.infix.testBalloon.framework.core/TestElement.Event.instant.<get-instant>|<get-instant>(){}[0]
 
-    open fun toString(): kotlin/String // de.infix.testBalloon.framework.core/TestElementEvent.toString|toString(){}[0]
+        open fun toString(): kotlin/String // de.infix.testBalloon.framework.core/TestElement.Event.toString|toString(){}[0]
 
-    final class Finished : de.infix.testBalloon.framework.core/TestElementEvent { // de.infix.testBalloon.framework.core/TestElementEvent.Finished|null[0]
-        constructor <init>(de.infix.testBalloon.framework.core/TestElement, de.infix.testBalloon.framework.core/TestElementEvent.Starting, kotlin/Throwable? = ...) // de.infix.testBalloon.framework.core/TestElementEvent.Finished.<init>|<init>(de.infix.testBalloon.framework.core.TestElement;de.infix.testBalloon.framework.core.TestElementEvent.Starting;kotlin.Throwable?){}[0]
+        final class Finished : de.infix.testBalloon.framework.core/TestElement.Event { // de.infix.testBalloon.framework.core/TestElement.Event.Finished|null[0]
+            constructor <init>(de.infix.testBalloon.framework.core/TestElement, de.infix.testBalloon.framework.core/TestElement.Event.Starting, kotlin/Throwable? = ...) // de.infix.testBalloon.framework.core/TestElement.Event.Finished.<init>|<init>(de.infix.testBalloon.framework.core.TestElement;de.infix.testBalloon.framework.core.TestElement.Event.Starting;kotlin.Throwable?){}[0]
 
-        final val failed // de.infix.testBalloon.framework.core/TestElementEvent.Finished.failed|{}failed[0]
-            final fun <get-failed>(): kotlin/Boolean // de.infix.testBalloon.framework.core/TestElementEvent.Finished.failed.<get-failed>|<get-failed>(){}[0]
-        final val startingEvent // de.infix.testBalloon.framework.core/TestElementEvent.Finished.startingEvent|{}startingEvent[0]
-            final fun <get-startingEvent>(): de.infix.testBalloon.framework.core/TestElementEvent.Starting // de.infix.testBalloon.framework.core/TestElementEvent.Finished.startingEvent.<get-startingEvent>|<get-startingEvent>(){}[0]
-        final val succeeded // de.infix.testBalloon.framework.core/TestElementEvent.Finished.succeeded|{}succeeded[0]
-            final fun <get-succeeded>(): kotlin/Boolean // de.infix.testBalloon.framework.core/TestElementEvent.Finished.succeeded.<get-succeeded>|<get-succeeded>(){}[0]
-        final val throwable // de.infix.testBalloon.framework.core/TestElementEvent.Finished.throwable|{}throwable[0]
-            final fun <get-throwable>(): kotlin/Throwable? // de.infix.testBalloon.framework.core/TestElementEvent.Finished.throwable.<get-throwable>|<get-throwable>(){}[0]
+            final val failed // de.infix.testBalloon.framework.core/TestElement.Event.Finished.failed|{}failed[0]
+                final fun <get-failed>(): kotlin/Boolean // de.infix.testBalloon.framework.core/TestElement.Event.Finished.failed.<get-failed>|<get-failed>(){}[0]
+            final val startingEvent // de.infix.testBalloon.framework.core/TestElement.Event.Finished.startingEvent|{}startingEvent[0]
+                final fun <get-startingEvent>(): de.infix.testBalloon.framework.core/TestElement.Event.Starting // de.infix.testBalloon.framework.core/TestElement.Event.Finished.startingEvent.<get-startingEvent>|<get-startingEvent>(){}[0]
+            final val succeeded // de.infix.testBalloon.framework.core/TestElement.Event.Finished.succeeded|{}succeeded[0]
+                final fun <get-succeeded>(): kotlin/Boolean // de.infix.testBalloon.framework.core/TestElement.Event.Finished.succeeded.<get-succeeded>|<get-succeeded>(){}[0]
+            final val throwable // de.infix.testBalloon.framework.core/TestElement.Event.Finished.throwable|{}throwable[0]
+                final fun <get-throwable>(): kotlin/Throwable? // de.infix.testBalloon.framework.core/TestElement.Event.Finished.throwable.<get-throwable>|<get-throwable>(){}[0]
 
-        final fun toString(): kotlin/String // de.infix.testBalloon.framework.core/TestElementEvent.Finished.toString|toString(){}[0]
-    }
+            final fun toString(): kotlin/String // de.infix.testBalloon.framework.core/TestElement.Event.Finished.toString|toString(){}[0]
+        }
 
-    final class Starting : de.infix.testBalloon.framework.core/TestElementEvent { // de.infix.testBalloon.framework.core/TestElementEvent.Starting|null[0]
-        constructor <init>(de.infix.testBalloon.framework.core/TestElement) // de.infix.testBalloon.framework.core/TestElementEvent.Starting.<init>|<init>(de.infix.testBalloon.framework.core.TestElement){}[0]
+        final class Starting : de.infix.testBalloon.framework.core/TestElement.Event { // de.infix.testBalloon.framework.core/TestElement.Event.Starting|null[0]
+            constructor <init>(de.infix.testBalloon.framework.core/TestElement) // de.infix.testBalloon.framework.core/TestElement.Event.Starting.<init>|<init>(de.infix.testBalloon.framework.core.TestElement){}[0]
+        }
     }
 }
 
@@ -226,7 +226,7 @@ final var de.infix.testBalloon.framework.core.internal/testFrameworkLogLevel // 
     final fun <get-testFrameworkLogLevel>(): de.infix.testBalloon.framework.core.internal/LogLevel // de.infix.testBalloon.framework.core.internal/testFrameworkLogLevel.<get-testFrameworkLogLevel>|<get-testFrameworkLogLevel>(){}[0]
     final fun <set-testFrameworkLogLevel>(de.infix.testBalloon.framework.core.internal/LogLevel) // de.infix.testBalloon.framework.core.internal/testFrameworkLogLevel.<set-testFrameworkLogLevel>|<set-testFrameworkLogLevel>(de.infix.testBalloon.framework.core.internal.LogLevel){}[0]
 
-final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/addPermits(kotlin/Array<out de.infix.testBalloon.framework.core/TestPermit>...): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/addPermits|addPermits@de.infix.testBalloon.framework.core.TestConfig(kotlin.Array<out|de.infix.testBalloon.framework.core.TestPermit>...){}[0]
+final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/addPermits(kotlin/Array<out de.infix.testBalloon.framework.core/TestConfig.Permit>...): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/addPermits|addPermits@de.infix.testBalloon.framework.core.TestConfig(kotlin.Array<out|de.infix.testBalloon.framework.core.TestConfig.Permit>...){}[0]
 final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/aroundAll(kotlin.coroutines/SuspendFunction2<de.infix.testBalloon.framework.core/TestElement, kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/TestElement, kotlin/Unit>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/aroundAll|aroundAll@de.infix.testBalloon.framework.core.TestConfig(kotlin.coroutines.SuspendFunction2<de.infix.testBalloon.framework.core.TestElement,kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.TestElement,kotlin.Unit>,kotlin.Unit>){}[0]
 final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/aroundEach(kotlin.coroutines/SuspendFunction2<de.infix.testBalloon.framework.core/TestElement, kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/TestElement, kotlin/Unit>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/aroundEach|aroundEach@de.infix.testBalloon.framework.core.TestConfig(kotlin.coroutines.SuspendFunction2<de.infix.testBalloon.framework.core.TestElement,kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.TestElement,kotlin.Unit>,kotlin.Unit>){}[0]
 final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/aroundEachTest(kotlin.coroutines/SuspendFunction2<de.infix.testBalloon.framework.core/TestElement, kotlin.coroutines/SuspendFunction1<de.infix.testBalloon.framework.core/TestElement, kotlin/Unit>, kotlin/Unit>): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/aroundEachTest|aroundEachTest@de.infix.testBalloon.framework.core.TestConfig(kotlin.coroutines.SuspendFunction2<de.infix.testBalloon.framework.core.TestElement,kotlin.coroutines.SuspendFunction1<de.infix.testBalloon.framework.core.TestElement,kotlin.Unit>,kotlin.Unit>){}[0]
@@ -234,13 +234,13 @@ final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.
 final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/disable(): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/disable|disable@de.infix.testBalloon.framework.core.TestConfig(){}[0]
 final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/executionReport(de.infix.testBalloon.framework.core/TestExecutionReport): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/executionReport|executionReport@de.infix.testBalloon.framework.core.TestConfig(de.infix.testBalloon.framework.core.TestExecutionReport){}[0]
 final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/failFast(kotlin/Int): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/failFast|failFast@de.infix.testBalloon.framework.core.TestConfig(kotlin.Int){}[0]
-final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/invocation(de.infix.testBalloon.framework.core/TestInvocation): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/invocation|invocation@de.infix.testBalloon.framework.core.TestConfig(de.infix.testBalloon.framework.core.TestInvocation){}[0]
+final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/invocation(de.infix.testBalloon.framework.core/TestConfig.Invocation): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/invocation|invocation@de.infix.testBalloon.framework.core.TestConfig(de.infix.testBalloon.framework.core.TestConfig.Invocation){}[0]
 final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/mainDispatcher(kotlinx.coroutines/CoroutineDispatcher? = ...): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/mainDispatcher|mainDispatcher@de.infix.testBalloon.framework.core.TestConfig(kotlinx.coroutines.CoroutineDispatcher?){}[0]
-final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/permits(kotlin/Array<out de.infix.testBalloon.framework.core/TestPermit>...): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/permits|permits@de.infix.testBalloon.framework.core.TestConfig(kotlin.Array<out|de.infix.testBalloon.framework.core.TestPermit>...){}[0]
-final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/removePermits(kotlin/Array<out de.infix.testBalloon.framework.core/TestPermit>...): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/removePermits|removePermits@de.infix.testBalloon.framework.core.TestConfig(kotlin.Array<out|de.infix.testBalloon.framework.core.TestPermit>...){}[0]
+final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/permits(kotlin/Array<out de.infix.testBalloon.framework.core/TestConfig.Permit>...): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/permits|permits@de.infix.testBalloon.framework.core.TestConfig(kotlin.Array<out|de.infix.testBalloon.framework.core.TestConfig.Permit>...){}[0]
+final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/removePermits(kotlin/Array<out de.infix.testBalloon.framework.core/TestConfig.Permit>...): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/removePermits|removePermits@de.infix.testBalloon.framework.core.TestConfig(kotlin.Array<out|de.infix.testBalloon.framework.core.TestConfig.Permit>...){}[0]
 final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/singleThreaded(): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/singleThreaded|singleThreaded@de.infix.testBalloon.framework.core.TestConfig(){}[0]
 final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/testScope(kotlin/Boolean, kotlin.time/Duration = ...): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/testScope|testScope@de.infix.testBalloon.framework.core.TestConfig(kotlin.Boolean;kotlin.time.Duration){}[0]
-final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/traversal(de.infix.testBalloon.framework.core/TestExecutionTraversal): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/traversal|traversal@de.infix.testBalloon.framework.core.TestConfig(de.infix.testBalloon.framework.core.TestExecutionTraversal){}[0]
+final fun (de.infix.testBalloon.framework.core/TestConfig).de.infix.testBalloon.framework.core/traversal(de.infix.testBalloon.framework.core/TestConfig.ExecutionTraversal): de.infix.testBalloon.framework.core/TestConfig // de.infix.testBalloon.framework.core/traversal|traversal@de.infix.testBalloon.framework.core.TestConfig(de.infix.testBalloon.framework.core.TestConfig.ExecutionTraversal){}[0]
 final fun de.infix.testBalloon.framework.core/dispatcherWithParallelism(kotlin/Int): kotlinx.coroutines/CoroutineDispatcher // de.infix.testBalloon.framework.core/dispatcherWithParallelism|dispatcherWithParallelism(kotlin.Int){}[0]
 final fun de.infix.testBalloon.framework.core/testSuite(kotlin/String = ..., kotlin/String = ..., de.infix.testBalloon.framework.core/TestConfig = ..., kotlin/Function1<de.infix.testBalloon.framework.core/TestSuite, kotlin/Unit>): kotlin/Lazy<de.infix.testBalloon.framework.core/TestSuite> // de.infix.testBalloon.framework.core/testSuite|testSuite(kotlin.String;kotlin.String;de.infix.testBalloon.framework.core.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.core.TestSuite,kotlin.Unit>){}[0]
 final fun de.infix.testBalloon.framework.core/testSuite(kotlin/String = ..., kotlin/String = ..., kotlin/Function0<de.infix.testBalloon.framework.core/TestCompartment>, de.infix.testBalloon.framework.core/TestConfig = ..., kotlin/Function1<de.infix.testBalloon.framework.core/TestSuite, kotlin/Unit>): kotlin/Lazy<de.infix.testBalloon.framework.core/TestSuite> // de.infix.testBalloon.framework.core/testSuite|testSuite(kotlin.String;kotlin.String;kotlin.Function0<de.infix.testBalloon.framework.core.TestCompartment>;de.infix.testBalloon.framework.core.TestConfig;kotlin.Function1<de.infix.testBalloon.framework.core.TestSuite,kotlin.Unit>){}[0]
@@ -272,8 +272,8 @@ abstract interface de.infix.testBalloon.framework.core/TestPlatformJsHosted : de
     open fun threadId(): kotlin/ULong // de.infix.testBalloon.framework.core/TestPlatformJsHosted.threadId|threadId(){}[0]
 
     final enum class Runtime : kotlin/Enum<de.infix.testBalloon.framework.core/TestPlatformJsHosted.Runtime> { // de.infix.testBalloon.framework.core/TestPlatformJsHosted.Runtime|null[0]
-        enum entry BROWSER // de.infix.testBalloon.framework.core/TestPlatformJsHosted.Runtime.BROWSER|null[0]
-        enum entry NODE // de.infix.testBalloon.framework.core/TestPlatformJsHosted.Runtime.NODE|null[0]
+        enum entry Browser // de.infix.testBalloon.framework.core/TestPlatformJsHosted.Runtime.Browser|null[0]
+        enum entry Node // de.infix.testBalloon.framework.core/TestPlatformJsHosted.Runtime.Node|null[0]
 
         final val displayName // de.infix.testBalloon.framework.core/TestPlatformJsHosted.Runtime.displayName|{}displayName[0]
             final fun <get-displayName>(): kotlin/String // de.infix.testBalloon.framework.core/TestPlatformJsHosted.Runtime.displayName.<get-displayName>|<get-displayName>(){}[0]

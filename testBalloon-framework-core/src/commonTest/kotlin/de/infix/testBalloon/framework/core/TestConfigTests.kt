@@ -30,11 +30,11 @@ class TestConfigTests {
         val testSuite by testSuite("testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
-            assertEquals(TestInvocation.SEQUENTIAL, TestInvocation.current())
+            assertEquals(TestConfig.Invocation.Sequential, TestConfig.Invocation.current())
         }
 
-        TestConfig.invocation(TestInvocation.CONCURRENT).executeWrapped(testSuite) {
-            assertEquals(TestInvocation.CONCURRENT, TestInvocation.current())
+        TestConfig.invocation(TestConfig.Invocation.Concurrent).executeWrapped(testSuite) {
+            assertEquals(TestConfig.Invocation.Concurrent, TestConfig.Invocation.current())
         }
     }
 
@@ -43,27 +43,30 @@ class TestConfigTests {
         val testSuite by testSuite("testSuite") {}
 
         TestSession.DefaultConfiguration.executeWrapped(testSuite) {
-            assertEquals(TestInvocation.SEQUENTIAL, TestInvocation.current())
+            assertEquals(TestConfig.Invocation.Sequential, TestConfig.Invocation.current())
             assertNotNull(TestScopeContext.current())
         }
 
-        TestSession.DefaultConfiguration.invocation(TestInvocation.CONCURRENT).executeWrapped(testSuite) {
-            assertEquals(TestInvocation.CONCURRENT, TestInvocation.current())
+        TestSession.DefaultConfiguration.invocation(TestConfig.Invocation.Concurrent).executeWrapped(testSuite) {
+            assertEquals(TestConfig.Invocation.Concurrent, TestConfig.Invocation.current())
             assertNull(TestScopeContext.current())
         }
 
         assertFailsWith<IllegalArgumentException> {
-            TestConfig.invocation(TestInvocation.CONCURRENT).testScope(isEnabled = true).executeWrapped(testSuite) {}
+            TestConfig.invocation(
+                TestConfig.Invocation.Concurrent
+            ).testScope(isEnabled = true).executeWrapped(testSuite) {
+            }
         }.also {
             assertContains(it.message!!, "attempt was made to enable a 'TestScope' in combination with concurrent")
         }
 
-        val testConfig = TestConfig.invocation(TestInvocation.CONCURRENT)
-            .addPermits(TestPermit.TEST_SCOPE_WITH_CONCURRENT_INVOCATION)
+        val testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent)
+            .addPermits(TestConfig.Permit.TestScopeWithConcurrentInvocation)
             .testScope(isEnabled = true)
         testConfig.parameterize(testSuite) // This is required to pick up permits
         testConfig.executeWrapped(testSuite) {
-            assertEquals(TestInvocation.CONCURRENT, TestInvocation.current())
+            assertEquals(TestConfig.Invocation.Concurrent, TestConfig.Invocation.current())
             assertNotNull(TestScopeContext.current())
         }
     }
@@ -72,14 +75,14 @@ class TestConfigTests {
     fun permits() {
         testPermits(testConfig = TestConfig)
         testPermits(
-            testConfig = TestConfig.permits(TestPermit.SUITE_WITHOUT_CHILDREN),
-            TestPermit.SUITE_WITHOUT_CHILDREN
+            testConfig = TestConfig.permits(TestConfig.Permit.SuiteWithoutChildren),
+            TestConfig.Permit.SuiteWithoutChildren
         )
         testPermits(
             testConfig = TestConfig
-                .permits(TestPermit.SUITE_WITHOUT_CHILDREN, TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION),
-            TestPermit.SUITE_WITHOUT_CHILDREN,
-            TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION
+                .permits(TestConfig.Permit.SuiteWithoutChildren, TestConfig.Permit.WrapperWithoutInnerInvocation),
+            TestConfig.Permit.SuiteWithoutChildren,
+            TestConfig.Permit.WrapperWithoutInnerInvocation
         )
     }
 
@@ -87,10 +90,10 @@ class TestConfigTests {
     fun permitsReplaced() {
         testPermits(
             testConfig = TestConfig
-                .permits(TestPermit.SUITE_WITHOUT_CHILDREN)
-                .permits(TestPermit.SUITE_WITHOUT_CHILDREN, TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION),
-            TestPermit.SUITE_WITHOUT_CHILDREN,
-            TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION
+                .permits(TestConfig.Permit.SuiteWithoutChildren)
+                .permits(TestConfig.Permit.SuiteWithoutChildren, TestConfig.Permit.WrapperWithoutInnerInvocation),
+            TestConfig.Permit.SuiteWithoutChildren,
+            TestConfig.Permit.WrapperWithoutInnerInvocation
         )
     }
 
@@ -98,10 +101,10 @@ class TestConfigTests {
     fun permitsAdded() {
         testPermits(
             testConfig = TestConfig
-                .permits(TestPermit.SUITE_WITHOUT_CHILDREN)
-                .addPermits(TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION),
-            TestPermit.SUITE_WITHOUT_CHILDREN,
-            TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION
+                .permits(TestConfig.Permit.SuiteWithoutChildren)
+                .addPermits(TestConfig.Permit.WrapperWithoutInnerInvocation),
+            TestConfig.Permit.SuiteWithoutChildren,
+            TestConfig.Permit.WrapperWithoutInnerInvocation
         )
     }
 
@@ -109,13 +112,13 @@ class TestConfigTests {
     fun permitsRemoved() {
         testPermits(
             testConfig = TestConfig
-                .permits(TestPermit.SUITE_WITHOUT_CHILDREN, TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION)
-                .removePermits(TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION),
-            TestPermit.SUITE_WITHOUT_CHILDREN
+                .permits(TestConfig.Permit.SuiteWithoutChildren, TestConfig.Permit.WrapperWithoutInnerInvocation)
+                .removePermits(TestConfig.Permit.WrapperWithoutInnerInvocation),
+            TestConfig.Permit.SuiteWithoutChildren
         )
     }
 
-    private fun testPermits(testConfig: TestConfig, vararg expectedPermits: TestPermit) = withTestFramework {
+    private fun testPermits(testConfig: TestConfig, vararg expectedPermits: TestConfig.Permit) = withTestFramework {
         val testSuite by testSuite("testSuite") {}
 
         testConfig.parameterize(testSuite)
@@ -149,10 +152,10 @@ class TestConfigTests {
         val coroutineNameElement = CoroutineName("TEST-CC")
         TestConfig.coroutineContext(coroutineNameElement).executeWrapped(testSuite) {
             assertEquals(coroutineNameElement, currentCoroutineContext()[CoroutineName.Key])
-            assertEquals(TestInvocation.SEQUENTIAL, TestInvocation.current())
-            TestConfig.invocation(TestInvocation.CONCURRENT).executeWrapped(testSuite) {
+            assertEquals(TestConfig.Invocation.Sequential, TestConfig.Invocation.current())
+            TestConfig.invocation(TestConfig.Invocation.Concurrent).executeWrapped(testSuite) {
                 assertEquals(coroutineNameElement, currentCoroutineContext()[CoroutineName.Key])
-                assertEquals(TestInvocation.CONCURRENT, TestInvocation.current())
+                assertEquals(TestConfig.Invocation.Concurrent, TestConfig.Invocation.current())
             }
         }
     }
@@ -163,12 +166,12 @@ class TestConfigTests {
 
         val coroutineNameElement = CoroutineName("TEST-CC")
         assertNull(currentCoroutineContext()[CoroutineName.Key])
-        assertEquals(TestInvocation.SEQUENTIAL, TestInvocation.current())
+        assertEquals(TestConfig.Invocation.Sequential, TestConfig.Invocation.current())
         TestConfig
             .coroutineContext(coroutineNameElement)
-            .invocation(TestInvocation.CONCURRENT).executeWrapped(testSuite) {
+            .invocation(TestConfig.Invocation.Concurrent).executeWrapped(testSuite) {
                 assertEquals(coroutineNameElement, currentCoroutineContext()[CoroutineName.Key])
-                assertEquals(TestInvocation.CONCURRENT, TestInvocation.current())
+                assertEquals(TestConfig.Invocation.Concurrent, TestConfig.Invocation.current())
             }
     }
 }

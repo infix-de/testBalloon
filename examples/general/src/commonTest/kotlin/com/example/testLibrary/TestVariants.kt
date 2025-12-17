@@ -1,7 +1,7 @@
 package com.example.testLibrary
 
+import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestConfig
-import de.infix.testBalloon.framework.core.TestExecutionScope
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.shared.TestRegistering
@@ -13,7 +13,7 @@ import kotlin.time.Duration
 /**
  * Registers a test with a [timeout] as defined in kotlinx.coroutines [withTimeout].
  */
-fun TestSuiteScope.test(name: String, timeout: Duration, action: suspend TestExecutionScope.() -> Unit) =
+fun TestSuiteScope.test(name: String, timeout: Duration, action: suspend Test.ExecutionScope.() -> Unit) =
     test(name, testConfig = TestConfig.testScope(isEnabled = false)) {
         try {
             withTimeout(timeout) {
@@ -27,7 +27,7 @@ fun TestSuiteScope.test(name: String, timeout: Duration, action: suspend TestExe
 /**
  * Registers a test series with a number of [iterations].
  */
-fun TestSuiteScope.testSeries(name: String, iterations: Int, action: suspend TestExecutionScope.() -> Unit) {
+fun TestSuiteScope.testSeries(name: String, iterations: Int, action: suspend Test.ExecutionScope.() -> Unit) {
     for (iteration in 1..iterations) {
         test("$name $iteration") {
             action()

@@ -22,7 +22,7 @@ internal actual fun CoroutineScope.testFunctionPromise(testFunction: suspend () 
     promise { testFunction() }
 
 internal actual fun processArguments(): Array<String>? =
-    if (TestPlatformJs.runtime == TestPlatformJsHosted.Runtime.NODE) js("process.argv") as Array<String> else null
+    if (TestPlatformJs.runtime == TestPlatformJsHosted.Runtime.Node) js("process.argv") as Array<String> else null
 
 /**
  * JS test framework adapter interface defined by the Kotlin/JS test infra.

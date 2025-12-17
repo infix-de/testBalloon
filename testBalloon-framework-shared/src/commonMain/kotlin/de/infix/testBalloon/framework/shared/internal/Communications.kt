@@ -1,16 +1,14 @@
 package de.infix.testBalloon.framework.shared.internal
 
-/**
- * This file contains types used to communicate across framework modules.
- */
+// This file contains types used to communicate between framework modules.
 
 /**
  * The framework-internal test reporting mode.
  */
 @TestBalloonInternalApi
 public enum class ReportingMode {
-    INTELLIJ_IDEA,
-    FILES
+    IntellijIdea,
+    Files
 }
 
 /**

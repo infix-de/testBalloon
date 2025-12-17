@@ -28,7 +28,7 @@ public open class TestCompartment(name: String, testConfig: TestConfig) :
         public val Concurrent: TestCompartment
             get() = concurrent ?: TestCompartment(
                 name = "Concurrent",
-                testConfig = TestConfig.invocation(TestInvocation.CONCURRENT)
+                testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent)
             ).also { concurrent = it }
 
         private var concurrent: TestCompartment? = null
@@ -44,7 +44,7 @@ public open class TestCompartment(name: String, testConfig: TestConfig) :
         public val Sequential: TestCompartment
             get() = sequential ?: TestCompartment(
                 name = "Sequential",
-                testConfig = TestConfig.invocation(TestInvocation.SEQUENTIAL)
+                testConfig = TestConfig.invocation(TestConfig.Invocation.Sequential)
             ).also { sequential = it }
 
         private var sequential: TestCompartment? = null
@@ -57,7 +57,7 @@ public open class TestCompartment(name: String, testConfig: TestConfig) :
         public val RealTime: TestCompartment
             get() = realTime ?: TestCompartment(
                 name = "RealTime",
-                testConfig = TestConfig.invocation(TestInvocation.SEQUENTIAL).testScope(isEnabled = false)
+                testConfig = TestConfig.invocation(TestConfig.Invocation.Sequential).testScope(isEnabled = false)
             ).also { realTime = it }
 
         private var realTime: TestCompartment? = null
@@ -76,7 +76,7 @@ public open class TestCompartment(name: String, testConfig: TestConfig) :
         ): TestCompartment = TestCompartment(
             name = "MainDispatcher",
             testConfig = TestConfig
-                .invocation(TestInvocation.SEQUENTIAL)
+                .invocation(TestConfig.Invocation.Sequential)
                 .mainDispatcher(mainDispatcher)
                 .chainedWith(testConfig)
         )

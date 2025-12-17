@@ -1,6 +1,6 @@
 package de.infix.testBalloon.framework.core
 
-import de.infix.testBalloon.framework.core.TestSuite.Fixture.TestEnvelopeContext
+import de.infix.testBalloon.framework.core.TestFixture.TestEnvelopeContext
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.runTestAwaitingCompletion
 import de.infix.testBalloon.framework.shared.AbstractTest
@@ -19,16 +19,38 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * A test containing a test [action] which raises assertion errors on failure.
  *
- * The test action runs in a [TestExecutionScope] and may suspend.
+ * The test action runs in a [Test.ExecutionScope] and may suspend.
  */
 public class Test internal constructor(
     parent: TestSuite,
     name: String,
     displayName: String = name,
     testConfig: TestConfig,
-    private val action: suspend TestExecutionScope.() -> Unit
+    private val action: suspend ExecutionScope.() -> Unit
 ) : TestElement(parent, name = name, displayName = displayName, testConfig = testConfig),
     AbstractTest {
+
+    /**
+     * The scope in which a single [Test] action executes.
+     */
+    public class ExecutionScope internal constructor(
+        internal val test: Test,
+        scope: CoroutineScope,
+        private val testScopeOrNull: TestScope? = null,
+        testTimeout: Duration? = null
+    ) : AbstractTest by test,
+        CoroutineScope by scope {
+
+        /** The [kotlinx.coroutines.test.TestScope], which must have been enabled by [TestConfig.testScope]. */
+        public val testScope: TestScope
+            get() = testScopeOrNull
+                ?: throw IllegalStateException("$test is not executing in a TestScope.")
+
+        /** The test timeout if set by [TestConfig.testScope], or null. */
+        @Suppress("CanBePrimaryConstructorProperty")
+        @TestBalloonExperimentalApi
+        public val testTimeout: Duration? = testTimeout
+    }
 
     override fun setUp(selection: Selection, report: TestSetupReport) {
         setUpReporting(report) {
@@ -46,14 +68,14 @@ public class Test internal constructor(
                 @Suppress("DEPRECATION")
                 testConfig.executeWrapped(this) {
                     val blockingEnvelope =
-                        TestEnvelopeContext.current()?.envelopeValue() as? TestSuite.Fixture.BlockingEnvelope
+                        TestEnvelopeContext.current()?.envelopeValue() as? TestFixture.BlockingEnvelope
                     val testScopeContext = TestScopeContext.current()
 
                     if (blockingEnvelope != null) {
                         val inheritableContext = inheritableContext()
                         blockingEnvelope.execute(test = this@Test) {
                             runTest(inheritableContext, timeout = testScopeContext?.timeout ?: 60.seconds) {
-                                TestExecutionScope(this@Test, this).action()
+                                ExecutionScope(this@Test, this).action()
                             }
                         }
                     } else {
@@ -61,7 +83,7 @@ public class Test internal constructor(
                             executeInTestScope(testScopeContext)
                         } else {
                             coroutineScope {
-                                TestExecutionScope(this@Test, this).action()
+                                ExecutionScope(this@Test, this).action()
                             }
                         }
                     }
@@ -76,7 +98,7 @@ public class Test internal constructor(
     private suspend fun Test.executeInTestScope(testScopeContext: TestScopeContext) {
         TestScope(inheritableContext())
             .runTestAwaitingCompletion(timeout = testScopeContext.timeout) TestScope@{
-                TestExecutionScope(
+                ExecutionScope(
                     this@Test,
                     CoroutineScope(currentCoroutineContext()),
                     this@TestScope,
@@ -92,26 +114,4 @@ public class Test internal constructor(
             it.minusKey(CoroutineDispatcher)
         }
     }
-}
-
-/**
- * A coroutine scope in which a single [Test] action executes.
- */
-public class TestExecutionScope internal constructor(
-    internal val test: Test,
-    scope: CoroutineScope,
-    private val testScopeOrNull: TestScope? = null,
-    testTimeout: Duration? = null
-) : AbstractTest by test,
-    CoroutineScope by scope {
-
-    /** The [kotlinx.coroutines.test.TestScope], which must have been enabled by [TestConfig.testScope]. */
-    public val testScope: TestScope
-        get() = testScopeOrNull
-            ?: throw IllegalStateException("$test is not executing in a TestScope.")
-
-    /** The test timeout if set by [TestConfig.testScope], or null. */
-    @Suppress("CanBePrimaryConstructorProperty")
-    @TestBalloonExperimentalApi
-    public val testTimeout: Duration? = testTimeout
 }

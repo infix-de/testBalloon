@@ -12,7 +12,7 @@ import io.kotest.matchers.string.shouldNotEndWith
 
 val IntegrationTest by testSuite {
     test("assertSoftly", testConfig = TestConfig.kotestAssertionsSupport()) {
-        if (testPlatform.type == TestPlatform.Type.NATIVE) return@test // TODO: Add Native support in Kotest
+        if (testPlatform.type == TestPlatform.Type.Native) return@test // TODO: Add Native support in Kotest
         shouldThrow<MultiAssertionError> {
             assertSoftly {
                 "Expect failure 1!" shouldNotEndWith "!"

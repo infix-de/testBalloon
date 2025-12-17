@@ -35,7 +35,7 @@ import kotlin.time.Duration.Companion.seconds
  * ```
  * testConfig = TestConfig
  *     .coroutineContext(UnconfinedTestDispatcher())
- *     .invocation(TestInvocation.CONCURRENT)
+ *     .invocation(TestConfig.Invocation.Concurrent)
  * ```
  */
 public open class TestConfig internal constructor(
@@ -123,7 +123,9 @@ public open class TestConfig internal constructor(
         } else {
             executionWrappingAction.wrapIfNotNull(testElement, invocationGuardingAction)
         }
-        require(elementActionInvoked || TestPermit.WRAPPER_WITHOUT_INNER_INVOCATION in testElement.parameters.permits) {
+        require(
+            elementActionInvoked || Permit.WrapperWithoutInnerInvocation in testElement.parameters.permits
+        ) {
             "$testElement: the element action has not been invoked.\n" +
                 "\tThis is typically caused by a wrapper not invoking its element action."
         }
@@ -144,6 +146,57 @@ public open class TestConfig internal constructor(
 
     /** The initial (empty) test configuration. */
     public companion object : TestConfig(null, null, null)
+
+    /**
+     * The mode in which a [TestSuite] executes its child [TestElement]s.
+     */
+    public enum class Invocation {
+        /** Execute child [TestElement]s sequentially. */
+        Sequential,
+
+        /** Execute child [TestElement]s concurrently. */
+        Concurrent;
+
+        internal companion object {
+            internal suspend fun current(): Invocation =
+                currentCoroutineContext()[InvocationContext.Key]?.mode ?: Sequential
+        }
+    }
+
+    /**
+     * A traversal following the execution across all [TestElement]s of a (partial) test element hierarchy.
+     *
+     * For an example, see the implementation of [TestConfig.failFast].
+     */
+    public interface ExecutionTraversal {
+        /**
+         * A method wrapping each [TestElement]'s cumulative [elementAction].
+         *
+         * The cumulative [elementAction] includes all wrapping actions following this one, and the elements primary
+         * action.
+         */
+        public suspend fun aroundEach(testElement: TestElement, elementAction: suspend TestElement.() -> Unit)
+    }
+
+    /**
+     * The permit to accept a situation which would otherwise trigger an error in TestBalloon.
+     */
+    @TestBalloonExperimentalApi
+    public enum class Permit {
+        /** Accept a test suite not registering and child tests or suites. */
+        SuiteWithoutChildren,
+
+        /** Accept a wrapper not invoking its inner action, effectively blocking everything inside. */
+        WrapperWithoutInnerInvocation,
+
+        /**
+         * Accept enabling `TestScope` inside a hierarchy with [TestConfig.Invocation.Concurrent], risking hangups.
+         *
+         * Using `TestScope` with concurrent invocation on a dispatcher with a limited number of threads it known to
+         * cause hangups due to thread starvation (see issue #49).
+         */
+        TestScopeWithConcurrentInvocation
+    }
 }
 
 private typealias ParameterizingAction = TestElement.Parameters.() -> TestElement.Parameters
@@ -289,7 +342,7 @@ public fun TestConfig.aroundEach(executionWrappingAction: TestElementExecutionWr
     traversal(AroundEachTraversal(executionWrappingAction))
 
 private class AroundEachTraversal(val executionWrappingAction: TestElementExecutionWrappingAction) :
-    TestExecutionTraversal {
+    TestConfig.ExecutionTraversal {
     override suspend fun aroundEach(testElement: TestElement, elementAction: suspend TestElement.() -> Unit) {
         testElement.executionWrappingAction {
             testElement.elementAction()
@@ -309,7 +362,7 @@ private class AroundEachTraversal(val executionWrappingAction: TestElementExecut
  */
 public fun TestConfig.failFast(maxFailureCount: Int): TestConfig = traversal(FailFastStrategy(maxFailureCount))
 
-private class FailFastStrategy(val maxFailureCount: Int) : TestExecutionTraversal {
+private class FailFastStrategy(val maxFailureCount: Int) : TestConfig.ExecutionTraversal {
     private val testFailureCount = atomic(0)
 
     override suspend fun aroundEach(testElement: TestElement, elementAction: suspend TestElement.() -> Unit) {
@@ -330,14 +383,15 @@ private class FailFastStrategy(val maxFailureCount: Int) : TestExecutionTraversa
 internal class FailFastException(val failureCount: Int) : Error("Failing fast after $failureCount failed tests")
 
 /**
- * Returns a test configuration which applies a [TestExecutionTraversal] to each element of a [TestElement] hierarchy.
+ * Returns a test configuration which applies a [TestConfig.ExecutionTraversal] to each element of a [TestElement]
+ * hierarchy.
  *
  * The traversal covers the [TestElement] it is configured for and all elements below it.
  * Multiple traversals nest outside-in in the order of appearance.
  *
  * Note: If you don't need a shared context, use [TestConfig.aroundEach].
  */
-public fun TestConfig.traversal(executionTraversal: TestExecutionTraversal): TestConfig =
+public fun TestConfig.traversal(executionTraversal: TestConfig.ExecutionTraversal): TestConfig =
     executionWrapping { elementAction ->
         val testElement = this
         withContext(ExecutionTraversalContext(executionTraversal)) {
@@ -347,23 +401,9 @@ public fun TestConfig.traversal(executionTraversal: TestExecutionTraversal): Tes
         }
     }
 
-/**
- * A traversal following the execution across all [TestElement]s of a (partial) test element hierarchy.
- *
- * For an example, see the implementation of [TestConfig.failFast].
- */
-public interface TestExecutionTraversal {
-    /**
-     * A method wrapping each [TestElement]'s cumulative [elementAction].
-     *
-     * The cumulative [elementAction] includes all wrapping actions following this one, and the elements primary action.
-     */
-    public suspend fun aroundEach(testElement: TestElement, elementAction: suspend TestElement.() -> Unit)
-}
-
 private class ExecutionTraversalContext private constructor(
-    /** [TestExecutionTraversal]s in an inside-out order of wrapping (innermost action first). */
-    private val executionTraversals: List<TestExecutionTraversal>
+    /** [TestConfig.ExecutionTraversal]s in an inside-out order of wrapping (innermost action first). */
+    private val executionTraversals: List<TestConfig.ExecutionTraversal>
 ) : AbstractCoroutineContextElement(Key) {
 
     /** Wraps the execution for this context's traversals, then executes [elementAction] on [testElement]. */
@@ -377,7 +417,7 @@ private class ExecutionTraversalContext private constructor(
         private val Key = object : CoroutineContext.Key<ExecutionTraversalContext> {}
 
         /** Returns a new [ExecutionTraversalContext], adding [executionTraversal] to the current ones. */
-        suspend operator fun invoke(executionTraversal: TestExecutionTraversal): ExecutionTraversalContext {
+        suspend operator fun invoke(executionTraversal: TestConfig.ExecutionTraversal): ExecutionTraversalContext {
             val current = current()
             return ExecutionTraversalContext(
                 if (current != null) {
@@ -410,40 +450,24 @@ private suspend inline fun <SpecificTestElement : TestElement> TestElementExecut
  *
  * Notes:
  *
- * - Setting [mode] to [TestInvocation.CONCURRENT] will disable a `TestScope` for the [TestElement] hierarchy.
+ * - Setting [mode] to [TestConfig.Invocation.Concurrent] will disable a `TestScope` for the [TestElement] hierarchy.
  *   This is necessary to protect against hangups caused by thread starvation (see issue #49).
  * - On platforms whose test infrastructure relies on sequential execution (like Android), setting [mode] to
- *   [TestInvocation.CONCURRENT] will be quietly ignored. This behavior is intentional to guarantee safe execution
- *   on all platforms and still allow cross-platform configurations to request execution to be as concurrent as
- *   possible.
+ *   [TestConfig.Invocation.Concurrent] will be quietly ignored. This behavior is intentional to guarantee safe
+ *   execution on all platforms and still allow cross-platform configurations to request execution to be as concurrent
+ *   as possible.
  *
  * Child elements inherit this [mode], unless configured otherwise.
  */
-public fun TestConfig.invocation(mode: TestInvocation): TestConfig = if (testInfrastructureSupportsConcurrency) {
+public fun TestConfig.invocation(mode: TestConfig.Invocation): TestConfig = if (testInfrastructureSupportsConcurrency) {
     coroutineContext(InvocationContext(mode)).run {
-        if (mode == TestInvocation.CONCURRENT) testScope(isEnabled = false) else this
+        if (mode == TestConfig.Invocation.Concurrent) testScope(isEnabled = false) else this
     }
 } else {
     this
 }
 
-/**
- * The mode in which a [TestSuite] executes its child [TestElement]s.
- */
-public enum class TestInvocation {
-    /** Execute child [TestElement]s sequentially. */
-    SEQUENTIAL,
-
-    /** Execute child [TestElement]s concurrently. */
-    CONCURRENT;
-
-    internal companion object {
-        internal suspend fun current(): TestInvocation =
-            currentCoroutineContext()[InvocationContext.Key]?.mode ?: SEQUENTIAL
-    }
-}
-
-private class InvocationContext(val mode: TestInvocation) : AbstractCoroutineContextElement(Key) {
+private class InvocationContext(val mode: TestConfig.Invocation) : AbstractCoroutineContextElement(Key) {
     companion object Key : CoroutineContext.Key<InvocationContext>
 }
 
@@ -453,7 +477,7 @@ private class InvocationContext(val mode: TestInvocation) : AbstractCoroutineCon
  * Child elements inherit [permits], unless configured otherwise.
  */
 @TestBalloonExperimentalApi
-public fun TestConfig.permits(vararg permits: TestPermit): TestConfig = parameterizing {
+public fun TestConfig.permits(vararg permits: TestConfig.Permit): TestConfig = parameterizing {
     copy(permits = permits.toSet())
 }
 
@@ -463,7 +487,7 @@ public fun TestConfig.permits(vararg permits: TestPermit): TestConfig = paramete
  * Child elements inherit [permits], unless configured otherwise.
  */
 @TestBalloonExperimentalApi
-public fun TestConfig.addPermits(vararg permits: TestPermit): TestConfig = parameterizing {
+public fun TestConfig.addPermits(vararg permits: TestConfig.Permit): TestConfig = parameterizing {
     copy(permits = this.permits + permits.toSet())
 }
 
@@ -473,28 +497,8 @@ public fun TestConfig.addPermits(vararg permits: TestPermit): TestConfig = param
  * Child elements inherit [permits], unless configured otherwise.
  */
 @TestBalloonExperimentalApi
-public fun TestConfig.removePermits(vararg permits: TestPermit): TestConfig = parameterizing {
+public fun TestConfig.removePermits(vararg permits: TestConfig.Permit): TestConfig = parameterizing {
     copy(permits = this.permits - permits.toSet())
-}
-
-/**
- * The permit to accept a situation which would otherwise trigger an error in TestBalloon.
- */
-@TestBalloonExperimentalApi
-public enum class TestPermit {
-    /** Accept a test suite not registering and child tests or suites. */
-    SUITE_WITHOUT_CHILDREN,
-
-    /** Accept a wrapper not invoking its inner action, effectively blocking everything inside. */
-    WRAPPER_WITHOUT_INNER_INVOCATION,
-
-    /**
-     * Accept enabling `TestScope` inside a hierarchy with [TestInvocation.CONCURRENT], risking hangups.
-     *
-     * Using `TestScope` with concurrent invocation on a dispatcher with a limited number of threads it known to
-     * cause hangups due to thread starvation (see issue #49).
-     */
-    TEST_SCOPE_WITH_CONCURRENT_INVOCATION
 }
 
 /**
@@ -539,8 +543,8 @@ public fun TestConfig.mainDispatcher(dispatcher: CoroutineDispatcher? = null): T
  */
 public fun TestConfig.testScope(isEnabled: Boolean, timeout: Duration = 60.seconds): TestConfig =
     executionWrapping { elementAction ->
-        if (isEnabled && TestInvocation.current() == TestInvocation.CONCURRENT) {
-            require(TestPermit.TEST_SCOPE_WITH_CONCURRENT_INVOCATION in parameters.permits) {
+        if (isEnabled && TestConfig.Invocation.current() == TestConfig.Invocation.Concurrent) {
+            require(TestConfig.Permit.TestScopeWithConcurrentInvocation in parameters.permits) {
                 "$this: an attempt was made to enable a 'TestScope' in combination with concurrent execution.\n" +
                     "\tThis can cause hangups due to to thread starvation (see issue #49)."
             }

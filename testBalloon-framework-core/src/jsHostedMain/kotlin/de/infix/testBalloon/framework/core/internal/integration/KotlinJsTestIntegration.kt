@@ -2,7 +2,6 @@ package de.infix.testBalloon.framework.core.internal.integration
 
 import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestElement
-import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
@@ -42,7 +41,7 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
                 }
             } else {
                 val elementName =
-                    if (isTopLevelSuite || TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA) {
+                    if (isTopLevelSuite || TestSession.global.reportingMode == ReportingMode.IntellijIdea) {
                         // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA, but
                         // duplicates path elements in XML and HTML file reports.
                         testElementPath.fullyQualifiedReportingName
@@ -137,8 +136,8 @@ private object TestSessionRelay {
                     // A TestExecutionReport relaying test results to the corresponding test elements'
                     // result channel(s).
 
-                    override suspend fun add(event: TestElementEvent) {
-                        if (event.element.testElementIsEnabled && event is TestElementEvent.Finished) {
+                    override suspend fun add(event: TestElement.Event) {
+                        if (event.element.testElementIsEnabled && event is TestElement.Event.Finished) {
                             event.sendResult()
                         }
                     }
@@ -155,7 +154,7 @@ private object TestSessionRelay {
     }
 
     /**
-     * Sends the [TestElementEvent.Finished] event's result to the corresponding result channel(s).
+     * Sends the [TestElement.Event.Finished] event's result to the corresponding result channel(s).
      *
      * - Sends a single test result to the test's result channel.
      * - Sends a suite failure as a close cause to the result channels of all tests under the suite. Reasons:
@@ -164,7 +163,7 @@ private object TestSessionRelay {
      *   - Since we do not know which tests have already completed and which will complete in the future,
      *     we must relay the failure to all tests under the suite.
      */
-    private suspend fun TestElementEvent.Finished.sendResult() {
+    private suspend fun TestElement.Event.Finished.sendResult() {
         when (element) {
             is Test -> {
                 val channel = element.resultChannel()

@@ -4,7 +4,6 @@ import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestElement
-import de.infix.testBalloon.framework.core.TestExecutionTraversal
 import de.infix.testBalloon.framework.core.internal.printlnFixed
 import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.traversal
@@ -24,7 +23,7 @@ import kotlin.time.measureTime
  */
 fun TestConfig.statisticsReport() = traversal(StatisticsReport())
 
-private class StatisticsReport : TestExecutionTraversal {
+private class StatisticsReport : TestConfig.ExecutionTraversal {
     private val reportStart = atomic<TimeSource.Monotonic.ValueTimeMark?>(null)
     private val lock = reentrantLock()
 

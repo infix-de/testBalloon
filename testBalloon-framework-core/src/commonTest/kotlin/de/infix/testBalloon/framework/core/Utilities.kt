@@ -41,7 +41,7 @@ internal fun withTestFramework(testSession: AbstractTestSession? = null, action:
         initializeTestFramework(testSession)
         try {
             action()
-            if (testPlatform.type == TestPlatform.Type.WASM_WASI) {
+            if (testPlatform.type == TestPlatform.Type.WasmWasi) {
                 logInfo { "Primary coroutine on ${testPlatform.displayName} completed." }
             }
         } finally {
@@ -51,7 +51,7 @@ internal fun withTestFramework(testSession: AbstractTestSession? = null, action:
     }
 
     return TestScope().runTest(timeout = 2.minutes) {
-        if (testPlatform.type == TestPlatform.Type.WASM_WASI) {
+        if (testPlatform.type == TestPlatform.Type.WasmWasi) {
             // WORKAROUND: `join()` and `await()` will hang on Wasm/WASI if a `Test` is running on the test dispatcher.
             logInfo { "WORKAROUND: Skip waiting for primary coroutine on ${testPlatform.displayName}." }
         } else {
@@ -89,22 +89,22 @@ internal suspend fun withTestReport(
 }
 
 /**
- * An in-memory test report, collecting [TestElementEvent]s for later examination.
+ * An in-memory test report, collecting [TestElement.Event]s for later examination.
  */
 internal class InMemoryTestExecutionReport : TestExecutionReport() {
-    private val allEvents = ConcurrentList<TestElementEvent>()
+    private val allEvents = ConcurrentList<TestElement.Event>()
 
     fun allEvents() = allEvents.elements()
-    fun finishedEvents() = allEvents().mapNotNull { it as? TestElementEvent.Finished }
+    fun finishedEvents() = allEvents().mapNotNull { it as? TestElement.Event.Finished }
     fun allTestEvents() = allEvents().filter { it.element is Test }
-    fun finishedTestEvents() = allTestEvents().mapNotNull { it as? TestElementEvent.Finished }
+    fun finishedTestEvents() = allTestEvents().mapNotNull { it as? TestElement.Event.Finished }
 
-    override suspend fun add(event: TestElementEvent) {
+    override suspend fun add(event: TestElement.Event) {
         // println("REPORT: $event")
         allEvents.add(event)
     }
 
-    fun List<TestElementEvent.Finished>.assertAllSucceeded() {
+    fun List<TestElement.Event.Finished>.assertAllSucceeded() {
         if (!all { it.succeeded }) {
             fail(
                 mapNotNull {
@@ -114,7 +114,7 @@ internal class InMemoryTestExecutionReport : TestExecutionReport() {
         }
     }
 
-    fun List<TestElementEvent>.assertElementPathsContainInOrder(
+    fun List<TestElement.Event>.assertElementPathsContainInOrder(
         expectedPaths: List<String>,
         exhaustive: Boolean = false
     ) {

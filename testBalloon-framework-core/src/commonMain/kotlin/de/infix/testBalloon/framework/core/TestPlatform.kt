@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineDispatcher
  * The platform executing tests.
  */
 public interface TestPlatform {
-    public enum class Type { JVM, NATIVE, JS, WASM_JS, WASM_WASI }
+    public enum class Type { Jvm, Native, Js, WasmJs, WasmWasi }
 
     /** The platform's type. */
     public val type: Type

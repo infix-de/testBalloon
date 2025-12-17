@@ -3,10 +3,10 @@ package de.infix.testBalloon.framework.core
 public actual val testPlatform: TestPlatform = TestPlatformWasmJs
 
 public object TestPlatformWasmJs : TestPlatformJsHosted {
-    override val type: TestPlatform.Type = TestPlatform.Type.WASM_JS
+    override val type: TestPlatform.Type = TestPlatform.Type.WasmJs
 
     override val runtime: TestPlatformJsHosted.Runtime =
-        if (runtimeIsNodeJs()) TestPlatformJsHosted.Runtime.NODE else TestPlatformJsHosted.Runtime.BROWSER
+        if (runtimeIsNodeJs()) TestPlatformJsHosted.Runtime.Node else TestPlatformJsHosted.Runtime.Browser
 
     override val displayName: String = "Wasm/JS/$runtime"
 

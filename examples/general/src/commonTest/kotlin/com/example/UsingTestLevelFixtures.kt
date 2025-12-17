@@ -1,14 +1,13 @@
 package com.example
 
 import de.infix.testBalloon.framework.core.TestConfig
-import de.infix.testBalloon.framework.core.TestInvocation
 import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testSuite
 import kotlin.test.assertEquals
 
 // Use suspend-capable test-level fixtures with values instantiated per test.
 
-val UsingTestLevelFixtures by testSuite(testConfig = TestConfig.invocation(TestInvocation.CONCURRENT)) {
+val UsingTestLevelFixtures by testSuite(testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent)) {
     testSuite("fixture value as a test context") {
         testFixture {
             object {

@@ -1,23 +1,22 @@
 ## Unreleased
 
+### Upgrading
+
+Please see the [migration notes for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/dev/how-to/upgrading/).
+
 ### Highlights
 
 * **Test-level fixtures**, providing fresh state per test, are now supported in addition to suite-level fixtures.
-* **Fixtures** can now provide their value **as a context or a parameter** to tests. See the documentation of [TestSuite.Fixture](https://infix-de.github.io/testBalloon/dev/getting-started/fixtures/) for an overview, and the documentation of its new `asContext*()` and `asParameter*()` functions for usage examples.
-* The **documentation** now contains a comprehensive section on **fixture usage**.
-* **Migration documentation** is provided for class-based test setups using **JUnit 4/5/6** and **kotlin.test**.
-
-### Migration from TestBalloon 0.7.x
-
-* For Android host-side (unit) tests:
-    1. Remove the `-jvm` suffix from each dependency `"de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion"`.
-    2. Add a dependency on JUnit 4: `"junit:junit:4.13.2"`
+* **Fixtures** can now provide their value **as a context or a parameter** to tests. See the [fixture documentation](https://infix-de.github.io/testBalloon/dev/getting-started/fixtures/) for details.
+* **Android** integration was improved, tests can now use multiple JUnit 4 rules.
+* The **API surface** was streamlined with fewer top-level declarations and scoped naming.
+* **Migration documentation** is provided for test setups using **JUnit 4/5/6** and **kotlin.test**. The section on **Kotest** migration was also updated.
 
 ### Other Changes
 
 #### Android
 
-* Android host-side tests (a.k.a. unit tests) now correctly use JUnit 4 instead of JUnit platform, enabling access to JUnit 4 rules.
+* Android host-side tests (a.k.a. unit tests) now correctly use JUnit 4 instead of JUnit platform.
 * Concurrent/parallel invocation is now ignored for Android tests, as it apparently conflicts with the Android test infrastructure's handling of Activities, leading to delays and potential hangups.
 * Examples using the deprecated combination of `com.android.application` and `org.jetbrains.kotlin.multiplatform` Gradle plugins were removed.
 
@@ -28,7 +27,7 @@
     * JVM tests (coexistence with other JUnit Platform-based frameworks like JUnit Jupiter).
 * The consistency of file-based reports across test platforms was improved.
 * Configuring concurrent invocation now disables `TestScope`, avoiding possible hangups due to thread starvation. (#49)
-* Migrated to Kotlin 2.3.0-RC2.
+* Migrated to Kotlin 2.3.0.
 
 ### Deprecations
 

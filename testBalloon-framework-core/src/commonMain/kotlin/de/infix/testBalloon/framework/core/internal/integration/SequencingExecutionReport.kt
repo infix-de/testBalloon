@@ -1,7 +1,6 @@
 package de.infix.testBalloon.framework.core.internal.integration
 
 import de.infix.testBalloon.framework.core.TestElement
-import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.GuardedBy
@@ -25,7 +24,7 @@ internal abstract class SequencingExecutionReport : TestExecutionReport() {
     @GuardedBy("reorderingMutex")
     private var elementInProgress: TestElement? = null
 
-    final override suspend fun add(event: TestElementEvent) {
+    final override suspend fun add(event: TestElement.Event) {
         // Convert concurrently incoming events to a depth-first tree order for downstream forwarding,
         // storing events and picking them up as they become eligible for downstream forwarding.
 
@@ -33,7 +32,7 @@ internal abstract class SequencingExecutionReport : TestExecutionReport() {
             val element = event.element
 
             when (event) {
-                is TestElementEvent.Starting -> {
+                is TestElement.Event.Starting -> {
                     check(element.recentEvent == null) {
                         "starting event for $element preceded by ${element.recentEvent}"
                     }
@@ -45,7 +44,7 @@ internal abstract class SequencingExecutionReport : TestExecutionReport() {
                     }
                 }
 
-                is TestElementEvent.Finished -> {
+                is TestElement.Event.Finished -> {
                     check(element.recentEvent == event.startingEvent) {
                         "finish event for $element preceded by ${element.recentEvent}"
                     }
@@ -67,11 +66,11 @@ internal abstract class SequencingExecutionReport : TestExecutionReport() {
     /**
      * Forwards a `Finished` event downstream after replaying any non-forwarded events that must precede it.
      */
-    private suspend fun forwardFinish(finishedEvent: TestElementEvent.Finished) {
+    private suspend fun forwardFinish(finishedEvent: TestElement.Event.Finished) {
         val element = finishedEvent.element
 
         // Forward the element's `Starting` event if not already done.
-        if (element.forwardingState == TestElement.ForwardingState.NOT_FORWARDED) {
+        if (element.forwardingState == TestElement.ForwardingState.NotForwarded) {
             forwardTracking(finishedEvent.startingEvent)
         }
 
@@ -90,8 +89,8 @@ internal abstract class SequencingExecutionReport : TestExecutionReport() {
     private suspend fun TestSuite.forwardEventsForFinishedChildren() {
         for (childElement in testElementChildren) {
             val childEvent = childElement.recentEvent
-            if (childEvent is TestElementEvent.Finished &&
-                childElement.forwardingState != TestElement.ForwardingState.FINISH_FORWARDED
+            if (childEvent is TestElement.Event.Finished &&
+                childElement.forwardingState != TestElement.ForwardingState.FinishForwarded
             ) {
                 forwardFinish(childEvent)
             }
@@ -101,23 +100,23 @@ internal abstract class SequencingExecutionReport : TestExecutionReport() {
     /**
      * Forwards an event downstream with state tracking.
      */
-    private suspend fun forwardTracking(event: TestElementEvent) {
+    private suspend fun forwardTracking(event: TestElement.Event) {
         val element = event.element
 
         when (event) {
-            is TestElementEvent.Starting -> {
-                check(element.forwardingState == TestElement.ForwardingState.NOT_FORWARDED) {
+            is TestElement.Event.Starting -> {
+                check(element.forwardingState == TestElement.ForwardingState.NotForwarded) {
                     "start forwarding for $element preceded by ${element.forwardingState}"
                 }
-                element.forwardingState = TestElement.ForwardingState.START_FORWARDED
+                element.forwardingState = TestElement.ForwardingState.StartForwarded
                 elementInProgress = element
             }
 
-            is TestElementEvent.Finished -> {
-                check(element.forwardingState == TestElement.ForwardingState.START_FORWARDED) {
+            is TestElement.Event.Finished -> {
+                check(element.forwardingState == TestElement.ForwardingState.StartForwarded) {
                     "finish forwarding for $element preceded by ${element.forwardingState}"
                 }
-                element.forwardingState = TestElement.ForwardingState.FINISH_FORWARDED
+                element.forwardingState = TestElement.ForwardingState.FinishForwarded
                 elementInProgress = element.testElementParent
             }
         }
@@ -128,5 +127,5 @@ internal abstract class SequencingExecutionReport : TestExecutionReport() {
     /**
      * Forwards an event downstream.
      */
-    protected abstract suspend fun forward(event: TestElementEvent)
+    protected abstract suspend fun forward(event: TestElement.Event)
 }

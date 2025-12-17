@@ -5,7 +5,7 @@ import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 
 internal val runsInBrowser: Boolean =
-    (testPlatform as? TestPlatformJsHosted)?.runtime == TestPlatformJsHosted.Runtime.BROWSER
+    (testPlatform as? TestPlatformJsHosted)?.runtime == TestPlatformJsHosted.Runtime.Browser
 
 @TestBalloonInternalApi
 public actual fun printlnFixed(message: Any?) {

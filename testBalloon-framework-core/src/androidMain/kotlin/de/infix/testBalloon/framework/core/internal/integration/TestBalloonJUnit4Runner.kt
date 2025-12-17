@@ -2,7 +2,6 @@ package de.infix.testBalloon.framework.core.internal.integration
 
 import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestElement
-import de.infix.testBalloon.framework.core.TestElementEvent
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
@@ -55,8 +54,8 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
         TestSession.global.setUp(
             EnvironmentBasedElementSelection(),
             report = object : TestSetupReport() {
-                override fun add(event: TestElementEvent) {
-                    if (event is TestElementEvent.Finished && event.throwable != null) {
+                override fun add(event: TestElement.Event) {
+                    if (event is TestElement.Event.Finished && event.throwable != null) {
                         throw TestBalloonInitializationError(
                             "Could not configure ${event.element.testElementPath}",
                             event.throwable
@@ -85,14 +84,14 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
 
             TestSession.global.execute(
                 report = object : TestExecutionReport() {
-                    // A TestReport relaying each TestElementEvent to the JUnit 4 run notifier.
+                    // An execution relaying each TestElement.Event to the JUnit 4 run notifier.
 
-                    override suspend fun add(event: TestElementEvent) {
+                    override suspend fun add(event: TestElement.Event) {
                         val element = event.element
                         val description = element.platformDescription
 
                         when (event) {
-                            is TestElementEvent.Starting -> {
+                            is TestElement.Event.Starting -> {
                                 if (element.testElementIsEnabled) {
                                     log { "$description: $element starting" }
                                     when (element) {
@@ -107,7 +106,7 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
                                 }
                             }
 
-                            is TestElementEvent.Finished -> {
+                            is TestElement.Event.Finished -> {
                                 if (element.testElementIsEnabled) {
                                     val throwable = event.throwable
                                     log { "$description: $element finished, result=$throwable)" }
@@ -143,7 +142,7 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
     is Test -> {
         testElementParent as TestSuite
 
-        val displayName = if (TestSession.global.reportingMode == ReportingMode.INTELLIJ_IDEA) {
+        val displayName = if (TestSession.global.reportingMode == ReportingMode.IntellijIdea) {
             testElementPath.partiallyQualifiedReportingName.printable()
         } else {
             testElementDisplayName.printable()

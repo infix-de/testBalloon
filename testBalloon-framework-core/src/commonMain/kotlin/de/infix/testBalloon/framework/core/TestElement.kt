@@ -4,6 +4,9 @@ import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.reportingPathLimit
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.internal.Constants
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 public sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, testConfig: TestConfig) :
     AbstractTestElement {
@@ -20,9 +23,9 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     public var testConfig: TestConfig = testConfig
 
     internal val testElementParent: TestSuite? = parent
-    internal val testElementName: String = parent?.uniqueChildName(name, TestSuite.ChildNameType.ELEMENT) ?: name
+    internal val testElementName: String = parent?.uniqueChildName(name, TestSuite.ChildNameType.Element) ?: name
     internal val testElementDisplayName: String =
-        parent?.uniqueChildName(displayName.lengthLimited(), TestSuite.ChildNameType.DISPLAY)
+        parent?.uniqueChildName(displayName.lengthLimited(), TestSuite.ChildNameType.Display)
             ?: displayName.lengthLimited()
 
     /**
@@ -135,19 +138,43 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
             _parameters = value
         }
 
-    internal data class Parameters(val isEnabled: Boolean = true, val permits: Set<TestPermit> = emptySet()) {
+    internal data class Parameters(val isEnabled: Boolean = true, val permits: Set<TestConfig.Permit> = emptySet()) {
         companion object {
             val default = Parameters()
         }
     }
 
+    /**
+     * An event occurring as part of a test element's setup or execution.
+     */
+    public sealed class Event(public val element: TestElement) {
+        @ExperimentalTime
+        public val instant: Instant = Clock.System.now()
+
+        public class Starting(element: TestElement) : Event(element)
+
+        public class Finished(
+            element: TestElement,
+            public val startingEvent: Starting,
+            public val throwable: Throwable? = null
+        ) : Event(element) {
+
+            public val succeeded: Boolean get() = throwable == null
+            public val failed: Boolean get() = throwable != null
+
+            override fun toString(): String = "${super.toString()} – throwable=$throwable"
+        }
+
+        override fun toString(): String = "$element: ${this::class.simpleName}"
+    }
+
     /** The most recent event observed by a `SequencingExecutionReport`. */
-    internal var recentEvent: TestElementEvent? = null
+    internal var recentEvent: Event? = null
 
     /** The state of this element's event forwarding by a `SequencingExecutionReport`. */
-    internal var forwardingState: ForwardingState = ForwardingState.NOT_FORWARDED
+    internal var forwardingState: ForwardingState = ForwardingState.NotForwarded
 
-    internal enum class ForwardingState { NOT_FORWARDED, START_FORWARDED, FINISH_FORWARDED }
+    internal enum class ForwardingState { NotForwarded, StartForwarded, FinishForwarded }
 
     init {
         @Suppress("LeakingThis")
@@ -181,51 +208,51 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     }
 
     /**
-     * Executes the test element, adding [TestElementEvent]s to the [report].
+     * Executes the test element, adding [Event]s to the [report].
      *
      * For proper reporting, this method is also invoked for disabled elements.
      */
     internal abstract suspend fun execute(report: TestExecutionReport)
 
     /**
-     * Executes the [setupAction], reporting its [TestElementEvent]s to the [report].
+     * Executes the [setupAction], reporting its [Event]s to the [report].
      */
     internal fun setUpReporting(report: TestSetupReport, setupAction: () -> Unit) {
-        val startingEvent = TestElementEvent.Starting(this)
+        val startingEvent = Event.Starting(this)
 
         report.add(startingEvent)
 
         try {
             setupAction()
-            report.add(TestElementEvent.Finished(this, startingEvent))
+            report.add(Event.Finished(this, startingEvent))
         } catch (throwable: Throwable) {
-            report.add(TestElementEvent.Finished(this, startingEvent, throwable))
+            report.add(Event.Finished(this, startingEvent, throwable))
             if (throwable is FailFastException) throw throwable
         }
     }
 
     /**
-     * Executes [action], reporting its [TestElementEvent]s to the [report].
+     * Executes [action], reporting its [Event]s to the [report].
      */
     internal suspend fun executeReporting(report: TestExecutionReport, action: suspend () -> Unit) {
         @Suppress("DEPRECATION")
         testConfig.withExecutionReportSetup(this) { additionalReports ->
-            suspend fun TestElementEvent.Finished.addToReports() {
+            suspend fun Event.Finished.addToReports() {
                 // address reports in reverse order for finish events
                 additionalReports?.reversed()?.forEach { it.add(this) }
                 report.add(this)
             }
 
-            val startingEvent = TestElementEvent.Starting(this)
+            val startingEvent = Event.Starting(this)
 
             report.add(startingEvent)
             additionalReports?.forEach { it.add(startingEvent) }
 
             try {
                 action()
-                TestElementEvent.Finished(this, startingEvent).addToReports()
+                Event.Finished(this, startingEvent).addToReports()
             } catch (throwable: Throwable) {
-                TestElementEvent.Finished(this, startingEvent, throwable).addToReports()
+                Event.Finished(this, startingEvent, throwable).addToReports()
                 if (throwable is FailFastException) throw throwable
             }
         }

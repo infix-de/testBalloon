@@ -56,7 +56,7 @@ val previousVersions by lazy {
 }
 
 val useProjectVersionPropertyName = "local.documentation.useProjectVersion"
-val projectCommonVersion = project.version.toString().replace(Regex("-.*"), "")
+val projectCommonVersion = project.version.toString().replace(Regex("-K.*"), "")
 val newApiVersion = if (providers.gradleProperty(useProjectVersionPropertyName).orNull == "true") {
     projectCommonVersion
 } else {
@@ -158,6 +158,8 @@ tasks {
     }
 
     val generateDocumentationVariables by registering {
+        inputs.property("newApiVersion", newApiVersion)
+
         val generatedVariablesDirectory = layout.buildDirectory.dir("generated/documentationVariables")
         outputs.dir(generatedVariablesDirectory)
 
@@ -204,8 +206,15 @@ tasks {
                     appendLine(
                         buildList {
                             add("""{ "version": "$devVersion", "title": "$devVersion 🚧", "aliases": [] }""")
-                            regularVersions.forEachIndexed { index, version ->
-                                val aliases = if (index == 0) "\"latest\"" else ""
+                            var latestFound = false
+                            for (version in regularVersions) {
+                                val isLatest = if (latestFound || version.contains('-')) {
+                                    false
+                                } else {
+                                    latestFound = true
+                                    true
+                                }
+                                val aliases = if (isLatest) "\"latest\"" else ""
                                 add("""{ "version": "$version", "title": "$version", "aliases": [$aliases] }""")
                             }
                         }.joinToString(separator = ",\n")

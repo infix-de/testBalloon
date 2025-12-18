@@ -2,12 +2,12 @@
 
 ### Upgrading
 
-Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/dev/how-to/upgrading/).
+Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0-Beta1/how-to/upgrading/).
 
 ### Highlights
 
 * **Test-level fixtures**, providing fresh state per test, are now supported in addition to suite-level fixtures.
-* **Fixtures** can now provide their value **as a context or a parameter** to tests. See the [fixture documentation](https://infix-de.github.io/testBalloon/dev/getting-started/fixtures/) for details.
+* **Fixtures** can now provide their value **as a context or a parameter** to tests. See the [fixture documentation](https://infix-de.github.io/testBalloon/0.8.0-Beta1/getting-started/fixtures/) for details.
 * **Android** integration was improved, tests can now use multiple JUnit 4 rules.
 * The **API surface** was streamlined with fewer top-level declarations and scoped naming.
 * **Migration documentation** is provided for test setups using **JUnit 4/5/6** and **kotlin.test**. The section on **Kotest** migration was also updated.

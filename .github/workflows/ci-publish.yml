@@ -8,7 +8,7 @@ on:
 jobs:
   publish:
     name: 'Publish a release'
-    if: github.repository == 'infix-de/testBalloon'
+    if: github.event.repository.fork == false
     runs-on: macOS-latest
 
     steps:

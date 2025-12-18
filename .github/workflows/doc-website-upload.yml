@@ -4,7 +4,7 @@ on: [ workflow_call ]
 
 jobs:
   upload:
-    if: github.repository == 'infix-de/testBalloon'
+    if: github.event.repository.fork == false
 
     runs-on: ubuntu-latest
 

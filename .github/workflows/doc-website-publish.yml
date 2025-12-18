@@ -7,7 +7,7 @@ concurrency:
 
 jobs:
   publish:
-    if: github.repository == 'infix-de/testBalloon'
+    if: github.event.repository.fork == false
 
     runs-on: ubuntu-latest
 

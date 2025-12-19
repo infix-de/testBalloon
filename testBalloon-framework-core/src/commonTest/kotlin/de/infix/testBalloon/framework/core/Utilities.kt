@@ -69,11 +69,14 @@ internal suspend fun withTestReport(
     vararg suites: TestSuite,
     selection: TestElement.Selection = TestElement.AllInSelection,
     expectFrameworkFailure: Boolean = false,
+    invokeSetup: Boolean = true,
     action: suspend InMemoryTestExecutionReport.(frameworkFailure: Throwable?) -> Unit
 ) {
     require(suites.isNotEmpty()) { "At least one suite must be provided" }
 
-    TestSession.global.setUp(selection, ThrowingTestSetupReport())
+    if (invokeSetup) {
+        TestSession.global.setUp(selection, ThrowingTestSetupReport())
+    }
 
     val report = InMemoryTestExecutionReport()
     var frameworkFailure: Throwable? = null

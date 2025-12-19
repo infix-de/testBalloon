@@ -11,6 +11,16 @@ import kotlin.time.Instant
 public sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, testConfig: TestConfig) :
     AbstractTestElement {
 
+    init {
+        fun elementInfo() = if (parent == null) "a test element" else "a test element in $parent"
+        require(name.isNotEmpty() && name.isNotBlank()) {
+            "Could not register ${elementInfo()} with an empty or blank name '$name'"
+        }
+        require(displayName.isNotEmpty() && displayName.isNotBlank()) {
+            "Could not register ${elementInfo()} with an empty or blank displayName '$displayName'"
+        }
+    }
+
     /**
      * The element's configuration.
      *

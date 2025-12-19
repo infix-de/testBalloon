@@ -125,7 +125,7 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
                         if (event is TestElement.Event.Finished && event.throwable != null) {
                             reportDiscoveryIssue(
                                 event.throwable,
-                                "Could not configure ${event.element.testElementPath}"
+                                "Could not configure ${event.element.testElementPath}."
                             )
                         }
                     }
@@ -140,7 +140,14 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
         log { "created EngineDescriptor(${engineDescriptor.uniqueId}, ${engineDescriptor.displayName})" }
         testElementDescriptors[TestSession.global] = engineDescriptor
         for (topLevelSuite in topLevelTestSuites) {
-            engineDescriptor.addChild((topLevelSuite as TestSuite).newPlatformDescriptor(uniqueId))
+            try {
+                engineDescriptor.addChild((topLevelSuite as TestSuite).newPlatformDescriptor(uniqueId))
+            } catch (throwable: Throwable) {
+                reportDiscoveryIssue(
+                    throwable,
+                    "Could not create JUnit platform descriptors for $topLevelSuite."
+                )
+            }
         }
 
         return engineDescriptor

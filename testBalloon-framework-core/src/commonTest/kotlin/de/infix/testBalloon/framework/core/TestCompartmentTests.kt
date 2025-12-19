@@ -102,7 +102,7 @@ class TestCompartmentTests {
 
     @Test
     fun concurrency() = withTestFramework {
-        val suiteCount = 8
+        val suiteCount = 16
         val testCount = 8
 
         val concurrentThreadIds = ConcurrentSet<ULong>()
@@ -117,7 +117,7 @@ class TestCompartmentTests {
                     for (testNumber in 1..testCount) {
                         test("test$testNumber") {
                             concurrentThreadIds.add(testPlatform.threadId())
-                            delay(1.milliseconds)
+                            delay(10.milliseconds)
                         }
                     }
                 }
@@ -132,7 +132,7 @@ class TestCompartmentTests {
                     for (testNumber in 1..testCount) {
                         test("test$testNumber") {
                             sequentialThreadIds.add(testPlatform.threadId())
-                            delay(1.milliseconds)
+                            delay(10.milliseconds)
                         }
                     }
                 }

@@ -13,7 +13,7 @@ class BuildLogicPublishingJvmPlugin : Plugin<Project> {
         }
 
         extensions.configure<MavenPublishBaseExtension>("mavenPublishing") {
-            configure(KotlinJvm(JavadocJar.Dokka("dokkaGenerateHtml"), sourcesJar = true))
+            configure(KotlinJvm(JavadocJar.Empty(), sourcesJar = true))
         }
     }
 }

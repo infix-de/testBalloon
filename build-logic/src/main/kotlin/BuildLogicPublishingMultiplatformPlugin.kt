@@ -13,7 +13,7 @@ class BuildLogicPublishingMultiplatformPlugin : Plugin<Project> {
         }
 
         extensions.configure<MavenPublishBaseExtension>("mavenPublishing") {
-            configure(KotlinMultiplatform(JavadocJar.Dokka("dokkaGenerateHtml"), sourcesJar = true))
+            configure(KotlinMultiplatform(JavadocJar.Empty(), sourcesJar = true))
         }
     }
 }

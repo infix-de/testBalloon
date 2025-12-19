@@ -8,6 +8,7 @@ on:
     paths:
       - 'documentation/website/**'
       - 'testBalloon-framework-core/**'
+      - '!testBalloon-framework-core/src/*Test/**'
       - 'testBalloon-framework-shared/**'
 
 jobs:

@@ -2,6 +2,8 @@ import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 
 @Suppress("unused")
@@ -71,6 +73,34 @@ class BuildLogicPublishingBasePlugin : Plugin<Project> {
 
         extensions.configure<SigningExtension>("signing") {
             isRequired = false // not necessary for local publishing
+        }
+
+        // WORKAROUND https://github.com/gradle/gradle/issues/26091
+        //     "Task ':testBalloon-gradle-plugin:publishPluginMavenPublicationToMavenCentralRepository' uses this output of task ':testBalloon-gradle-plugin:signMavenPublication' without declaring an explicit or implicit dependency."
+        //     Caused by a single source jar or dokka jar artifact being added to all publications.
+        //     See https://github.com/gradle/gradle/issues/26091#issuecomment-1836156762
+        tasks.withType(AbstractPublishToMaven::class.java).configureEach {
+            val signingTasks = tasks.withType(Sign::class.java)
+            mustRunAfter(signingTasks)
+        }
+
+        // WORKAROUND https://github.com/gradle/gradle/issues/26132
+        //     "Task ':linkDebugTestLinuxX64' uses this output of task ':signLinuxX64Publication' without declaring an explicit or implicit dependency."
+        //     Signing plugin generates overlapping task outputs
+        afterEvaluate {
+            tasks.configureEach {
+                if (name.startsWith("compileTestKotlin")) {
+                    val target = name.substring("compileTestKotlin".length)
+                    val sign = try {
+                        tasks.named("sign${target}Publication")
+                    } catch (e: Throwable) {
+                        null
+                    }
+                    if (sign != null) {
+                        dependsOn(sign)
+                    }
+                }
+            }
         }
     }
 }

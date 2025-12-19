@@ -263,8 +263,10 @@ class TestSuiteTests {
         val suite1 by testSuite("suite1") {
         }
 
-        assertFails("does not contain any child tests or test suites") {
+        assertFails {
             withTestReport(suite1) {}
+        }.also {
+            assertContains(it.cause?.message ?: "", "does not contain any child tests or test suites")
         }
     }
 
@@ -275,6 +277,110 @@ class TestSuiteTests {
 
         withTestReport(suite1) {
             finishedTestEvents().all { it.succeeded }
+        }
+    }
+
+    @Test
+    fun suiteWithEmptyName() = withTestFramework {
+        val suite1 by testSuite("") {
+        }
+
+        assertFails {
+            withTestReport(suite1) {}
+        }.also {
+            assertContains(it.message ?: "", "with an empty or blank name ''")
+        }
+    }
+
+    @Test
+    fun suiteWithBlankName() = withTestFramework {
+        val suite1 by testSuite(" ") {
+        }
+
+        assertFails {
+            withTestReport(suite1) {}
+        }.also {
+            assertContains(it.message ?: "", "with an empty or blank name ' '")
+        }
+    }
+
+    @Test
+    fun suiteWithEmptyDisplayName() = withTestFramework {
+        val suite1 by testSuite("suite1", displayName = "") {
+        }
+
+        assertFails {
+            withTestReport(suite1) {}
+        }.also {
+            assertContains(it.message ?: "", "with an empty or blank displayName ''")
+        }
+    }
+
+    @Test
+    fun suiteWithBlankDisplayName() = withTestFramework {
+        val suite1 by testSuite("suite1", displayName = " ") {
+        }
+
+        assertFails {
+            withTestReport(suite1) {}
+        }.also {
+            assertContains(it.message ?: "", "with an empty or blank displayName ' '")
+        }
+    }
+
+    @Test
+    fun testWithEmptyName() = withTestFramework {
+        val suite1 by testSuite("suite1") {
+            test("") {
+            }
+        }
+
+        assertFails {
+            withTestReport(suite1) {}
+        }.also {
+            assertContains(it.cause?.message ?: "", "with an empty or blank name ''")
+        }
+    }
+
+    @Test
+    fun testWithBlankName() = withTestFramework {
+        val suite1 by testSuite("suite1") {
+            test(" ") {
+            }
+        }
+
+        assertFails {
+            withTestReport(suite1) {}
+        }.also {
+            assertContains(it.cause?.message ?: "", "with an empty or blank name ' '")
+        }
+    }
+
+    @Test
+    fun testWithEmptyDisplayName() = withTestFramework {
+        val suite1 by testSuite("suite1") {
+            test("test1", displayName = "") {
+            }
+        }
+
+        assertFails {
+            withTestReport(suite1) {}
+        }.also {
+            assertContains(it.cause?.message ?: "", "with an empty or blank displayName ''")
+        }
+    }
+
+    @Test
+    fun testWithBlankDisplayName() = withTestFramework {
+        val suite1 by testSuite("suite1") {
+            test("test1", displayName = " ") {
+            }
+        }
+
+        assertFails {
+            withTestReport(suite1) {}
+        }.also {
+            assertContains(it.cause?.message ?: "", "with an empty or blank displayName ' '")
         }
     }
 
@@ -403,7 +509,7 @@ class TestSuiteTests {
             } closeWith {
                 trace.add("$testElementPath fixture closing")
             } asParameterForAll {
-                test("test1") { fixture ->
+                test("test1") { _ ->
                     // The fixture must be created here, although its value is not used.
                     trace.add("$testElementPath")
                 }
@@ -466,7 +572,7 @@ class TestSuiteTests {
             } closeWith {
                 trace.add("$testElementPath fixture closing")
             } asParameterForEach {
-                test("test1") { fixture ->
+                test("test1") { _ ->
                     // The fixture must be created here, although its value is not used.
                     trace.add("$testElementPath")
                 }
@@ -608,7 +714,7 @@ class TestSuiteTests {
         val suite1 by testSuite("suite1") {
             val fixture1 = testFixture {
             } asParameterForEach {
-                test("test1") { fixture ->
+                test("test1") { _ ->
                 }
             }
 
@@ -632,10 +738,10 @@ class TestSuiteTests {
         val suite1 by testSuite("suite1") {
             testFixture {
             } asParameterForAll {
-                test("test1") { fixture ->
+                test("test1") { _ ->
                 }
             } asParameterForEach {
-                test("test2") { fixture ->
+                test("test2") { _ ->
                 }
             }
         }
@@ -1133,14 +1239,15 @@ class TestSuiteTests {
         class Suite1 :
             TestSuite({
                 test("(1)test1") {}
-            })
+            }, name = "Suite1")
 
         class Suite2 :
             TestSuite(
                 testConfig = TestConfig,
                 {
                     test("(2)test1") {}
-                }
+                },
+                name = "Suite2"
             )
 
         class Suite3 :
@@ -1148,7 +1255,8 @@ class TestSuiteTests {
                 compartment = TestCompartment.Default,
                 {
                     test("(3)test1") {}
-                }
+                },
+                name = "Suite3"
             )
 
         class Suite4 :
@@ -1157,7 +1265,8 @@ class TestSuiteTests {
                 testConfig = TestConfig,
                 {
                     test("(4)test1") {}
-                }
+                },
+                name = "Suite4"
             )
 
         class Suite5 :
@@ -1193,10 +1302,10 @@ class TestSuiteTests {
                 assertAllSucceeded()
                 assertElementPathsContainInOrder(
                     listOf(
-                        "$iSep(1)test1",
-                        " 〈2〉$iSep(2)test1",
-                        " 〈3〉$iSep(3)test1",
-                        " 〈4〉$iSep(4)test1",
+                        "Suite1$iSep(1)test1",
+                        "Suite2$iSep(2)test1",
+                        "Suite3$iSep(3)test1",
+                        "Suite4$iSep(4)test1",
                         "Suite5${iSep}test1",
                         "Suite6${iSep}test1",
                         "Suite7${iSep}test1"

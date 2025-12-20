@@ -17,14 +17,18 @@ val ExperimentalSuite1 by testSuite(testConfig = TestConfig.logTestExecution()) 
         assertEquals(8, "Test me!".length)
     }
 
+    val specials = "< > : \" / \\ | ? *"
+
     // Use a function call to register a nested test suite.
-    testSuite("integer operations") {
-        test("max") {
+    testSuite("middle $specials middle") {
+        test("max $specials max") {
             assertEquals(5, max(5, 3))
         }
 
-        test("min") {
-            assertEquals(3, min(5, 3))
+        testSuite("lowest $specials lowest") {
+            test("min $specials min") {
+                assertEquals(3, min(5, 3))
+            }
         }
     }
 }

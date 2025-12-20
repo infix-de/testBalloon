@@ -17,3 +17,5 @@
 * `./gradlew -PtestBalloon.reportingMode=files --rerun-tasks cleanJsNodeTest jsNodeTest`
 * `./gradlew -PtestBalloon.reportingMode=files --rerun-tasks cleanPixel2api30AndroidDeviceTest pixel2api30AndroidDeviceTest`
 * `./gradlew -PtestBalloon.reportingMode=files --rerun-tasks cleanTestAndroidHostTest testAndroidHostTest`
+
+* `./gradlew -PtestBalloon.reportingMode=files --rerun-tasks cleanAllTests linuxX64Test`

@@ -4,6 +4,7 @@ import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.reportingPathLimit
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -85,13 +86,13 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
                 // package name.
                 // NOTE: If users explicitly supply element names without a package prefix, reports might deviate from
                 // expectations.
-                testElementName
+                testElementName.safeAsSuiteDisplayName()
             } else {
                 if (this is Test) {
-                    testElementDisplayName.replace(".", ESCAPED_DOT)
+                    testElementDisplayName.safeAsTestDisplayName()
                 } else {
                     // lower-level suite
-                    testElementDisplayName.replace(' ', ESCAPED_SPACE).replace(".", ESCAPED_DOT)
+                    testElementDisplayName.safeAsLowerLevelSuiteDisplayName()
                 }
             }
 
@@ -119,9 +120,6 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
         }
 
         internal companion object {
-            private const val ESCAPED_SPACE = '\u00a0' // non-breaking space
-            private const val ESCAPED_DOT = "·" // middle dot
-            private const val REPORTING_SEPARATOR: String = "$ESCAPED_SPACE↘$ESCAPED_SPACE"
             internal const val REPORTING_SEPARATOR_LENGTH = REPORTING_SEPARATOR.length
             private const val INTERNAL_PATH_ELEMENT_SEPARATOR_STRING = "${Constants.INTERNAL_PATH_ELEMENT_SEPARATOR}"
         }
@@ -296,3 +294,49 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
         }
     }
 }
+
+private fun String.safeAsSuiteDisplayName() = transformed(suiteDisplayNameReplacements)
+
+private fun String.safeAsLowerLevelSuiteDisplayName() = transformed(lowerLevelSuiteDisplayNameReplacements)
+
+private fun String.safeAsTestDisplayName() = transformed(testDisplayNameReplacements)
+
+private fun String.transformed(replacementCharacters: Map<Char, Char>): String = buildString(length) {
+    for (character in this@transformed) {
+        val replacementCharacter = replacementCharacters[character]
+        append(
+            when {
+                replacementCharacter != null -> replacementCharacter
+                character.code < 32 -> '�'
+                else -> character
+            }
+        )
+    }
+}
+
+private val suiteDisplayNameReplacements = if (TestSession.global.reportingMode == ReportingMode.Files) {
+    // These characters are potentially file-system-incompatible on Windows. Gradle reporting does not escape
+    // characters in what it considers to be a "package name", which in our hierarchy is every non-leaf suite.
+    mapOf(
+        '<' to '＜',
+        '>' to '＞',
+        ':' to '։',
+        '"' to '＂',
+        '/' to '⧸', // The slash is also a problem on other platforms, making Gradle create unexpected directories.
+        '\\' to '⧹',
+        '|' to '❘',
+        '?' to '？',
+        '*' to '＊'
+    )
+} else {
+    mapOf()
+}
+
+private val lowerLevelSuiteDisplayNameReplacements =
+    mapOf(' ' to ESCAPED_SPACE, '.' to ESCAPED_DOT) + suiteDisplayNameReplacements
+
+private val testDisplayNameReplacements = mapOf('.' to ESCAPED_DOT)
+
+private const val ESCAPED_SPACE = '\u00a0' // non-breaking space
+private const val ESCAPED_DOT = '·' // middle dot
+private const val REPORTING_SEPARATOR: String = "$ESCAPED_SPACE↘$ESCAPED_SPACE"

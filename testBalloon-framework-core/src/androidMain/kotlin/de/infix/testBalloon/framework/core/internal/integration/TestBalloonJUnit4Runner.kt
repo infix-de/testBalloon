@@ -11,7 +11,6 @@ import de.infix.testBalloon.framework.core.internal.logDebug
 import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.InvokedByGeneratedCode
-import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -130,7 +129,7 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
 private fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
         Description.createSuiteDescription(
-            testElementPath.fullyQualifiedReportingName.printable(),
+            testElementPath.fullyQualifiedReportingName.safeForDeviceSideTests(),
             testElementPath.internalId
         ).apply {
             testElementChildren.forEach {
@@ -142,15 +141,9 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
     is Test -> {
         testElementParent as TestSuite
 
-        val displayName = if (TestSession.global.reportingMode == ReportingMode.IntellijIdea) {
-            testElementPath.partiallyQualifiedReportingName.printable()
-        } else {
-            testElementDisplayName.printable()
-        }
-
         Description.createTestDescription(
-            testElementParent.testElementPath.fullyQualifiedReportingName.printable(),
-            displayName.printable(), // Guard against a slash crashing Android device-side tests.
+            testElementParent.testElementPath.fullyQualifiedReportingName.safeForDeviceSideTests(),
+            testElementPath.partiallyQualifiedReportingName.safeForDeviceSideTests(),
             Category(TestBalloonJUnit4Runner::class) // Support JUnit 4 runner selection via 'includeCategories'.
         )
     }
@@ -158,17 +151,8 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
     testElementDescriptions[this] = it
 }
 
-private fun String.printable(): String = buildString(length) {
-    for (character in this@printable) {
-        append(
-            when {
-                character.code < 32 -> '�'
-                character == '/' -> '⧸'
-                else -> character
-            }
-        )
-    }
-}
+// Returns a suite or test name guarded against slashes, which are suspected to crash Android device-side tests.
+private fun String.safeForDeviceSideTests() = replace('/', '⧸')
 
 internal val TestElement.platformDescription: Description
     get() = checkNotNull(testElementDescriptions[this]) { "$this is missing its test description" }

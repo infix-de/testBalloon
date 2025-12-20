@@ -145,6 +145,7 @@ internal fun TestSuite.reference() {
 internal class ConcurrentSet<Element> : SynchronizedObject() {
     private val elements = mutableSetOf<Element>()
 
+    fun clear() = synchronized(this) { elements.clear() }
     fun add(element: Element) = synchronized(this) { elements.add(element) }
     fun elements() = synchronized(this) { elements.toSet() }
 }

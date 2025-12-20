@@ -148,6 +148,9 @@ class TestCompartmentTests {
         // This test has been flaky on GitHub macOS and Windows runners. Tests occasionally run on one thread only,
         // on systems where multiple cores are present. We try repeatedly before giving up.
         for (attempt in 1..10) {
+            concurrentThreadIds.clear()
+            sequentialThreadIds.clear()
+
             try {
                 withTestReport(suite1, suite2, invokeSetup = missedParallelismExpectation == null) {
                     with(finishedTestEvents()) {
@@ -160,10 +163,19 @@ class TestCompartmentTests {
                                 throw MissedParallelismExpectation(concurrentThreadCount)
                             }
                         } else {
-                            assertEquals(1, concurrentThreadCount)
+                            assertEquals(
+                                1,
+                                concurrentThreadCount,
+                                "Expected concurrent execution on 1 thread, actually: $concurrentThreadCount threads"
+                            )
                         }
 
-                        assertEquals(1, sequentialThreadIds.elements().size)
+                        val sequentialThreadCount = sequentialThreadIds.elements().size
+                        assertEquals(
+                            1,
+                            sequentialThreadCount,
+                            "Expected sequential execution on 1 thread, actually: $sequentialThreadCount threads"
+                        )
 
                         // Tests in each compartment must be processed consecutively.
                         assertElementPathsContainInOrder(

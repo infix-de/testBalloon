@@ -4,6 +4,7 @@ import buildLogic.enableAbiValidation
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
     id("buildLogic.multiplatform-plus-android-library")
@@ -83,5 +84,13 @@ tasks.withType<Test>().configureEach {
     // https://docs.gradle.org/current/userguide/java_testing.html
     useJUnitPlatform {
         excludeEngines(Constants.JUNIT_ENGINE_ID) // Do not use TestBalloon in this project
+    }
+}
+
+tasks.withType<KotlinNativeTest>().configureEach {
+    val taskName = name
+    doFirst {
+        environment("TEST_TASK_NAME", taskName, false)
+        environment("SIMCTL_CHILD_TEST_TASK_NAME", taskName, false) // Apple simulator execution environment
     }
 }

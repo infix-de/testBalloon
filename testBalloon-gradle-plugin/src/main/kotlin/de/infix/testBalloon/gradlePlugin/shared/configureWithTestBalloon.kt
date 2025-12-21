@@ -97,7 +97,9 @@ private fun Project.configureTestTasks(
 ) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
         "intellij" -> ReportingMode.IntellijIdea
+
         "files" -> ReportingMode.Files
+
         else -> if (providers.systemProperty("idea.active").isPresent) {
             ReportingMode.IntellijIdea
         } else {
@@ -273,6 +275,7 @@ private fun Project.configureTestTasks(
                 is KotlinNativeTest -> {
                     configureEnvironment { name, value ->
                         environment(name, value, false)
+                        environment("SIMCTL_CHILD_$name", value, false) // required for Apple simulator execution
                     }
                 }
 

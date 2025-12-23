@@ -133,7 +133,12 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
             testElementPath.internalId
         ).apply {
             testElementChildren.forEach {
-                addChild(it.newPlatformDescription())
+                if (it.isIncluded) {
+                    // Create descriptions only for included elements: These will be used to count the
+                    // total number of tests. If the number of executed tests is less than the number of
+                    // descriptions created for tests, a test run failure will be reported.
+                    addChild(it.newPlatformDescription())
+                }
             }
         }
     }

@@ -141,7 +141,7 @@ The reporting stack (KGP, AGP, Gradle, IDE) exposes the following quirks in the 
 
 ==== Running Tests
 
-Gradle's https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/AbstractTestTask.html[AbstractTestTask] forms the basis of test invocations, defining test capabilities such as filtering, listeners and reporting.
+Gradle's https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/AbstractTestTask.html[AbstractTestTask] forms the basis of test invocations, except for Android device-side tests. `AbstractTestTask` defines test capabilities such as filtering, listeners and reporting.
 
 ==== Test Filtering
 

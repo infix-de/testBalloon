@@ -4,7 +4,7 @@ import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import kotlin.test.assertEquals
 
-val TestSuite by testSuite {
+val CommonTestBalloon by testSuite {
     log("configuring $testElementPath")
 
     test("test1") {

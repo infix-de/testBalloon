@@ -199,12 +199,13 @@ class TestCompartmentTests {
         }
 
         if (missedParallelismExpectation != null) {
-            // Finally, Apple simulator test runs on GH can be really stubborn, insisting on a single thread.
+            // Finally, Apple target test runs on GH can be really stubborn, insisting on a single thread.
             // We ignore them.
 
             val testTaskName = testPlatform.environment("TEST_TASK_NAME") ?: ""
+            val taskNamesToSkip = Regex("""^(.*SimulatorArm64Test|macosArm64Test)$""")
 
-            if (testTaskName.endsWith("SimulatorArm64Test")) {
+            if (taskNamesToSkip.matches(testTaskName)) {
                 println(">>> $testTaskName ignoring $missedParallelismExpectation")
             } else {
                 fail(missedParallelismExpectation.message)

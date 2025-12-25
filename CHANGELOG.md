@@ -1,4 +1,21 @@
+## 0.8.0-Beta2
+
+_This beta release is available for Kotlin 2.3.0 only. Other Kotlin versions follow with the final release._
+
+### Upgrading
+
+Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0-Beta1/how-to/upgrading/).
+
+### Fixes since 0.8.0-Beta1
+
+* (Android) The total test count is now correctly displayed, avoiding a false positive failure report.
+* Running individual tests is now supported on Apple simulator targets. (#53)
+* Potentially unsafe characters are now escaped in file-based reporting. (#42)
+* Empty or blank test names are now reported with a more helpful message. (#51)
+
 ## 0.8.0-Beta1
+
+_This beta release is available for Kotlin 2.3.0 only. Other Kotlin versions follow with the final release._
 
 ### Upgrading
 
@@ -72,7 +89,7 @@ TestBalloon release variants:
 
 * An **extensive documentation site** is available at https://infix-de.github.io/testBalloon/ along with guidance on [effective testing](https://infix-de.github.io/testBalloon/0.7.0/how-to/effective-testing/).
 
-* The **API** has been undergone some scrutiny to use more precise language and make everything **as intuitive as possible**. As a result, there is some migration required.
+* The **API** has undergone some scrutiny to use more precise language and make everything **as intuitive as possible**. As a result, there is some migration required.
 
 Enjoy!
 

@@ -7,6 +7,7 @@ package de.infix.testBalloon.framework.shared.internal
  */
 @TestBalloonInternalApi
 public enum class ReportingMode {
+    IntellijIdeaLegacy,
     IntellijIdea,
     Files
 }

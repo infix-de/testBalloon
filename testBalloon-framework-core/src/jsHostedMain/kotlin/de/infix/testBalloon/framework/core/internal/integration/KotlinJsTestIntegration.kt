@@ -9,7 +9,6 @@ import de.infix.testBalloon.framework.core.internal.integration.TestSessionRelay
 import de.infix.testBalloon.framework.core.internal.logError
 import de.infix.testBalloon.framework.core.internal.logInfo
 import de.infix.testBalloon.framework.core.testPlatform
-import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -40,17 +39,8 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
                     }
                 }
             } else {
-                val elementName =
-                    if (isTopLevelSuite || TestSession.global.reportingMode == ReportingMode.IntellijIdea) {
-                        // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA, but
-                        // duplicates path elements in XML and HTML file reports.
-                        testElementPath.fullyQualifiedReportingName
-                    } else {
-                        // Simple element names below the top level work for file reports.
-                        testElementPath.elementReportingName
-                    }
                 kotlinJsTestFramework.suite(
-                    elementName,
+                    reportingNameForJsAndTeamCity,
                     ignored = !testElementIsEnabled
                 ) {
                     testElementChildren.forEach {
@@ -61,7 +51,7 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
         }
 
         is Test -> {
-            kotlinJsTestFramework.test(testElementPath.elementReportingName, ignored = !testElementIsEnabled) {
+            kotlinJsTestFramework.test(reportingNameForJsAndTeamCity, ignored = !testElementIsEnabled) {
                 TestSessionRelay.resultReceivingPromise(this)
             }
         }

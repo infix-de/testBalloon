@@ -96,6 +96,8 @@ private fun Project.configureTestTasks(
     browserSafeEnvironmentPatternFromExtension: () -> String
 ) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
+        "intellij-legacy" -> ReportingMode.IntellijIdeaLegacy
+
         "intellij" -> ReportingMode.IntellijIdea
 
         "files" -> ReportingMode.Files

@@ -74,10 +74,14 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val jvmTestBalloonTestsOnly by booleanProperty("false")
 
     /**
-     * Test reporting mode. One of `auto` (default), `intellij`, `files`.
+     * Test reporting mode. One of `auto` (default), `intellij`, `files`, `intellij-legacy`.
      *
-     * The mode `intellij` supplies full test element paths to the reporting infrastructure, supporting proper
-     * hierarchy display in IntelliJ's test run window.
+     * The `intellij` mode supplies test element coordinates to the reporting infrastructure, supporting the
+     * IDE plugin versions >= 0.5 for proper hierarchy display in IntelliJ's test run window, and navigation to test
+     * element sources.
+     *
+     * The `intellij-legacy` mode supplies full test element paths to the reporting infrastructure, supporting proper
+     * hierarchy display in IntelliJ's test run window without IDE plugin support.
      *
      * The mode `files` supplies test element names instead of full paths, supporting proper XML and HTML report
      * files, avoiding duplicate path elements leading to `file name too long' errors.

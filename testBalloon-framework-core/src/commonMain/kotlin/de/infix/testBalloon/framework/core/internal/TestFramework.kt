@@ -121,3 +121,5 @@ internal val reportingPathLimit: Int =
         ?: Int.MAX_VALUE
 
 internal expect val testInfrastructureSupportsConcurrency: Boolean
+
+internal expect val testInfrastructureIsAndroidDevice: Boolean

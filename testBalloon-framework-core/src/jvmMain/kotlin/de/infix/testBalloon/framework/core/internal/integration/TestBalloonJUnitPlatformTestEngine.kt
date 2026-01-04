@@ -228,33 +228,24 @@ private class TestElementJUnitPlatformDescriptor(
 
 private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestElementJUnitPlatformDescriptor {
     val uniqueId: UniqueId
-    val element = this
-    var source: TestSource? = null
-
-    val segmentType = when (element) {
+    val source: TestSource? = if (isTopLevelSuite) ClassSource.from(testElementName) else null
+    val segmentType = when (this) {
         is Test -> "test"
-
-        is TestSuite -> {
-            if (isTopLevelSuite) {
-                source = ClassSource.from(testElementName)
-                "class"
-            } else {
-                "suite"
-            }
-        }
+        is TestSuite -> "suite"
     }
+
     uniqueId = parentUniqueId.append(segmentType, testElementName)
-    val displayName = if (TestSession.global.reportingMode == ReportingMode.IntellijIdea) {
-        testElementDisplayName
-    } else {
-        testElementPath.qualifiedReportingNameBelowTopLevel
+    val displayName = when (TestSession.global.reportingMode) {
+        ReportingMode.IntellijIdeaLegacy -> testElementDisplayName
+        ReportingMode.IntellijIdea -> reportingCoordinates(mode = TestElement.CoordinatesMode.DisplayName)
+        else -> testElementPath.reportingNameWithoutTopLevelSuite
     }
 
     return TestElementJUnitPlatformDescriptor(
         uniqueId = uniqueId,
         displayName = displayName,
         source = source,
-        element = element
+        element = this
     ).apply {
         log { "created TestDescriptor($uniqueId, $displayName)" }
         testElementDescriptors[element] = this

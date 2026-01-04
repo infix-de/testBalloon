@@ -1,5 +1,7 @@
 package de.infix.testBalloon.framework.core.internal
 
+import android.os.Bundle
+import androidx.test.platform.app.InstrumentationRegistry
 import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.internal.integration.TeamCityTestExecutionReport
 import de.infix.testBalloon.framework.core.internal.integration.ThrowingTestSetupReport
@@ -47,3 +49,9 @@ internal actual val defaultReportingPathLimit: Int? = 200
 // The Android test infrastructure uses `RunListener`s to finish activities. The entire mechanism is thread-based
 // and expects test events to appear synchronously.
 internal actual val testInfrastructureSupportsConcurrency: Boolean = false
+
+internal val instrumentationArguments: Bundle? by lazy {
+    runCatching { InstrumentationRegistry.getArguments() }.getOrNull()
+}
+
+internal actual val testInfrastructureIsAndroidDevice: Boolean = instrumentationArguments != null

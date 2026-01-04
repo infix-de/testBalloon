@@ -30,6 +30,14 @@ public object Constants {
     /** The internal separator between elements of a test element path. */
     public const val INTERNAL_PATH_ELEMENT_SEPARATOR: Char = '↘'
 
+    /** A replacement for a space character. */
+    public const val ESCAPED_SPACE: Char = '\u00a0'
+
+    /** Marks appearing in an element's reporting coordinates. */
+    public const val INTERNAL_ELEMENT_REPORTING_COORDINATES_BEGIN_MARK: String = "〈tb〈"
+    public const val INTERNAL_ELEMENT_REPORTING_COORDINATES_END_MARK: String = "〉tb〉"
+    public const val INTERNAL_ELEMENT_REPORTING_COORDINATES_COMPONENT_SEPARATOR: Char = '⬥'
+
     /** The internal separator between path patterns. */
     public const val INTERNAL_PATH_PATTERN_SEPARATOR: Char = '⬥'
 }

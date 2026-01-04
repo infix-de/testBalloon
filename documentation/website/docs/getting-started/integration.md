@@ -145,14 +145,14 @@ For Android device-side tests, TestBalloon provides simulated environment variab
 TestBalloon integrates with IntelliJ IDEA. Some of the functionality is provided by the [TestBalloon plugin for IntelliJ IDEA](https://plugins.jetbrains.com/plugin/27749-testballoon).
 
 * Editor windows show run gutter icons to run or debug individual tests or test suites (at any level).
+    * Test status indicators (successful, failed) are displayed for JVM targets (except Android device tests).
 * Test results appear in IntelliJ's test run window, including the results tree display.
+    * The actions "Run", "Debug", and "Jump to source" are available, except for Android device tests.
+* Test elements appear in the [file structure tool window and structure popup](https://www.jetbrains.com/help/idea/viewing-structure-of-a-source-file.html).
+* Navigating between test elements is possible via the "Next Method" and "Previous Method" actions.
 * Stack traces in test results hide framework-internal lines by folding.
 * Kotlin inspections allow title-case naming for TestBalloon's top-level suite properties.
 
 ### Limitations
 
-Currently, TestBalloon's IntelliJ plugin does not support the following:
-
-* Actions _run_, _debug_ and _jump to source_ in the test results tree display.
-* Actions _run_, _debug_ and _jump to source_ for failed tests in the inspections window
-* The action _rerun failed tests_ in the test run window.
+The action "Rerun Failed Tests" in the test run window is not supported.

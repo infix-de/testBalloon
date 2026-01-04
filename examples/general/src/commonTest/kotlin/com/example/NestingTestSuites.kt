@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 // Nesting is supported on all platforms, including Kotlin/JS and Kotlin/Wasm with Node.js and browser runtimes.
 
 // Use a val property to register a top-level test suite.
-val Nesting by testSuite {
+val NestingCommon by testSuite {
     test("string length") {
         assertEquals(8, "Test me!".length)
     }
@@ -20,8 +20,12 @@ val Nesting by testSuite {
             assertEquals(5, max(5, 3))
         }
 
-        test("min") {
-            assertEquals(3, min(5, 3))
+        testSuite("third level") {
+            repeat(3) {
+                test("min/$it") {
+                    assertEquals(3, min(5, 3))
+                }
+            }
         }
     }
 }

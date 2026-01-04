@@ -1,6 +1,6 @@
 package de.infix.testBalloon.framework.core
 
-import androidx.test.platform.app.InstrumentationRegistry
+import de.infix.testBalloon.framework.core.internal.instrumentationArguments
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -35,8 +35,4 @@ public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatch
     newSingleThreadContext("single-threading").use { dispatcher ->
         action(dispatcher)
     }
-}
-
-private val instrumentationArguments by lazy {
-    runCatching { InstrumentationRegistry.getArguments() }.getOrNull()
 }

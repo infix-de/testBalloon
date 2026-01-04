@@ -11,7 +11,9 @@ import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.core.withTestFramework
 import de.infix.testBalloon.framework.core.withTestReport
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
+import kotlinx.coroutines.test.TestResult
 import kotlin.also
+import kotlin.collections.listOf
 import kotlin.getValue
 import kotlin.test.Test
 import kotlin.test.fail
@@ -19,16 +21,76 @@ import kotlin.test.fail
 class TeamCityTestExecutionReportTests {
     private val timestampRegex = Regex("""timestamp='[^']+'""")
     private val detailsRegex = Regex("""details='[^:]+Error:[^']*'""")
-    private val rSepEsc = "|0x00a0|0x2198|0x00a0" // escaped report separator
-    private val iSepEsc = "|0x2198" // escaped internal separator
+    private val dESep = "|0x00a0|0x2198|0x00a0" // escaped report separator
+    private val iESep = "|0x2198" // escaped internal separator
+    private val iBegin = "|0x2329tb|0x2329"
+    private val iEnd = "|0x232atb|0x232a"
+    private val iCSep = "|0x2b25"
 
     @Test
-    fun basicOutputIntelliJ() = basicOutputTest(ReportingMode.IntellijIdea, "topSuite$rSepEsc")
+    fun basicOutputIntelliJ() = basicOutputTest(
+        ReportingMode.IntellijIdea,
+        @Suppress("LongLine", "ktlint:standard:max-line-length")
+        listOf(
+            "##teamcity[testSuiteStarted name='${iBegin}topSuite${iCSep}topSuite$iEnd.topSuite' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite' parent='TestSession$iESep@Default']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}test2${iCSep}test2$iEnd.test2' timestamp='...']",
+            "##teamcity[testFailed name='${iBegin}topSuite${iESep}test2${iCSep}test2$iEnd.test2' timestamp='...' message='intentionally' details='AssertionError']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}test2${iCSep}test2$iEnd.test2' timestamp='...']",
+            "##teamcity[testSuiteStarted name='${iBegin}topSuite${iESep}subSuite1${iCSep}topSuite${dESep}subSuite1$iEnd.subSuite1' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}subSuite1' parent='topSuite']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}subSuite1${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}subSuite1${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}subSuite1']",
+            "##teamcity[testSuiteFinished name='${iBegin}topSuite${iESep}subSuite1${iCSep}topSuite${dESep}subSuite1$iEnd.subSuite1' timestamp='...']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}test3${iCSep}test3$iEnd.test3' timestamp='...']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}test3${iCSep}test3$iEnd.test3' timestamp='...']",
+            "##teamcity[testSuiteStarted name='${iBegin}topSuite${iESep}subSuite2${iCSep}topSuite${dESep}subSuite2$iEnd.subSuite2' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}subSuite2' parent='topSuite']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}subSuite2${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
+            "##teamcity[testFailed name='${iBegin}topSuite${iESep}subSuite2${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...' message='intentionally' details='AssertionError']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}subSuite2${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}subSuite2']",
+            "##teamcity[testSuiteFinished name='${iBegin}topSuite${iESep}subSuite2${iCSep}topSuite${dESep}subSuite2$iEnd.subSuite2' timestamp='...']",
+            "##teamcity[flowFinished flowId='topSuite']",
+            "##teamcity[testSuiteFinished name='${iBegin}topSuite${iCSep}topSuite$iEnd.topSuite' timestamp='...']"
+        )
+    )
 
     @Test
-    fun basicOutputFiles() = basicOutputTest(ReportingMode.Files, "")
+    fun basicOutputFiles() = basicOutputTest(
+        ReportingMode.Files,
+        listOf(
+            "##teamcity[testSuiteStarted name='topSuite' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite' parent='TestSession$iESep@Default']",
+            "##teamcity[testStarted name='test1' timestamp='...']",
+            "##teamcity[testFinished name='test1' timestamp='...']",
+            "##teamcity[testStarted name='test2' timestamp='...']",
+            "##teamcity[testFailed name='test2' timestamp='...' message='intentionally' details='AssertionError']",
+            "##teamcity[testFinished name='test2' timestamp='...']",
+            "##teamcity[testSuiteStarted name='subSuite1' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}subSuite1' parent='topSuite']",
+            "##teamcity[testStarted name='test1' timestamp='...']",
+            "##teamcity[testFinished name='test1' timestamp='...']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}subSuite1']",
+            "##teamcity[testSuiteFinished name='subSuite1' timestamp='...']",
+            "##teamcity[testStarted name='test3' timestamp='...']",
+            "##teamcity[testFinished name='test3' timestamp='...']",
+            "##teamcity[testSuiteStarted name='subSuite2' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}subSuite2' parent='topSuite']",
+            "##teamcity[testStarted name='test1' timestamp='...']",
+            "##teamcity[testFailed name='test1' timestamp='...' message='intentionally' details='AssertionError']",
+            "##teamcity[testFinished name='test1' timestamp='...']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}subSuite2']",
+            "##teamcity[testSuiteFinished name='subSuite2' timestamp='...']",
+            "##teamcity[flowFinished flowId='topSuite']",
+            "##teamcity[testSuiteFinished name='topSuite' timestamp='...']"
+        )
+    )
 
-    private fun basicOutputTest(reportingMode: ReportingMode, extraPath: String) =
+    private fun basicOutputTest(reportingMode: ReportingMode, expectedElements: List<String>): TestResult =
         withTestFramework(TestSession(reportingMode = reportingMode)) {
             val suite by testSuite("topSuite") {
                 test("test1") {}
@@ -53,34 +115,7 @@ class TeamCityTestExecutionReportTests {
 
                 output.comparableElements()
                     .assertContainsInOrder(
-                        listOf(
-                            "##teamcity[testSuiteStarted name='topSuite' timestamp='...']",
-                            "##teamcity[flowStarted flowId='topSuite' parent='TestSession$iSepEsc@Default']",
-                            "##teamcity[testStarted name='test1' timestamp='...']",
-                            "##teamcity[testFinished name='test1' timestamp='...']",
-                            "##teamcity[testStarted name='test2' timestamp='...']",
-                            "##teamcity[testFailed name='test2' timestamp='...' message='intentionally'" +
-                                " details='AssertionError']",
-                            "##teamcity[testFinished name='test2' timestamp='...']",
-                            "##teamcity[testSuiteStarted name='${extraPath}subSuite1' timestamp='...']",
-                            "##teamcity[flowStarted flowId='topSuite${iSepEsc}subSuite1' parent='topSuite']",
-                            "##teamcity[testStarted name='test1' timestamp='...']",
-                            "##teamcity[testFinished name='test1' timestamp='...']",
-                            "##teamcity[flowFinished flowId='topSuite${iSepEsc}subSuite1']",
-                            "##teamcity[testSuiteFinished name='${extraPath}subSuite1' timestamp='...']",
-                            "##teamcity[testStarted name='test3' timestamp='...']",
-                            "##teamcity[testFinished name='test3' timestamp='...']",
-                            "##teamcity[testSuiteStarted name='${extraPath}subSuite2' timestamp='...']",
-                            "##teamcity[flowStarted flowId='topSuite${iSepEsc}subSuite2' parent='topSuite']",
-                            "##teamcity[testStarted name='test1' timestamp='...']",
-                            "##teamcity[testFailed name='test1' timestamp='...' message='intentionally'" +
-                                " details='AssertionError']",
-                            "##teamcity[testFinished name='test1' timestamp='...']",
-                            "##teamcity[flowFinished flowId='topSuite${iSepEsc}subSuite2']",
-                            "##teamcity[testSuiteFinished name='${extraPath}subSuite2' timestamp='...']",
-                            "##teamcity[flowFinished flowId='topSuite']",
-                            "##teamcity[testSuiteFinished name='topSuite' timestamp='...']"
-                        ),
+                        expectedElements,
                         exhaustive = true
                     )
             }
@@ -153,22 +188,22 @@ class TeamCityTestExecutionReportTests {
         output.comparableElements().assertContainsInOrder(
             listOf(
                 "##teamcity[testSuiteStarted name='concurrent' timestamp='...']",
-                "##teamcity[flowStarted flowId='concurrent' parent='TestSession$iSepEsc@Default']",
+                "##teamcity[flowStarted flowId='concurrent' parent='TestSession$iESep@Default']",
                 "##teamcity[testSuiteStarted name='suite-1' timestamp='...']",
-                "##teamcity[flowStarted flowId='concurrent${iSepEsc}suite-1' parent='concurrent']",
+                "##teamcity[flowStarted flowId='concurrent${iESep}suite-1' parent='concurrent']",
                 "##teamcity[testStarted name='suite-1-test2' timestamp='...']",
                 "##teamcity[testFinished name='suite-1-test2' timestamp='...']",
                 "##teamcity[testStarted name='suite-1-test1' timestamp='...']",
                 "##teamcity[testFinished name='suite-1-test1' timestamp='...']",
-                "##teamcity[flowFinished flowId='concurrent${iSepEsc}suite-1']",
+                "##teamcity[flowFinished flowId='concurrent${iESep}suite-1']",
                 "##teamcity[testSuiteFinished name='suite-1' timestamp='...']",
                 "##teamcity[testSuiteStarted name='suite-2' timestamp='...']",
-                "##teamcity[flowStarted flowId='concurrent${iSepEsc}suite-2' parent='concurrent']",
+                "##teamcity[flowStarted flowId='concurrent${iESep}suite-2' parent='concurrent']",
                 "##teamcity[testStarted name='suite-2-test1' timestamp='...']",
                 "##teamcity[testFinished name='suite-2-test1' timestamp='...']",
                 "##teamcity[testStarted name='suite-2-test2' timestamp='...']",
                 "##teamcity[testFinished name='suite-2-test2' timestamp='...']",
-                "##teamcity[flowFinished flowId='concurrent${iSepEsc}suite-2']",
+                "##teamcity[flowFinished flowId='concurrent${iESep}suite-2']",
                 "##teamcity[testSuiteFinished name='suite-2' timestamp='...']",
                 "##teamcity[testStarted name='test2' timestamp='...']",
                 "##teamcity[testFinished name='test2' timestamp='...']",

@@ -5,7 +5,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.test.assertEquals
 
-val Nesting by testSuite {
+val NestingJvmOnly by testSuite {
     test("string length") {
         assertEquals(8, "Test me!".length)
     }
@@ -15,8 +15,10 @@ val Nesting by testSuite {
             assertEquals(5, max(5, 3))
         }
 
-        test("min") {
-            assertEquals(3, min(5, 3))
+        testSuite("third level") {
+            test("min") {
+                assertEquals(3, min(5, 3))
+            }
         }
     }
 }

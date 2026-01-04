@@ -8,9 +8,11 @@ import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.EnvironmentBasedElementSelection
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
+import de.infix.testBalloon.framework.core.internal.testInfrastructureIsAndroidDevice
 import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.InvokedByGeneratedCode
+import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -129,7 +131,11 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
 private fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
         Description.createSuiteDescription(
-            testElementPath.fullyQualifiedReportingName.safeForDeviceSideTests(),
+            if (TestSession.global.reportingMode == ReportingMode.IntellijIdea && !testInfrastructureIsAndroidDevice) {
+                reportingCoordinates(mode = TestElement.CoordinatesMode.FullyQualified)
+            } else {
+                testElementPath.reportingNameWithTopLevelPackage
+            }.safeForDeviceSideTests(),
             testElementPath.internalId
         ).apply {
             testElementChildren.forEach {
@@ -147,8 +153,16 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
         testElementParent as TestSuite
 
         Description.createTestDescription(
-            testElementParent.testElementPath.fullyQualifiedReportingName.safeForDeviceSideTests(),
-            testElementPath.partiallyQualifiedReportingName.safeForDeviceSideTests(),
+            topLevelSuiteReportingName,
+            when {
+                testInfrastructureIsAndroidDevice -> testElementPath.reportingNameWithoutTopLevelSuite
+
+                TestSession.global.reportingMode == ReportingMode.IntellijIdea -> {
+                    reportingCoordinates(mode = TestElement.CoordinatesMode.QualifiedWithoutTopLevelPackage)
+                }
+
+                else -> testElementPath.elementReportingName
+            }.safeForDeviceSideTests(),
             Category(TestBalloonJUnit4Runner::class) // Support JUnit 4 runner selection via 'includeCategories'.
         )
     }
@@ -157,7 +171,7 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
 }
 
 // Returns a suite or test name guarded against slashes, which are suspected to crash Android device-side tests.
-private fun String.safeForDeviceSideTests() = replace('/', '⧸')
+private fun String.safeForDeviceSideTests() = if (testInfrastructureIsAndroidDevice) replace('/', '⧸') else this
 
 internal val TestElement.platformDescription: Description
     get() = checkNotNull(testElementDescriptions[this]) { "$this is missing its test description" }

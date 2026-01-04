@@ -47,41 +47,48 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
 
         /**
          * This path's internal ID, directly derived from element names.
+         *
+         * The only conversion in this ID is escaping space characters. Why? The path is used to identify test
+         * elements in the IntelliJ plugin. JavaScript test frameworks replace spaces in suite names with dots,
+         * and this change appears in IntelliJ's test results reporting, which we use to map a test result to
+         * its test element. In order not to break the identification, we avoid spaces altogether.
          */
         internal val internalId: String by lazy {
-            flattened(separator = INTERNAL_PATH_ELEMENT_SEPARATOR_STRING) { testElementName }
+            flattened(separator = INTERNAL_PATH_ELEMENT_SEPARATOR_STRING) {
+                testElementName.replace(' ', Constants.ESCAPED_SPACE)
+            }
         }
 
         /**
          * This path's fully qualified reporting name, including the top-level package name, if present.
          */
-        internal val fullyQualifiedReportingName: String by lazy {
-            flattened(separator = REPORTING_SEPARATOR) { externalizedName(fullyQualified = true) }
+        internal val reportingNameWithTopLevelPackage: String by lazy {
+            flattened(separator = REPORTING_SEPARATOR) { externalizedName(includeTopLevelPackageName = true) }
         }
 
         /**
-         * This path's partially qualified reporting name, including a top-level package name.
+         * This path's partially qualified reporting name, excluding a top-level package name.
          */
-        internal val partiallyQualifiedReportingName: String by lazy {
-            flattened(separator = REPORTING_SEPARATOR) { externalizedName(fullyQualified = false) }
+        internal val reportingNameWithoutTopLevelPackage: String by lazy {
+            flattened(separator = REPORTING_SEPARATOR) { externalizedName(includeTopLevelPackageName = false) }
         }
 
         /**
-         * This path's partially qualified reporting name, including a top-level package name.
+         * This path's partially qualified reporting name, excluding the top-level element name.
          */
-        internal val qualifiedReportingNameBelowTopLevel: String by lazy {
+        internal val reportingNameWithoutTopLevelSuite: String by lazy {
             flattened(separator = REPORTING_SEPARATOR, topLevelStrippingEnabled = true) {
-                externalizedName(fullyQualified = false)
+                externalizedName(includeTopLevelPackageName = false)
             }
         }
 
         /**
          * This path element's reporting name.
          */
-        internal val elementReportingName: String get() = element.externalizedName(fullyQualified = false)
+        internal val elementReportingName: String get() = element.externalizedName(includeTopLevelPackageName = false)
 
-        private fun TestElement.externalizedName(fullyQualified: Boolean): String =
-            if (isTopLevelSuite && fullyQualified) {
+        private fun TestElement.externalizedName(includeTopLevelPackageName: Boolean): String =
+            if (isTopLevelSuite && includeTopLevelPackageName) {
                 // Do not escape fully qualified element names for top-level suites as reporting tools extract a
                 // package name.
                 // NOTE: If users explicitly supply element names without a package prefix, reports might deviate from
@@ -126,6 +133,84 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     }
 
     override val testElementPath: Path = Path(this)
+
+    internal enum class CoordinatesMode {
+        FullyQualified,
+        QualifiedWithoutTopLevelPackage,
+        QualifiedWithoutTopLevelSuite,
+        DisplayName
+    }
+
+    /**
+     * Returns the element's reporting coordinates in a form to be parsed by the IDE plugin.
+     *
+     * The format must be synchronized with the IDE plugin's `TestElementReportingCoordinates.from()`.
+     */
+    internal fun reportingCoordinates(mode: CoordinatesMode): String =
+        reportingCoordinates(suiteMode = mode, testMode = mode)
+
+    /**
+     * Returns the element's reporting coordinates in a form to be parsed by the IDE plugin.
+     *
+     * The format must be synchronized with the IDE plugin's `TestElementReportingCoordinates.from()`.
+     */
+    internal fun reportingCoordinates(suiteMode: CoordinatesMode, testMode: CoordinatesMode): String = buildString {
+        append(Constants.INTERNAL_ELEMENT_REPORTING_COORDINATES_BEGIN_MARK)
+        append(testElementPath.internalId)
+        append(Constants.INTERNAL_ELEMENT_REPORTING_COORDINATES_COMPONENT_SEPARATOR)
+        append(
+            when (if (this@TestElement is TestSuite) suiteMode else testMode) {
+                CoordinatesMode.FullyQualified -> testElementPath.reportingNameWithTopLevelPackage
+                CoordinatesMode.QualifiedWithoutTopLevelPackage -> testElementPath.reportingNameWithoutTopLevelPackage
+                CoordinatesMode.QualifiedWithoutTopLevelSuite -> testElementPath.reportingNameWithoutTopLevelSuite
+                CoordinatesMode.DisplayName -> testElementDisplayName
+            }
+        )
+        append(Constants.INTERNAL_ELEMENT_REPORTING_COORDINATES_END_MARK)
+    }
+
+    internal val reportingNameForJsAndTeamCity: String
+        get() = when (TestSession.global.reportingMode) {
+            ReportingMode.IntellijIdeaLegacy -> {
+                if (this is TestSuite) {
+                    // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA.
+                    testElementPath.reportingNameWithTopLevelPackage
+                } else {
+                    // Simple element names below the top level work for file reports.
+                    testElementPath.elementReportingName
+                }
+            }
+
+            ReportingMode.IntellijIdea -> {
+                // The attached ".$testElementDisplayName" can be replaced by a dot followed by a phrase like ".WoT".
+                // JS frameworks will replace the last dot in an element's name, so we place it after our
+                // significant content, which must be unchanged. The phrase can be used to identify a missing IDE
+                // plugin, which would normally extract and show the element's display name.
+                reportingCoordinates(
+                    suiteMode = CoordinatesMode.FullyQualified,
+                    testMode = CoordinatesMode.DisplayName
+                ) + ".$testElementDisplayName"
+            }
+
+            ReportingMode.Files -> {
+                if (isTopLevelSuite) {
+                    // Restricting the qualified path name to top-level suites avoids duplicated path elements.
+                    testElementPath.reportingNameWithTopLevelPackage
+                } else {
+                    // Simple element names below the top level work for file reports.
+                    testElementPath.elementReportingName
+                }
+            }
+        }
+
+    internal val topLevelSuiteReportingName: String
+        get() {
+            var element = this
+            while (!element.isTopLevelSuite) {
+                element = element.testElementParent ?: break
+            }
+            return element.testElementName.safeAsSuiteDisplayName()
+        }
 
     internal val isSessionOrCompartment: Boolean = parent == null || this is TestCompartment
 
@@ -267,7 +352,7 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     }
 
     private fun String.lengthLimited(): String {
-        val parentPathPlusSeparatorLength = testElementParent?.testElementPath?.fullyQualifiedReportingName?.length
+        val parentPathPlusSeparatorLength = testElementParent?.testElementPath?.reportingNameWithTopLevelPackage?.length
             ?.plus(Path.REPORTING_SEPARATOR_LENGTH)
             ?: 0
         val originalUniquePathLength = parentPathPlusSeparatorLength + length + TestSuite.UNIQUE_APPENDIX_LENGTH_LIMIT
@@ -333,10 +418,9 @@ private val suiteDisplayNameReplacements = if (TestSession.global.reportingMode 
 }
 
 private val lowerLevelSuiteDisplayNameReplacements =
-    mapOf(' ' to ESCAPED_SPACE, '.' to ESCAPED_DOT) + suiteDisplayNameReplacements
+    mapOf(' ' to Constants.ESCAPED_SPACE, '.' to ESCAPED_DOT) + suiteDisplayNameReplacements
 
 private val testDisplayNameReplacements = mapOf('.' to ESCAPED_DOT)
 
-private const val ESCAPED_SPACE = '\u00a0' // non-breaking space
 private const val ESCAPED_DOT = '·' // middle dot
-private const val REPORTING_SEPARATOR: String = "$ESCAPED_SPACE↘$ESCAPED_SPACE"
+private const val REPORTING_SEPARATOR: String = "${Constants.ESCAPED_SPACE}↘${Constants.ESCAPED_SPACE}"

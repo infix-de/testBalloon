@@ -15,7 +15,7 @@ val NestingCommon by testSuite {
     }
 
     // Use a function call to register a nested test suite.
-    testSuite("integer operations") {
+    testSuite("integer operations/stuff") {
         test("max") {
             assertEquals(5, max(5, 3))
         }
@@ -23,7 +23,7 @@ val NestingCommon by testSuite {
         testSuite("third level") {
             repeat(3) {
                 test("min/$it") {
-                    assertEquals(3, min(5, 3))
+                    assertEquals(it, min(5, it))
                 }
             }
         }

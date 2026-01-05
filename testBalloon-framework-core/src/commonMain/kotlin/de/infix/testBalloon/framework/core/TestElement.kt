@@ -5,6 +5,8 @@ import de.infix.testBalloon.framework.core.internal.reportingPathLimit
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
+import de.infix.testBalloon.framework.shared.internal.safeAsInternalId
+import de.infix.testBalloon.framework.shared.internal.safelyTransformed
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -46,17 +48,10 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
         override fun toString(): String = "«$internalId»"
 
         /**
-         * This path's internal ID, directly derived from element names.
-         *
-         * The only conversion in this ID is escaping space characters. Why? The path is used to identify test
-         * elements in the IntelliJ plugin. JavaScript test frameworks replace spaces in suite names with dots,
-         * and this change appears in IntelliJ's test results reporting, which we use to map a test result to
-         * its test element. In order not to break the identification, we avoid spaces altogether.
+         * This path's internal ID, with as little transformation as possible, but safe for low-level infrastructure.
          */
         internal val internalId: String by lazy {
-            flattened(separator = INTERNAL_PATH_ELEMENT_SEPARATOR_STRING) {
-                testElementName.replace(' ', Constants.ESCAPED_SPACE)
-            }
+            flattened(separator = INTERNAL_PATH_ELEMENT_SEPARATOR_STRING) { testElementName.safeAsInternalId() }
         }
 
         /**
@@ -380,24 +375,11 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
     }
 }
 
-private fun String.safeAsSuiteDisplayName() = transformed(suiteDisplayNameReplacements)
+private fun String.safeAsSuiteDisplayName() = safelyTransformed(suiteDisplayNameReplacements)
 
-private fun String.safeAsLowerLevelSuiteDisplayName() = transformed(lowerLevelSuiteDisplayNameReplacements)
+private fun String.safeAsLowerLevelSuiteDisplayName() = safelyTransformed(lowerLevelSuiteDisplayNameReplacements)
 
-private fun String.safeAsTestDisplayName() = transformed(testDisplayNameReplacements)
-
-private fun String.transformed(replacementCharacters: Map<Char, Char>): String = buildString(length) {
-    for (character in this@transformed) {
-        val replacementCharacter = replacementCharacters[character]
-        append(
-            when {
-                replacementCharacter != null -> replacementCharacter
-                character.code < 32 -> '�'
-                else -> character
-            }
-        )
-    }
-}
+private fun String.safeAsTestDisplayName() = safelyTransformed(testDisplayNameReplacements)
 
 private val suiteDisplayNameReplacements = if (TestSession.global.reportingMode == ReportingMode.Files) {
     // These characters are potentially file-system-incompatible on Windows. Gradle reporting does not escape

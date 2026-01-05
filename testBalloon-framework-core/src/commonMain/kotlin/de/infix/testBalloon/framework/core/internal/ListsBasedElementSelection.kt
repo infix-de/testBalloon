@@ -5,6 +5,7 @@ import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
+import de.infix.testBalloon.framework.shared.internal.safeAsInternalId
 import kotlin.text.iterator
 
 /**
@@ -68,7 +69,7 @@ internal open class ListsBasedElementSelection protected constructor(
         private fun String.patternToRegex() = try {
             var inputElementSeparator: Char? = null
             buildString {
-                for (character in this@patternToRegex) {
+                for (character in this@patternToRegex.safeAsInternalId()) {
                     // If the first character is not a letter, use it as an element separator, which will then
                     // be transformed into the framework's internal separator.
                     if (inputElementSeparator == null) {
@@ -112,7 +113,7 @@ internal open class ListsBasedElementSelection protected constructor(
             }
             result = result.replace(inputElementSeparator, Constants.INTERNAL_PATH_ELEMENT_SEPARATOR)
             if (result.endsWith(Constants.INTERNAL_PATH_ELEMENT_SEPARATOR)) result = result.dropLast(1)
-            return result
+            return result.safeAsInternalId()
         }
 
         private fun String?.toPatternList(): List<String> =
@@ -147,4 +148,8 @@ internal class ArgumentsBasedElementSelection(arguments: Array<String>) :
 internal class EnvironmentBasedElementSelection(
     includePatterns: String? = EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.value(),
     excludePatterns: String? = EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.value()
-) : ListsBasedElementSelection(includePatterns, excludePatterns)
+) : ListsBasedElementSelection(includePatterns, excludePatterns) {
+    companion object {
+        internal fun isAvailable(): Boolean = EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.value() != null
+    }
+}

@@ -75,7 +75,7 @@ public open class TestSession protected constructor(
      * Sets up the session's test element hierarchy.
      */
     internal fun setUp(report: TestSetupReport) {
-        val selection = if (EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.value() != null) {
+        val selection = if (EnvironmentBasedElementSelection.isAvailable()) {
             EnvironmentBasedElementSelection()
         } else {
             argumentsBasedElementSelection ?: AllInSelection

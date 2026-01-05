@@ -36,3 +36,32 @@ public enum class DebugLevel {
     DISCOVERY,
     CODE
 }
+
+/**
+ * Returns the string in a form that is safe to use as a `TestElement.Path.internalId` or a component thereof.
+ */
+@TestBalloonInternalApi
+public fun String.safeAsInternalId(): String = safelyTransformed(internalIdReplacements)
+
+@OptIn(TestBalloonInternalApi::class)
+private val internalIdReplacements = mapOf(
+    ' ' to Constants.ESCAPED_SPACE, // prevents JS frameworks from replacing a space with a dot
+    '/' to '⧸' // prevents crashing Android device tests
+)
+
+/**
+ * Returns the string in a form that is safe to use (digestible by external components) with additional replacements.
+ */
+@TestBalloonInternalApi
+public fun String.safelyTransformed(replacementCharacters: Map<Char, Char>): String = buildString(length) {
+    for (character in this@safelyTransformed) {
+        val replacementCharacter = replacementCharacters[character]
+        append(
+            when {
+                replacementCharacter != null -> replacementCharacter
+                character.code < 32 -> '�'
+                else -> character
+            }
+        )
+    }
+}

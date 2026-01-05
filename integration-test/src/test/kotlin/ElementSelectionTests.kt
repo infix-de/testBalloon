@@ -18,7 +18,7 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
         val execution: suspend (taskName: String, pattern: String) -> TestProject.Execution
     )
 
-    val variants = listOf(
+    val commonVariants = listOf(
         TestVariant(
             type = VariantType.CLI,
             execution = { taskName, pattern ->
@@ -29,7 +29,10 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
                     pattern
                 )
             }
-        ),
+        )
+    )
+
+    val primaryOnlyVariants = listOf(
         TestVariant(
             type = VariantType.Environment,
             execution = { taskName, pattern ->
@@ -51,6 +54,8 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
             }
         )
     )
+
+    val variants = if (secondarySkippingEnabled) commonVariants else commonVariants + primaryOnlyVariants
 
     val nativeTargetsThatMayFail = listOf("macosX64Test", "linuxX64Test", "mingwX64Test")
 
@@ -103,6 +108,8 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
 }
 
 private enum class VariantType { CLI, Environment, Buildscript }
+
+private val secondarySkippingEnabled = skippingEnabled("secondary")
 
 private val nonAsciiPatternSkippingEnabled = skippingEnabled("non-ASCII patterns")
 

@@ -35,14 +35,6 @@ public interface TestPlatform {
 public expect val testPlatform: TestPlatform
 
 /**
- * Returns a [CoroutineDispatcher] providing a maximum amount of [parallelism], limited by the platform's capabilities.
- *
- * Use this utility function for testing special cases.
- */
-@Deprecated("This function has no compelling use case in testing. Scheduled for removal in TestBalloon 0.8.")
-public expect fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher
-
-/**
  * Executes [action], providing it with a single-threaded [CoroutineDispatcher].
  *
  * The dispatcher provided is guaranteed not to leak resources after use. It is not guaranteed to be usable when

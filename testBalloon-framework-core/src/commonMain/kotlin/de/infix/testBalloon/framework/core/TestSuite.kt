@@ -130,132 +130,6 @@ public open class TestSuite internal constructor(
     internal val suiteLevelFixtures = mutableListOf<TestFixture<*>>()
     internal val suiteLevelFixturesMutex = Mutex()
 
-    // region – We need these constructor variants only for top-level test suites registered as classes.
-    //
-    // The constructor variants ensure proper overload resolution with default parameters,
-    // because Kotlin determines argument positions before default values are filled in.
-    // See https://youtrack.jetbrains.com/issue/KT-48521.
-
-    @Deprecated(
-        "Using a class to register a top-level test suite will be dropped in a future version." +
-            " Please use a top-level property instead."
-    )
-    protected constructor(
-        content: TestSuite.() -> Unit,
-        @TestElementName name: String = "",
-        @TestDisplayName displayName: String = name
-    ) : this(
-        parent = TestSession.global.defaultCompartment,
-        name = name,
-        displayName = displayName,
-        content = content
-    )
-
-    @Deprecated(
-        "Using a class to register a top-level test suite will be dropped in a future version." +
-            " Please use a top-level property instead."
-    )
-    protected constructor(
-        testConfig: TestConfig,
-        content: TestSuite.() -> Unit,
-        @TestElementName name: String = "",
-        @TestDisplayName displayName: String = name
-    ) :
-        this(
-            parent = TestSession.global.defaultCompartment,
-            name = name,
-            displayName = displayName,
-            testConfig = testConfig,
-            content = content
-        )
-
-    @Deprecated(
-        "Using a class to register a top-level test suite will be dropped in a future version." +
-            " Please use a top-level property instead."
-    )
-    protected constructor(
-        compartment: TestCompartment,
-        content: TestSuite.() -> Unit,
-        @TestElementName name: String = "",
-        @TestDisplayName displayName: String = name
-    ) : this(
-        parent = compartment,
-        name = name,
-        displayName = displayName,
-        content = content
-    )
-
-    @Deprecated(
-        "Using a class to register a top-level test suite will be dropped in a future version." +
-            " Please use a top-level property instead."
-    )
-    protected constructor(
-        compartment: TestCompartment,
-        testConfig: TestConfig,
-        content: TestSuite.() -> Unit,
-        @TestElementName name: String = "",
-        @TestDisplayName displayName: String = name
-    ) : this(
-        parent = compartment,
-        name = name,
-        displayName = displayName,
-        testConfig = testConfig,
-        content = content
-    )
-
-    @Deprecated(
-        "Using a class to register a top-level test suite will be dropped in a future version." +
-            " Please use a top-level property instead."
-    )
-    protected constructor(
-        name: String,
-        testConfig: TestConfig,
-        content: TestSuite.() -> Unit,
-        @TestDisplayName displayName: String = name
-    ) : this(
-        parent = TestSession.global.defaultCompartment,
-        name = name,
-        displayName = displayName,
-        testConfig = testConfig,
-        content = content
-    )
-
-    @Deprecated(
-        "Using a class to register a top-level test suite will be dropped in a future version." +
-            " Please use a top-level property instead."
-    )
-    protected constructor(
-        name: String,
-        compartment: TestCompartment,
-        content: TestSuite.() -> Unit,
-        @TestDisplayName displayName: String = name
-    ) : this(
-        parent = compartment,
-        name = name,
-        displayName = displayName,
-        content = content
-    )
-
-    @Deprecated(
-        "Using a class to register a top-level test suite will be dropped in a future version." +
-            " Please use a top-level property instead."
-    )
-    protected constructor(
-        name: String,
-        compartment: TestCompartment,
-        testConfig: TestConfig,
-        content: TestSuite.() -> Unit,
-        @TestDisplayName displayName: String = name
-    ) : this(
-        parent = compartment,
-        name = name,
-        displayName = displayName,
-        testConfig = testConfig,
-        content = content
-    )
-
-    // endregion
-
     internal enum class ChildNameType {
         Element,
         Display
@@ -308,12 +182,6 @@ public open class TestSuite internal constructor(
                 childElement.forEachChildElement(action)
             }
             action(childElement)
-        }
-    }
-
-    internal fun aroundAllInternally(executionWrappingAction: TestSuiteExecutionWrappingAction) {
-        privateConfiguration = privateConfiguration.aroundAll { elementAction ->
-            executionWrappingAction { elementAction() }
         }
     }
 
@@ -445,11 +313,3 @@ public open class TestSuite internal constructor(
         }
     }
 }
-
-/**
- * An action wrapping the actions of a [TestSuite].
- *
- * See also [TestElementExecutionWrappingAction] for requirements.
- */
-@Deprecated("Will become obsolete with TestSuiteScope.aroundAll(). Scheduled for removal in TestBalloon 0.8.")
-public typealias TestSuiteExecutionWrappingAction = suspend (testSuiteAction: suspend TestSuite.() -> Unit) -> Unit

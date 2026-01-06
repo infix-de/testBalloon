@@ -17,9 +17,6 @@ public enum class ReportingMode {
  */
 @TestBalloonInternalApi
 public enum class EnvironmentVariable {
-    @Deprecated("To be removed", ReplaceWith("TESTBALLOON_INCLUDE_PATTERNS"))
-    TEST_INCLUDE,
-
     TESTBALLOON_INCLUDE_PATTERNS,
     TESTBALLOON_EXCLUDE_PATTERNS,
     TESTBALLOON_REPORTING,

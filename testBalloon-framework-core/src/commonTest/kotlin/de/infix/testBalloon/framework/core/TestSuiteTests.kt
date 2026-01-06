@@ -2,18 +2,12 @@ package de.infix.testBalloon.framework.core
 
 import de.infix.testBalloon.framework.shared.internal.Constants
 import kotlinx.atomicfu.atomic
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -53,150 +47,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun aroundAll() = assertSuccessfulSuite(testConfig = TestConfig.testScope(isEnabled = false)) {
-        val outerCoroutineName = CoroutineName("from aroundAll")
-        val innerDispatcher = Dispatchers.Unconfined
-
-        aroundAll { tests ->
-            withContext(outerCoroutineName) {
-                tests()
-            }
-        }
-
-        for (testNumber in 1..2) {
-            test("test$testNumber") {
-                assertEquals(outerCoroutineName, currentCoroutineContext()[CoroutineName.Key])
-                @OptIn(ExperimentalStdlibApi::class)
-                assertNotEquals(innerDispatcher, currentCoroutineContext()[CoroutineDispatcher.Key])
-            }
-        }
-
-        testSuite("innerSuite") {
-            aroundAll { tests ->
-                withContext(innerDispatcher) {
-                    tests()
-                }
-            }
-
-            test("test1") {
-                assertEquals(outerCoroutineName, currentCoroutineContext()[CoroutineName.Key])
-                @OptIn(ExperimentalStdlibApi::class)
-                assertEquals(innerDispatcher, currentCoroutineContext()[CoroutineDispatcher.Key])
-            }
-        }
-    }
-
-    @Test
-    fun aroundAllWithDisabledElements() = withTestFramework {
-        val trace = ConcurrentList<String>()
-
-        val suite1 by testSuite("suite1") {
-            aroundAll { tests ->
-                trace.add("$testElementPath aroundAll begin")
-                tests()
-                trace.add("$testElementPath aroundAll end")
-            }
-
-            test("test1", testConfig = TestConfig.disable()) {
-                trace.add("$testElementPath")
-            }
-        }
-
-        val suite2 by testSuite("suite2") {
-            aroundAll { tests ->
-                trace.add("$testElementPath aroundAll begin")
-                tests()
-                trace.add("$testElementPath aroundAll end")
-            }
-
-            test("test1", testConfig = TestConfig.disable()) {
-                trace.add("$testElementPath")
-            }
-
-            test("test2") {
-                trace.add("$testElementPath")
-            }
-        }
-
-        val suite3 by testSuite("suite3") {
-            aroundAll { tests ->
-                trace.add("$testElementPath aroundAll begin")
-                tests()
-                trace.add("$testElementPath aroundAll end")
-            }
-
-            test("test1", testConfig = TestConfig.disable()) {
-                trace.add("$testElementPath")
-            }
-
-            testSuite("innerSuite") {
-                test("test1", testConfig = TestConfig.disable()) {
-                    trace.add("$testElementPath")
-                }
-                test("test2") {
-                    trace.add("$testElementPath")
-                }
-            }
-        }
-
-        withTestReport(suite1, suite2, suite3) {
-            assertContentEquals(
-                listOf(
-                    "«suite2» aroundAll begin",
-                    "«suite2${iSep}test2»",
-                    "«suite2» aroundAll end",
-                    "«suite3» aroundAll begin",
-                    "«suite3${iSep}innerSuite${iSep}test2»",
-                    "«suite3» aroundAll end"
-                ),
-                trace.elements()
-            )
-        }
-    }
-
-    @Test
-    fun aroundAllWithFailedTest() = withTestFramework {
-        val trace = ConcurrentList<String>()
-
-        val suite1 by testSuite("suite1") {
-            aroundAll { tests ->
-                trace.add("$testElementPath aroundAll begin")
-                tests()
-                trace.add("$testElementPath aroundAll end")
-            }
-
-            test("test1") {
-                trace.add("$testElementPath")
-            }
-
-            test("test2") {
-                trace.add("$testElementPath")
-                fail("intentionally")
-            }
-        }
-
-        withTestReport(suite1) {
-            with(finishedTestEvents()) {
-                assertEquals(2, size)
-                assertEquals("suite1${iSep}test1", this[0].element.testElementPath.internalId)
-                assertTrue(this[0].succeeded)
-                assertEquals("suite1${iSep}test2", this[1].element.testElementPath.internalId)
-                assertTrue(this[1].failed)
-            }
-            assertContentEquals(
-                listOf(
-                    "«suite1» aroundAll begin",
-                    "«suite1${iSep}test1»",
-                    "«suite1${iSep}test2»",
-                    "«suite1» aroundAll end"
-                ),
-                trace.elements()
-            )
-        }
-    }
-
-    @Test
-    fun aroundAllConfig() = withTestFramework {
+    fun aroundAll() = withTestFramework {
         val trace = ConcurrentList<String>()
 
         val suite1 by testSuite(
@@ -757,48 +608,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureWithTestSuiteAroundAll() = withTestFramework {
-        val trace = ConcurrentList<String>()
-
-        val suite1 by testSuite("suite1") {
-            val outerFixture =
-                testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
-                    { trace.add("$testElementPath fixture closing") }
-
-            aroundAll { tests ->
-                outerFixture().add("$testElementPath aroundAll begin")
-                tests()
-                outerFixture().add("$testElementPath aroundAll end")
-            }
-
-            test("test1") {
-                outerFixture().add("$testElementPath")
-            }
-
-            testSuite("innerSuite") {
-                test("test1") {
-                    outerFixture().add("$testElementPath")
-                }
-            }
-        }
-
-        withTestReport(suite1) {
-            assertContentEquals(
-                listOf(
-                    "«suite1» fixture creating",
-                    "«suite1» aroundAll begin",
-                    "«suite1${iSep}test1»",
-                    "«suite1${iSep}innerSuite${iSep}test1»",
-                    "«suite1» aroundAll end",
-                    "«suite1» fixture closing"
-                ),
-                trace.elements()
-            )
-        }
-    }
-
-    @Test
-    fun suiteLevelFixtureWithTestConfigAroundAll() = withTestFramework {
+    fun suiteLevelFixtureWithAroundAll() = withTestFramework {
         val trace = ConcurrentList<String>()
 
         val suite1 by testSuite(
@@ -997,12 +807,13 @@ class TestSuiteTests {
                 traceWithFixtureAccess()
             }
 
-            testSuite("inner") {
-                aroundAll {
+            testSuite(
+                "inner",
+                testConfig = TestConfig.aroundAll {
                     trace.add("aroundAll $testElementPath failing intentionally")
                     fail("aroundAll $testElementPath failing intentionally")
                 }
-
+            ) {
                 test("test2") {
                     traceWithFixtureAccess()
                 }
@@ -1231,88 +1042,6 @@ class TestSuiteTests {
                 ),
                 eventLog
             )
-        }
-    }
-
-    @Test
-    fun topLevelClassDeclarations() = withTestFramework {
-        class Suite1 :
-            TestSuite({
-                test("(1)test1") {}
-            }, name = "Suite1")
-
-        class Suite2 :
-            TestSuite(
-                testConfig = TestConfig,
-                {
-                    test("(2)test1") {}
-                },
-                name = "Suite2"
-            )
-
-        class Suite3 :
-            TestSuite(
-                compartment = TestCompartment.Default,
-                {
-                    test("(3)test1") {}
-                },
-                name = "Suite3"
-            )
-
-        class Suite4 :
-            TestSuite(
-                compartment = TestCompartment.Default,
-                testConfig = TestConfig,
-                {
-                    test("(4)test1") {}
-                },
-                name = "Suite4"
-            )
-
-        class Suite5 :
-            TestSuite(
-                name = "Suite5",
-                testConfig = TestConfig,
-                {
-                    test("test1") {}
-                }
-            )
-
-        class Suite6 :
-            TestSuite(
-                name = "Suite6",
-                compartment = TestCompartment.Default,
-                {
-                    test("test1") {}
-                }
-            )
-
-        class Suite7 :
-            TestSuite(
-                name = "Suite7",
-                compartment = TestCompartment.Default,
-                testConfig = TestConfig,
-                {
-                    test("test1") {}
-                }
-            )
-
-        withTestReport(Suite1(), Suite2(), Suite3(), Suite4(), Suite5(), Suite6(), Suite7()) {
-            with(finishedTestEvents()) {
-                assertAllSucceeded()
-                assertElementPathsContainInOrder(
-                    listOf(
-                        "Suite1$iSep(1)test1",
-                        "Suite2$iSep(2)test1",
-                        "Suite3$iSep(3)test1",
-                        "Suite4$iSep(4)test1",
-                        "Suite5${iSep}test1",
-                        "Suite6${iSep}test1",
-                        "Suite7${iSep}test1"
-                    ),
-                    exhaustive = true
-                )
-            }
         }
     }
 }

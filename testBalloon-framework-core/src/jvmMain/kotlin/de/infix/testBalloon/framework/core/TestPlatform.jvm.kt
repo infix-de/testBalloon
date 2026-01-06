@@ -2,7 +2,6 @@ package de.infix.testBalloon.framework.core
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 
@@ -22,10 +21,6 @@ public object TestPlatformJvm : TestPlatform {
 
     override fun environment(variableName: String): String? = System.getenv(variableName)
 }
-
-@Deprecated("This function has no compelling use case in testing. Scheduled for removal in TestBalloon 0.8.")
-public actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =
-    Dispatchers.IO.limitedParallelism(parallelism)
 
 @TestBalloonExperimentalApi
 public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {

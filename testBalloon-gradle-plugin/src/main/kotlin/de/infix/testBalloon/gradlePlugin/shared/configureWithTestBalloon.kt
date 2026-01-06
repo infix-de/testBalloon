@@ -177,14 +177,13 @@ private fun Project.configureTestTasks(
                 secondaryIncludePatterns: List<String>,
                 secondaryExcludePatterns: List<String>
             ): Map<String, String> = buildMap {
-                fun prioritizedPatterns(vararg primary: EnvironmentVariable, secondary: Iterable<String>): String =
-                    primary.firstNotNullOfOrNull { System.getenv(it.name)?.ifEmpty { null } }
+                fun prioritizedPatterns(primary: EnvironmentVariable, secondary: Iterable<String>): String =
+                    System.getenv(primary.name)?.ifEmpty { null }
                         ?: secondary.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
 
                 this[EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name] =
                     prioritizedPatterns(
                         EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
-                        EnvironmentVariable.TEST_INCLUDE,
                         secondary = secondaryIncludePatterns
                     )
 

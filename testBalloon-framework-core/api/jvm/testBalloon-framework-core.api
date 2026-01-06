@@ -81,11 +81,9 @@ public final class de/infix/testBalloon/framework/core/TestConfigKt {
 public abstract class de/infix/testBalloon/framework/core/TestElement : de/infix/testBalloon/framework/shared/AbstractTestElement {
 	public synthetic fun <init> (Lde/infix/testBalloon/framework/core/TestSuite;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lde/infix/testBalloon/framework/core/TestSuite;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getTestConfig ()Lde/infix/testBalloon/framework/core/TestConfig;
 	public fun getTestElementIsEnabled ()Z
 	public fun getTestElementPath ()Lde/infix/testBalloon/framework/core/TestElement$Path;
 	public synthetic fun getTestElementPath ()Lde/infix/testBalloon/framework/shared/AbstractTestElement$Path;
-	public final fun setTestConfig (Lde/infix/testBalloon/framework/core/TestConfig;)V
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -129,7 +127,6 @@ public final class de/infix/testBalloon/framework/core/TestFixture {
 }
 
 public final class de/infix/testBalloon/framework/core/TestFixture$Scope : de/infix/testBalloon/framework/core/TestSuiteScope {
-	public fun aroundAll (Lde/infix/testBalloon/framework/core/TestSuite;Lkotlin/jvm/functions/Function2;)V
 	public fun getTestSuiteInScope ()Lde/infix/testBalloon/framework/core/TestSuite;
 	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
 	public fun testFixture (Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestFixture;
@@ -171,7 +168,6 @@ public final class de/infix/testBalloon/framework/core/TestPlatformJvm : de/infi
 }
 
 public final class de/infix/testBalloon/framework/core/TestPlatform_jvmKt {
-	public static final fun dispatcherWithParallelism (I)Lkotlinx/coroutines/CoroutineDispatcher;
 	public static final fun getTestPlatform ()Lde/infix/testBalloon/framework/core/TestPlatform;
 	public static final fun withSingleThreadedDispatcher (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -188,21 +184,6 @@ public final class de/infix/testBalloon/framework/core/TestSession$Companion {
 }
 
 public class de/infix/testBalloon/framework/core/TestSuite : de/infix/testBalloon/framework/core/TestElement, de/infix/testBalloon/framework/core/TestSuiteScope, de/infix/testBalloon/framework/shared/AbstractTestSuite {
-	protected fun <init> (Lde/infix/testBalloon/framework/core/TestCompartment;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Lde/infix/testBalloon/framework/core/TestCompartment;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected fun <init> (Lde/infix/testBalloon/framework/core/TestCompartment;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Lde/infix/testBalloon/framework/core/TestCompartment;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected fun <init> (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected fun <init> (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestCompartment;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestCompartment;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected fun <init> (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestCompartment;Lkotlin/jvm/functions/Function1;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestCompartment;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected fun <init> (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected fun <init> (Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun aroundAll (Lde/infix/testBalloon/framework/core/TestSuite;Lkotlin/jvm/functions/Function2;)V
 	public fun getTestElementIsEnabled ()Z
 	public final fun getTestSuiteCoroutineScope ()Lkotlinx/coroutines/CoroutineScope;
 	public fun getTestSuiteInScope ()Lde/infix/testBalloon/framework/core/TestSuite;
@@ -219,7 +200,6 @@ public final class de/infix/testBalloon/framework/core/TestSuiteKt {
 }
 
 public abstract interface class de/infix/testBalloon/framework/core/TestSuiteScope {
-	public fun aroundAll (Lde/infix/testBalloon/framework/core/TestSuite;Lkotlin/jvm/functions/Function2;)V
 	public abstract fun getTestSuiteInScope ()Lde/infix/testBalloon/framework/core/TestSuite;
 	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
 	public static synthetic fun test$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
@@ -229,7 +209,6 @@ public abstract interface class de/infix/testBalloon/framework/core/TestSuiteSco
 }
 
 public final class de/infix/testBalloon/framework/core/TestSuiteScope$DefaultImpls {
-	public static fun aroundAll (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuite;Lkotlin/jvm/functions/Function2;)V
 	public static fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
 	public static synthetic fun test$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
 	public static fun testFixture (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestFixture;

@@ -4,9 +4,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.newSingleThreadContext
 import platform.posix.getenv
 import kotlin.experimental.ExperimentalNativeApi
@@ -34,10 +32,6 @@ public object TestPlatformNative : TestPlatform {
     @OptIn(ExperimentalForeignApi::class)
     override fun environment(variableName: String): String? = getenv(variableName)?.toKString()
 }
-
-@Deprecated("This function has no compelling use case in testing. Scheduled for removal in TestBalloon 0.8.")
-public actual fun dispatcherWithParallelism(parallelism: Int): CoroutineDispatcher =
-    Dispatchers.IO.limitedParallelism(parallelism)
 
 @TestBalloonExperimentalApi
 public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {

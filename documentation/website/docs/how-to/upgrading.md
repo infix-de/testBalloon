@@ -1,5 +1,13 @@
 ## Upgrading from TestBalloon 0.7.x to {{ project.version }}
 
+### Removal of deprecations
+
+* Replace class declarations for top-level test suites with properties.
+* Change code using `dispatcherWithParallelism()`.
+* Replace `aroundAll` with `testConfig = TestConfig.aroundAll { ... }`.
+* Replace `testConfig` assignments in test suite bodies with `testSuite(..., testConfig = ...)`.
+* Replace the `TEST_INCLUDE` environment variable with `TESTBALLOON_INCLUDE_PATTERNS`.
+
 ### Android host-side (unit) tests
 
 1. Remove the `-jvm` suffix from each dependency `"de.infix.testBalloon:testBalloon-framework-core-jvm:$testBalloonVersion"`.

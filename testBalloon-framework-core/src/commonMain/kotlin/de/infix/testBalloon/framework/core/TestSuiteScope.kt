@@ -51,36 +51,4 @@ public interface TestSuiteScope {
      */
     public fun <Value : Any> testFixture(value: suspend TestSuite.() -> Value): TestFixture<Value> =
         TestFixture(testSuiteInScope, value)
-
-    /**
-     * Registers an [executionWrappingAction] which wraps the execution actions of this test suite.
-     *
-     * [executionWrappingAction] wraps around the [TestElement]'s primary `testSuiteAction`, which accumulates
-     * the execution actions of its children.
-     * The wrapping action will be invoked only if at least one (direct or indirect) child [Test] executes.
-     * See also [TestElementExecutionWrappingAction] for requirements.
-     *
-     * Note: [TestSuite.aroundAll] will not wrap around fixtures registered in its [TestSuite]. Fixtures (which are
-     * lazily created on their first invocation) will close _after_ any [aroundAll] actions registered in their
-     * [TestSuite]. Use the suite's `testConfig` parameter with `TestConfig.aroundAll` to register an action which
-     * also wraps around the suite's fixtures.
-     *
-     * Usage:
-     * ```
-     *     aroundAll { testSuiteAction ->
-     *         withContext(CoroutineName("parent coroutine configured by aroundAll")) {
-     *             testSuiteAction()
-     *         }
-     *     }
-     * ```
-     */
-    @Deprecated(
-        "Please use the test suite's parameter testConfig = TestConfig.aroundAll { ... } instead." +
-            " Scheduled for removal in TestBalloon 0.8."
-    )
-    public fun TestSuite.aroundAll(executionWrappingAction: TestSuiteExecutionWrappingAction) {
-        testSuiteInScope.aroundAllInternally { elementAction ->
-            executionWrappingAction { elementAction() }
-        }
-    }
 }

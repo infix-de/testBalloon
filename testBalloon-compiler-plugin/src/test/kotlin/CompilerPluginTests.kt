@@ -141,7 +141,7 @@ private class CompilerPluginTests {
             classPathInheritanceEnabled = false,
             debugLevel = "BASIC"
         ) {
-            assertTrue("[DEBUG] Disabling the plugin for module <module>: It is not a test module." in messages)
+            assertTrue("[DEBUG] Disabling the plugin for module <module>: It is not a test module" in messages)
         }
     }
 

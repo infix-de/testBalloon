@@ -11,8 +11,12 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-public sealed class TestElement(parent: TestSuite?, name: String, displayName: String = name, testConfig: TestConfig) :
-    AbstractTestElement {
+public sealed class TestElement(
+    parent: TestSuite?,
+    name: String,
+    displayName: String = name,
+    internal var testConfig: TestConfig
+) : AbstractTestElement {
 
     init {
         fun elementInfo() = if (parent == null) "a test element" else "a test element in $parent"
@@ -23,17 +27,6 @@ public sealed class TestElement(parent: TestSuite?, name: String, displayName: S
             "Could not register ${elementInfo()} with an empty or blank displayName '$displayName'"
         }
     }
-
-    /**
-     * The element's configuration.
-     *
-     * Note: Using `testSuite(...) { testConfig = ... }` is unsafe and will be removed.
-     */
-    @Suppress("CanBePrimaryConstructorProperty")
-    @Deprecated(
-        "Use 'testSuite(..., testConfig = ...)' instead. Scheduled for removal in TestBalloon 0.8."
-    )
-    public var testConfig: TestConfig = testConfig
 
     internal val testElementParent: TestSuite? = parent
     internal val testElementName: String = parent?.uniqueChildName(name, TestSuite.ChildNameType.Element) ?: name

@@ -104,6 +104,8 @@ org-jetbrains-dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.
 org-jetbrains-dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "org-jetbrains-dokka" }
 org-jetbrains-dokka-gradle-plugin = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version.ref = "org-jetbrains-dokka" }
 
+org-jetbrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "org-jetbrains-kotlin" }
+
 org-jetbrains-kotlin-android-gradle-plugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-assignment-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-atomicfu-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.atomicfu:org.jetbrains.kotlin.plugin.atomicfu.gradle.plugin", version.ref = "org-jetbrains-kotlin" }

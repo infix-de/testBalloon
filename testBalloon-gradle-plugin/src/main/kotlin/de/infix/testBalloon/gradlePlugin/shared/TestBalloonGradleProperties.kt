@@ -10,7 +10,7 @@ import kotlin.reflect.KProperty
 internal class TestBalloonGradleProperties(val project: Project) {
 
     /** Name pattern for test root source sets which will receive generated entry point code. */
-    val testRootSourceSetRegex by regexProperty(
+    val testRootSourceSetRegex by gradleTestSuiteEnhancedRegexProperty(
         """^(test$|commonTest$|androidTest|androidInstrumentedTest)"""
     )
 
@@ -19,7 +19,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
      *
      * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
      */
-    val testCompilationRegex by regexProperty("""(^test)|Test""")
+    val testCompilationRegex by gradleTestSuiteEnhancedRegexProperty("""(^test)|Test""")
 
     /**
      * Name pattern for test compilations in which the compiler plugin will look up test suites and a test session.
@@ -40,7 +40,16 @@ internal class TestBalloonGradleProperties(val project: Project) {
      *
      * The Compiler plugin will disable itself for modules not matching this pattern.
      */
-    val testModuleRegex by stringProperty("""(_test|Test)$""")
+    val testModuleRegex by gradleTestSuiteEnhancedStringProperty("""(_test|Test)$""")
+
+    /**
+     * Name pattern for Gradle JVM Test Suites (incubating).
+     *
+     * The pattern will extend [testRootSourceSetRegex], [testCompilationRegex] and [testModuleRegex] to enable
+     * TestBalloon tests in Gradle JVM Test Suites, which can have arbitrary names and would otherwise not
+     * be recognized as test source sets, modules, or compilations.
+     */
+    val gradleTestSuiteNamesRegex by stringProperty("")
 
     /**
      * Name pattern for browser-based test tasks using Karma.
@@ -81,7 +90,8 @@ internal class TestBalloonGradleProperties(val project: Project) {
      * element sources.
      *
      * The `intellij-legacy` mode supplies full test element paths to the reporting infrastructure, supporting proper
-     * hierarchy display in IntelliJ's test run window without IDE plugin support.
+     * hierarchy display in IntelliJ's test run window without IDE plugin support. It is only effective if
+     * TestBalloon runs under IntelliJ IDEA.
      *
      * The mode `files` supplies test element names instead of full paths, supporting proper XML and HTML report
      * files, avoiding duplicate path elements leading to `file name too long' errors.
@@ -127,7 +137,17 @@ internal class TestBalloonGradleProperties(val project: Project) {
     @Suppress("SameParameterValue")
     private fun stringProperty(default: String) = Delegate(default) { it }
 
+    @Suppress("SameParameterValue")
+    private fun gradleTestSuiteEnhancedStringProperty(default: String) = Delegate(default) {
+        if (gradleTestSuiteNamesRegex.isEmpty()) it else "($it)|($gradleTestSuiteNamesRegex)"
+    }
+
     private fun regexProperty(default: String) = Delegate(default) { Regex(it) }
+
+    @Suppress("SameParameterValue")
+    private fun gradleTestSuiteEnhancedRegexProperty(default: String) = Delegate(default) {
+        Regex(if (gradleTestSuiteNamesRegex.isEmpty()) it else "($it)|($gradleTestSuiteNamesRegex)")
+    }
 
     @Suppress("SameParameterValue")
     private fun intProperty(default: String) = Delegate(default) { it.toIntOrNull() }

@@ -21,6 +21,8 @@ TestBalloon fully integrates with the Kotlin Gradle Plugin ([Multiplatform](http
 * Gradle's test reports (HTML and XML), and
 * the Kotlin Gradle Plugin's combined multiplatform test reports.
 
+TestBalloon can support the incubating Gradle JVM Test Suite Plugin by setting a Gradle property containing the Gradle test suite names as a regular expression, like `testBalloon.gradleTestSuiteNamesRegex=integrationTest|anotherGradleSuite`.
+
 !!! warning
 
     Never use the `maxParallelForks` option on Gradle test tasks. Gradle has no idea about the test structure and assumes class-based tests, which TestBalloon does not use.

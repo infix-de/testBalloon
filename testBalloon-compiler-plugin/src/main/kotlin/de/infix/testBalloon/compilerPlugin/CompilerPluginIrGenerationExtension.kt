@@ -141,7 +141,7 @@ class CompilerPluginIrGenerationExtension(private val compilerConfiguration: Com
         // for the test module). If the test module picks up the main module's symbol, no suites will be considered
         // discovered.
         if (!Regex(testModuleRegex).containsMatchIn(moduleFragment.name.asStringStripSpecialMarkers())) {
-            reportDisablingReason("It is not a test module.")
+            reportDisablingReason("It is not a test module (matching '$testModuleRegex').")
             return
         }
 

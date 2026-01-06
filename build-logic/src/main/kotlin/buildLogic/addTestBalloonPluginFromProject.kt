@@ -4,6 +4,7 @@ import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleProperties
 import de.infix.testBalloon.gradlePlugin.shared.configureWithTestBalloon
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 
@@ -29,6 +30,15 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
         if (junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
             dependencies.add(
                 project.dependencies.create(libraryFromCatalog("org.junit.platform.launcher"))
+            )
+        }
+    }
+
+    extensions.configure<HasConfigurableKotlinCompilerOptions<*>>("kotlin") {
+        compilerOptions {
+            freeCompilerArgs.addAll(
+                "-P",
+                "plugin:de.infix.testBalloon:testModuleRegex=${testBalloonProperties.testModuleRegex}"
             )
         }
     }

@@ -29,6 +29,7 @@ include(":examples:with-kotest-assertions")
 include(":examples:with-parameterize")
 include(":examples:android")
 include(":examples:jvm-only")
+include(":examples:jvm-with-gradle-test-suites")
 include(":examples:multiplatform-library-with-android")
 
 include(":comparisons:using-kotlin-test")

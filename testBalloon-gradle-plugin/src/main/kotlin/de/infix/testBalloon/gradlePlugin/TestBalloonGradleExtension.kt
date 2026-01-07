@@ -22,6 +22,7 @@ open class TestBalloonGradleExtension {
     /**
      * `junit4AutoIntegrationEnabled` controls JUnit 4 auto-integration on the JVM.
      *
+     * This property controls whether TestBalloon creates a JUnit 4 runner if JUnit 4 is on the classpath.
      * If disabled, the framework will only support JUnit Platform on the JVM.
      */
     var junit4AutoIntegrationEnabled: Boolean? = null

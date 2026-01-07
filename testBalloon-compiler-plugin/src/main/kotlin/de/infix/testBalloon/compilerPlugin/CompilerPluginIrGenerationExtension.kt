@@ -675,7 +675,7 @@ private class ModuleTransformer(
                         if (configuration.junit4AutoIntegrationEnabled) {
                             "Integrating with JUnit 4"
                         } else {
-                            "Suppressing JUnit 4 integration (not enabled)"
+                            "Suppressing JUnit 4 auto-integration (not enabled)"
                         }
                     }
 

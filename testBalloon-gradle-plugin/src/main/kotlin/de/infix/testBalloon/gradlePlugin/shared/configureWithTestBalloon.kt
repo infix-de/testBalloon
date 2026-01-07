@@ -125,25 +125,28 @@ private fun Project.configureTestTasks(
         }
     }
 
-    val androidLocalTestClassRegex = testBalloonProperties.androidHostSideTestClassRegex
-    val junit4AutoIntegrationEnabled = testBalloonProperties.junit4AutoIntegrationEnabled ?: true
+    val androidHostSideTestClassRegex = testBalloonProperties.androidHostSideTestClassRegex
+    val junit4GradleAutoConfigurationEnabled = testBalloonProperties.junit4GradleAutoConfigurationEnabled ?: true
     val testBalloonPriorityIncludePatternsExist by lazy {
         System.getenv(EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name)?.ifEmpty { null } != null
     }
     val jvmTestBalloonTestsOnly = testBalloonProperties.jvmTestBalloonTestsOnly ?: true
-    val junitPlatformAutoconfigurationEnabled = testBalloonProperties.junitPlatformAutoconfigurationEnabled ?: true
+    val junitPlatformGradleAutoConfigurationEnabled =
+        testBalloonProperties.junitPlatformGradleAutoConfigurationEnabled ?: true
 
     tasks.withType(Test::class.java).configureEach {
         // https://docs.gradle.org/current/userguide/java_testing.html
         val testClassName = this::class.qualifiedName?.removeSuffix("_Decorated") ?: ""
-        if (androidLocalTestClassRegex.containsMatchIn(testClassName)) {
-            if (junit4AutoIntegrationEnabled && (jvmTestBalloonTestsOnly || testBalloonPriorityIncludePatternsExist)) {
+        if (androidHostSideTestClassRegex.containsMatchIn(testClassName)) {
+            if (junit4GradleAutoConfigurationEnabled &&
+                (jvmTestBalloonTestsOnly || testBalloonPriorityIncludePatternsExist)
+            ) {
                 useJUnit {
                     includeCategories(Constants.JUNIT4_RUNNER_CLASS_NAME)
                 }
             }
         } else {
-            if (junitPlatformAutoconfigurationEnabled) {
+            if (junitPlatformGradleAutoConfigurationEnabled) {
                 useJUnitPlatform {
                     if (jvmTestBalloonTestsOnly || testBalloonPriorityIncludePatternsExist) {
                         includeEngines(Constants.JUNIT_ENGINE_ID)

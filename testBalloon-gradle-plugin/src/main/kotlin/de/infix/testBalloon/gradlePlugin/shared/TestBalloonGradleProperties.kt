@@ -68,12 +68,19 @@ internal class TestBalloonGradleProperties(val project: Project) {
     )
 
     /**
-     * Setting to enable or disable JUnit Platform autoconfiguration for test tasks. `true` (default) or `false`.
+     * Setting to enable or disable Gradle auto-configuration for JUnit Platform. `true` (default) or `false`.
      */
-    val junitPlatformAutoconfigurationEnabled by booleanProperty("true")
+    val junitPlatformGradleAutoConfigurationEnabled by booleanProperty("true")
 
     /**
-     * Setting to enable or disable JUnit 4 auto-integration for test tasks. `true` (default) or `false`.
+     * Setting to enable or disable Gradle auto-configuration for JUnit 4. `true` (default) or `false`.
+     */
+    val junit4GradleAutoConfigurationEnabled by booleanProperty("true")
+
+    /**
+     * Setting to enable or disable JUnit 4 auto-integration for test modules. `true` (default) or `false`.
+     *
+     * This property controls whether TestBalloon creates a JUnit 4 runner if JUnit 4 is on the classpath.
      */
     val junit4AutoIntegrationEnabled by booleanProperty("true")
 

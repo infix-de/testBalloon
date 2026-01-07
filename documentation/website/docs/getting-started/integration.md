@@ -109,6 +109,10 @@ TestBalloon supports Android's JUnit 4 runner with
 * **JUnit 4 test rules** via [test fixtures](fixtures.md) with values of type `JUnit4RulesContext`,
 * other (non-TestBalloon) JUnit-based tests executing alongside TestBalloon in the same module.
 
+!!! info
+
+    In Android host-side tests, two TestBalloon integrations are available: JUnit 4 (preferred) and JUnit Platform. If you enable both (e.g. using JUnit Vintage), TestBalloon will produce an error due to the framework initializing twice. In this case, please disable TestBalloon for JUnit Platform via `useJUnitPlatform { excludeEngines("de.infix.testBalloon") }`.
+
 !!! note
 
     Although Android supports multithreading, TestBalloon will not run tests in parallel on that platform. Android's test infrastructure assumes sequential execution and can cause hangups with tests executing asynchronously.

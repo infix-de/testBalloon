@@ -1,6 +1,9 @@
 ## Choose your pace
 
-TestBalloon can reside with JUnit 4/5/6 tests in the same module, running tests side-by-side.
+TestBalloon can reside with JUnit 4/5/6 tests in the same module(1), running tests side-by-side.
+{ .annotate }
+
+1. For **Android host-side tests**: If you have JUnit Platform **_and_** JUnit 4 enabled (e.g. by using JUnit Vintage), please disable TestBalloon on JUnit Platform via `useJUnitPlatform { excludeEngines("de.infix.testBalloon") }`. Otherwise, the framework would respond to both integrations and initialize twice, which produces an error.
 
 You can **migrate at your pace**, and you don't need to migrate code that does not benefit from TestBalloon's capabilities.
 

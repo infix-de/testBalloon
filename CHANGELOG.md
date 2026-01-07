@@ -1,3 +1,28 @@
+## 0.8.0-RC
+
+_This release candidate is available for Kotlin 2.3.0 only. Other Kotlin versions follow with the final release._
+
+### Upgrading
+
+Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0-Beta1/how-to/upgrading/).
+
+### Breaking
+
+Former deprecations were removed:
+
+* Class declarations for top-level test suites,
+* `dispatcherWithParallelism()`,
+* `aroundAll` inside a test suite,
+* `testConfig` assignments inside a test suite,
+* `TEST_INCLUDE` environment variable.
+
+### Changes since 0.8.0-Beta2
+
+* Together with IntelliJ plugin version 0.5.0, the actions "Run", "Debug" and "Jump to source" work from the test run window's results tree view (except for Android device tests). In addition, test run gutter icons display the test status for JVM targets, except Android device test runs.
+    * This feature requires a new report format, which is less readable if the new IntelliJ plugin is not installed. In the latter case, setting the Gradle property `testBalloon.reportingMode=intellij-legacy` restores the previous human-readable output format.
+* The incubating Gradle JVM Test Suite Plugin is supported by setting a Gradle property containing the Gradle test suite names as a regular expression.
+    * Example: `testBalloon.gradleTestSuiteNamesRegex=integrationTest|anotherGradleSuite`.
+
 ## 0.8.0-Beta2
 
 _This beta release is available for Kotlin 2.3.0 only. Other Kotlin versions follow with the final release._

@@ -289,7 +289,7 @@ public fun TestConfig.aroundAll(executionWrappingAction: TestElementExecutionWra
  * Multiple [aroundEach]/[aroundEachTest] invocations nest outside-in in the order of appearance.
  *
  * Notes:
- * - If you want to wrap both, [TestSuite]s and [Test]s, use [aroundEachTest].
+ * - If you want to wrap both, [TestSuite]s and [Test]s, use [aroundEach].
  *
  * Example:
  * ```

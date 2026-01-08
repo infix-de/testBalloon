@@ -4,7 +4,7 @@ _This release candidate is available for Kotlin 2.3.0 only. Other Kotlin version
 
 ### Upgrading
 
-Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0-Beta1/how-to/upgrading/).
+Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0-RC/how-to/upgrading/).
 
 ### Breaking
 

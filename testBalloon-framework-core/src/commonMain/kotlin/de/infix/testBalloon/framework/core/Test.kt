@@ -108,6 +108,7 @@ public class Test internal constructor(
     }
 
     private suspend fun inheritableContext(): CoroutineContext = currentCoroutineContext().minusKey(Job).let {
+        @OptIn(ExperimentalStdlibApi::class)
         if (it[CoroutineDispatcher] is TestDispatcher) {
             it
         } else {

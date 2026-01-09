@@ -81,7 +81,6 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
                             ?: true
                         ).toString()
                 ),
-                SubpluginOption(key = "jvmMainFunctionEnabled", value = extension.jvmMainFunctionEnabled.toString()),
                 SubpluginOption(key = "testModuleRegex", value = testBalloonProperties.testModuleRegex)
             )
         }

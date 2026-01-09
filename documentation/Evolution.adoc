@@ -44,7 +44,7 @@ For changes with source-compatible overloads, the old API will immediately recei
 
 ==== Practices
 
-* Enable `abiValidation`, use `checkLegacyAbi`.
+* Enable `abiValidation`, use `checkKotlinAbi`.
 * Enable `explicitApi`.
 * Enable `-Werror` or `warningsAsErrors`.
 +

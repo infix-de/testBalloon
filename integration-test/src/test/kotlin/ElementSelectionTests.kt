@@ -57,7 +57,7 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
 
     val variants = if (secondarySkippingEnabled) commonVariants else commonVariants + primaryOnlyVariants
 
-    val nativeTargetsThatMayFail = listOf("macosX64Test", "linuxX64Test", "mingwX64Test")
+    val nativeTasksThatMayFail = setOf("macosArm64Test", "linuxX64Test", "mingwX64Test")
 
     for ((pattern, expectedTestCount) in mapOf(
         "com.example.SimpleSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1,
@@ -89,7 +89,7 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
                     }
 
                     val taskResults = taskExecution.logMessages()
-                    if (taskName in nativeTargetsThatMayFail && taskExecution.stdout.contains(":$taskName SKIPPED")) {
+                    if (taskName in nativeTasksThatMayFail && taskExecution.stdout.contains(":$taskName SKIPPED")) {
                         println("$testElementPath: $taskName – SKIPPED")
                         continue
                     }

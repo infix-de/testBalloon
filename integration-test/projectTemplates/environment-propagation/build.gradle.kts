@@ -39,7 +39,7 @@ kotlin {
 
     // Kotlin/Native target support – see https://kotlinlang.org/docs/native-target-support.html
     // Tier 1
-    macosX64()
+    macosArm64()
     // Tier 2
     linuxX64()
     // Tier 3

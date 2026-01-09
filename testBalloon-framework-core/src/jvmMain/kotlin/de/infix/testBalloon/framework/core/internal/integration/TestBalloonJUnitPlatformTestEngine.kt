@@ -50,11 +50,11 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
         val engineUniqueId = UniqueId.forEngine(id)
         val engineDescriptor = EngineDescriptor(engineUniqueId, "${this::class.qualifiedName}")
 
-        // Find the generated file-level class for `EntryPointAnchor.kt`.
+        // Find the generated `JvmEntryPoint` class.
         val frameworkDiscoveryResultFileClass = try {
-            Class.forName(Constants.ENTRY_POINT_ANCHOR_CLASS_NAME)
+            Class.forName(Constants.JVM_ENTRY_POINT_CLASS_NAME)
         } catch (_: ClassNotFoundException) {
-            // Do not initialize the test framework if the entry point anchor file class is not on the classpath.
+            // Do not initialize the test framework if the entry point class is not on the classpath.
             return engineDescriptor
         }
 
@@ -91,7 +91,7 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
         // checking for our entry point class, which can never be a legitimate test selector.
         val testClassSelectorsAreGuesswork =
             selectorsArePresent && discoveryRequest.getSelectorsByType(ClassSelector::class.java).any {
-                it.className == Constants.ENTRY_POINT_ANCHOR_CLASS_NAME
+                it.className == Constants.JVM_ENTRY_POINT_CLASS_NAME
             }
         if (selectorsArePresent &&
             !testClassSelectorsAreGuesswork &&
@@ -102,10 +102,10 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
             return engineDescriptor
         }
 
-        // Trigger the framework's initialization by invoking the `testFrameworkDiscoveryResult` property getter
-        // in the generated file-level class for `EntryPointAnchor.kt`.
+        // Trigger the framework's initialization by invoking the `testFrameworkDiscoveryResult` function
+        // in the generated `JvmEntryPoint` class.
         val frameworkDiscoveryResult = try {
-            frameworkDiscoveryResultFileClass.getMethod(Constants.JVM_DISCOVERY_RESULT_PROPERTY_GETTER).invoke(null)
+            frameworkDiscoveryResultFileClass.getMethod(Constants.JVM_DISCOVERY_RESULT_METHOD_NAME).invoke(null)
                 as TestFrameworkDiscoveryResult
         } catch (throwable: Throwable) {
             reportDiscoveryIssue(

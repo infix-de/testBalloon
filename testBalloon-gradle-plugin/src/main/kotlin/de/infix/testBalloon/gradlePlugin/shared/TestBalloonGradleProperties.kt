@@ -22,11 +22,12 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val testCompilationRegex by gradleTestSuiteEnhancedRegexProperty("""(^test)|Test""")
 
     /**
-     * Name pattern for test compilations in which the compiler plugin will look up test suites and a test session.
+     * Name pattern for test compile tasks in which the compiler plugin will disable incremental compilation.
      *
-     * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
+     * WORKAROUND: Kotlin IC on JS does not support compiler plugins generating top-level declarations
+     *     https://youtrack.jetbrains.com/issue/KT-82395
      */
-    val testCompileTaskRegex by regexProperty("""^compile.*Test""")
+    val nonIncrementalTestCompileTaskRegex by regexProperty("""^compileTestKotlin(Js|Wasm)""")
 
     /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.

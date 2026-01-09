@@ -1,6 +1,6 @@
 ## 0.8.0-RC
 
-_This release candidate is available for Kotlin 2.3.0 only. Other Kotlin versions follow with the final release._
+_This release candidate is available for Kotlin 2.3.0 and 2.3.20-Beta1 only. Other Kotlin versions will follow with the final release._
 
 ### Upgrading
 

@@ -22,34 +22,6 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCompilerApi::class)
 private class CompilerPluginTests {
     @Test
-    fun suiteDiscovery() {
-        listOf("com.example", "").forEach { packageName ->
-            println("=== packageName='$packageName' ===")
-
-            val packageDeclaration = if (packageName.isEmpty()) "" else "package $packageName"
-
-            compilation(
-                """
-                    $packageDeclaration
-                    
-                    import fakeTestFramework.TestSuite
-                    import fakeTestFramework.testSuite
-
-                    val TestSuiteOne by testSuite {}
-
-                    class TestSuiteTwo : TestSuite(content = {})
-                """,
-                debugLevel = "DISCOVERY"
-            ) {
-                val packageNameDot = if (packageName.isEmpty()) "" else "$packageName."
-
-                assertTrue("Found top-level test suite property '${packageNameDot}TestSuiteOne'" in messages)
-                assertTrue("Found top-level test suite class '${packageNameDot}TestSuiteTwo'" in messages)
-            }
-        }
-    }
-
-    @Test
     fun initialization() {
         val packageName = "com.example"
 
@@ -73,11 +45,7 @@ private class CompilerPluginTests {
                     }
                 }
 
-                class TestSuiteTwo : TestSuite(content = {
-                    println("$d{testElementPath}")
-                })
-
-                val testSuiteThree by testSuite("my test suite three") {
+                val testSuiteTwo by testSuite("my test suite two") {
                     println("$d{testElementPath}")
                 }
             """,
@@ -90,8 +58,7 @@ private class CompilerPluginTests {
                 """
                     $packageName.MyTestSession
                     $packageName.TestSuiteOne
-                    $packageName.TestSuiteTwo
-                    my test suite three
+                    my test suite two
                 """.trimIndent()
             )
         }

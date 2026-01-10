@@ -64,15 +64,12 @@ import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -92,9 +89,6 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.packageFqName
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.statements
-import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.CallableId
@@ -190,7 +184,7 @@ private class Configuration(
 
     val abstractSuiteSymbol = irClassSymbol(AbstractTestSuite::class)
     val abstractSessionSymbol = irClassSymbol(AbstractTestSession::class)
-    val testDiscoverableAnnotationSymbol = irClassSymbol(TestRegistering::class)
+    val testRegisteringAnnotationSymbol = irClassSymbol(TestRegistering::class)
     val testElementNameAnnotationSymbol = irClassSymbol(TestElementName::class)
     val testDisplayNameAnnotationSymbol = irClassSymbol(TestDisplayName::class)
 
@@ -259,29 +253,22 @@ private class ModuleTransformer(
         val irClass = declaration
 
         withErrorReporting(irClass, "Could not analyze class '${irClass.fqName()}'") {
-            // Fast path: Ignore non-suite classes.
-            if (!irClass.isSameOrSubTypeOf(configuration.abstractSuiteSymbol)) return@withErrorReporting
+            // Fast path: Top-level classes only.
+            if (irClass.parent !is IrFile) return@withErrorReporting
 
-            // Consider classes with a @TestRegistering superclass.
-            if (irClass.superClass?.hasAnnotation(configuration.testDiscoverableAnnotationSymbol) == true) {
-                if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
-                    reportDebug("Found top-level test suite class '${irClass.fqName()}'", irClass)
-                }
-
-                if (irClass.isSameOrSubTypeOf(configuration.abstractSessionSymbol)) {
-                    if (customSessionClass == null) {
-                        customSessionClass = irClass
-                    } else {
-                        reportError(
-                            "Found multiple test sessions annotated with" +
-                                " @${configuration.testDiscoverableAnnotationSymbol.owner.name}," +
-                                " but expected at most one.",
-                            irClass
-                        )
+            if (irClass.isSameOrSubTypeOf(configuration.abstractSessionSymbol)) {
+                if (customSessionClass == null) {
+                    if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
+                        reportDebug("Found test session '${irClass.fqName()}'", irClass)
                     }
+                    customSessionClass = irClass
                 } else {
-                    irClass.addNameValueArgumentsToConstructorIfApplicable()
-                    discoveredSuites.add(DiscoveredSuite(irClass) { irConstructorCall(irClass.symbol) })
+                    reportError(
+                        "Found multiple test sessions annotated with" +
+                            " @${configuration.testRegisteringAnnotationSymbol.owner.name}," +
+                            " but expected at most one.",
+                        irClass
+                    )
                 }
             }
         }
@@ -302,7 +289,7 @@ private class ModuleTransformer(
             val initializerCall = initializer.expression as? IrCall ?: return@withErrorReporting
             val initializerCallFunction = initializerCall.symbol.owner
 
-            if (initializerCallFunction.hasAnnotation(configuration.testDiscoverableAnnotationSymbol)) {
+            if (initializerCallFunction.hasAnnotation(configuration.testRegisteringAnnotationSymbol)) {
                 if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
                     reportDebug("Found top-level test suite property '${irProperty.fqNameWhenAvailable}'", irProperty)
                 }
@@ -378,73 +365,6 @@ private class ModuleTransformer(
         }
 
         return moduleFragment
-    }
-
-    /**
-     * Adds value arguments for element and display name to [this] class's primary constructor, if applicable.
-     *
-     * Parameters are added according to `@[TestElementName]` and `@[TestDisplayName]` annotations.
-     */
-    private fun IrClass.addNameValueArgumentsToConstructorIfApplicable() {
-        val irClass = this
-        val primaryConstructor = irClass.primaryConstructor ?: return
-        val superClassConstructorCall =
-            primaryConstructor.body?.statements?.firstOrNull() as? IrDelegatingConstructorCall? ?: return
-        val valueParameters = superClassConstructorCall.symbol.owner.parameters
-        val valueArguments = superClassConstructorCall.arguments
-
-        val nameValueArgumentsToAdd = nameValueArgumentsToAdd(
-            mapOf(
-                configuration.testElementNameAnnotationSymbol to { irClass.fqName() },
-                configuration.testDisplayNameAnnotationSymbol to { "${irClass.name}" }
-            ),
-            valueParameters,
-            valueArguments
-        )
-
-        if (nameValueArgumentsToAdd.isEmpty()) return
-
-        primaryConstructor.transformChildren(
-            object : IrElementTransformerVoid() {
-                var constructorCallProcessed = false
-
-                override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                    // Fast path: Skip all constructor calls after the first one.
-                    if (constructorCallProcessed) super.visitDelegatingConstructorCall(expression)
-                    constructorCallProcessed = true
-
-                    @Suppress("UnnecessaryVariable", "RedundantSuppression")
-                    val originalCall = expression
-                    return DeclarationIrBuilder(
-                        pluginContext,
-                        currentScope!!.scope.scopeOwnerSymbol,
-                        originalCall.startOffset,
-                        originalCall.endOffset
-                    ).run {
-                        @Suppress("DuplicatedCode")
-                        IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                            originalCall.startOffset,
-                            originalCall.endOffset,
-                            originalCall.type,
-                            originalCall.symbol,
-                            originalCall.typeArguments.size
-                        ).apply {
-                            copyTypeAndValueArgumentsFrom(originalCall)
-                            nameValueArgumentsToAdd.forEach { (index, value) ->
-                                arguments[index] = irString(value)
-                                if (configuration.debugLevel >= DebugLevel.CODE) {
-                                    reportDebug(
-                                        "${irClass.fqName()}: Setting parameter '${valueParameters[index].name}'" +
-                                            " to '$value'"
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            null
-        )
     }
 
     /**

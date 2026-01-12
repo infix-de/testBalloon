@@ -155,16 +155,10 @@ class CompilerPluginIrGenerationExtension(private val compilerConfiguration: Com
     }
 }
 
-private interface CapableOfSymbolResolving {
-    val pluginContext: IrPluginContext
-    val messageCollector: MessageCollector
-    val sourceFileForReporting: IrFile? get() = null
-}
-
 private class ModuleProbe(
     override val pluginContext: IrPluginContext,
     override val messageCollector: MessageCollector
-) : CapableOfSymbolResolving {
+) : ModuleWideSymbolResolving {
     /** Returns true if the currently compiled module is `TestSuite`-aware. */
     fun hasFrameworkLibraryDependency(): Boolean = irClassSymbolOrNull(AbstractTestSuite::class.qualifiedName!!) != null
 }
@@ -173,7 +167,7 @@ private class Configuration(
     compilerConfiguration: CompilerConfiguration,
     override val pluginContext: IrPluginContext,
     override val messageCollector: MessageCollector
-) : CapableOfSymbolResolving {
+) : ModuleWideSymbolResolving {
 
     val coreInternalPackageName = Constants.CORE_INTERNAL_PACKAGE_NAME
 
@@ -218,7 +212,7 @@ private class ModuleTransformer(
     override val messageCollector: MessageCollector,
     val configuration: Configuration
 ) : IrElementTransformerVoidWithContext(),
-    CapableOfSymbolResolving {
+    ModuleWideSymbolResolving {
 
     class DiscoveredSuite(
         val referencedDeclaration: IrDeclarationWithName,
@@ -760,83 +754,90 @@ private fun IrBuilderWithScope.irSimpleFunctionCall(
     }
 }
 
-private fun CapableOfSymbolResolving.irClassSymbol(kClass: KClass<*>): IrClassSymbol =
-    irClassSymbol(kClass.qualifiedName!!)
+/**
+ * A module-wide symbol-resolving capability.
+ *
+ * "Module-wide" in this context means that resolved symbols are referenced on behalf of the entire compilation module.
+ * For incremental compilation purposes, if such a symbol is invalidated, the entire module must be recompiled.
+ */
+private interface ModuleWideSymbolResolving : Reporting {
+    val pluginContext: IrPluginContext
 
-private fun CapableOfSymbolResolving.irClassSymbolOrNull(fqName: String): IrClassSymbol? =
-    pluginContext.referenceClass(ClassId.topLevel(FqName(fqName)))
+    private val declarationFinder get() = pluginContext.finderForBuiltins()
 
-private fun CapableOfSymbolResolving.irClassSymbol(fqName: String): IrClassSymbol = irClassSymbolOrNull(fqName)
-    ?: throw MissingFrameworkSymbol("class '$fqName'")
+    fun irClassSymbol(kClass: KClass<*>): IrClassSymbol = irClassSymbol(kClass.qualifiedName!!)
 
-private fun CapableOfSymbolResolving.irFunctionSymbol(
-    packageName: String,
-    functionName: String
-): IrSimpleFunctionSymbol = irFunctionSymbol(CallableId(FqName(packageName), Name.identifier(functionName)))
+    fun irClassSymbolOrNull(fqName: String): IrClassSymbol? =
+        declarationFinder.findClass(ClassId.topLevel(FqName(fqName)))
 
-private fun CapableOfSymbolResolving.irFunctionSymbol(callableId: CallableId): IrSimpleFunctionSymbol =
-    pluginContext.referenceFunctions(callableId).singleOrElse {
-        if (it.isEmpty()) {
-            throw MissingFrameworkSymbol("function '${callableId.asFqNameForDebugInfo()}'")
-        } else {
-            reportWarning(
-                "Function '${callableId.asFqNameForDebugInfo()}' found ${it.size} times\n" +
-                    "\tThis may be caused by a misconfiguration of the module's dependencies."
-            )
-            it.first()
+    fun irClassSymbol(fqName: String): IrClassSymbol = irClassSymbolOrNull(fqName)
+        ?: throw MissingFrameworkSymbol("class '$fqName'")
+
+    fun irFunctionSymbol(packageName: String, functionName: String): IrSimpleFunctionSymbol =
+        irFunctionSymbol(CallableId(FqName(packageName), Name.identifier(functionName)))
+
+    fun irFunctionSymbol(callableId: CallableId): IrSimpleFunctionSymbol =
+        declarationFinder.findFunctions(callableId).singleOrElse {
+            if (it.isEmpty()) {
+                throw MissingFrameworkSymbol("function '${callableId.asFqNameForDebugInfo()}'")
+            } else {
+                reportWarning(
+                    "Function '${callableId.asFqNameForDebugInfo()}' found ${it.size} times\n" +
+                        "\tThis may be caused by a misconfiguration of the module's dependencies."
+                )
+                it.first()
+            }
         }
-    }
 
-private fun CapableOfSymbolResolving.irPropertySymbol(callableId: CallableId): IrPropertySymbol =
-    pluginContext.referenceProperties(callableId).singleOrElse {
-        if (it.isEmpty()) {
-            throw MissingFrameworkSymbol("property '${callableId.asFqNameForDebugInfo()}'")
-        } else {
-            reportWarning(
-                "Property '${callableId.asFqNameForDebugInfo()}' found ${it.size} times\n" +
-                    "\tThis may be caused by a misconfiguration of the module's dependencies."
-            )
-            it.first()
+    fun irPropertySymbol(callableId: CallableId): IrPropertySymbol =
+        declarationFinder.findProperties(callableId).singleOrElse {
+            if (it.isEmpty()) {
+                throw MissingFrameworkSymbol("property '${callableId.asFqNameForDebugInfo()}'")
+            } else {
+                reportWarning(
+                    "Property '${callableId.asFqNameForDebugInfo()}' found ${it.size} times\n" +
+                        "\tThis may be caused by a misconfiguration of the module's dependencies."
+                )
+                it.first()
+            }
         }
-    }
-
-private fun <Result> CapableOfSymbolResolving.withErrorReporting(
-    declaration: IrElement,
-    failureDescription: String,
-    block: () -> Result
-): Result = try {
-    block()
-} catch (throwable: Throwable) {
-    report(CompilerMessageSeverity.EXCEPTION, "$failureDescription: $throwable", declaration)
-    throw throwable
 }
 
-private fun CapableOfSymbolResolving.reportDebug(message: String, declaration: IrElement? = null) =
-    report(CompilerMessageSeverity.WARNING, "[DEBUG] $message", declaration)
+private interface Reporting {
+    val messageCollector: MessageCollector
+    val sourceFileForReporting: IrFile? get() = null
 
-private fun CapableOfSymbolResolving.reportWarning(message: String, declaration: IrElement? = null) =
-    report(CompilerMessageSeverity.WARNING, message, declaration)
+    fun <Result> withErrorReporting(declaration: IrElement, failureDescription: String, block: () -> Result): Result =
+        try {
+            block()
+        } catch (throwable: Throwable) {
+            report(CompilerMessageSeverity.EXCEPTION, "$failureDescription: $throwable", declaration)
+            throw throwable
+        }
 
-private fun CapableOfSymbolResolving.reportError(message: String, declaration: IrElement? = null) =
-    report(CompilerMessageSeverity.ERROR, message, declaration)
+    fun reportDebug(message: String, declaration: IrElement? = null) =
+        report(CompilerMessageSeverity.WARNING, "[DEBUG] $message", declaration)
 
-private fun CapableOfSymbolResolving.report(
-    severity: CompilerMessageSeverity,
-    message: String,
-    declaration: IrElement? = null
-) {
-    fun IrFile.locationOrNull(offset: Int?): CompilerMessageLocation? {
-        if (offset == null) return null
-        val lineNumber = fileEntry.getLineNumber(offset) + 1
-        val columnNumber = fileEntry.getColumnNumber(offset) + 1
-        return CompilerMessageLocation.create(fileEntry.name, lineNumber, columnNumber, null)
+    fun reportWarning(message: String, declaration: IrElement? = null) =
+        report(CompilerMessageSeverity.WARNING, message, declaration)
+
+    fun reportError(message: String, declaration: IrElement? = null) =
+        report(CompilerMessageSeverity.ERROR, message, declaration)
+
+    fun report(severity: CompilerMessageSeverity, message: String, declaration: IrElement? = null) {
+        fun IrFile.locationOrNull(offset: Int?): CompilerMessageLocation? {
+            if (offset == null) return null
+            val lineNumber = fileEntry.getLineNumber(offset) + 1
+            val columnNumber = fileEntry.getColumnNumber(offset) + 1
+            return CompilerMessageLocation.create(fileEntry.name, lineNumber, columnNumber, null)
+        }
+
+        messageCollector.report(
+            severity,
+            "$PLUGIN_DISPLAY_NAME: $message",
+            sourceFileForReporting?.locationOrNull(declaration?.startOffset)
+        )
     }
-
-    messageCollector.report(
-        severity,
-        "$PLUGIN_DISPLAY_NAME: $message",
-        sourceFileForReporting?.locationOrNull(declaration?.startOffset)
-    )
 }
 
 private class MissingFrameworkSymbol(typeAndName: String) :

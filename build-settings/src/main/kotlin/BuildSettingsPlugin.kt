@@ -48,6 +48,8 @@ class BuildSettingsPlugin : Plugin<Settings> {
         }
         maven(url = uri("https://redirector.kotlinlang.org/maven/dev"))
         maven(url = uri("https://packages.jetbrains.team/maven/p/kt/dev/org/jetbrains/kotlin/kotlin-compiler/"))
+        // Note: The 'dev' repo is unstable, releases are deleted after (two?) weeks.
+        // The stable Kotlin pre-release repo is: https://packages.jetbrains.team/maven/p/kt/bootstrap
         gradlePluginPortal()
     }
 

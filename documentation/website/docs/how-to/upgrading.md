@@ -15,7 +15,17 @@
 
 ### Custom test functions
 
-#### Replace with test-level fixtures (optional)
+#### Use `TestSuiteScope` instead of `TestSuite`
+
+Change extension functions like `TestSuite.myCustomTest()` to `TestSuiteScope.myCustomTest()`. This makes them compatible with the new fixture scopes and other custom scopes.
+
+!!! note
+
+    While this change may not be necessary initially (if you do not yet use `TestSuiteScope`), applying it right away avoids incompatibilities later on. Please change all usages.
+
+#### Prefer test-level fixtures over custom test functions
+
+The following change is optional, but simplifies your code:
 
 === "TestBalloon 0.7.x"
 
@@ -66,10 +76,6 @@
         }
     }
     ```
-
-#### Use `TestSuiteScope` (optional)
-
-Change extension functions like `TestSuite.myCustomTest()` to `TestSuiteScope.myCustomTest()`. This makes them compatible with the new fixture scopes and other custom scopes.
 
 ### `TestConfig` changes 
 

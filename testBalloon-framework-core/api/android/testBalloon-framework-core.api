@@ -128,7 +128,7 @@ public final class de/infix/testBalloon/framework/core/TestFixture {
 	public final fun asContextForEach (Lkotlin/jvm/functions/Function1;)Lde/infix/testBalloon/framework/core/TestFixture;
 	public final fun asParameterForAll (Lkotlin/jvm/functions/Function1;)Lde/infix/testBalloon/framework/core/TestFixture;
 	public final fun asParameterForEach (Lkotlin/jvm/functions/Function1;)Lde/infix/testBalloon/framework/core/TestFixture;
-	public final fun closeWith (Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestFixture;
+	public final fun closeWith (Lkotlin/jvm/functions/Function3;)Lde/infix/testBalloon/framework/core/TestFixture;
 	public final fun invoke (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

@@ -204,3 +204,32 @@ If you define tags(1) and a `TestConfig` extension like this,
 ```kotlin
 --8<-- "EffectiveTesting.kt:tag-based-tests"
 ```
+
+## Use a temporary directory (and keep it on failures)
+
+Some tests require a temporary directory. Let's suppose you want to keep it for inspection if there were test failures – but not on CI. Let's also require the directory name to identify the test by default.
+
+Create a test fixture for the directory, deleting it at the end of its lifecycle (its test or test suite):
+
+```kotlin
+--8<-- "EffectiveTestingJvm.kt:temporary-directory-fixture"
+```
+
+1. Prefixes the directory with a name identifying the test suite.
+2. The directory (a `Path`) is the fixture's value.
+3. Show the path on failures for easy inspection. 
+
+If you need a directory per test, use it like this:
+
+```kotlin
+--8<-- "EffectiveTestingJvm.kt:temporary-directory-per-test"
+```
+
+If you need a directory per test suite, use it like this:(1)
+{ .annotate }
+
+1. You can also use the others variants like [`asParameterForAll`](../getting-started/fixtures.md#suite-level-fixtures).
+
+```kotlin
+--8<-- "EffectiveTestingJvm.kt:temporary-directory-per-suite"
+```

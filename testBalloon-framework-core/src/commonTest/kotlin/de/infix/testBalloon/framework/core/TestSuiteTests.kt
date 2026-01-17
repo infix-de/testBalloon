@@ -749,6 +749,112 @@ class TestSuiteTests {
     }
 
     @Test
+    fun fixturesWithCloseResult() = withTestFramework {
+        val results = ConcurrentList<String>()
+
+        fun TestSuite.testFixtureChecking() = testFixture {} closeWith { testsSucceeded ->
+            results.add(
+                "${testElementPath.toString().replace(Constants.ESCAPED_SPACE, ' ')} testsSucceeded=$testsSucceeded"
+            )
+        }
+
+        fun TestSuiteScope.testSeries(suiteLevelFixture: TestFixture<Unit>, testSuccesses: List<Boolean>) {
+            testSuccesses.forEachIndexed { index, testSuccess ->
+                test("test-$index") {
+                    suiteLevelFixture()
+                    if (!testSuccess) {
+                        fail("test-$index failing")
+                    }
+                }
+            }
+        }
+
+        fun testSuiteWithTestLevelFixture(name: String, testSuccesses: List<Boolean>): TestSuite =
+            testSuite("test-level, $name") {
+                testFixtureChecking() asParameterForEach {
+                    testSuccesses.forEachIndexed { index, testSuccess ->
+                        test("test-$index") {
+                            if (!testSuccess) {
+                                fail("test-$index failing")
+                            }
+                        }
+                    }
+                }
+            }.value
+
+        fun testSuiteWithSuiteLevelFixture(name: String, testSuccesses: List<Boolean>): TestSuite =
+            testSuite("suite-level, $name") {
+                val fixture = testFixtureChecking()
+                testSeries(suiteLevelFixture = fixture, testSuccesses)
+            }.value
+
+        fun testSuiteWithSuiteLevelFixtureAndSubSuite(name: String, testSuccesses: List<Boolean>): TestSuite =
+            testSuite("suite-level+sub, $name") {
+                val fixture = testFixtureChecking()
+                testSuite("sub") {
+                    testSeries(suiteLevelFixture = fixture, testSuccesses)
+                }
+            }.value
+
+        fun testSuiteWithSuiteLevelFixtureAndSubSubSuite(name: String, testSuccesses: List<Boolean>): TestSuite =
+            testSuite("suite-level+sub+sub, $name") {
+                val fixture = testFixtureChecking()
+                testSuite("sub") {
+                    testSuite("sub") {
+                        testSeries(suiteLevelFixture = fixture, testSuccesses)
+                    }
+                }
+            }.value
+
+        val suites = mapOf(
+            "single test, success, 1" to listOf(true),
+            "single test, success, 2" to listOf(true, true),
+            "single test, failure, 1" to listOf(false),
+            "single test, failure, 2" to listOf(false, true),
+            "single test, failure, 3" to listOf(true, false)
+        ).flatMap { (name, testSuccesses) ->
+            listOf(
+                testSuiteWithTestLevelFixture(name, testSuccesses),
+                testSuiteWithSuiteLevelFixture(name, testSuccesses),
+                testSuiteWithSuiteLevelFixtureAndSubSuite(name, testSuccesses),
+                testSuiteWithSuiteLevelFixtureAndSubSubSuite(name, testSuccesses)
+            )
+        }
+
+        withTestReport(*suites.toTypedArray()) {
+            // println(results.elements().joinToString("\n") { "\"$it\"," })
+            assertContentEquals(
+                listOf(
+                    "«test-level, single test, success, 1» testsSucceeded=true",
+                    "«suite-level, single test, success, 1» testsSucceeded=true",
+                    "«suite-level+sub, single test, success, 1» testsSucceeded=true",
+                    "«suite-level+sub+sub, single test, success, 1» testsSucceeded=true",
+                    "«test-level, single test, success, 2» testsSucceeded=true",
+                    "«test-level, single test, success, 2» testsSucceeded=true",
+                    "«suite-level, single test, success, 2» testsSucceeded=true",
+                    "«suite-level+sub, single test, success, 2» testsSucceeded=true",
+                    "«suite-level+sub+sub, single test, success, 2» testsSucceeded=true",
+                    "«test-level, single test, failure, 1» testsSucceeded=false",
+                    "«suite-level, single test, failure, 1» testsSucceeded=false",
+                    "«suite-level+sub, single test, failure, 1» testsSucceeded=false",
+                    "«suite-level+sub+sub, single test, failure, 1» testsSucceeded=false",
+                    "«test-level, single test, failure, 2» testsSucceeded=false",
+                    "«test-level, single test, failure, 2» testsSucceeded=true",
+                    "«suite-level, single test, failure, 2» testsSucceeded=false",
+                    "«suite-level+sub, single test, failure, 2» testsSucceeded=false",
+                    "«suite-level+sub+sub, single test, failure, 2» testsSucceeded=false",
+                    "«test-level, single test, failure, 3» testsSucceeded=true",
+                    "«test-level, single test, failure, 3» testsSucceeded=false",
+                    "«suite-level, single test, failure, 3» testsSucceeded=false",
+                    "«suite-level+sub, single test, failure, 3» testsSucceeded=false",
+                    "«suite-level+sub+sub, single test, failure, 3» testsSucceeded=false"
+                ),
+                results.elements()
+            )
+        }
+    }
+
+    @Test
     fun suiteLevelFixtureActionFailure() = withTestFramework {
         var failCount = 0
         var closeCount = 0

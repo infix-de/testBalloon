@@ -296,7 +296,7 @@ public open class TestSuite internal constructor(
             withContext(NonCancellable) {
                 for (fixture in this@TestSuite.suiteLevelFixtures) {
                     try {
-                        fixture.close()
+                        fixture.close(this@TestSuite.executedSuccessfully())
                     } catch (closeException: Throwable) {
                         if (actionException == null) {
                             actionException = closeException

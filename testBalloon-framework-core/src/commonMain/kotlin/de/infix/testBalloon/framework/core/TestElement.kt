@@ -7,6 +7,7 @@ import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.safeAsInternalId
 import de.infix.testBalloon.framework.shared.internal.safelyTransformed
+import kotlinx.atomicfu.atomic
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -33,6 +34,19 @@ public sealed class TestElement(
     internal val testElementDisplayName: String =
         parent?.uniqueChildName(displayName.lengthLimited(), TestSuite.ChildNameType.Display)
             ?: displayName.lengthLimited()
+
+    /**
+     * `true`, if the element (including all of its child elements) executed successfully so far.
+     */
+    private val executedSuccessfully = atomic(true)
+
+    internal fun executedSuccessfully() = executedSuccessfully.value
+
+    internal fun registerFailure() {
+        if (executedSuccessfully.compareAndSet(expect = true, update = false)) {
+            testElementParent?.registerFailure()
+        }
+    }
 
     /**
      * A path uniquely identifying a test element in its test hierarchy.
@@ -333,6 +347,7 @@ public sealed class TestElement(
                 action()
                 Event.Finished(this, startingEvent).addToReports()
             } catch (throwable: Throwable) {
+                registerFailure()
                 Event.Finished(this, startingEvent, throwable).addToReports()
                 if (throwable is FailFastException) throw throwable
             }

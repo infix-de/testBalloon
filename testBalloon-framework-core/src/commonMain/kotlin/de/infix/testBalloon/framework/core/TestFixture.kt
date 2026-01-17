@@ -67,7 +67,7 @@ public class TestFixture<Value : Any> internal constructor(
     private var suiteLevelValue: Value? = null
     private val suiteLevelValueMutex = Mutex()
 
-    private var close: suspend Value.() -> Unit = { (this as? AutoCloseable)?.close() }
+    private var close: suspend Value.(testsSucceeded: Boolean) -> Unit = { (this as? AutoCloseable)?.close() }
 
     /**
      * Returns the value of `this` fixture, which is implied to be a suite-level fixture.
@@ -330,18 +330,25 @@ public class TestFixture<Value : Any> internal constructor(
         }
     }
 
-    /** Registers [action] to be called when this fixture's lifetime ends. */
-    public infix fun closeWith(action: suspend Value.() -> Unit): TestFixture<Value> {
+    /**
+     * Registers [action] to be called when this fixture's lifetime ends.
+     *
+     * [action] is provided with a `testsSucceeded` parameter. It is `true` if the closing test (of a test-level
+     * fixture) or all tests of the closing suite (for a suite-level fixture) were successful.
+     * Example use case: A fixture representing a file or directory, which usually gets cleared, but should be kept
+     * for inspection in case of failures.
+     */
+    public infix fun closeWith(action: suspend Value.(testsSucceeded: Boolean) -> Unit): TestFixture<Value> {
         close = action
         return this
     }
 
-    internal suspend fun close() {
+    internal suspend fun close(testsSucceeded: Boolean) {
         require(level != Level.Test) { "$testSuite: close() cannot be used with a test-level fixture." }
 
         suiteLevelValue?.let {
             suiteLevelValue = null
-            it.close()
+            it.close(testsSucceeded)
         }
     }
 
@@ -412,7 +419,7 @@ public class TestFixture<Value : Any> internal constructor(
         } finally {
             withContext(NonCancellable) {
                 try {
-                    value?.close()
+                    value?.close(actionException == null)
                 } catch (closeException: Throwable) {
                     if (actionException == null) {
                         actionException = closeException

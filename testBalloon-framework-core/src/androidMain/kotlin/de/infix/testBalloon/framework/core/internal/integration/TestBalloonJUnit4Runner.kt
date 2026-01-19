@@ -155,10 +155,10 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
         Description.createTestDescription(
             topLevelSuiteReportingName,
             when {
-                testInfrastructureIsAndroidDevice -> testElementPath.reportingNameWithoutTopLevelSuite
+                testInfrastructureIsAndroidDevice -> testElementPath.reportingNameBelowTopLevel
 
                 TestSession.global.reportingMode == ReportingMode.IntellijIdea -> {
-                    reportingCoordinates(mode = TestElement.CoordinatesMode.QualifiedWithoutTopLevelPackage)
+                    reportingCoordinates(mode = TestElement.CoordinatesMode.WithoutTopLevelPackage)
                 }
 
                 else -> testElementPath.elementReportingName

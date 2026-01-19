@@ -2,6 +2,7 @@ package de.infix.testBalloon.framework.core
 
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.reportingPathLimit
+import de.infix.testBalloon.framework.core.internal.reportingPathLimitBelowTopLevel
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
@@ -30,10 +31,10 @@ public sealed class TestElement(
     }
 
     internal val testElementParent: TestSuite? = parent
-    internal val testElementName: String = parent?.uniqueChildName(name, TestSuite.ChildNameType.Element) ?: name
+    internal val testElementName: String = parent?.childElementNamesRegistry?.uniqueName(name) ?: name
     internal val testElementDisplayName: String =
-        parent?.uniqueChildName(displayName.lengthLimited(), TestSuite.ChildNameType.Display)
-            ?: displayName.lengthLimited()
+        parent?.childDisplayNamesRegistry?.uniqueName(displayName.asLengthLimitedReportingPathName())
+            ?: displayName.asLengthLimitedReportingPathName()
 
     /**
      * `true`, if the element (including all of its child elements) executed successfully so far.
@@ -58,30 +59,59 @@ public sealed class TestElement(
          * This path's internal ID, with as little transformation as possible, but safe for low-level infrastructure.
          */
         internal val internalId: String by lazy {
-            flattened(separator = INTERNAL_PATH_ELEMENT_SEPARATOR_STRING) { testElementName.safeAsInternalId() }
+            asString(separator = INTERNAL_PATH_ELEMENT_SEPARATOR_STRING) { testElementName.safeAsInternalId() }
         }
 
         /**
-         * This path's fully qualified reporting name, including the top-level package name, if present.
+         * This path's fully qualified reporting name, including the top-level suite's package name, if present.
          */
         internal val reportingNameWithTopLevelPackage: String by lazy {
-            flattened(separator = REPORTING_SEPARATOR) { externalizedName(includeTopLevelPackageName = true) }
+            asString(separator = REPORTING_SEPARATOR) { externalizedName(includeTopLevelPackageName = true) }
         }
 
         /**
-         * This path's partially qualified reporting name, excluding a top-level package name.
+         * This path's unqualified reporting name, excluding a top-level suite's package name.
          */
         internal val reportingNameWithoutTopLevelPackage: String by lazy {
-            flattened(separator = REPORTING_SEPARATOR) { externalizedName(includeTopLevelPackageName = false) }
+            asString(separator = REPORTING_SEPARATOR) { externalizedName(includeTopLevelPackageName = false) }
         }
 
         /**
-         * This path's partially qualified reporting name, excluding the top-level element name.
+         * This path's reporting name, excluding the top-level suite name, made globally unique.
+         *
+         * This name is used exclusively in Android device tests. To avoid crashing the Android test infrastructure,
+         * the name
+         * - must not exceed a certain length, and
+         * - it must be globally unique.
+         *
+         * For details, see comment for `defaultReportingPathLimitBelowTopLevel` in `TestFramework.android.kt`.
          */
-        internal val reportingNameWithoutTopLevelSuite: String by lazy {
-            flattened(separator = REPORTING_SEPARATOR, topLevelStrippingEnabled = true) {
-                externalizedName(includeTopLevelPackageName = false)
+        internal val reportingNameBelowTopLevel: String by lazy {
+            val parentReportingNameBelowTopLevel = element.testElementParent?.takeIf { !it.isTopLevelSuite }
+                ?.testElementPath?.reportingNameBelowTopLevel
+            val originalName = buildString {
+                if (parentReportingNameBelowTopLevel != null) {
+                    append(parentReportingNameBelowTopLevel)
+                    append(REPORTING_SEPARATOR)
+                }
+                append(element.externalizedName(includeTopLevelPackageName = false))
             }
+            val originalUniquePathLength = originalName.length + TestSuite.UNIQUE_APPENDIX_LENGTH_LIMIT
+
+            val candidateName = if (originalUniquePathLength <= reportingPathLimitBelowTopLevel) {
+                originalName
+            } else {
+                val newSafeNameLength =
+                    originalName.length - (originalUniquePathLength - reportingPathLimitBelowTopLevel) - 1 /*ellipsis*/
+                require(newSafeNameLength >= 0) {
+                    "Could not produce a test element path starting below the top level, which observes the" +
+                        " length limit of $reportingPathLimitBelowTopLevel characters.\n" +
+                        "\tElement path: `$originalName`"
+                }
+                originalName.dropLast(originalName.length - newSafeNameLength) + "…"
+            }
+
+            TestSession.global.reportingNamesBelowTopLevelRegistry.uniqueName(candidateName)
         }
 
         /**
@@ -100,26 +130,26 @@ public sealed class TestElement(
                 if (this is Test) {
                     testElementDisplayName.safeAsTestDisplayName()
                 } else {
-                    // lower-level suite
+                    // lower-level suite or top-level suite without package name
                     testElementDisplayName.safeAsLowerLevelSuiteDisplayName()
                 }
             }
 
-        private fun flattened(
+        private fun asString(
             separator: String,
-            topLevelStrippingEnabled: Boolean = false,
+            topLevelSuiteExcluded: Boolean = false,
             elementName: TestElement.() -> String
         ): String = if (element.testElementParent == null ||
             element.isTopLevelSuite ||
-            (topLevelStrippingEnabled && element.testElementParent.isTopLevelSuite)
+            (topLevelSuiteExcluded && element.testElementParent.isTopLevelSuite)
         ) {
             element.elementName()
         } else {
             buildString {
                 append(
-                    element.testElementParent.testElementPath.flattened(
+                    element.testElementParent.testElementPath.asString(
                         separator = separator,
-                        topLevelStrippingEnabled = topLevelStrippingEnabled,
+                        topLevelSuiteExcluded = topLevelSuiteExcluded,
                         elementName = elementName
                     )
                 )
@@ -138,8 +168,7 @@ public sealed class TestElement(
 
     internal enum class CoordinatesMode {
         FullyQualified,
-        QualifiedWithoutTopLevelPackage,
-        QualifiedWithoutTopLevelSuite,
+        WithoutTopLevelPackage,
         DisplayName
     }
 
@@ -163,8 +192,7 @@ public sealed class TestElement(
         append(
             when (if (this@TestElement is TestSuite) suiteMode else testMode) {
                 CoordinatesMode.FullyQualified -> testElementPath.reportingNameWithTopLevelPackage
-                CoordinatesMode.QualifiedWithoutTopLevelPackage -> testElementPath.reportingNameWithoutTopLevelPackage
-                CoordinatesMode.QualifiedWithoutTopLevelSuite -> testElementPath.reportingNameWithoutTopLevelSuite
+                CoordinatesMode.WithoutTopLevelPackage -> testElementPath.reportingNameWithoutTopLevelPackage
                 CoordinatesMode.DisplayName -> testElementDisplayName
             }
         )
@@ -354,7 +382,13 @@ public sealed class TestElement(
         }
     }
 
-    private fun String.lengthLimited(): String {
+    /**
+     * Returns the length-limited name considered path of the element's reporting path.
+     *
+     * The length limitation ensures that the resulting reporting path, ending with [this] name, and appended
+     * with a unique appendix, stays within the length limits, if possible.
+     */
+    private fun String.asLengthLimitedReportingPathName(): String {
         val parentPathPlusSeparatorLength = testElementParent?.testElementPath?.reportingNameWithTopLevelPackage?.length
             ?.plus(Path.REPORTING_SEPARATOR_LENGTH)
             ?: 0

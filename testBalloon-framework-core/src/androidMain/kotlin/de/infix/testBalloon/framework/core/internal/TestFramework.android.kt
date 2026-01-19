@@ -40,12 +40,6 @@ internal actual fun handleFrameworkLevelError(throwable: Throwable) {
     exitProcess(3)
 }
 
-// Test element paths exceeding a certain length crash Android device-side Tests.
-// The exact length depends on the number of elements in the path (hierarchical depth). It is around 242
-// characters for a hierarchy of depth 3, reduced by 4 characters per extra hierarchy level.
-// Not knowing the hierarchy depth here, we try to be safe and stay well below the maximum possible number.
-internal actual val defaultReportingPathLimit: Int? = 200
-
 // The Android test infrastructure uses `RunListener`s to finish activities. The entire mechanism is thread-based
 // and expects test events to appear synchronously.
 internal actual val testInfrastructureSupportsConcurrency: Boolean = false
@@ -55,3 +49,28 @@ internal val instrumentationArguments: Bundle? by lazy {
 }
 
 internal actual val testInfrastructureIsAndroidDevice: Boolean = instrumentationArguments != null
+
+internal actual val defaultReportingPathLimit: Int? = null
+
+/**
+ * Default maximum length of the reporting path, excluding the top-level suite name, supported by the platform, or null.
+ *
+ * A path exceeding a certain limit crashes the Android device test run. The exact cause has not been determined, but
+ * crashes have been observed with
+ * - Gradle-managed devices,
+ * - below-top-level path lengths exceeding 138 characters,
+ * - below-top-level paths not being globally unique.
+ *
+ * A secondary restriction exists to avoid TraceRunListener warnings "Span name exceeds limits".
+ * Android's TraceRunListener tries to get a class name by calling `description.getTestClass().getSimpleName()`
+ * instead of `description.getClassName()`. Since there is no test class in TestBalloon, the former fails, and
+ * TraceRunListener uses the constant `None` as a "test class" name. "Test class" and "test method" names
+ * concatenated by `#` may not exceed 127 characters.
+ * See https://github.com/android/android-test/blob/5b83cd99b2f6df8a7ce910f7b34917b30d73f0ad/runner/android_junit_runner/java/androidx/test/internal/runner/listener/TraceRunListener.java#L29
+ */
+internal actual val defaultReportingPathLimitBelowTopLevel: Int? =
+    if (testInfrastructureIsAndroidDevice) {
+        127 - "None#".length
+    } else {
+        null
+    }

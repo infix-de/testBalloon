@@ -238,7 +238,7 @@ private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestEle
     val displayName = when (TestSession.global.reportingMode) {
         ReportingMode.IntellijIdeaLegacy -> testElementDisplayName
         ReportingMode.IntellijIdea -> reportingCoordinates(mode = TestElement.CoordinatesMode.DisplayName)
-        else -> testElementPath.reportingNameWithoutTopLevelSuite
+        else -> testElementPath.reportingNameBelowTopLevel
     }
 
     return TestElementJUnitPlatformDescriptor(

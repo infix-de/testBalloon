@@ -102,23 +102,37 @@ internal expect val defaultReportingPathLimit: Int?
  * Maximum length of the test element path in reporting.
  */
 internal val reportingPathLimit: Int =
-    EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.value()?.let { value ->
-        try {
-            value.toInt()
-                .also { require(it > 0) }
-                .also {
-                    logInfo { "${testPlatform.displayName}: Reporting path limit set to $it characters." }
-                }
-        } catch (_: IllegalArgumentException) {
-            throw IllegalArgumentException(
-                "The environment variable '${EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT}'" +
-                    " contains the value '$value', which is unsupported.\n" +
-                    "\tPlease choose a positive integer value."
-            )
-        }
-    }
+    EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.positiveIntValue()
         ?: defaultReportingPathLimit
         ?: Int.MAX_VALUE
+
+/**
+ * Default maximum length of the reporting path, excluding the top-level suite name, supported by the platform, or null.
+ */
+internal expect val defaultReportingPathLimitBelowTopLevel: Int?
+
+/**
+ * Maximum length of the reporting path, excluding the top-level suite name.
+ */
+internal val reportingPathLimitBelowTopLevel: Int =
+    EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT_BELOW_TOP_LEVEL.positiveIntValue()
+        ?: defaultReportingPathLimitBelowTopLevel
+        ?: Int.MAX_VALUE
+
+private fun EnvironmentVariable.positiveIntValue() = value()?.let { value ->
+    try {
+        value.toInt()
+            .also { require(it > 0) }
+            .also {
+                logInfo { "${testPlatform.displayName}: $name=$it" }
+            }
+    } catch (_: IllegalArgumentException) {
+        throw IllegalArgumentException(
+            "The environment variable '$name' contains the value '$value', which is unsupported.\n" +
+                "\tPlease choose a positive integer value."
+        )
+    }
+}
 
 internal expect val testInfrastructureSupportsConcurrency: Boolean
 

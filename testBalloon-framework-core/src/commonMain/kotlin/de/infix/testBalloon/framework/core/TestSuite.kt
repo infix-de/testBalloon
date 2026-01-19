@@ -13,6 +13,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
+import kotlin.collections.set
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -104,10 +105,6 @@ public open class TestSuite internal constructor(
 
     private var enabledChildExists: Boolean = false
 
-    private val childElementNameCount: MutableMap<String, Int> = mutableMapOf()
-
-    private val childDisplayNameCount: MutableMap<String, Int> = mutableMapOf()
-
     /**
      * The test suite's [CoroutineScope], valid only during the suite's execution.
      *
@@ -130,30 +127,29 @@ public open class TestSuite internal constructor(
     internal val suiteLevelFixtures = mutableListOf<TestFixture<*>>()
     internal val suiteLevelFixturesMutex = Mutex()
 
-    internal enum class ChildNameType {
-        Element,
-        Display
-    }
+    internal val childElementNamesRegistry = PotentiallyDuplicateNamesRegistry()
+    internal val childDisplayNamesRegistry = PotentiallyDuplicateNamesRegistry()
 
     /**
-     * Returns a [type] name for [originalName] which is unique among children of this suite.
-     *
-     * Guarantees that [originalName] will not grow beyond [UNIQUE_APPENDIX_LENGTH_LIMIT].
+     * A registry for potentially duplicate names, capable of producing unique names in case of duplications.
      */
-    internal fun uniqueChildName(originalName: String, type: ChildNameType): String {
-        val registeredCount = if (type == ChildNameType.Element) childElementNameCount else childDisplayNameCount
-        val nameCount = (registeredCount[originalName] ?: 0) + 1
-        registeredCount[originalName] = nameCount
-        return if (nameCount == 1) {
-            originalName
-        } else {
-            val appendix = appendix(nameCount)
-            require(appendix.length <= UNIQUE_APPENDIX_LENGTH_LIMIT) {
-                "$this failed to provide a unique name. The required appendix '$appendix' is longer" +
-                    " than $UNIQUE_APPENDIX_LENGTH_LIMIT characters.\n" +
-                    "\tOriginal name: $originalName"
+    internal class PotentiallyDuplicateNamesRegistry {
+        private val nameCounts: MutableMap<String, Int> = mutableMapOf()
+
+        internal fun uniqueName(originalName: String): String {
+            val nameCount = (nameCounts[originalName] ?: 0) + 1
+            nameCounts[originalName] = nameCount
+            return if (nameCount == 1) {
+                originalName
+            } else {
+                val appendix = appendix(nameCount)
+                require(appendix.length <= UNIQUE_APPENDIX_LENGTH_LIMIT) {
+                    "$this failed to provide a unique name. The required appendix '$appendix' is longer" +
+                        " than $UNIQUE_APPENDIX_LENGTH_LIMIT characters.\n" +
+                        "\tOriginal name: $originalName"
+                }
+                "$originalName$appendix"
             }
-            "$originalName$appendix"
         }
     }
 

@@ -55,6 +55,8 @@ public open class TestSession protected constructor(
             }
             ?: ReportingMode.Files
 
+    internal val reportingNamesBelowTopLevelRegistry = PotentiallyDuplicateNamesRegistry()
+
     init {
         if (singleton != null) {
             throw IllegalArgumentException(

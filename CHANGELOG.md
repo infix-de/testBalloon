@@ -1,50 +1,16 @@
-## 0.8.0-RC
+## 0.8.0 (January 21, 2026)
 
-_This release candidate is available for Kotlin 2.3.0 and 2.3.20-Beta1 only. Other Kotlin versions will follow with the final release._
+TestBalloon release variants:
 
-### Upgrading
-
-Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0-RC/how-to/upgrading/).
-
-### Breaking
-
-Former deprecations were removed:
-
-* Class declarations for top-level test suites,
-* `dispatcherWithParallelism()`,
-* `aroundAll` inside a test suite,
-* `testConfig` assignments inside a test suite,
-* `TEST_INCLUDE` environment variable.
-
-### Changes since 0.8.0-Beta2
-
-* Together with IntelliJ plugin version 0.5.0, the actions "Run", "Debug" and "Jump to source" work from the test run window's results tree view (except for Android device tests). In addition, test run gutter icons display the test status for JVM targets, except Android device test runs.
-    * This feature requires a new report format, which is less readable if the new IntelliJ plugin is not installed. In the latter case, setting the Gradle property `testBalloon.reportingMode=intellij-legacy` restores the previous human-readable output format.
-* The incubating Gradle JVM Test Suite Plugin is supported by setting a Gradle property containing the Gradle test suite names as a regular expression.
-    * Example: `testBalloon.gradleTestSuiteNamesRegex=integrationTest|anotherGradleSuite`.
-
-## 0.8.0-Beta2
-
-_This beta release is available for Kotlin 2.3.0 only. Other Kotlin versions follow with the final release._
-
-### Upgrading
-
-Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0-Beta1/how-to/upgrading/).
-
-### Fixes since 0.8.0-Beta1
-
-* (Android) The total test count is now correctly displayed, avoiding a false positive failure report.
-* Running individual tests is now supported on Apple simulator targets. (#53)
-* Potentially unsafe characters are now escaped in file-based reporting. (#42)
-* Empty or blank test names are now reported with a more helpful message. (#51)
-
-## 0.8.0-Beta1
-
-_This beta release is available for Kotlin 2.3.0 only. Other Kotlin versions follow with the final release._
-
-### Upgrading
-
-Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0-Beta1/how-to/upgrading/).
+| TestBalloon version  | Supported Kotlin versions |
+|----------------------|---------------------------|
+| 0.8.0-K2.3.20-Beta1  | 2.3.20-Beta1              |
+| 0.8.0-K2.3.0         | 2.3.0                     |
+| 0.8.0-K2.2.21        | 2.2.21                    |
+| 0.8.0-K2.2.0         | 2.2.0 … 2.2.20            |
+| 0.8.0-K2.1.20        | 2.1.20 … 2.1.21           |
+| 0.8.0-K2.1.0         | 2.1.0 … 2.1.10            |
+| 0.8.0-K2.0.0         | 2.0.0 … 2.0.21            |
 
 ### Highlights
 
@@ -54,22 +20,42 @@ Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix
 * The **API surface** was streamlined with fewer top-level declarations and scoped naming.
 * **Migration documentation** is provided for test setups using **JUnit 4/5/6** and **kotlin.test**. The section on **Kotest** migration was also updated.
 
+### Upgrading
+
+Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0/how-to/upgrading/).
+
+### Breaking Changes
+
+Former deprecations were removed:
+
+* Class declarations for top-level test suites,
+* `dispatcherWithParallelism()`,
+* `aroundAll` inside a test suite (superseded by `aroundAll` as part of the `testConfig` parameter),
+* `testConfig` assignments inside a test suite (superseded by the `testConfig` parameter),
+* `TEST_INCLUDE` environment variable (superseded by `TESTBALLOON_INCLUDE_PATTERNS`).
+
 ### Other Changes
 
 #### Android
 
 * Android host-side tests (a.k.a. unit tests) now correctly use JUnit 4 instead of JUnit platform.
-* Concurrent/parallel invocation is now ignored for Android tests, as it apparently conflicts with the Android test infrastructure's handling of Activities, leading to delays and potential hangups.
+* Concurrent/parallel test invocations are now ignored for Android tests, as this apparently conflicts with the Android test infrastructure's handling of Activities, leading to delays and potential hangups (concurrency/parallelism remains available inside tests, of course).
 * Examples using the deprecated combination of `com.android.application` and `org.jetbrains.kotlin.multiplatform` Gradle plugins were removed.
+
+#### JVM
+
+* The incubating Gradle JVM Test Suite Plugin is supported by setting a Gradle property containing the Gradle test suite names as a regular expression.
+    * Example: `testBalloon.gradleTestSuiteNamesRegex=integrationTest|anotherGradleSuite`.
 
 #### General
 
+* Together with IntelliJ plugin version 0.5.0, the actions "Run", "Debug" and "Jump to source" work from the test run window's results tree view (except for Android device tests). In addition, test run gutter icons display the test status for JVM targets, except Android device test runs.
+    * This feature requires a new report format, which is less readable if the new IntelliJ plugin is not installed. In the latter case, setting the Gradle property `testBalloon.reportingMode=intellij-legacy` restores the previous human-readable output format.
 * Running individual tests from gutter icons and cross-framework test filtering is now supported with multiple test frameworks in the same module for
     * Android host-side tests (coexistence with other JUnit 4 runners),
     * JVM tests (coexistence with other JUnit Platform-based frameworks like JUnit Jupiter).
 * The consistency of file-based reports across test platforms was improved.
 * Configuring concurrent invocation now disables `TestScope`, avoiding possible hangups due to thread starvation. (#49)
-* Migrated to Kotlin 2.3.0.
 
 ### Deprecations
 
@@ -80,6 +66,10 @@ Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix
 
 * (JVM-only projects) Incremental compilation will no longer miss tests. (#47)
 * (Android) Display name length limiting in test reports now works correctly. (#44)
+* (Android) The total test count is now correctly displayed, avoiding a false positive failure report.
+* Running individual tests is now supported on Apple simulator targets. (#53)
+* Potentially unsafe characters are now escaped in file-based reporting. (#42)
+* Empty or blank test names are now reported with a more helpful message. (#51)
 
 ## TestBalloon 0.7.1 (November 5, 2025, updated for K2.3.0 on December 17, 2025)
 

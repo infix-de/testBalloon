@@ -6,7 +6,7 @@ Like Kotest, TestBalloon is DSL-based and offers a choice of assertion libraries
 
     !!! tip
 
-        [TestBalloon Addons](https://github.com/a-sit-plus/testballoon-addons) by A-SIT Plus is a ready-to-use library which provides a translation for `FreeSpec`.
+        [TestBalloon Addons](https://github.com/a-sit-plus/testballoon-addons) by A-SIT Plus is a ready-to-use library which provides a translation for `FreeSpec`, plus replacements for Kotest's data-driven and property test functions.
 
 * You can **keep your assertion library** (if it is Kotest Assertions, TestBalloon has [an integration for it](../getting-started/first-steps.md/#kotest-assertions)).
 

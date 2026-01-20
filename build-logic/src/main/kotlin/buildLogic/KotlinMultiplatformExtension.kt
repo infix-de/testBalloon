@@ -72,7 +72,7 @@ fun KotlinMultiplatformExtension.enableAbiValidation() {
     extensions.configure<AbiValidationMultiplatformExtension>("abiValidation") {
         enabled.set(true)
         filters {
-            exclude {
+            excluded {
                 byNames.add(TestBalloonInternalApi::class.qualifiedName!!)
                 annotatedWith.add(TestBalloonInternalApi::class.qualifiedName!!)
             }

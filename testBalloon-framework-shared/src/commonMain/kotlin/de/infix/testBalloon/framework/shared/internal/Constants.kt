@@ -22,6 +22,8 @@ public object Constants {
 
     public const val JUNIT_ENGINE_ID: String = "de.infix.testBalloon"
 
+    public const val NATIVE_ENTRY_POINT_PROPERTY_NAME: String = "testFrameworkNativeEntryPoint"
+
     public const val GRADLE_EXTENSION_NAME: String = "testBalloon"
     public const val GRADLE_PROPERTY_PREFIX: String = "testBalloon"
 

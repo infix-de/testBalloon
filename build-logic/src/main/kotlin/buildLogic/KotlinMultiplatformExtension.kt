@@ -41,6 +41,11 @@ fun KotlinMultiplatformExtension.nativeTargets() {
     androidNativeX64()
     mingwX64()
     watchosDeviceArm64()
+    // Tier 3 – scheduled for removal in Kotlin 2.4.0
+    macosX64()
+    iosX64()
+    watchosX64()
+    tvosX64()
 }
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)

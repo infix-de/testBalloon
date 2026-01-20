@@ -27,6 +27,8 @@ public object Constants {
 
     public const val COMPILER_PLUGIN_NAME: String = TESTBALLOON_QUALIFIED_NAME
 
+    public const val NATIVE_ENTRY_POINT_PROPERTY_NAME: String = "testFrameworkNativeEntryPoint"
+
     public const val GRADLE_EXTENSION_NAME: String = TESTBALLOON_SIMPLE_NAME
     public const val GRADLE_PROPERTY_PREFIX: String = TESTBALLOON_SIMPLE_NAME
 

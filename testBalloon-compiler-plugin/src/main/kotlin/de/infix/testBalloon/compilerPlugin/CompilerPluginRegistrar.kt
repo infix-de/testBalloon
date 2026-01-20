@@ -9,11 +9,6 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
-import org.jetbrains.kotlin.fir.moduleData
 
 @OptIn(ExperimentalCompilerApi::class)
 class CompilerPluginRegistrar : CompilerPluginRegistrar() {
@@ -24,7 +19,6 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
         val disablingReason = Options.disablingReason.value(configuration)
 
         if (disablingReason.isEmpty()) {
-            FirExtensionRegistrarAdapter.registerExtension(CompilerPluginFirExtensionRegistrar(configuration))
             IrGenerationExtension.registerExtension(CompilerPluginIrGenerationExtension(configuration))
         } else {
             val messageCollector = configuration.get(
@@ -41,21 +35,4 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
             }
         }
     }
-}
-
-class CompilerPluginFirExtensionRegistrar(val configuration: CompilerConfiguration) : FirExtensionRegistrar() {
-    override fun ExtensionRegistrarContext.configurePlugin() {
-        +FirDeclarationGenerationExtension.Factory { session ->
-            val isTargetTestModule = !session.moduleData.isCommon
-
-            if (isTargetTestModule) {
-                CompilerPluginFrontendExtension(session)
-            } else {
-                NoOpFirDeclarationGenerationExtension(session)
-            }
-        }
-    }
-
-    private class NoOpFirDeclarationGenerationExtension(session: FirSession) :
-        FirDeclarationGenerationExtension(session)
 }

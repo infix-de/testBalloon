@@ -28,7 +28,7 @@ jobs:
         run: ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
 
       - name: 'Check ABI compatibility'
-        run: ./gradlew checkKotlinAbi
+        run: ./gradlew checkLegacyAbi
 
       - name: 'Check code style consistency'
         run: ./gradlew lintKotlin
@@ -78,7 +78,7 @@ jobs:
         run: ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
 
       - name: 'Check ABI compatibility'
-        run: ./gradlew checkKotlinAbi
+        run: ./gradlew checkLegacyAbi
 
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets

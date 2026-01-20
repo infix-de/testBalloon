@@ -744,12 +744,10 @@ private class ModuleTransformer(
 private interface ModuleWideSymbolResolving : Reporting {
     val pluginContext: IrPluginContext
 
-    private val declarationFinder get() = pluginContext.finderForBuiltins()
-
     fun irClassSymbol(kClass: KClass<*>): IrClassSymbol = irClassSymbol(kClass.qualifiedName!!)
 
     fun irClassSymbolOrNull(fqName: String): IrClassSymbol? =
-        declarationFinder.findClass(ClassId.topLevel(FqName(fqName)))
+        pluginContext.referenceClass(ClassId.topLevel(FqName(fqName)))
 
     fun irClassSymbol(fqName: String): IrClassSymbol = irClassSymbolOrNull(fqName)
         ?: throw MissingFrameworkSymbol("class '$fqName'")
@@ -758,7 +756,7 @@ private interface ModuleWideSymbolResolving : Reporting {
         irFunctionSymbol(CallableId(FqName(packageName), Name.identifier(functionName)))
 
     fun irFunctionSymbol(callableId: CallableId): IrSimpleFunctionSymbol =
-        declarationFinder.findFunctions(callableId).singleOrElse {
+        pluginContext.referenceFunctions(callableId).singleOrElse {
             if (it.isEmpty()) {
                 throw MissingFrameworkSymbol("function '${callableId.asFqNameForDebugInfo()}'")
             } else {
@@ -771,7 +769,7 @@ private interface ModuleWideSymbolResolving : Reporting {
         }
 
     fun irPropertySymbol(callableId: CallableId): IrPropertySymbol =
-        declarationFinder.findProperties(callableId).singleOrElse {
+        pluginContext.referenceProperties(callableId).singleOrElse {
             if (it.isEmpty()) {
                 throw MissingFrameworkSymbol("property '${callableId.asFqNameForDebugInfo()}'")
             } else {

@@ -74,7 +74,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
@@ -529,7 +528,7 @@ private class ModuleTransformer(
         with(classSymbol.owner) {
             addFunction(
                 name = Constants.JVM_DISCOVERY_RESULT_METHOD_NAME,
-                returnType = configuration.testFrameworkDiscoveryResultClassSymbol.defaultType,
+                returnType = configuration.testFrameworkDiscoveryResultClassSymbol.owner.defaultType,
                 visibility = DescriptorVisibilities.INTERNAL,
                 isStatic = true
             ).apply {
@@ -547,7 +546,7 @@ private class ModuleTransformer(
                     +IrReturnImpl(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
-                        configuration.testFrameworkDiscoveryResultClassSymbol.defaultType,
+                        configuration.testFrameworkDiscoveryResultClassSymbol.owner.defaultType,
                         symbol,
                         irConstructorCall(
                             configuration.testFrameworkDiscoveryResultClassSymbol,
@@ -610,7 +609,7 @@ private class ModuleTransformer(
             addConstructor {
                 isPrimary = true
                 visibility = DescriptorVisibilities.PUBLIC
-                returnType = symbol.defaultType
+                returnType = symbol.owner.defaultType
             }.apply {
                 val irBuilder = DeclarationIrBuilder(pluginContext, symbol, startOffset, endOffset)
                 body = irBuilder.irBlockBody {
@@ -627,9 +626,9 @@ private class ModuleTransformer(
                     IrClassReferenceImpl(
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
-                        type = irBuiltIns.kClassClass.typeWith(testBalloonJUnit4RunnerSymbol.defaultType),
+                        type = irBuiltIns.kClassClass.typeWith(testBalloonJUnit4RunnerSymbol.owner.defaultType),
                         symbol = testBalloonJUnit4RunnerSymbol,
-                        classType = testBalloonJUnit4RunnerSymbol.defaultType
+                        classType = testBalloonJUnit4RunnerSymbol.owner.defaultType
                     )
                 )
         }

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.fileMappingTracker
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -61,7 +60,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.declarations.name
-import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -99,7 +97,6 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
-import java.io.File
 import kotlin.reflect.KClass
 
 class CompilerPluginIrGenerationExtension(private val compilerConfiguration: CompilerConfiguration) :
@@ -173,8 +170,6 @@ private class Configuration(
 
     val debugLevel = Options.debugLevel.value(compilerConfiguration)
     val junit4AutoIntegrationEnabled = Options.junit4AutoIntegrationEnabled.value(compilerConfiguration)
-
-    val fileMappingTracker = compilerConfiguration.fileMappingTracker
 
     val abstractSuiteSymbol = irClassSymbol(AbstractTestSuite::class)
     val abstractSessionSymbol = irClassSymbol(AbstractTestSession::class)
@@ -734,11 +729,9 @@ private class ModuleTransformer(
      *
      * This is required for incremental compilation.
      */
+    @Suppress("unused")
     private fun registerReference(entryPointFile: IrFile, referencedDeclaration: IrDeclarationWithName) {
-        pluginContext.recordLookup(referencedDeclaration, entryPointFile)
-        configuration.fileMappingTracker?.recordSourceReferencedByCompilerPlugin(
-            File(referencedDeclaration.fileParent.path)
-        )
+        // WORKAROUND: IC in Kotlin < 2.3.20-Beta1 does not support compiler plugins generating top-level declarations
     }
 
     fun IrClass.isSameOrSubTypeOf(irSupertypeClassSymbol: IrClassSymbol): Boolean =

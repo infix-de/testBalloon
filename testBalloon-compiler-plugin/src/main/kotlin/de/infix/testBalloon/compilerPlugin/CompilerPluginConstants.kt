@@ -17,5 +17,5 @@ val mainFunctionId = CallableId(
 
 val nativeEntryPointPropertyId = CallableId(
     packageName = entryPointPackageFqName,
-    callableName = Name.identifier("testFrameworkNativeEntryPoint")
+    callableName = Name.identifier(Constants.NATIVE_ENTRY_POINT_PROPERTY_NAME)
 )

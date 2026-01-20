@@ -24,10 +24,9 @@ internal class TestBalloonGradleProperties(val project: Project) {
     /**
      * Name pattern for test compile tasks in which the compiler plugin will disable incremental compilation.
      *
-     * WORKAROUND: Kotlin IC on JS does not support compiler plugins generating top-level declarations
-     *     https://youtrack.jetbrains.com/issue/KT-82395
+     * WORKAROUND: IC in Kotlin < 2.3.20-Beta1 does not support compiler plugins generating top-level declarations
      */
-    val nonIncrementalTestCompileTaskRegex by regexProperty("""^compileTestKotlin(Js|Wasm)""")
+    val nonIncrementalTestCompileTaskRegex by regexProperty("""^compileTestKotlin""")
 
     /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.

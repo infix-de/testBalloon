@@ -20,6 +20,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.internal.VersionNumber
+import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
@@ -155,7 +156,7 @@ private fun Project.addEntryPointSourceFile(testBalloonProperties: TestBalloonGr
         }
     }
 
-    extensions.configure<KotlinProjectExtension>("kotlin") {
+    extensions.configure<KotlinBaseExtension>("kotlin") {
         val testRootSourceSetRegex = testBalloonProperties.testRootSourceSetRegex
         val emptyFileCollection: FileCollection = layout.files()
 

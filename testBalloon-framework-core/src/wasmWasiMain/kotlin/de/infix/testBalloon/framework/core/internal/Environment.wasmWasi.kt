@@ -75,10 +75,8 @@ private class WasiException(errorCode: Int) : RuntimeException(message = "WASI c
 
 private typealias Size = Int
 
-@OptIn(ExperimentalWasmInterop::class)
 @WasmImport("wasi_snapshot_preview1", "environ_get")
 private external fun wasmEnvironGet(arg0: Int, arg1: Int): Int
 
-@OptIn(ExperimentalWasmInterop::class)
 @WasmImport("wasi_snapshot_preview1", "environ_sizes_get")
 private external fun wasmEnvironSizesGet(arg0: Int, arg1: Int): Int

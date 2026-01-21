@@ -5,7 +5,10 @@ import de.infix.testBalloon.gradlePlugin.shared.configureWithTestBalloon
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.UnknownConfigurationException
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 
@@ -40,13 +43,16 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
         }
     }
 
-    extensions.configure<HasConfigurableKotlinCompilerOptions<*>>("kotlin") {
-        compilerOptions {
-            freeCompilerArgs.addAll(
-                "-P",
-                "plugin:de.infix.testBalloon:testModuleRegex=${testBalloonProperties.testModuleRegex}"
-            )
-        }
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    extensions.configure<KotlinProjectExtension>("kotlin") {
+        when (this) {
+            is HasConfigurableKotlinCompilerOptions<*> -> compilerOptions.freeCompilerArgs
+            is KotlinJvmProjectExtension -> compilerOptions.freeCompilerArgs
+            else -> null
+        }?.addAll(
+            "-P",
+            "plugin:de.infix.testBalloon:testModuleRegex=${testBalloonProperties.testModuleRegex}"
+        )
     }
 
     configureWithTestBalloon(testBalloonProperties)

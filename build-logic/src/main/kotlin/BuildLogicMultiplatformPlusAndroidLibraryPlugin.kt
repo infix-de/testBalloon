@@ -1,6 +1,6 @@
 import buildLogic.versionFromCatalog
 import buildLogic.withTapmoc
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
+import com.android.build.api.dsl.androidLibrary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -15,7 +15,8 @@ class BuildLogicMultiplatformPlusAndroidLibraryPlugin : Plugin<Project> {
         }
 
         extensions.configure<KotlinMultiplatformExtension>("kotlin") {
-            extensions.configure<KotlinMultiplatformAndroidLibraryExtension>("androidLibrary") {
+            @Suppress("UnstableApiUsage")
+            androidLibrary {
                 compileSdk = versionFromCatalog("android-compileSdk").toInt()
             }
         }

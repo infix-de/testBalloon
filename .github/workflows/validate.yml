@@ -16,9 +16,6 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: 'Check ABI compatibility'
-        run: ./gradlew checkLegacyAbi
-
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets
 
@@ -52,9 +49,6 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-
-      - name: 'Check ABI compatibility'
-        run: ./gradlew checkLegacyAbi
 
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets

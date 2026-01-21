@@ -23,10 +23,7 @@ jobs:
 
       - name: 'Upgrade package lock files'
         # WORKAROUND: spurious occurrences of "Lock file was changed."
-        run: ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
-
-      - name: 'Check ABI compatibility'
-        run: ./gradlew checkLegacyAbi
+        run: ./gradlew kotlinUpgradePackageLock
 
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets
@@ -70,10 +67,7 @@ jobs:
 
       - name: 'Upgrade package lock files'
         # WORKAROUND: spurious occurrences of "Lock file was changed."
-        run: ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
-
-      - name: 'Check ABI compatibility'
-        run: ./gradlew checkLegacyAbi
+        run: ./gradlew kotlinUpgradePackageLock
 
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets

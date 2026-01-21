@@ -20,7 +20,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.internal.VersionNumber
-import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import java.nio.file.DirectoryNotEmptyException
 import kotlin.io.path.Path
@@ -94,10 +92,11 @@ internal fun Project.configureWithTestBalloon(
                     if (this is AbstractKotlinCompile<*>) {
                         debugLog("disabling incremental compilation for $project, task '$name'.")
                         incremental = false
-                        if (this is Kotlin2JsCompile) {
-                            @Suppress("INVISIBLE_REFERENCE")
-                            incrementalJsKlib = false
-                        }
+                        // Backporting to Kotlin 2.0.0 from 2.1.0, setting the internal property
+                        // Kotlin2JsCompile.incrementalJsKlib with '@Suppress("INVISIBLE_REFERENCE")' fails to compile
+                        // ("Unresolved reference 'incrementalJsKlib'").
+                        // To turn off JS IC for the entire project, the following setting must appear in 'gradle.properties':
+                        //     kotlin.incremental.js.klib=false
                     }
                 }
             } else {
@@ -156,7 +155,7 @@ private fun Project.addEntryPointSourceFile(testBalloonProperties: TestBalloonGr
         }
     }
 
-    extensions.configure<KotlinBaseExtension>("kotlin") {
+    extensions.configure<KotlinProjectExtension>("kotlin") {
         val testRootSourceSetRegex = testBalloonProperties.testRootSourceSetRegex
         val emptyFileCollection: FileCollection = layout.files()
 

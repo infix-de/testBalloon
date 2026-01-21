@@ -12,6 +12,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.UnknownConfigurationException
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 
@@ -43,19 +45,22 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
     )
 
     // Configure compiler plugin options as done by KotlinCompilerPluginSupportPlugin.
-    extensions.configure<HasConfigurableKotlinCompilerOptions<*>>("kotlin") {
-        compilerOptions {
-            freeCompilerArgs.addAll(
-                provider {
-                    // Lazily configuring the compiler options ensures that the extension is guaranteed to be present
-                    // and the build script (including extension settings) has been completely evaluated.
-                    val extension = extensions.getByType(TestBalloonGradleExtension::class.java)
-                    compilerPluginOptionValues(extension, testBalloonProperties).flatMap { (key, value) ->
-                        listOf("-P", "plugin:${Constants.COMPILER_PLUGIN_NAME}:$key=$value")
-                    }
-                }
-            )
+    extensions.configure<KotlinProjectExtension>("kotlin") {
+        val freeCompilerArgs = when (this) {
+            is KotlinJvmProjectExtension -> compilerOptions.freeCompilerArgs
+            is HasConfigurableKotlinCompilerOptions<*> -> compilerOptions.freeCompilerArgs
+            else -> null
         }
+        freeCompilerArgs?.addAll(
+            provider {
+                // Lazily configuring the compiler options ensures that the extension is guaranteed to be present
+                // and the build script (including extension settings) has been completely evaluated.
+                val extension = extensions.getByType(TestBalloonGradleExtension::class.java)
+                compilerPluginOptionValues(extension, testBalloonProperties).flatMap { (key, value) ->
+                    listOf("-P", "plugin:${Constants.COMPILER_PLUGIN_NAME}:$key=$value")
+                }
+            }
+        )
     }
 }
 

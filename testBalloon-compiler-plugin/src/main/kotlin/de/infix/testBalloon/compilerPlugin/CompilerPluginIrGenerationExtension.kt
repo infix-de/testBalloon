@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.IrSingleStatementBuilder
@@ -331,7 +332,7 @@ private class ModuleTransformer(
     ) {
         val irProperty = this
 
-        val propertyFqnParameter = initializerCallFunction.parameters.firstOrNull {
+        val propertyFqnParameter = initializerCallFunction.valueParameters.firstOrNull {
             it.hasAnnotation(configuration.testSuitePropertyNameAnnotationSymbol)
         } ?: run {
             reportError(
@@ -342,7 +343,7 @@ private class ModuleTransformer(
             return
         }
 
-        if (initializerCall.arguments[propertyFqnParameter.indexInParameters] != null) {
+        if (initializerCall.valueArguments[propertyFqnParameter.indexInParameters] != null) {
             reportError(
                 "The '${initializerCallFunction.name}' invocation must not pass a value for parameter" +
                     " '${propertyFqnParameter.name}'.\n" +
@@ -375,7 +376,7 @@ private class ModuleTransformer(
                         @Suppress("DuplicatedCode")
                         irCall(originalCall.symbol).apply {
                             copyTypeAndValueArgumentsFrom(originalCall)
-                            arguments[propertyFqnParameter.indexInParameters] = irString(propertyFqnValue)
+                            putValueArgument(propertyFqnParameter.indexInParameters, irString(propertyFqnValue))
                             if (configuration.debugLevel >= DebugLevel.CODE) {
                                 reportDebug(
                                     "${irProperty.fqName()}: Setting parameter '${propertyFqnParameter.name}'" +
@@ -650,7 +651,7 @@ private class ModuleTransformer(
             val irSuitesVararg: List<IrExpression> = discoveredSuites.map { discoveredSuite ->
                 discoveredSuite.valueExpression.invoke(this@irArrayOfRootSuites)
             }
-            arguments[0] = irVararg(irElementType, irSuitesVararg)
+            putValueArgument(0, irVararg(irElementType, irSuitesVararg))
         }
     }
 
@@ -668,7 +669,7 @@ private class ModuleTransformer(
 
         return irCall(irConstructor).apply {
             irValues.forEachIndexed { index, irValue ->
-                arguments[index] = irValue ?: irNull()
+                putValueArgument(index, irValue ?: irNull())
             }
         }
     }
@@ -692,7 +693,7 @@ private fun IrBuilderWithScope.irSimpleFunctionCall(
     vararg irValues: IrExpression?
 ) = irCall(irFunctionSymbol).apply {
     irValues.forEachIndexed { index, irValue ->
-        arguments[index] = irValue ?: irNull()
+        putValueArgument(index, irValue ?: irNull())
     }
 }
 

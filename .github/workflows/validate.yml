@@ -19,6 +19,9 @@ jobs:
       - name: 'Check ABI compatibility'
         run: ./gradlew checkLegacyAbi
 
+      - name: 'Workaround: Upgrade JS package lock files'
+        run: ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
+
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets
 
@@ -55,6 +58,9 @@ jobs:
 
       - name: 'Check ABI compatibility'
         run: ./gradlew checkLegacyAbi
+
+      - name: 'Workaround: Upgrade JS package lock files'
+        run: ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
 
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets

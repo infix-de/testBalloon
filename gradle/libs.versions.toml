@@ -25,7 +25,7 @@ junit-junit4 = "4.13.2"
 com-gradleup-tapmoc = "0.4.2"
 
 # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
-com-vanniktech-maven-publish = "0.36.0"
+com-vanniktech-maven-publish = "0.35.0"
 
 # https://github.com/kotest/kotest/releases
 # Do not force an update onto consumers unless necessary
@@ -39,7 +39,7 @@ org-jetbrains-dokka = "2.1.0"
 
 # https://github.com/JetBrains/kotlin/releases
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
-org-jetbrains-kotlin = "2.2.0"
+org-jetbrains-kotlin = "2.1.20"
 
 # https://github.com/Kotlin/kotlinx.coroutines/releases
 org-jetbrains-kotlinx-coroutines = "1.10.2"
@@ -84,7 +84,7 @@ com-vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech:gradle-m
 de-fayard-refreshversions-gradle-plugin = "de.fayard.refreshVersions:de.fayard.refreshVersions.gradle.plugin:0.60.6"
 
 # https://github.com/ZacSweers/kotlin-compile-testing/releases
-dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.12.1"
+dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.1"
 
 # https://github.com/kotest/kotest/releases
 io-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest" }
@@ -117,7 +117,7 @@ org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gra
 org-jetbrains-kotlin-sam-with-receiver-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 
 # https://github.com/Kotlin/kotlinx-atomicfu/releases
-org-jetbrains-kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.32.1"
+org-jetbrains-kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.27.0"
 
 org-jetbrains-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "org-jetbrains-kotlinx-coroutines" }
 org-jetbrains-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "org-jetbrains-kotlinx-coroutines" }

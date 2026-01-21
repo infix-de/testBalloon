@@ -24,6 +24,11 @@ TestBalloon release variants:
 
 Please see the [instructions for upgrading from TestBalloon 0.7.x](https://infix-de.github.io/testBalloon/0.8.0/how-to/upgrading/).
 
+#### Note for Kotlin 2.0.0
+
+Kotlin 2.0.0 projects using JS or Wasm/JS targets should add the following setting to `gradle.properties`:
+`kotlin.incremental.js.klib=false`. This avoids incremental compilation errors. Later Kotlin versions are fine.
+
 ### Breaking Changes
 
 Former deprecations were removed:

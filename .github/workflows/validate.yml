@@ -27,8 +27,9 @@ jobs:
         # WORKAROUND: spurious occurrences of "Lock file was changed."
         run: ./gradlew kotlinUpgradePackageLock
 
-      - name: 'Check code style consistency'
-        run: ./gradlew lintKotlin
+      # Disable for Kotlin 2.0.0
+      # - name: 'Check code style consistency'
+      #   run: ./gradlew lintKotlin
 
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets

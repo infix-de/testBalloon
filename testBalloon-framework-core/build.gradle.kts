@@ -5,7 +5,7 @@ import buildLogic.enableAbiValidation
 import buildLogic.versionFromCatalog
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
@@ -49,7 +49,8 @@ kotlin {
         namespace = Constants.CORE_PACKAGE_NAME
         compileSdk = versionFromCatalog("android-compileSdk").toInt()
 
-        withHostTestBuilder {}.configure {}
+        // With AGP 8.3.2, Android+KMP host tests could not be configured
+        // withHostTestBuilder {}.configure {}
     }
 
     sourceSets {

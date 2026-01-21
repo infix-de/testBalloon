@@ -14,7 +14,8 @@ tasks {
 
             dependsOn(":testBalloon-integration-kotest-assertions:$kmpTaskName")
             dependsOn(":testBalloon-integration-blocking-detection:$kmpTaskName")
-            dependsOn(":testBalloon-integration-robolectric:testAndroidHostTest")
+            // With AGP 8.3.2, Android+KMP host tests could not be configured
+            // dependsOn(":testBalloon-integration-robolectric:testAndroidHostTest")
         }
     }
 

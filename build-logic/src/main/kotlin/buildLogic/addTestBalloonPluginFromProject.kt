@@ -12,6 +12,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.UnknownConfigurationException
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 
@@ -51,13 +53,16 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
     // Set the compiler plugin options at a point in time where we can be sure that the testBalloon extension
     // has either been invoked, or will not ever be invoked.
     afterEvaluate {
-        extensions.configure<HasConfigurableKotlinCompilerOptions<*>>("kotlin") {
+        extensions.configure<KotlinProjectExtension>("kotlin") {
             val testBalloonExtension =
                 extensions.getByName(Constants.GRADLE_EXTENSION_NAME) as TestBalloonGradleExtension
-            compilerOptions {
-                compilerPluginOptionValues(testBalloonExtension, testBalloonProperties).forEach { (key, value) ->
-                    freeCompilerArgs.addAll("-P", "plugin:${Constants.COMPILER_PLUGIN_NAME}:$key=$value")
-                }
+            val freeCompilerArgs = when (this) {
+                is KotlinJvmProjectExtension -> compilerOptions.freeCompilerArgs
+                is HasConfigurableKotlinCompilerOptions<*> -> compilerOptions.freeCompilerArgs
+                else -> null
+            }
+            compilerPluginOptionValues(testBalloonExtension, testBalloonProperties).forEach { (key, value) ->
+                freeCompilerArgs?.addAll("-P", "plugin:${Constants.COMPILER_PLUGIN_NAME}:$key=$value")
             }
         }
     }

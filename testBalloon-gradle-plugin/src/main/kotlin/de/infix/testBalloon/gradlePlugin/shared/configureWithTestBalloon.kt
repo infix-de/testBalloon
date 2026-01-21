@@ -18,12 +18,11 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.internal.VersionNumber
-import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import java.nio.file.DirectoryNotEmptyException
 import kotlin.io.path.Path
@@ -48,10 +47,11 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
         tasks.withType(AbstractKotlinCompile::class.java).configureEach {
             if (nonIncrementalTestCompileTaskRegex.containsMatchIn(name)) {
                 incremental = false
-                if (this is Kotlin2JsCompile) {
-                    @Suppress("INVISIBLE_REFERENCE")
-                    incrementalJsKlib = false
-                }
+                // Backporting to Kotlin 2.0.0 from 2.1.0, setting the internal property
+                // Kotlin2JsCompile.incrementalJsKlib with '@Suppress("INVISIBLE_REFERENCE")' fails to compile
+                // ("Unresolved reference 'incrementalJsKlib'").
+                // To turn off JS IC for the entire project, the following setting must appear in 'gradle.properties':
+                //     kotlin.incremental.js.klib=false
             }
         }
     }
@@ -100,7 +100,7 @@ private fun Project.addEntryPointSourceFile(testBalloonProperties: TestBalloonGr
         // - If another plugin modifies the source set hierarchy in an `afterEvaluate` block, its modifications might
         //   not be picked up, depending on the order plugins are applied to the project.
 
-        extensions.configure<KotlinBaseExtension>("kotlin") {
+        extensions.configure<KotlinSourceSetContainer>("kotlin") {
             val testRootSourceSetRegex = testBalloonProperties.testRootSourceSetRegex
             sourceSets.configureEach {
                 if (testRootSourceSetRegex.containsMatchIn(name) && dependsOn.isEmpty()) {

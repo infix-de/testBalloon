@@ -14,6 +14,7 @@ import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleProperties
 import de.infix.testBalloon.gradlePlugin.shared.configureWithTestBalloon
 import org.gradle.api.Project
+import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
@@ -29,11 +30,16 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project): Unit = with(target) {
         testBalloonProperties = TestBalloonGradleProperties(this)
 
-        // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
-        configurations.named(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME) {
-            dependencies.add(
-                project.dependencies.create("$PROJECT_GROUP_ID:$PROJECT_SHARED_ARTIFACT_ID:$PROJECT_VERSION")
-            )
+        try {
+            // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin
+            //     dependencies
+            configurations.named(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME) {
+                dependencies.add(
+                    project.dependencies.create("$PROJECT_GROUP_ID:$PROJECT_SHARED_ARTIFACT_ID:$PROJECT_VERSION")
+                )
+            }
+        } catch (_: UnknownConfigurationException) {
+            // The configuration "kotlinNativeCompilerPluginClasspath" is unavailable with AGP9's built-in Kotlin.
         }
 
         val junitPlatformLauncherDependentConfigurationRegex =

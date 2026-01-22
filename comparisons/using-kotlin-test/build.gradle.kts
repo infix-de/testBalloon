@@ -1,5 +1,5 @@
 import buildLogic.versionFromCatalog
-import com.android.build.api.dsl.androidLibrary
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import tapmoc.Severity
 
 plugins {
@@ -22,7 +22,7 @@ kotlin {
 
     jvm()
 
-    androidLibrary {
+    extensions.configure<KotlinMultiplatformAndroidLibraryExtension>("androidLibrary") {
         namespace = "org.example.android.multiplatform.library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()

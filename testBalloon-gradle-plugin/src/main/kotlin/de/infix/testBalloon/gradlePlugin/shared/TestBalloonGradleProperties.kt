@@ -41,7 +41,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
      *
      * The Compiler plugin will disable itself for modules not matching this pattern.
      */
-    val testModuleRegex by gradleTestSuiteEnhancedStringProperty("""(_test|Test)$""")
+    val testModuleRegex by gradleTestSuiteEnhancedStringProperty("""(^android|_test|Test)$""")
 
     /**
      * Name pattern for Gradle JVM Test Suites (incubating).

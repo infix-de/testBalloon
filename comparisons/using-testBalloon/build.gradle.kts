@@ -1,8 +1,6 @@
 import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.versionFromCatalog
-import com.android.build.api.dsl.ManagedVirtualDevice
-import com.android.build.api.dsl.androidLibrary
-import org.gradle.kotlin.dsl.invoke
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import tapmoc.Severity
 
 plugins {
@@ -27,7 +25,7 @@ kotlin {
 
     jvm()
 
-    androidLibrary {
+    extensions.configure<KotlinMultiplatformAndroidLibraryExtension>("androidLibrary") {
         namespace = "org.example.android.multiplatform.library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -42,7 +40,6 @@ kotlin {
                 localDevices {
                     @Suppress("UnstableApiUsage")
                     create("pixel2api30") {
-                        this as ManagedVirtualDevice
                         device = "Pixel 2"
                         apiLevel = 30
                         systemImageSource = "aosp"

@@ -22,7 +22,7 @@ jdk = "11"
 junit-junit4 = "4.13.2"
 
 # https://github.com/GradleUp/Tapmoc/releases
-com-gradleup-tapmoc = "0.3.1"
+com-gradleup-tapmoc = "0.4.0"
 
 # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
 com-vanniktech-maven-publish = "0.35.0"

@@ -9,7 +9,7 @@ TestBalloon release variants:
 | 0.8.1-K2.2.21        | 2.2.21                    |
 | 0.8.0-K2.2.0         | 2.2.0 … 2.2.20            |
 
-_This AGP 9 update specifically targets those Kotlin versions which are safe to use with AGP 9. For earlier Kotlin versions, please continue using the TestBalloon 0.8.0 variants without AGP._
+_This AGP 9 update specifically targets those Kotlin versions which are safe to use with AGP 9. For earlier Kotlin versions, please continue using the TestBalloon 0.8.0 variants._
 
 ### Highlights
 

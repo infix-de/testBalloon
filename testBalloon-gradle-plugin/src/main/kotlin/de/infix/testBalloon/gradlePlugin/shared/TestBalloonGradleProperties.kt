@@ -11,7 +11,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
 
     /** Name pattern for test root source sets which will receive generated entry point code. */
     val testRootSourceSetRegex by gradleTestSuiteEnhancedRegexProperty(
-        """^(test$|commonTest$|androidTest|androidInstrumentedTest)"""
+        """^test$|^commonTest$|^androidTest|^androidInstrumentedTest|AndroidTest$|UnitTest$"""
     )
 
     /**

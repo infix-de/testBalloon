@@ -9,11 +9,6 @@ import kotlin.reflect.KProperty
 
 internal class TestBalloonGradleProperties(val project: Project) {
 
-    /** Name pattern for test root source sets which will receive generated entry point code. */
-    val testRootSourceSetRegex by gradleTestSuiteEnhancedRegexProperty(
-        """^(test$|commonTest$|androidTest|androidInstrumentedTest)"""
-    )
-
     /**
      * Name pattern for test compilations in which the compiler plugin will look up test suites and a test session.
      *
@@ -46,7 +41,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
     /**
      * Name pattern for Gradle JVM Test Suites (incubating).
      *
-     * The pattern will extend [testRootSourceSetRegex], [testCompilationRegex] and [testModuleRegex] to enable
+     * The pattern will extend [testCompilationRegex] and [testModuleRegex] to enable
      * TestBalloon tests in Gradle JVM Test Suites, which can have arbitrary names and would otherwise not
      * be recognized as test source sets, modules, or compilations.
      */

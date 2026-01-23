@@ -4,7 +4,7 @@
 
 ==== Choose Kotlin versions
 
-Each TestBallon version should produce releases for the most recent stable Kotlin versions, plus the most recent EAP version. Those versions are listed at https://kotlinlang.org/docs/home.html[Kotlin Docs] under _What's new in Kotlin_.
+Each TestBallon version should produce releases for the most recent stable Kotlin versions, plus the most recent EAP version. Those versions are listed at https://kotlinlang.org/docs/home.html[Kotlin Docs] under https://kotlinlang.org/docs/whatsnew-eap.html[_What's new in Kotlin_] and _Kotlin evolution and roadmap_ – https://kotlinlang.org/docs/releases.html[_Kotlin releases_].
 
 ==== Update documentation
 

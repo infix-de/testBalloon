@@ -25,6 +25,7 @@ fun KotlinMultiplatformExtension.nativeTargets() {
     // Kotlin/Native target support – see https://kotlinlang.org/docs/native-target-support.html
     // Tier 1
     macosArm64()
+    iosArm64()
     iosSimulatorArm64()
     // Tier 2
     linuxX64()

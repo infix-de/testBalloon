@@ -1,3 +1,21 @@
+## 0.8.2 (January 27, 2026)
+
+TestBalloon release variants:
+
+| TestBalloon version  | Supported Kotlin versions |
+|----------------------|---------------------------|
+| 0.8.2-K2.3.20-Beta1  | 2.3.20-Beta1              |
+| 0.8.2-K2.3.0         | 2.3.0                     |
+| 0.8.2-K2.2.21        | 2.2.21                    |
+| 0.8.2-K2.2.0         | 2.2.0 … 2.2.20            |
+| 0.8.2-K2.1.20        | 2.1.20 … 2.1.21           |
+| 0.8.2-K2.1.0         | 2.1.0 … 2.1.10            |
+| 0.8.2-K2.0.0         | 2.0.0 … 2.0.21            |
+
+### Fixes
+
+* Restored missing `iosArm64` target. (#60)
+
 ## 0.8.1 (January 23, 2026)
 
 TestBalloon release variants:

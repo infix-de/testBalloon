@@ -26,7 +26,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
      *
      * WORKAROUND: IC in Kotlin < 2.3.20-Beta1 does not support compiler plugins generating top-level declarations
      */
-    val nonIncrementalTestCompileTaskRegex by regexProperty("""^compileTestKotlin""")
+    val nonIncrementalTestCompileTaskRegex by regexProperty("""^compile.*TestKotlin""")
 
     /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.

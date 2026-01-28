@@ -8,9 +8,17 @@ import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
+import org.gradle.util.internal.VersionNumber
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -31,6 +39,7 @@ internal fun Project.configureWithTestBalloon(
     browserSafeEnvironmentPatternFromExtension: () -> String = { "" }
 ) {
     configureTestTasks(testBalloonProperties, browserSafeEnvironmentPatternFromExtension)
+    configureDiagnosticsTask()
 
     afterEvaluate {
         val nonIncrementalTestCompileTaskRegex = testBalloonProperties.nonIncrementalTestCompileTaskRegex
@@ -294,6 +303,197 @@ private fun Project.configureTestTasks(
                     }
                 }
             }
+        }
+    }
+}
+
+private fun Project.configureDiagnosticsTask() = afterEvaluate {
+    val taskName = "testBalloonDiagnostics"
+    val kotlinMultiplatformExtension =
+        runCatching { extensions.findByName("kotlin") as? KotlinMultiplatformExtension }.getOrNull()
+
+    tasks.register(taskName) {
+        group = "help"
+        description = "Shows diagnostics for the TestBalloon test framework"
+
+        fun <Result : Any> safeProvider(value: () -> Result?): Provider<Result> = project.provider {
+            try {
+                value()
+            } catch (throwable: Throwable) {
+                println("WARNING: Problem configuring task step in '$taskName': $throwable")
+                throwable.printStackTrace()
+                null
+            }
+        }
+
+        fun doLastSafely(block: () -> Unit) = doLast {
+            try {
+                block()
+            } catch (throwable: Throwable) {
+                println("WARNING: Problem executing task step in '$taskName': $throwable")
+                throwable.printStackTrace()
+            }
+        }
+
+        val projectPath = project.path
+        val gradleVersion = gradle.gradleVersion
+
+        doLastSafely {
+            println()
+            println("--- BEGIN TestBalloon diagnostics for $projectPath ---------------------------------")
+            println()
+            println("Project path: $projectPath")
+            println("Gradle version: $gradleVersion")
+        }
+
+        val buildScriptPluginsBlock = safeProvider {
+            val buildScriptText = project.buildscript.sourceFile?.readText()
+            Regex("""plugins \{.*?\}""", option = RegexOption.DOT_MATCHES_ALL).find(buildScriptText ?: "")?.value
+                ?: "no plugins block found in ${project.buildscript.sourceFile?.path ?: "(unknown build script)"}"
+        }
+
+        doLastSafely {
+            println()
+            println("Build script plugins block:")
+            println(buildScriptPluginsBlock.get().prependIndent("  "))
+        }
+
+        val catalogsExtension = safeProvider {
+            project.extensions.getByType(VersionCatalogsExtension::class.java)
+        }
+        val versionCatalogNames = catalogsExtension.map { it.catalogNames.toList() }
+        val relevantPlugins = safeProvider {
+            val catalogsExtension = catalogsExtension.get()
+            val versionCatalogs = catalogsExtension.catalogNames.map { catalogsExtension.named(it) }
+            val catalogPluginVersions = versionCatalogs.flatMap { catalog ->
+                catalog.pluginAliases.map {
+                    val (artifactId, version) = catalog.findPlugin(it).get().get().toString().split(':', limit = 2)
+                    artifactId to version
+                }
+            }.toMap()
+
+            mapOf(
+                "de.infix.testBalloon" to null,
+                "org.jetbrains.kotlin.jvm" to null,
+                "org.jetbrains.kotlin.multiplatform" to null,
+                "com.android.application" to "Sharing a module with KMP is unsupported.",
+                "com.android.library" to "deprecated",
+                "org.jetbrains.kotlin.android" to "Must not be used with built-in Kotlin of AGP 9.",
+                "com.android.kotlin.multiplatform.library" to null
+            ).mapNotNull { (pluginId, notice) ->
+                pluginManager.findPlugin(pluginId)?.let {
+                    val pluginAndVersion = "$pluginId:${catalogPluginVersions[pluginId]}"
+                    if (notice != null) "$pluginAndVersion  (*) $notice" else pluginAndVersion
+                }
+            }
+        }
+
+        doLast {
+            println()
+            println("Gradle plugins (excerpt, versions from catalog(s) $versionCatalogNames):")
+            println(relevantPlugins.get().joinToString(separator = "\n  ", prefix = "  "))
+        }
+
+        val relevantProperties = safeProvider {
+            providers.gradlePropertiesPrefixedBy("testBalloon.").get() +
+                providers.gradlePropertiesPrefixedBy("org.gradle.").get() +
+                providers.gradlePropertiesPrefixedBy("kotlin.").get()
+        }
+
+        doLastSafely {
+            println()
+            println("Gradle properties (excerpt):")
+            relevantProperties.get().toSortedMap(String::compareTo).forEach { (name, value) ->
+                println("  $name=$value")
+            }
+        }
+
+        val testBalloonVersionsUsage = safeProvider {
+            configurations
+                .filter { it.isCanBeResolved }
+                .flatMap { configuration ->
+                    val visitedComponentIds = mutableSetOf<ComponentIdentifier>()
+
+                    fun ResolvedComponentResult.withAllChildren(): Sequence<ResolvedComponentResult> = sequence {
+                        if (!visitedComponentIds.add(id)) return@sequence
+                        yield(this@withAllChildren)
+                        dependencies
+                            .filterIsInstance<ResolvedDependencyResult>()
+                            .forEach { dep ->
+                                yieldAll(dep.selected.withAllChildren())
+                            }
+                    }
+
+                    val rootComponent = configuration.incoming.resolutionResult.rootComponent.get()
+                    val testBalloonVersions = rootComponent.dependencies
+                        .filterIsInstance<ResolvedDependencyResult>()
+                        .flatMap { resolvedDependencyResult ->
+                            resolvedDependencyResult.selected.withAllChildren()
+                        }
+                        .mapNotNull { component ->
+                            (component.id as? ModuleComponentIdentifier)?.let {
+                                if (it.group == "de.infix.testBalloon") VersionNumber.parse(it.version) else null
+                            }
+                        }
+                        .toSet()
+
+                    testBalloonVersions.map {
+                        Pair(it, configuration.name)
+                    }
+                }
+                .groupBy({ it.first }) {
+                    it.second
+                }
+        }
+
+        doLastSafely {
+            val testBalloonVersionsUsage = testBalloonVersionsUsage.get()
+
+            println()
+            println("TestBalloon dependencies:")
+            for ((version, configurations) in testBalloonVersionsUsage) {
+                println("  $version: ${configurations.joinToString(limit = 3)}")
+            }
+            when (testBalloonVersionsUsage.size) {
+                0 -> println("  (*) External TestBalloon dependencies are not present in this module.")
+                1 -> {}
+                else -> println("  (*) TestBalloon dependencies with different versions are unsupported and may fail.")
+            }
+        }
+
+        val testSourceSetsDiagram = safeProvider {
+            kotlinMultiplatformExtension?.let { kotlin ->
+                val testSourceSetRegex = Regex("[tT]est")
+
+                val testSourceSets = kotlin.sourceSets.filter { testSourceSetRegex.containsMatchIn(it.name) }
+
+                buildString {
+                    appendLine()
+                    appendLine("Diagram for display on https://mermaid.live/")
+                    appendLine()
+                    appendLine("---")
+                    appendLine("title: KMP test source sets of ${project.path}")
+                    appendLine("---")
+                    appendLine("classDiagram")
+                    for (sourceSet in testSourceSets) {
+                        appendLine("    class ${sourceSet.name}")
+                    }
+                    for (sourceSet in testSourceSets) {
+                        for (dependsOnSourceSet in sourceSet.dependsOn.map { it.name }) {
+                            appendLine("    $dependsOnSourceSet <|-- ${sourceSet.name}")
+                        }
+                    }
+                }
+            }
+        }
+
+        doLastSafely {
+            testSourceSetsDiagram.orNull?.let { print(it) }
+        }
+
+        doLastSafely {
+            println()
+            println("--- END TestBalloon diagnostics for $projectPath -----------------------------------")
         }
     }
 }

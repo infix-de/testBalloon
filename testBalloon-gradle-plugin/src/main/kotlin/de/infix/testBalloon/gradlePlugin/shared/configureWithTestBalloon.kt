@@ -390,7 +390,7 @@ private fun Project.configureDiagnosticsTask() = afterEvaluate {
 
         doLast {
             println()
-            println("Gradle plugins (excerpt, versions from catalog(s) $versionCatalogNames):")
+            println("Gradle plugins (excerpt, versions from catalog(s) ${versionCatalogNames.get()}):")
             println(relevantPlugins.get().joinToString(separator = "\n  ", prefix = "  "))
         }
 

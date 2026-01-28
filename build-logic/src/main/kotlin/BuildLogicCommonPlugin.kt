@@ -18,11 +18,11 @@ class BuildLogicCommonPlugin : Plugin<Project> {
             reporters = arrayOf("checkstyle", "plain")
         }
 
-        tasks.withType(LintTask::class.java) {
+        tasks.withType(LintTask::class.java).configureEach {
             source = source.minus(fileTree("build")).asFileTree
         }
 
-        tasks.withType(FormatTask::class.java) {
+        tasks.withType(FormatTask::class.java).configureEach {
             source = source.minus(fileTree("build")).asFileTree
         }
     }

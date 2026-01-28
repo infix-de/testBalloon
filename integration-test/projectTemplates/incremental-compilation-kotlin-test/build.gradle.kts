@@ -59,13 +59,13 @@ tasks {
         }
     }
 
-    withType<Test> {
+    withType<Test>().configureEach {
         testLogging { showStandardStreams = true }
     }
-    withType<KotlinJsTest> {
+    withType<KotlinJsTest>().configureEach {
         testLogging { showStandardStreams = true }
     }
-    withType<KotlinNativeTest> {
+    withType<KotlinNativeTest>().configureEach {
         testLogging { showStandardStreams = true }
     }
 }

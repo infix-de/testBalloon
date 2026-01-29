@@ -16,10 +16,6 @@ tapmoc {
 }
 
 kotlin {
-    compilerOptions {
-        // freeCompilerArgs.addAll("-P", "plugin:de.infix.testBalloon:debugLevel=DISCOVERY")
-    }
-
     jvm()
 
     extensions.configure<KotlinMultiplatformAndroidLibraryExtension>("androidLibrary") {

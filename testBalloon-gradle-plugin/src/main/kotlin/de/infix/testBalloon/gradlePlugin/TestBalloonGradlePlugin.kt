@@ -8,10 +8,11 @@ import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
 import buildConfig.BuildConfig.PROJECT_SHARED_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
-import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
+import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleExtension
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleProperties
+import de.infix.testBalloon.gradlePlugin.shared.compilerPluginOptionValues
 import de.infix.testBalloon.gradlePlugin.shared.configureWithTestBalloon
 import org.gradle.api.Project
 import org.gradle.api.artifacts.UnknownConfigurationException
@@ -51,12 +52,7 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
-        val testBalloonExtension = extensions.create(
-            Constants.GRADLE_EXTENSION_NAME,
-            TestBalloonGradleExtension::class.java
-        )
-
-        configureWithTestBalloon(testBalloonProperties) { testBalloonExtension.browserSafeEnvironmentPattern }
+        configureWithTestBalloon(testBalloonProperties)
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
@@ -77,18 +73,9 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
         val extension = project.extensions.getByType(TestBalloonGradleExtension::class.java)
 
         return project.provider {
-            listOf(
-                SubpluginOption(key = "debugLevel", value = extension.debugLevel.toString()),
-                SubpluginOption(
-                    key = "junit4AutoIntegrationEnabled",
-                    value = (
-                        extension.junit4AutoIntegrationEnabled
-                            ?: testBalloonProperties.junit4AutoIntegrationEnabled
-                            ?: true
-                        ).toString()
-                ),
-                SubpluginOption(key = "testModuleRegex", value = testBalloonProperties.testModuleRegex)
-            )
+            compilerPluginOptionValues(extension, testBalloonProperties).map { (key, value) ->
+                SubpluginOption(key, value)
+            }
         }
     }
 

@@ -135,7 +135,12 @@ internal class TestBalloonGradleProperties(val project: Project) {
     /**
      * A regex pattern of environment variable names which are safe to export into browser's simulated environments.
      */
-    val browserSafeEnvironmentPattern by stringProperty("")
+    val browserSafeEnvironmentPattern by stringProperty("^(CI|TEST.*)$")
+
+    /**
+     * A regex pattern of environment variable names which are safe to export into an Apple simulator's environments.
+     */
+    val simulatorSafeEnvironmentPattern by stringProperty("^(CI|TEST.*)$")
 
     @Suppress("SameParameterValue")
     private fun stringProperty(default: String) = Delegate(default) { it }

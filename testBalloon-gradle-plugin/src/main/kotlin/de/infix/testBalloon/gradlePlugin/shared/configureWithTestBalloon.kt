@@ -36,9 +36,14 @@ import kotlin.io.path.writeText
  */
 internal fun Project.configureWithTestBalloon(
     testBalloonProperties: TestBalloonGradleProperties,
-    browserSafeEnvironmentPatternFromExtension: () -> String = { "" }
+    browserSafeEnvironmentPatternFromExtension: () -> String = { "" },
+    simulatorSafeEnvironmentPatternFromExtension: () -> String = { "" }
 ) {
-    configureTestTasks(testBalloonProperties, browserSafeEnvironmentPatternFromExtension)
+    configureTestTasks(
+        testBalloonProperties,
+        browserSafeEnvironmentPatternFromExtension,
+        simulatorSafeEnvironmentPatternFromExtension
+    )
     configureDiagnosticsTask()
 
     afterEvaluate {
@@ -60,7 +65,8 @@ internal fun Project.configureWithTestBalloon(
  */
 private fun Project.configureTestTasks(
     testBalloonProperties: TestBalloonGradleProperties,
-    browserSafeEnvironmentPatternFromExtension: () -> String
+    browserSafeEnvironmentPatternFromExtension: () -> String,
+    simulatorSafeEnvironmentPatternFromExtension: () -> String
 ) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
         "intellij-legacy" -> if (providers.systemProperty("idea.active").isPresent) {
@@ -248,6 +254,20 @@ private fun Project.configureTestTasks(
 
             when (this) {
                 is KotlinNativeTest -> {
+                    val simulatorSafeEnvironmentPatterns = listOf(
+                        testBalloonProperties.simulatorSafeEnvironmentPattern,
+                        simulatorSafeEnvironmentPatternFromExtension()
+                    ).mapNotNull {
+                        it.ifEmpty { null }?.toRegex()
+                    }
+
+                    // The environment propagated to the simulator. May be overridden by TestBalloon's own entries.
+                    for ((name, value) in System.getenv()) {
+                        if (simulatorSafeEnvironmentPatterns.any { it.matches(name) }) {
+                            environment("SIMCTL_CHILD_$name", value, false) // required for Apple simulator execution
+                        }
+                    }
+
                     configureEnvironment { name, value ->
                         environment(name, value, false)
                         environment("SIMCTL_CHILD_$name", value, false) // required for Apple simulator execution

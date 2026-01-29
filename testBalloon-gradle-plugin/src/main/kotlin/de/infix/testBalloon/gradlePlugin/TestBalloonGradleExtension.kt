@@ -11,10 +11,20 @@ open class TestBalloonGradleExtension {
      *
      * Example:
      * ```
-     * browserSafeEnvironmentPattern = "^CI|TEST.*$"
+     * browserSafeEnvironmentPattern = "^(CI|TEST.*)$"
      * ```
      */
     var browserSafeEnvironmentPattern: String = ""
+
+    /**
+     * A regex pattern of environment variable names which are safe to export into an Apple simulator's environment.
+     *
+     * Example:
+     * ```
+     * simulatorSafeEnvironmentPattern = "^(CI|TEST.*)$"
+     * ```
+     */
+    var simulatorSafeEnvironmentPattern: String = ""
 
     /** The framework-internal debug level. */
     var debugLevel: DebugLevel = DebugLevel.NONE

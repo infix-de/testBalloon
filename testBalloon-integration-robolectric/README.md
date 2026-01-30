@@ -1,8 +1,20 @@
 # TestBalloon Robolectric Integration
 
-This module provides seamless integration between [TestBalloon](https://infix-de.github.io/testBalloon/) and [Robolectric](http://robolectric.org/), enabling Android framework APIs to be tested on the JVM without requiring an actual device or emulator.
+This module provides the framework for seamless integration between [TestBalloon](https://infix-de.github.io/testBalloon/) and [Robolectric](http://robolectric.org/), enabling Android framework APIs to be tested on the JVM without requiring an actual device or emulator.
 
-## Features
+## ⚠️ Current Status
+
+**This module is currently a template awaiting the completion of [robolectric/robolectric#10897](https://github.com/robolectric/robolectric/pull/10897).**
+
+The PR introduces a new `runner:common` module that provides framework-agnostic Robolectric integration. Once this PR is merged and Robolectric releases a version containing it (expected in 4.15.x or 4.16), this module will be fully implemented.
+
+The code in this module:
+- ✅ Documents the complete intended API
+- ✅ Demonstrates usage patterns with example tests
+- ✅ Provides module structure ready for implementation
+- ⏸️ Implementation pending Robolectric release
+
+## Planned Features
 
 - ✅ **Opt-in per test suite**: Choose which test suites run with Robolectric
 - ✅ **Zero impact on other tests**: Non-Robolectric test suites remain completely unaffected
@@ -10,7 +22,7 @@ This module provides seamless integration between [TestBalloon](https://infix-de
 - ✅ **Flexible configuration**: Customize sandbox sharing, parameter injection, and logging
 - ✅ **Based on latest Robolectric**: Uses the new runner architecture from [robolectric/robolectric#10897](https://github.com/robolectric/robolectric/pull/10897)
 
-## Installation
+## Installation (Once Available)
 
 Add the integration to your Gradle dependencies:
 
@@ -24,7 +36,7 @@ dependencies {
 }
 ```
 
-## Quick Start
+## Intended Usage
 
 ### Basic Usage
 
@@ -192,12 +204,77 @@ The `RobolectricContext` class wraps Robolectric's `RobolectricIntegration` inte
 
 ## Examples
 
-See the module's test suite for more examples:
+See the module's test suite for usage examples:
 
-- [Example test suite WITH Robolectric](src/jvmTest/kotlin/de/infix/testBalloon/integration/robolectric/ExampleWithRobolectric.kt)
-- [Example test suite WITHOUT Robolectric](src/jvmTest/kotlin/de/infix/testBalloon/integration/robolectric/ExampleWithoutRobolectric.kt)
+- [Example test suite WITHOUT Robolectric](src/jvmTest/kotlin/de/infix/testBalloon/integration/robolectric/examples/ExampleWithoutRobolectric.kt) - Fully functional, demonstrates coexistence
+- [Example test suite WITH Robolectric](src/jvmTest/kotlin/de/infix/testBalloon/integration/robolectric/examples/ExampleWithRobolectric.kt) - API documented (commented out, pending implementation)
 
-## Troubleshooting
+## Implementation Plan
+
+Once Robolectric's PR #10897 is merged and released, this module will be implemented as follows:
+
+### 1. Core Integration (`RobolectricContext.kt`)
+
+Create a `RobolectricContext` class that wraps Robolectric's `RobolectricIntegration`:
+
+```kotlin
+@OptIn(ExperimentalRunnerApi::class)
+class RobolectricContext(
+    sandboxSharing: SandboxSharingStrategy = SandboxSharingStrategy.PER_CLASS,
+    debugLogging: Boolean = false
+) {
+    private val integration: RobolectricIntegration = RobolectricIntegrationBuilder()
+        .sandboxSharing(sandboxSharing)
+        .apply { if (debugLogging) enableDebugLogging() }
+        .build()
+    
+    // Lifecycle management methods
+    // Sandbox execution methods
+}
+```
+
+### 2. Fixture Integration
+
+Use TestBalloon's `testFixture` API to manage the Robolectric lifecycle:
+
+```kotlin
+fun robolectricContext(...) = testFixture {
+    RobolectricContext(...)
+}
+```
+
+The fixture's `asContextForEach` mechanism automatically handles:
+- Creating a fresh `RobolectricContext` per test
+- Proper setup and teardown
+- Resource cleanup via `AutoCloseable`
+
+### 3. Test Execution
+
+Wrap test execution to run within the Robolectric sandbox:
+
+```kotlin
+fun <T> executeInSandbox(testName: String, block: () -> T): T {
+    val sandboxContext = lifecycleManager.createSandbox(testClass, null)
+    val environment = RobolectricEnvironment(
+        sandboxContext.sandbox,
+        sandboxContext.configuration,
+        sandboxContext.appManifest
+    )
+    return environment.executeInSandbox(testName) { block() }
+}
+```
+
+### 4. Dependencies
+
+```kotlin
+dependencies {
+    jvmMain {
+        api("org.robolectric:runner-common:4.15.x")  // Version TBD
+    }
+}
+```
+
+## Troubleshooting (Future)
 
 ### ClassNotFoundException for Android classes
 

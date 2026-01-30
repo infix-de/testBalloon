@@ -34,8 +34,13 @@ kotlin {
             dependencies {
                 // Robolectric runner:common module provides framework-agnostic integration API
                 // Based on https://github.com/robolectric/robolectric/pull/10897
-                // This is a compileOnly dependency as 4.15-SNAPSHOT is not yet available
-                // compileOnly("org.robolectric:runner-common:4.15-SNAPSHOT")
+                // 
+                // This dependency will be activated once PR #10897 is merged and released.
+                // Expected in Robolectric 4.15.x or 4.16.
+                // Current latest version: 4.15.1 (does not include runner:common yet)
+                //
+                // When available, uncomment:
+                // api("org.robolectric:runner-common:4.15.x")
             }
         }
     }

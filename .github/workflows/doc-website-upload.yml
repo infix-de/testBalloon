@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: 'Check out the project'
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.1
 
       - uses: ./.github/actions/setup
         with:
@@ -20,6 +20,7 @@ jobs:
         run: ./gradlew documentationWebsiteUpdate
 
       - name: 'Upload the GitHub Pages artifact'
-        uses: actions/upload-pages-artifact@v3
+        # https://github.com/actions/upload-pages-artifact/releases
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:
           path: documentation/website/distribution

@@ -13,7 +13,8 @@ runs:
 
   steps:
     - name: 'Set up JDK'
-      uses: actions/setup-java@v4
+      # https://github.com/actions/setup-java/releases
+      uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
       with:
         distribution: 'zulu'
         java-version: 21
@@ -43,19 +44,21 @@ runs:
 
     # Enable configuration-cache reuse with included builds – https://github.com/gradle/actions/issues/21
     - name: 'Cache build-settings/build'
-      uses: actions/cache@v4
+      # https://github.com/actions/cache/releases
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
       with:
         path: build-settings/build
         key: build-settings-${{ hashFiles('build-settings/src/**', 'build-settings/*.kts') }}
 
     - name: 'Cache build-logic/build'
-      uses: actions/cache@v4
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
       with:
         path: build-logic/build
         key: build-logic-${{ hashFiles('build-logic/src/**', 'build-logic/*.kts', 'build-logic/build/generated/**') }}
 
     - name: 'Set up Gradle'
-      uses: gradle/actions/setup-gradle@v4
+      # https://github.com/gradle/actions/releases
+      uses: gradle/actions/setup-gradle@f29f5a9d7b09a7c6b29859002d29d24e1674c884 # v5.0.1
       with:
         build-scan-publish: true
         build-scan-terms-of-use-url: 'https://gradle.com/terms-of-service'

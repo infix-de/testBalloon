@@ -23,6 +23,7 @@ include(":documentation:dokka-plugin-navigation-node-hiding")
 
 include(":testBalloon-integration-kotest-assertions")
 include(":testBalloon-integration-blocking-detection")
+include(":testBalloon-integration-robolectric")
 
 include(":examples:general")
 include(":examples:with-kotest-assertions")

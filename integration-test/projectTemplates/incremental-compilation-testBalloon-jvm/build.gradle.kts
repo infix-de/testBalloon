@@ -26,7 +26,7 @@ tasks {
         }
     }
 
-    withType<Test> {
+    withType<Test>().configureEach {
         testLogging { showStandardStreams = true }
     }
 }

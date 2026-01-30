@@ -34,16 +34,11 @@ import kotlin.io.path.writeText
 /**
  * Configures the project for TestBalloon, given the precondition that the compiler plugin artifacts are set up.
  */
-internal fun Project.configureWithTestBalloon(
-    testBalloonProperties: TestBalloonGradleProperties,
-    browserSafeEnvironmentPatternFromExtension: () -> String = { "" },
-    simulatorSafeEnvironmentPatternFromExtension: () -> String = { "" }
-) {
-    configureTestTasks(
-        testBalloonProperties,
-        browserSafeEnvironmentPatternFromExtension,
-        simulatorSafeEnvironmentPatternFromExtension
-    )
+internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloonGradleProperties) {
+    val testBalloonExtension =
+        extensions.create(Constants.GRADLE_EXTENSION_NAME, TestBalloonGradleExtension::class.java)
+
+    configureTestTasks(testBalloonProperties, testBalloonExtension)
     configureDiagnosticsTask()
 
     afterEvaluate {
@@ -65,8 +60,7 @@ internal fun Project.configureWithTestBalloon(
  */
 private fun Project.configureTestTasks(
     testBalloonProperties: TestBalloonGradleProperties,
-    browserSafeEnvironmentPatternFromExtension: () -> String,
-    simulatorSafeEnvironmentPatternFromExtension: () -> String
+    testBalloonExtension: TestBalloonGradleExtension
 ) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
         "intellij-legacy" -> if (providers.systemProperty("idea.active").isPresent) {
@@ -184,10 +178,10 @@ private fun Project.configureTestTasks(
                     ).toList()
                 val secondaryExcludePatterns = filter.excludePatterns.toList()
 
-                val browserSafeEnvironmentPatternStrings = listOf(
-                    testBalloonProperties.browserSafeEnvironmentPattern,
-                    browserSafeEnvironmentPatternFromExtension()
-                )
+                val browserSafeEnvironmentPattern: Provider<String> = project.provider {
+                    testBalloonExtension.browserSafeEnvironmentPattern
+                        ?: testBalloonProperties.browserSafeEnvironmentPattern
+                }
 
                 doFirst {
                     @Suppress("NewApi")
@@ -195,14 +189,11 @@ private fun Project.configureTestTasks(
                         "Could not create directory '$directory'"
                     }
 
-                    val browserSafeEnvironmentPatterns = browserSafeEnvironmentPatternStrings.mapNotNull {
-                        if (it.isEmpty()) null else it.toRegex()
-                    }
-
                     // The environment propagated to the browser. TestBalloon's own entries have precedence.
+                    val browserSafeEnvironmentPattern = browserSafeEnvironmentPattern.get().ifEmpty { null }?.toRegex()
                     val browserEnvironment =
                         System.getenv().filter { (name, _) ->
-                            browserSafeEnvironmentPatterns.any { it.matches(name) }
+                            browserSafeEnvironmentPattern?.containsMatchIn(name) == true
                         } + testBalloonEnvironment(secondaryIncludePatterns, secondaryExcludePatterns)
 
                     val clientConfiguration = buildList {
@@ -254,23 +245,31 @@ private fun Project.configureTestTasks(
 
             when (this) {
                 is KotlinNativeTest -> {
-                    val simulatorSafeEnvironmentPatterns = listOf(
-                        testBalloonProperties.simulatorSafeEnvironmentPattern,
-                        simulatorSafeEnvironmentPatternFromExtension()
-                    ).mapNotNull {
-                        it.ifEmpty { null }?.toRegex()
-                    }
-
-                    // The environment propagated to the simulator. May be overridden by TestBalloon's own entries.
-                    for ((name, value) in System.getenv()) {
-                        if (simulatorSafeEnvironmentPatterns.any { it.matches(name) }) {
-                            environment("SIMCTL_CHILD_$name", value, false) // required for Apple simulator execution
-                        }
-                    }
-
                     configureEnvironment { name, value ->
                         environment(name, value, false)
                         environment("SIMCTL_CHILD_$name", value, false) // required for Apple simulator execution
+                    }
+
+                    val simulatorSafeEnvironmentPattern: Provider<String> = project.provider {
+                        testBalloonExtension.simulatorSafeEnvironmentPattern
+                            ?: testBalloonProperties.simulatorSafeEnvironmentPattern
+                    }
+
+                    doFirst {
+                        // The environment propagated to the simulator. May be overridden by TestBalloon's own entries
+                        // by the previously registered `doFirst` action of `configureEnvironment`, which actually
+                        // runs _after_ this action.
+                        val simulatorSafeEnvironmentPattern =
+                            simulatorSafeEnvironmentPattern.get().ifEmpty { null }?.toRegex()
+                        for ((name, value) in System.getenv()) {
+                            if (simulatorSafeEnvironmentPattern?.containsMatchIn(name) == true) {
+                                environment(
+                                    "SIMCTL_CHILD_$name",
+                                    value,
+                                    false
+                                ) // required for Apple simulator execution
+                            }
+                        }
                     }
                 }
 

@@ -14,22 +14,16 @@ tapmoc {
     kotlin("{{version:org.jetbrains.kotlin}}")
 }
 
-testBalloon {
-    browserSafeEnvironmentPattern = "FROM_EXTENSION"
-}
-
 kotlin {
     jvm()
 
     js {
         nodejs()
-        browser()
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         nodejs()
-        browser()
     }
 
     @OptIn(ExperimentalWasmDsl::class)

@@ -19,10 +19,6 @@ tapmoc {
 }
 
 kotlin {
-    compilerOptions {
-        // freeCompilerArgs.addAll("-P", "plugin:de.infix.testBalloon:debugLevel=DISCOVERY")
-    }
-
     jvm()
 
     // @OptIn(ExperimentalWasmDsl::class)

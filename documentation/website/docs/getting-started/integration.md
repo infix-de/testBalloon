@@ -76,19 +76,19 @@ TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-paral
 
 #### Environment variables {#browser-environment-variables}
 
-TestBalloon exports only those environment variables into a **browser's simulated environment**, which are declared browser-safe. To do so, use these options (they are cumulative):
+TestBalloon exports only those environment variables into a **browser's simulated environment**, which are declared browser-safe. To do so, use these options (the build script's setting takes precedence):
 
-1. Set the Gradle property `testBalloon.browserSafeEnvironmentPattern` to regular expression pattern for environment variable names:
+1. Set the Gradle property `testBalloon.browserSafeEnvironmentPattern` to a regular expression pattern for environment variable names:
 
     ```properties
-    testBalloon.browserSafeEnvironmentPattern=CI|TEST.*
+    testBalloon.browserSafeEnvironmentPattern=^(CI|TEST.*)$
     ```
 
 2. In a build script's `testBalloon` extension, set the parameter `browserSafeEnvironmentPattern`:
 
     ```kotlin
     testBalloon {
-        browserSafeEnvironmentPattern = "CI|TEST.*"
+        browserSafeEnvironmentPattern = "^(CI|TEST.*)$"
     }
     ``` 
 
@@ -97,6 +97,24 @@ TestBalloon exports only those environment variables into a **browser's simulate
 TestBalloon fully supports the Kotlin Gradle Plugin infrastructure.
 
 TestBalloon supports [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) and tests running in parallel.
+
+#### Apple simulator environment variables {#simulator-environment-variables}
+
+TestBalloon exports only those environment variables into an **Apple simulator's environment**, which are declared simulator-safe. To do so, use these options (the build script's setting takes precedence):
+
+1. Set the Gradle property `testBalloon.simulatorSafeEnvironmentPattern` to a regular expression pattern for environment variable names:
+
+    ```properties
+    testBalloon.simulatorSafeEnvironmentPattern=^(CI|TEST.*)$
+    ```
+
+2. In a build script's `testBalloon` extension, set the parameter `simulatorSafeEnvironmentPattern`:
+
+    ```kotlin
+    testBalloon {
+        simulatorSafeEnvironmentPattern = "^(CI|TEST.*)$"
+    }
+    ``` 
 
 ## Android
 

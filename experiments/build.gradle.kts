@@ -1,5 +1,8 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.testBalloon
 import buildLogic.versionFromCatalog
+import de.infix.testBalloon.framework.shared.internal.DebugLevel
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import tapmoc.Severity
 
 plugins {
@@ -17,12 +20,18 @@ tapmoc {
     checkDependencies(Severity.ERROR)
 }
 
-kotlin {
-    compilerOptions {
-        // freeCompilerArgs.addAll("-P", "plugin:de.infix.testBalloon:debugLevel=DISCOVERY")
-    }
+testBalloon {
+    browserSafeEnvironmentPattern = "SHELL"
+    @OptIn(TestBalloonInternalApi::class)
+    debugLevel = DebugLevel.DISCOVERY
+}
 
+kotlin {
     jvm()
+    js {
+        browser()
+        nodejs()
+    }
 
     androidLibrary {
         namespace = "org.example.android.multiplatform.library"

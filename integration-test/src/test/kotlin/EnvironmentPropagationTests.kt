@@ -1,6 +1,7 @@
 @file:OptIn(TestBalloonInternalApi::class)
 
 import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
@@ -10,42 +11,60 @@ import kotlin.time.Duration.Companion.minutes
 val EnvironmentPropagationTests by testSuite(
     testConfig = TestConfig.testScope(isEnabled = true, timeout = 24.minutes)
 ) {
-    val projectName = "environment-propagation"
-    val project = TestProject(this, projectName)
+    val nativeTasksThatMayFail = setOf("macosArm64Test", "iosSimulatorArm64Test", "linuxX64Test", "mingwX64Test")
+    val projectTestSuite = this
+    val environment = mapOf("TEST_ONE" to "test one", "CUSTOM_ONE" to "custom one", "CUSTOM_TWO" to "custom two")
 
-    val nativeTasksThatMayFail = setOf("macosArm64Test", "linuxX64Test", "mingwX64Test")
+    fun TestSuiteScope.projectTest(
+        projectName: String,
+        variantName: String? = null,
+        vararg gradleArguments: String,
+        expectedVariables: List<String>
+    ) = test(listOfNotNull(projectName, variantName).joinToString()) {
+        val project = TestProject(projectTestSuite, "environment-propagation-$projectName")
 
-    val testCases = mapOf(
-        mapOf<String, String>() to 1,
-        mapOf("FROM_PROPERTY" to "yes") to 2,
-        mapOf("FROM_EXTENSION" to "yes") to 2,
-        mapOf("FROM_PROPERTY" to "yes", "FROM_EXTENSION" to "yes") to 3
-    )
-    for ((environment, expectedTestCount) in testCases) {
-        test("with environment=$environment expect $expectedTestCount test(s)") {
-            for (taskName in project.testTaskNames()) {
-                val taskExecution = project.gradleExecution(
-                    ":clean${taskName.capitalizedTaskName()}",
-                    ":$taskName",
-                    "-PtestBalloon.browserSafeEnvironmentPattern=FROM_PROPERTY",
-                    environment = mapOf("FROM_PROPERTY" to "yes", "FROM_EXTENSION" to "yes")
-                )
-                val taskResults = taskExecution.logMessages()
-                if (taskName in nativeTasksThatMayFail && taskExecution.stdout.contains(":$taskName SKIPPED")) {
-                    println("$testElementPath: $taskName – SKIPPED")
-                } else {
-                    val expectedTestCount = 3
-                    check(taskResults.size == expectedTestCount) {
-                        "$taskName was expected to produce $expectedTestCount result(s)," +
-                            " but produced ${taskResults.size}:\n" +
-                            "\tactual results:\n${taskResults.asIndentedText(indent = "\t\t")}\n" +
-                            taskExecution.stdoutStderr()
-                    }
-                    println("$testElementPath: $taskName – OK")
+        for (taskName in project.testTaskNames()) {
+            val taskExecution = project.gradleExecution(
+                ":clean${taskName.capitalizedTaskName()}",
+                ":$taskName",
+                *gradleArguments,
+                environment = environment
+            )
+            val taskResults = taskExecution.logMessages()
+            if (taskName in nativeTasksThatMayFail && taskExecution.stdout.contains(":$taskName SKIPPED")) {
+                println("$testElementPath: $taskName – SKIPPED")
+            } else {
+                check(taskResults == expectedVariables) {
+                    "$taskName did not propagate exactly $expectedVariables:\n" +
+                        "\tactual results:\n${taskResults.asIndentedText(indent = "\t\t")}\n" +
+                        taskExecution.stdoutStderr()
                 }
+                println("$testElementPath: $taskName – OK")
             }
         }
     }
+
+    projectTest("unrestricted", expectedVariables = listOf("TEST_ONE", "CUSTOM_ONE", "CUSTOM_TWO"))
+
+    projectTest(
+        "browser-and-ios-without-extension",
+        "no custom variables declared safe",
+        expectedVariables = listOf("TEST_ONE") // matched by default pattern
+    )
+    projectTest(
+        "browser-and-ios-without-extension",
+        "CUSTOM_ONE declared safe by property",
+        "-PtestBalloon.browserSafeEnvironmentPattern=CUSTOM_ONE",
+        "-PtestBalloon.simulatorSafeEnvironmentPattern=CUSTOM_ONE",
+        expectedVariables = listOf("CUSTOM_ONE") // matched by property
+    )
+    projectTest(
+        "browser-and-ios-with-extension",
+        "CUSTOM_TWO declared safe by extension",
+        "-PtestBalloon.browserSafeEnvironmentPattern=CUSTOM_ONE",
+        "-PtestBalloon.simulatorSafeEnvironmentPattern=CUSTOM_ONE",
+        expectedVariables = listOf("CUSTOM_TWO") // matched by extension, overrides property
+    )
 }
 
 private fun String.capitalizedTaskName(): String = replaceFirstChar {

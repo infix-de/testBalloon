@@ -45,12 +45,6 @@ android {
         }
     }
 
-    kotlin {
-        compilerOptions {
-            // freeCompilerArgs.addAll("-P", "plugin:de.infix.testBalloon:debugLevel=DISCOVERY")
-        }
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE*.md}"

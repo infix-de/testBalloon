@@ -12,26 +12,31 @@ public enum class LogLevel { DEBUG, INFO, ERROR }
 @TestBalloonExperimentalApi
 public var testFrameworkLogLevel: LogLevel = LogLevel.INFO
 
-internal fun logDebug(message: () -> String) {
+@TestBalloonInternalApi
+public fun logDebug(message: () -> String) {
     log(LogLevel.DEBUG) { "DEBUG: ${message()}" }
 }
 
-internal fun logInfo(message: () -> String) {
+@TestBalloonInternalApi
+public fun logInfo(message: () -> String) {
     log(LogLevel.INFO) { "INFO: ${message()}" }
 }
 
-internal fun logError(message: () -> String) {
+@TestBalloonInternalApi
+public fun logError(message: () -> String) {
     log(LogLevel.ERROR) { "ERROR: ${message()}" }
 }
 
-internal fun log(messageLevel: LogLevel, message: () -> String) {
+@TestBalloonInternalApi
+public fun log(messageLevel: LogLevel, message: () -> String) {
     if (messageLevel >= testFrameworkLogLevel) {
         @OptIn(ExperimentalTime::class)
         printlnFixed("${Clock.System.now()} [${testPlatform.threadId()}] ${message()}")
     }
 }
 
-internal inline fun <Result> withLog(messageLevel: LogLevel, message: String, action: () -> Result): Result {
+@TestBalloonInternalApi
+public inline fun <Result> withLog(messageLevel: LogLevel, message: String, action: () -> Result): Result {
     try {
         log(messageLevel) { "$message [${testPlatform.displayName}] – start" }
         val result = action()
@@ -49,7 +54,8 @@ internal inline fun <Result> withLog(messageLevel: LogLevel, message: String, ac
 @TestBalloonInternalApi
 public expect fun printlnFixed(message: Any?)
 
-internal fun Throwable.logErrorWithStacktrace(headline: String, includeStacktrace: Boolean = true) {
+@TestBalloonInternalApi
+public fun Throwable.logErrorWithStacktrace(headline: String, includeStacktrace: Boolean = true) {
     logError {
         buildString {
             append(headline)

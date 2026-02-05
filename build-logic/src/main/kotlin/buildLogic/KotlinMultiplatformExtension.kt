@@ -49,6 +49,26 @@ fun KotlinMultiplatformExtension.nativeTargets() {
     tvosX64()
 }
 
+fun KotlinMultiplatformExtension.allTargets(includeWasmWasi: Boolean = true) {
+    jvm()
+    jsTargets()
+    nativeTargets()
+
+    if (includeWasmWasi) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmWasi {
+            nodejs()
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    applyHierarchy {
+        if (includeWasmWasi) {
+            withWasmWasi()
+        }
+    }
+}
+
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 fun KotlinMultiplatformExtension.applyHierarchy(nonJvm: KotlinHierarchyBuilder.() -> Unit = {}) {
     applyHierarchyTemplate(KotlinHierarchyTemplate.default) {

@@ -1,8 +1,9 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.allTargets
 import buildLogic.enableAbiValidation
 
 plugins {
-    id("buildLogic.multiplatform-excluding-wasm-wasi")
+    id("buildLogic.kotlin-multiplatform")
     id("buildLogic.publishing-multiplatform")
 }
 
@@ -12,6 +13,8 @@ addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.tes
 
 kotlin {
     enableAbiValidation()
+
+    allTargets(includeWasmWasi = false)
 
     sourceSets {
         commonMain {

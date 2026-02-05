@@ -39,11 +39,8 @@ gradlePlugin {
         val pluginMap = mapOf(
             "buildLogic.common" to "BuildLogicCommonPlugin",
             "buildLogic.dokka" to "BuildLogicDokkaPlugin",
-            "buildLogic.jvm" to "BuildLogicJvmPlugin",
-            "buildLogic.multiplatform-base" to "BuildLogicMultiplatformBasePlugin",
-            "buildLogic.multiplatform" to "BuildLogicMultiplatformPlugin",
-            "buildLogic.multiplatform-excluding-wasm-wasi" to "BuildLogicMultiplatformExcludingWasmWasiPlugin",
-            "buildLogic.multiplatform-plus-android-library" to "BuildLogicMultiplatformPlusAndroidLibraryPlugin",
+            "buildLogic.kotlin-jvm" to "BuildLogicKotlinJvmPlugin",
+            "buildLogic.kotlin-multiplatform" to "BuildLogicKotlinMultiplatformPlugin",
             "buildLogic.android-application" to "BuildLogicAndroidApplicationPlugin",
             "buildLogic.publishing-base" to "BuildLogicPublishingBasePlugin",
             "buildLogic.publishing-jvm" to "BuildLogicPublishingJvmPlugin",

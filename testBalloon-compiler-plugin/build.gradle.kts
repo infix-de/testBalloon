@@ -1,5 +1,5 @@
 plugins {
-    id("buildLogic.jvm")
+    id("buildLogic.kotlin-jvm")
     id("buildLogic.publishing-jvm")
     id("com.github.gmazzo.buildconfig")
 }

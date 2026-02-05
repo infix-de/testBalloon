@@ -1,13 +1,16 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.allTargets
 
 plugins {
-    id("buildLogic.multiplatform-excluding-wasm-wasi")
+    id("buildLogic.kotlin-multiplatform")
 }
 
 // The following invocation supplements the TestBalloon plugin declaration inside this project:
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 kotlin {
+    allTargets(includeWasmWasi = false)
+
     sourceSets {
         commonTest {
             dependencies {

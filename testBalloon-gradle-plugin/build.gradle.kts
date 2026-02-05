@@ -1,7 +1,7 @@
 import buildLogic.libraryFromCatalog
 
 plugins {
-    id("buildLogic.jvm")
+    id("buildLogic.kotlin-jvm")
     id("buildLogic.publishing-jvm")
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
     id("org.jetbrains.kotlin.plugin.assignment")

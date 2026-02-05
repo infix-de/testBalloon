@@ -1,7 +1,8 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.allTargets
 
 plugins {
-    id("buildLogic.multiplatform")
+    id("buildLogic.kotlin-multiplatform")
     // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
     id("org.jetbrains.kotlin.plugin.atomicfu")
 }
@@ -10,6 +11,8 @@ plugins {
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 kotlin {
+    allTargets()
+
     sourceSets {
         commonTest {
             dependencies {

@@ -1,12 +1,11 @@
-import buildLogic.withTapmoc
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 @Suppress("unused")
-class BuildLogicJvmPlugin : Plugin<Project> {
+class BuildLogicKotlinJvmPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
-        withTapmoc {
+        with(pluginManager) {
             apply("buildLogic.common")
             apply("org.jetbrains.kotlin.jvm")
         }

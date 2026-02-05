@@ -2,7 +2,7 @@ import buildLogic.addTestBalloonPluginFromProject
 import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
-    id("buildLogic.jvm")
+    id("buildLogic.kotlin-jvm")
 }
 
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
@@ -69,8 +69,11 @@ tasks {
                 val (protocol, name) = matchResult.groupValues[1].split(':')
                 when (protocol) {
                     "version" -> baseVersions[name] ?: "??version alias '$name' not found??"
+
                     "pluginVersion" -> basePluginVersions[name] ?: "??plugin alias '$name' not found??"
+
                     "prop" -> baseProperties[name] ?: "??property '$name' not found??"
+
                     "path" -> when (name) {
                         "integration-test-repository" -> integrationTestRepositoryDir.get().toString()
                         else -> "??unknown path name '$name'??"

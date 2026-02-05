@@ -3,7 +3,6 @@ import buildLogic.addTestBalloonPluginFromProject
 plugins {
     id("buildLogic.android-application")
     // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
-    id("org.jetbrains.kotlin.plugin.atomicfu")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
@@ -79,8 +78,6 @@ dependencies {
     // instead of this project-internal dependency:
     androidTestImplementation(projects.testBalloonFrameworkCore)
     androidTestImplementation(libs.androidx.test.runner)
-
-    androidTestImplementation(libs.org.jetbrains.kotlinx.atomicfu)
 
     // Test rules and transitive dependencies:
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")

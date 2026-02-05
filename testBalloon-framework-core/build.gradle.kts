@@ -1,14 +1,18 @@
 @file:OptIn(TestBalloonInternalApi::class)
 
+import buildLogic.allTargets
 import buildLogic.enableAbiValidation
+import buildLogic.versionFromCatalog
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
-    id("buildLogic.multiplatform-plus-android-library")
+    id("buildLogic.kotlin-multiplatform")
+    id("com.android.kotlin.multiplatform.library")
     id("buildLogic.publishing-multiplatform")
+    id("org.jetbrains.kotlin.plugin.atomicfu")
 }
 
 description = "Core library for the TestBalloon framework"
@@ -22,6 +26,8 @@ kotlin {
             "-opt-in=${Constants.CORE_PACKAGE_NAME}.TestBalloonExperimentalApi"
         )
     }
+
+    allTargets()
 
     js {
         // The core library tests use kotlin.test, which comes with a default timeout of 2 seconds on JS.
@@ -40,6 +46,7 @@ kotlin {
 
     androidLibrary {
         namespace = Constants.CORE_PACKAGE_NAME
+        compileSdk = versionFromCatalog("android-compileSdk").toInt()
     }
 
     sourceSets {

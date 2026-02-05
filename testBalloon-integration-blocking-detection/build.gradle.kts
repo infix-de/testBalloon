@@ -1,8 +1,11 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.allTargets
 import buildLogic.enableAbiValidation
+import buildLogic.versionFromCatalog
 
 plugins {
-    id("buildLogic.multiplatform-plus-android-library")
+    id("buildLogic.kotlin-multiplatform")
+    id("com.android.kotlin.multiplatform.library")
     id("buildLogic.publishing-multiplatform")
 }
 
@@ -13,8 +16,11 @@ addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.tes
 kotlin {
     enableAbiValidation()
 
+    allTargets()
+
     androidLibrary {
         namespace = "de.infix.testBalloon.integration.blockingDetection"
+        compileSdk = versionFromCatalog("android-compileSdk").toInt()
     }
 
     sourceSets {

@@ -70,6 +70,11 @@ kotlin {
                 // instead of this project-internal dependency:
                 implementation(projects.testBalloonFrameworkCore)
                 implementation(libs.junit.junit4)
+                // required for host-side tests with TestBalloon outside this project:
+                //     implementation("de.infix.testBalloon:testBalloon-integration-roboelectric:${testBalloonVersion}")
+                // instead of this project-internal dependency:
+                implementation(projects.testBalloonIntegrationRoboelectric)
+                implementation(libs.androidx.test.core)
             }
         }
 

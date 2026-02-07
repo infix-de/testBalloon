@@ -99,5 +99,8 @@ tasks.withType<KotlinNativeTest>().configureEach {
     doFirst {
         environment("TEST_TASK_NAME", taskName, false)
         environment("SIMCTL_CHILD_TEST_TASK_NAME", taskName, false) // Apple simulator execution environment
+        System.getenv("CI")?.let {
+            environment("SIMCTL_CHILD_CI", it, false) // Apple simulator execution environment
+        }
     }
 }

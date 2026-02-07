@@ -134,6 +134,8 @@ org-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", 
 org-junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "org-junit-platform" }
 org-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "org-junit-platform" }
 
+org-robolectric = "org.robolectric:robolectric:4.16.1"
+
 [plugins]
 
 com-android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }

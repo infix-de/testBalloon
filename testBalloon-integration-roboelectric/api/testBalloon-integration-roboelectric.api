@@ -1,0 +1,9 @@
+public final class de/infix/testBalloon/integration/roboelectric/Integration_jvmKt {
+	public static final fun roboelectricTestSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lkotlin/reflect/KClass;Lde/infix/testBalloon/framework/core/TestConfig;)V
+	public static synthetic fun roboelectricTestSuite$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lkotlin/reflect/KClass;Lde/infix/testBalloon/framework/core/TestConfig;ILjava/lang/Object;)V
+}
+
+public class de/infix/testBalloon/integration/roboelectric/RoboelectricTestSuite {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+}
+

@@ -191,11 +191,11 @@ public open class TestSuite internal constructor(
         }
 
         setUpReporting(report) {
+            super.setUp(selection, report)
+
             inRegistrationScope {
                 content()
             }
-
-            super.setUp(selection, report)
 
             check(
                 testElementChildren.any() ||

@@ -72,7 +72,7 @@ class TestConfigTests {
     }
 
     @Test
-    fun permits() {
+    fun permitsSetting() {
         testPermits(testConfig = TestConfig)
         testPermits(
             testConfig = TestConfig.permits(TestConfig.Permit.SuiteWithoutChildren),
@@ -87,18 +87,7 @@ class TestConfigTests {
     }
 
     @Test
-    fun permitsReplaced() {
-        testPermits(
-            testConfig = TestConfig
-                .permits(TestConfig.Permit.SuiteWithoutChildren)
-                .permits(TestConfig.Permit.SuiteWithoutChildren, TestConfig.Permit.WrapperWithoutInnerInvocation),
-            TestConfig.Permit.SuiteWithoutChildren,
-            TestConfig.Permit.WrapperWithoutInnerInvocation
-        )
-    }
-
-    @Test
-    fun permitsAdded() {
+    fun permitsAddition() {
         testPermits(
             testConfig = TestConfig
                 .permits(TestConfig.Permit.SuiteWithoutChildren)
@@ -109,7 +98,18 @@ class TestConfigTests {
     }
 
     @Test
-    fun permitsRemoved() {
+    fun permitsReplacement() {
+        testPermits(
+            testConfig = TestConfig
+                .permits(TestConfig.Permit.SuiteWithoutChildren)
+                .permits(TestConfig.Permit.SuiteWithoutChildren, TestConfig.Permit.WrapperWithoutInnerInvocation),
+            TestConfig.Permit.SuiteWithoutChildren,
+            TestConfig.Permit.WrapperWithoutInnerInvocation
+        )
+    }
+
+    @Test
+    fun permitsRemoval() {
         testPermits(
             testConfig = TestConfig
                 .permits(TestConfig.Permit.SuiteWithoutChildren, TestConfig.Permit.WrapperWithoutInnerInvocation)
@@ -127,6 +127,77 @@ class TestConfigTests {
             assertContentEquals(parameters.permits.toList(), expectedPermits.toSet().toList())
         }
     }
+
+    private class ParameterA : TestElement.KeyedParameter(Key) {
+        companion object {
+            val Key = object : Key<ParameterA> {}
+        }
+    }
+
+    private class ParameterB : TestElement.KeyedParameter(Key) {
+        companion object {
+            val Key = object : Key<ParameterB> {}
+        }
+    }
+
+    @Test
+    fun parameterAddition() {
+        testKeyedParameters(testConfig = TestConfig)
+        val parameterA = ParameterA()
+        testKeyedParameters(
+            testConfig = TestConfig.parameter(ParameterA.Key) { parameterA },
+            parameterA
+        )
+        val parameterB = ParameterB()
+        testKeyedParameters(
+            testConfig = TestConfig
+                .parameter(ParameterA.Key) { parameterA }
+                .parameter(ParameterB.Key) { parameterB },
+            parameterA,
+            parameterB
+        )
+    }
+
+    @Test
+    fun parameterReplacement() {
+        val parameterA1 = ParameterA()
+        val parameterA2 = ParameterA()
+        testKeyedParameters(
+            testConfig = TestConfig
+                .parameter(ParameterA.Key) { parameterA1 }
+                .parameter(ParameterA.Key) { parameterA2 },
+            parameterA2
+        )
+    }
+
+    @Test
+    fun parameterRemoval() {
+        val parameterA = ParameterA()
+        testKeyedParameters(
+            testConfig = TestConfig
+                .parameter(ParameterA.Key) { parameterA }
+                .parameter(ParameterA.Key) { null }
+        )
+        val parameterB = ParameterB()
+        testKeyedParameters(
+            testConfig = TestConfig
+                .parameter(ParameterA.Key) { parameterA }
+                .parameter(ParameterB.Key) { parameterB }
+                .parameter(ParameterA.Key) { null },
+            parameterB
+        )
+    }
+
+    private fun testKeyedParameters(testConfig: TestConfig, vararg expectedParameters: TestElement.KeyedParameter) =
+        withTestFramework {
+            val testSuite by testSuite("testSuite") {}
+
+            testConfig.parameterize(testSuite)
+
+            TestConfig.executeWrapped(testSuite) {
+                assertContentEquals(parameters.keyedParameters.values.toList(), expectedParameters.toSet().toList())
+            }
+        }
 
     @Test
     fun testScope() = withTestFramework {

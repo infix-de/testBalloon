@@ -261,10 +261,40 @@ public sealed class TestElement(
             _parameters = value
         }
 
-    internal data class Parameters(val isEnabled: Boolean = true, val permits: Set<TestConfig.Permit> = emptySet()) {
+    internal data class Parameters(
+        val isEnabled: Boolean = true,
+        val permits: Set<TestConfig.Permit> = emptySet(),
+        val keyedParameters: Map<KeyedParameter.Key<*>, KeyedParameter> = mapOf()
+    ) {
         companion object {
             val default = Parameters()
         }
+    }
+
+    /**
+     * A parameter uniquely identified by its [key]. The key also determines the specific parameter's type.
+     *
+     * Usage:
+     * ```
+     * class MyParameter : TestElement.KeyedParameter(Key) {
+     *     companion object {
+     *         val Key = object : Key<MyParameter> {}
+     *     }
+     * }
+     * ```
+     */
+    public abstract class KeyedParameter(internal val key: Key<*>) {
+        public interface Key<SpecificParameter : KeyedParameter>
+    }
+
+    /**
+     * Returns the parameter identified by [key], if it exists, otherwise null.
+     */
+    public fun <SpecificParameter : KeyedParameter> testElementParameter(
+        key: KeyedParameter.Key<SpecificParameter>
+    ): SpecificParameter? = parameters.keyedParameters[key]?.let {
+        @Suppress("UNCHECKED_CAST")
+        it as SpecificParameter
     }
 
     /**

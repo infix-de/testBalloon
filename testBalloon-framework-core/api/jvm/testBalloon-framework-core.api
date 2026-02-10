@@ -68,6 +68,7 @@ public final class de/infix/testBalloon/framework/core/TestConfigKt {
 	public static final fun invocation (Lde/infix/testBalloon/framework/core/TestConfig;Lde/infix/testBalloon/framework/core/TestConfig$Invocation;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun mainDispatcher (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlinx/coroutines/CoroutineDispatcher;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static synthetic fun mainDispatcher$default (Lde/infix/testBalloon/framework/core/TestConfig;Lkotlinx/coroutines/CoroutineDispatcher;ILjava/lang/Object;)Lde/infix/testBalloon/framework/core/TestConfig;
+	public static final fun parameter (Lde/infix/testBalloon/framework/core/TestConfig;Lde/infix/testBalloon/framework/core/TestElement$KeyedParameter$Key;Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun permits (Lde/infix/testBalloon/framework/core/TestConfig;[Lde/infix/testBalloon/framework/core/TestConfig$Permit;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun removePermits (Lde/infix/testBalloon/framework/core/TestConfig;[Lde/infix/testBalloon/framework/core/TestConfig$Permit;)Lde/infix/testBalloon/framework/core/TestConfig;
 	public static final fun singleThreaded (Lde/infix/testBalloon/framework/core/TestConfig;)Lde/infix/testBalloon/framework/core/TestConfig;
@@ -84,6 +85,7 @@ public abstract class de/infix/testBalloon/framework/core/TestElement : de/infix
 	public fun getTestElementIsEnabled ()Z
 	public fun getTestElementPath ()Lde/infix/testBalloon/framework/core/TestElement$Path;
 	public synthetic fun getTestElementPath ()Lde/infix/testBalloon/framework/shared/AbstractTestElement$Path;
+	public final fun testElementParameter (Lde/infix/testBalloon/framework/core/TestElement$KeyedParameter$Key;)Lde/infix/testBalloon/framework/core/TestElement$KeyedParameter;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -106,6 +108,13 @@ public final class de/infix/testBalloon/framework/core/TestElement$Event$Finishe
 
 public final class de/infix/testBalloon/framework/core/TestElement$Event$Starting : de/infix/testBalloon/framework/core/TestElement$Event {
 	public fun <init> (Lde/infix/testBalloon/framework/core/TestElement;)V
+}
+
+public abstract class de/infix/testBalloon/framework/core/TestElement$KeyedParameter {
+	public fun <init> (Lde/infix/testBalloon/framework/core/TestElement$KeyedParameter$Key;)V
+}
+
+public abstract interface class de/infix/testBalloon/framework/core/TestElement$KeyedParameter$Key {
 }
 
 public final class de/infix/testBalloon/framework/core/TestElement$Path : de/infix/testBalloon/framework/shared/AbstractTestElement$Path {

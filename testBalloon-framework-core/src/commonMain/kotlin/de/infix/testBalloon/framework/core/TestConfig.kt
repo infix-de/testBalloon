@@ -39,15 +39,17 @@ import kotlin.time.Duration.Companion.seconds
  * ```
  */
 public open class TestConfig internal constructor(
-    private val parameterizingAction: ParameterizingAction?,
+    private val parameterizingAction: (TestElement.(TestElement.Parameters) -> TestElement.Parameters)?,
     private val executionWrappingAction: TestElementExecutionWrappingAction?,
     private val executionReportSetupAction: ExecutionReportSetupAction?
 ) {
     /** Returns a [TestConfig] which combines `this` configuration with a parameterizing action. */
-    internal fun parameterizing(nextParameterizingAction: ParameterizingAction): TestConfig = TestConfig(
+    internal fun parameterizing(
+        nextParameterizingAction: TestElement.(TestElement.Parameters) -> TestElement.Parameters
+    ): TestConfig = TestConfig(
         parameterizingAction = if (parameterizingAction != null) {
-            {
-                parameterizingAction().nextParameterizingAction()
+            { parameters ->
+                nextParameterizingAction(parameterizingAction(parameters))
             }
         } else {
             nextParameterizingAction
@@ -102,7 +104,7 @@ public open class TestConfig internal constructor(
     internal fun parameterize(testElement: TestElement) {
         val initialParameters = testElement.testElementParent?.parameters ?: TestElement.Parameters.default
         testElement.parameters =
-            if (parameterizingAction == null) initialParameters else initialParameters.parameterizingAction()
+            if (parameterizingAction == null) initialParameters else testElement.parameterizingAction(initialParameters)
     }
 
     /** Wraps the execution according to `this` configuration, then executes [elementAction] on [testElement]. */
@@ -199,8 +201,6 @@ public open class TestConfig internal constructor(
     }
 }
 
-private typealias ParameterizingAction = TestElement.Parameters.() -> TestElement.Parameters
-
 private typealias ExecutionReportSetupAction =
     suspend TestElement.(elementAction: suspend TestElement.() -> Unit) -> Unit
 
@@ -233,10 +233,35 @@ public typealias TestElementExecutionWrappingAction = suspend TestElement.(
  *
  * It disables test execution for the [TestElement] it is configured for and all elements below it.
  */
-public fun TestConfig.disable(): TestConfig = parameterizing {
+public fun TestConfig.disable(): TestConfig = parameterizing { parameters ->
     // Starting with the parent element's parameters, we can only disable.
     // We can never enable an element with a disabled parent.
-    if (isEnabled) copy(isEnabled = false) else this
+    if (parameters.isEnabled) parameters.copy(isEnabled = false) else parameters
+}
+
+/**
+ * Returns a test configuration specifying a [TestElement.KeyedParameter] for a [TestElement] hierarchy.
+ *
+ * The [newParameter] lambda is invoked with the existing/inherited parameter, if present, otherwise null.
+ * The lambda returns the new parameter, or null to remove it.
+ */
+public fun <SpecificParameter : TestElement.KeyedParameter> TestConfig.parameter(
+    key: TestElement.KeyedParameter.Key<SpecificParameter>,
+    newParameter: TestElement.(originalParameter: SpecificParameter?) -> SpecificParameter?
+): TestConfig = parameterizing { parameters ->
+    val originalParameter: SpecificParameter? = parameters.keyedParameters[key]?.let {
+        @Suppress("UNCHECKED_CAST")
+        it as SpecificParameter
+    }
+    val newParameter: SpecificParameter? = newParameter(originalParameter)
+    val newAdditionalParameters = if (newParameter != null) {
+        parameters.keyedParameters + (newParameter.key to newParameter)
+    } else if (originalParameter != null) {
+        parameters.keyedParameters - originalParameter.key
+    } else {
+        parameters.keyedParameters
+    }
+    parameters.copy(keyedParameters = newAdditionalParameters)
 }
 
 /**
@@ -477,8 +502,8 @@ private class InvocationContext(val mode: TestConfig.Invocation) : AbstractCorou
  * Child elements inherit [permits], unless configured otherwise.
  */
 @TestBalloonExperimentalApi
-public fun TestConfig.permits(vararg permits: TestConfig.Permit): TestConfig = parameterizing {
-    copy(permits = permits.toSet())
+public fun TestConfig.permits(vararg permits: TestConfig.Permit): TestConfig = parameterizing { parameters ->
+    parameters.copy(permits = permits.toSet())
 }
 
 /**
@@ -487,8 +512,8 @@ public fun TestConfig.permits(vararg permits: TestConfig.Permit): TestConfig = p
  * Child elements inherit [permits], unless configured otherwise.
  */
 @TestBalloonExperimentalApi
-public fun TestConfig.addPermits(vararg permits: TestConfig.Permit): TestConfig = parameterizing {
-    copy(permits = this.permits + permits.toSet())
+public fun TestConfig.addPermits(vararg permits: TestConfig.Permit): TestConfig = parameterizing { parameters ->
+    parameters.copy(permits = parameters.permits + permits.toSet())
 }
 
 /**
@@ -497,8 +522,8 @@ public fun TestConfig.addPermits(vararg permits: TestConfig.Permit): TestConfig 
  * Child elements inherit [permits], unless configured otherwise.
  */
 @TestBalloonExperimentalApi
-public fun TestConfig.removePermits(vararg permits: TestConfig.Permit): TestConfig = parameterizing {
-    copy(permits = this.permits - permits.toSet())
+public fun TestConfig.removePermits(vararg permits: TestConfig.Permit): TestConfig = parameterizing { parameters ->
+    parameters.copy(permits = parameters.permits - permits.toSet())
 }
 
 /**

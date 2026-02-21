@@ -15,7 +15,10 @@ nav:
       - Configuration: getting-started/configuration.md
       - Integration: getting-started/integration.md
       - Examples: getting-started/examples.md
+  - Integrations:
       - Background: getting-started/background.md
+      - Kotest Assertions: integrations/kotest-assertions.md
+      - Blocking Detection: integrations/blocking-detection.md
   - How to:
       - Effective testing: how-to/effective-testing.md
       - Upgrading: how-to/upgrading.md
@@ -23,8 +26,9 @@ nav:
           - …from JUnit: how-to/migrating-from-junit.md
           - …from Kotest: how-to/migrating-from-kotest.md
           - …from kotlin.test: how-to/migrating-from-kotlin-test.md
-  - Articles: articles.md
   - Support: support.md
+  - Blog:
+      - blog/index.md
   - API Reference: api/index.html
 
 theme:
@@ -80,6 +84,7 @@ plugins:
   - social
   - search
   - privacy
+  - blog
   - markdownextradata:
       data: build/generated/documentationVariables
       jinja_options:

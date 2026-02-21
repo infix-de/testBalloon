@@ -37,4 +37,4 @@ This documentation is organized as follows:
 * The [How-to guide](how-to/effective-testing.md) contains guidance about effective testing and migrating to TestBalloon.
 * The [API Reference](api/index.html) provides comprehensive documentation for TestBalloon's public API.
 
-There are [Support](support.md) touchpoints and an incubating selection of [Articles](articles.md) on TestBalloon.
+In addition, there are [Support](support.md) touchpoints and a [Blog](blog/index.md) covering TestBalloon developments.

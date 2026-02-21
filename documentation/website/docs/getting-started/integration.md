@@ -1,14 +1,14 @@
 TestBalloon has a unified API for all Kotlin target platforms, residing in the `common` source set.
 
+TestBalloon supports multi-level nesting of test suites and [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on platforms whose test infrastructure can handle concurrent test execution.
+
 !!! info
 
     TestBalloon integrates thoroughly with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
 
-TestBalloon supports multi-level nesting of test suites and [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on platforms whose test infrastructure can handle concurrent test execution.
-
 **Runtime information** and **environment variables** are available on all platforms via the global `testPlatform` variable and its [`TestPlatform`](../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-platform/index.html) interface.
 
-The following sections provide an overview about TestBalloon's integration with its various platforms and build tooling. They are not meant to be exhaustive, but highlight selected details.
+The following sections provide an overview about platforms and build tooling. They are not meant to be exhaustive, but highlight selected details.
 
 ## Kotlin Multiplatform
 
@@ -168,10 +168,8 @@ For Android device-side tests, TestBalloon provides simulated environment variab
 
 TestBalloon integrates with IntelliJ IDEA. Some of the functionality is provided by the [TestBalloon plugin for IntelliJ IDEA](https://plugins.jetbrains.com/plugin/27749-testballoon).
 
-* Editor windows show run gutter icons to run or debug individual tests or test suites (at any level).
-    * Test status indicators (successful, failed) are displayed for JVM targets (except Android tests).
-* Test results appear in IntelliJ's test run window, including the results tree display.
-    * The actions "Run", "Debug", and "Jump to source" are available, except for Android device tests.
+* Editor windows show run gutter icons to run or debug individual tests or test suites (at any level). Test status indicators (successful, failed) are displayed for JVM targets (except Android tests).
+* Test results appear in IntelliJ's test run window, including the results tree display. The actions "Run", "Debug", and "Jump to source" are available, except for Android device tests.
 * Test elements appear in the [file structure tool window and structure popup](https://www.jetbrains.com/help/idea/viewing-structure-of-a-source-file.html).
 * Navigating between test elements is possible via the "Next Method" and "Previous Method" actions.
 * Stack traces in test results hide framework-internal lines by folding.

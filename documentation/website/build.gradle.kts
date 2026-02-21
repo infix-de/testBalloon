@@ -27,6 +27,8 @@ plugins {
 dependencies {
     dokka(project(":testBalloon-framework-shared"))
     dokka(project(":testBalloon-framework-core"))
+    dokka(project(":testBalloon-integration-kotest-assertions"))
+    dokka(project(":testBalloon-integration-blocking-detection"))
 
     //noinspection UseTomlInstead
     dokkaHtmlPlugin("org.jetbrains.dokka:versioning-plugin")

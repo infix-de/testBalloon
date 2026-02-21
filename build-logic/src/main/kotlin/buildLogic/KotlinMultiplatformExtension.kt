@@ -1,6 +1,7 @@
 package buildLogic
 
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalTestingApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -95,6 +96,8 @@ fun KotlinMultiplatformExtension.enableAbiValidation() {
             exclude {
                 byNames.add(TestBalloonInternalApi::class.qualifiedName!!)
                 annotatedWith.add(TestBalloonInternalApi::class.qualifiedName!!)
+                byNames.add(TestBalloonInternalTestingApi::class.qualifiedName!!)
+                annotatedWith.add(TestBalloonInternalTestingApi::class.qualifiedName!!)
             }
         }
     }

@@ -1,6 +1,8 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.internal.FrameworkTestUtilities
 import de.infix.testBalloon.framework.core.internal.TestFramework
+import de.infix.testBalloon.framework.core.internal.assertMessageStartsWith
 import de.infix.testBalloon.framework.core.internal.initializeTestFramework
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,7 +17,7 @@ import kotlin.test.assertNotEquals
 class TestConfigTestsJvm {
     @Test
     fun singleThreadedDispatcher() {
-        withTestFramework {
+        FrameworkTestUtilities.withTestFramework {
             @OptIn(ExperimentalCoroutinesApi::class)
             withSingleThreadedDispatcher { defaultDispatcher ->
                 val testSuite by testSuite("testSuite", testConfig = TestConfig.coroutineContext(defaultDispatcher)) {}
@@ -93,7 +95,7 @@ class TestConfigTestsJvm {
 
     @Test
     fun mainDispatcherSetMoreThanOnce() {
-        withTestFramework {
+        FrameworkTestUtilities.withTestFramework {
             val testSuite by testSuite("testSuite") {}
 
             @OptIn(ExperimentalCoroutinesApi::class)

@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.internal.FrameworkTestUtilities
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.currentCoroutineContext
 import kotlin.test.Test
@@ -12,7 +13,7 @@ import kotlin.test.assertNull
 
 class TestConfigTests {
     @Test
-    fun coroutineContext() = withTestFramework {
+    fun coroutineContext() = FrameworkTestUtilities.withTestFramework {
         val testSuite by testSuite("testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
@@ -26,7 +27,7 @@ class TestConfigTests {
     }
 
     @Test
-    fun invocation() = withTestFramework {
+    fun invocation() = FrameworkTestUtilities.withTestFramework {
         val testSuite by testSuite("testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
@@ -39,7 +40,7 @@ class TestConfigTests {
     }
 
     @Test
-    fun concurrencyAndTestScope() = withTestFramework {
+    fun concurrencyAndTestScope() = FrameworkTestUtilities.withTestFramework {
         val testSuite by testSuite("testSuite") {}
 
         TestSession.DefaultConfiguration.executeWrapped(testSuite) {
@@ -118,15 +119,16 @@ class TestConfigTests {
         )
     }
 
-    private fun testPermits(testConfig: TestConfig, vararg expectedPermits: TestConfig.Permit) = withTestFramework {
-        val testSuite by testSuite("testSuite") {}
+    private fun testPermits(testConfig: TestConfig, vararg expectedPermits: TestConfig.Permit) =
+        FrameworkTestUtilities.withTestFramework {
+            val testSuite by testSuite("testSuite") {}
 
-        testConfig.parameterize(testSuite)
+            testConfig.parameterize(testSuite)
 
-        TestConfig.executeWrapped(testSuite) {
-            assertContentEquals(parameters.permits.toList(), expectedPermits.toSet().toList())
+            TestConfig.executeWrapped(testSuite) {
+                assertContentEquals(parameters.permits.toList(), expectedPermits.toSet().toList())
+            }
         }
-    }
 
     private class ParameterA : TestElement.KeyedParameter(Key) {
         companion object {
@@ -189,7 +191,7 @@ class TestConfigTests {
     }
 
     private fun testKeyedParameters(testConfig: TestConfig, vararg expectedParameters: TestElement.KeyedParameter) =
-        withTestFramework {
+        FrameworkTestUtilities.withTestFramework {
             val testSuite by testSuite("testSuite") {}
 
             testConfig.parameterize(testSuite)
@@ -200,7 +202,7 @@ class TestConfigTests {
         }
 
     @Test
-    fun testScope() = withTestFramework {
+    fun testScope() = FrameworkTestUtilities.withTestFramework {
         val testSuite by testSuite("testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
@@ -217,7 +219,7 @@ class TestConfigTests {
     }
 
     @Test
-    fun inheritance() = withTestFramework {
+    fun inheritance() = FrameworkTestUtilities.withTestFramework {
         val testSuite by testSuite("testSuite") {}
 
         val coroutineNameElement = CoroutineName("TEST-CC")
@@ -232,7 +234,7 @@ class TestConfigTests {
     }
 
     @Test
-    fun chaining() = withTestFramework {
+    fun chaining() = FrameworkTestUtilities.withTestFramework {
         val testSuite by testSuite("testSuite") {}
 
         val coroutineNameElement = CoroutineName("TEST-CC")

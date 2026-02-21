@@ -1,5 +1,7 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.internal.FrameworkTestUtilities
+import de.infix.testBalloon.framework.core.internal.assertMessageStartsWith
 import de.infix.testBalloon.framework.shared.internal.Constants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -13,7 +15,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class TestTests {
     @Test
-    fun testScope() = assertSuccessfulSuite {
+    fun testScope() = FrameworkTestUtilities.assertSuccessfulSuite {
         @OptIn(ExperimentalCoroutinesApi::class)
         test("test1") {
             assertEquals(0, testScope.currentTime)
@@ -23,21 +25,22 @@ class TestTests {
     }
 
     @Test
-    fun noTestScope() = assertSuccessfulSuite(testConfig = TestConfig.testScope(isEnabled = false)) {
-        @OptIn(ExperimentalCoroutinesApi::class)
-        test("test1") {
-            assertFails {
-                testScope.currentTime
-            }.assertMessageStartsWith(
-                "Test(«suite${Constants.INTERNAL_PATH_ELEMENT_SEPARATOR}test1») is not executing in a TestScope."
-            )
+    fun noTestScope() =
+        FrameworkTestUtilities.assertSuccessfulSuite(testConfig = TestConfig.testScope(isEnabled = false)) {
+            @OptIn(ExperimentalCoroutinesApi::class)
+            test("test1") {
+                assertFails {
+                    testScope.currentTime
+                }.assertMessageStartsWith(
+                    "Test(«suite${Constants.INTERNAL_PATH_ELEMENT_SEPARATOR}test1») is not executing in a TestScope."
+                )
+            }
         }
-    }
 
     @Test
-    fun launchesAreWaitedFor() = withTestFramework {
+    fun launchesAreWaitedFor() = FrameworkTestUtilities.withTestFramework {
         val launchCount = 10
-        val completedLaunches = ConcurrentList<Int>()
+        val completedLaunches = FrameworkTestUtilities.ConcurrentList<Int>()
 
         val suite1 by testSuite("suite1", compartment = { TestCompartment.RealTime }) {
             test("test1") {
@@ -50,7 +53,8 @@ class TestTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
+            @Suppress("RedundantWith")
             with(finishedTestEvents()) {
                 assertEquals(
                     launchCount,

@@ -1,6 +1,11 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.internal.FrameworkTestUtilities
+import de.infix.testBalloon.framework.core.internal.assertElementPathsContainInOrder
+import de.infix.testBalloon.framework.core.internal.assertMessageStartsWith
 import de.infix.testBalloon.framework.shared.internal.Constants
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -18,7 +23,7 @@ class TestCompartmentTests {
     private val iSep = Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
 
     @Test
-    fun defaultCompartment() = assertSuccessfulSuite {
+    fun defaultCompartment() = FrameworkTestUtilities.assertSuccessfulSuite {
         val compartment = testElementParent as? TestCompartment
         test("test1") {
             assertEquals(TestCompartment.Default, compartment)
@@ -29,7 +34,7 @@ class TestCompartmentTests {
     }
 
     @Test
-    fun twoCompartments() = withTestFramework {
+    fun twoCompartments() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             val compartment = testElementParent as? TestCompartment
             test("test1") {
@@ -81,7 +86,7 @@ class TestCompartmentTests {
             }
         }
 
-        withTestReport(suite1, suite2, suite3, suite4) {
+        FrameworkTestUtilities.withTestReport(suite1, suite2, suite3, suite4) {
             with(finishedTestEvents()) {
                 assertTrue(isNotEmpty())
                 assertAllSucceeded()
@@ -102,7 +107,7 @@ class TestCompartmentTests {
     }
 
     @Test
-    fun concurrency() = withTestFramework {
+    fun concurrency() = FrameworkTestUtilities.withTestFramework {
         val suiteCount = 8
         val testCount = 8
 
@@ -152,7 +157,11 @@ class TestCompartmentTests {
             sequentialThreadIds.clear()
 
             try {
-                withTestReport(suite1, suite2, invokeSetup = missedParallelismExpectation == null) {
+                FrameworkTestUtilities.withTestReport(
+                    suite1,
+                    suite2,
+                    invokeSetup = missedParallelismExpectation == null
+                ) {
                     with(finishedTestEvents()) {
                         assertTrue(isNotEmpty())
                         assertAllSucceeded()
@@ -209,7 +218,7 @@ class TestCompartmentTests {
     }
 
     @Test
-    fun ui() = withTestFramework {
+    fun ui() = FrameworkTestUtilities.withTestFramework {
         val uiThreadIds = ConcurrentSet<ULong>()
 
         val suite by testSuite("topSuite", compartment = { TestCompartment.MainDispatcher(Dispatchers.Unconfined) }) {
@@ -233,7 +242,7 @@ class TestCompartmentTests {
             }
         }
 
-        withTestReport(suite) {
+        FrameworkTestUtilities.withTestReport(suite) {
             with(finishedTestEvents()) {
                 assertTrue(isNotEmpty(), "Missing finished test events.")
                 assertAllSucceeded()
@@ -242,4 +251,12 @@ class TestCompartmentTests {
             }
         }
     }
+}
+
+private class ConcurrentSet<Element> : SynchronizedObject() {
+    private val elements = mutableSetOf<Element>()
+
+    fun clear() = synchronized(this) { elements.clear() }
+    fun add(element: Element) = synchronized(this) { elements.add(element) }
+    fun elements() = synchronized(this) { elements.toSet() }
 }

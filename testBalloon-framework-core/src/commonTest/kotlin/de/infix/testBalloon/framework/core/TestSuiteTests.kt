@@ -1,5 +1,8 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.internal.FrameworkTestUtilities
+import de.infix.testBalloon.framework.core.internal.assertElementPathsContainInOrder
+import de.infix.testBalloon.framework.core.internal.assertMessageStartsWith
 import de.infix.testBalloon.framework.shared.internal.Constants
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.delay
@@ -17,10 +20,10 @@ class TestSuiteTests {
     private val iSep = Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
 
     @Test
-    fun sequentialExecution() = withTestFramework {
+    fun sequentialExecution() = FrameworkTestUtilities.withTestFramework {
         val subSuiteCount = 3
         val testCount = 3
-        val expectedTestElementPaths = ConcurrentList<String>()
+        val expectedTestElementPaths = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite by testSuite("topSuite") {
             for (suiteNumber in 1..subSuiteCount) {
@@ -37,7 +40,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite) {
+        FrameworkTestUtilities.withTestReport(suite) {
             with(finishedTestEvents()) {
                 assertTrue(isNotEmpty())
                 assertAllSucceeded()
@@ -47,8 +50,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun aroundAll() = withTestFramework {
-        val trace = ConcurrentList<String>()
+    fun aroundAll() = FrameworkTestUtilities.withTestFramework {
+        val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(
             "suite1",
@@ -69,7 +72,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             assertContentEquals(
                 listOf(
                     "«suite1» aroundAll begin",
@@ -83,12 +86,12 @@ class TestSuiteTests {
     }
 
     @Test
-    fun aroundAllWithoutInnerInvocation() = withTestFramework {
+    fun aroundAllWithoutInnerInvocation() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1", testConfig = TestConfig.aroundAll {}) {
             test("test1") {}
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             finishedTestEvents().any {
                 it.throwable?.message?.contains("the element action has not been invoked") == true
             }
@@ -96,7 +99,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun aroundAllWithoutInnerInvocationPermitted() = withTestFramework {
+    fun aroundAllWithoutInnerInvocationPermitted() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite(
             "suite1",
             testConfig = TestConfig.permits(TestConfig.Permit.WrapperWithoutInnerInvocation).aroundAll {}
@@ -104,140 +107,140 @@ class TestSuiteTests {
             test("test1") {}
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             finishedTestEvents().all { it.succeeded }
         }
     }
 
     @Test
-    fun suiteWithoutChildren() = withTestFramework {
+    fun suiteWithoutChildren() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
         }
 
         assertFails {
-            withTestReport(suite1) {}
+            FrameworkTestUtilities.withTestReport(suite1) {}
         }.also {
             assertContains(it.cause?.message ?: "", "does not contain any child tests or test suites")
         }
     }
 
     @Test
-    fun suiteWithoutChildrenPermitted() = withTestFramework {
+    fun suiteWithoutChildrenPermitted() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1", testConfig = TestConfig.permits(TestConfig.Permit.SuiteWithoutChildren)) {
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             finishedTestEvents().all { it.succeeded }
         }
     }
 
     @Test
-    fun suiteWithEmptyName() = withTestFramework {
+    fun suiteWithEmptyName() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("") {
         }
 
         assertFails {
-            withTestReport(suite1) {}
+            FrameworkTestUtilities.withTestReport(suite1) {}
         }.also {
             assertContains(it.message ?: "", "with an empty or blank name ''")
         }
     }
 
     @Test
-    fun suiteWithBlankName() = withTestFramework {
+    fun suiteWithBlankName() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite(" ") {
         }
 
         assertFails {
-            withTestReport(suite1) {}
+            FrameworkTestUtilities.withTestReport(suite1) {}
         }.also {
             assertContains(it.message ?: "", "with an empty or blank name ' '")
         }
     }
 
     @Test
-    fun suiteWithEmptyDisplayName() = withTestFramework {
+    fun suiteWithEmptyDisplayName() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1", displayName = "") {
         }
 
         assertFails {
-            withTestReport(suite1) {}
+            FrameworkTestUtilities.withTestReport(suite1) {}
         }.also {
             assertContains(it.message ?: "", "with an empty or blank displayName ''")
         }
     }
 
     @Test
-    fun suiteWithBlankDisplayName() = withTestFramework {
+    fun suiteWithBlankDisplayName() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1", displayName = " ") {
         }
 
         assertFails {
-            withTestReport(suite1) {}
+            FrameworkTestUtilities.withTestReport(suite1) {}
         }.also {
             assertContains(it.message ?: "", "with an empty or blank displayName ' '")
         }
     }
 
     @Test
-    fun testWithEmptyName() = withTestFramework {
+    fun testWithEmptyName() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             test("") {
             }
         }
 
         assertFails {
-            withTestReport(suite1) {}
+            FrameworkTestUtilities.withTestReport(suite1) {}
         }.also {
             assertContains(it.cause?.message ?: "", "with an empty or blank name ''")
         }
     }
 
     @Test
-    fun testWithBlankName() = withTestFramework {
+    fun testWithBlankName() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             test(" ") {
             }
         }
 
         assertFails {
-            withTestReport(suite1) {}
+            FrameworkTestUtilities.withTestReport(suite1) {}
         }.also {
             assertContains(it.cause?.message ?: "", "with an empty or blank name ' '")
         }
     }
 
     @Test
-    fun testWithEmptyDisplayName() = withTestFramework {
+    fun testWithEmptyDisplayName() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             test("test1", displayName = "") {
             }
         }
 
         assertFails {
-            withTestReport(suite1) {}
+            FrameworkTestUtilities.withTestReport(suite1) {}
         }.also {
             assertContains(it.cause?.message ?: "", "with an empty or blank displayName ''")
         }
     }
 
     @Test
-    fun testWithBlankDisplayName() = withTestFramework {
+    fun testWithBlankDisplayName() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             test("test1", displayName = " ") {
             }
         }
 
         assertFails {
-            withTestReport(suite1) {}
+            FrameworkTestUtilities.withTestReport(suite1) {}
         }.also {
             assertContains(it.cause?.message ?: "", "with an empty or blank displayName ' '")
         }
     }
 
     @Test
-    fun aroundEach() = withTestFramework {
-        val trace = ConcurrentList<String>()
+    fun aroundEach() = FrameworkTestUtilities.withTestFramework {
+        val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(
             "suite1",
@@ -274,7 +277,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             assertContentEquals(
                 listOf(
                     "«suite1» aroundEach1.1 begin",
@@ -310,7 +313,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun failFast() = withTestFramework {
+    fun failFast() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1", testConfig = TestConfig.failFast(3)) {
             for (testId in 1..15) {
                 test("test$testId") {
@@ -324,7 +327,7 @@ class TestSuiteTests {
         // Note that since this test does not interact with the Kotlin/JS test infrastructure, it tests
         // premature completion in a JVM-like fashion (stopping to run tests after "fail fast" detection)
         // on all platforms.
-        withTestReport(suite1, expectFrameworkFailure = true) { frameworkFailure ->
+        FrameworkTestUtilities.withTestReport(suite1, expectFrameworkFailure = true) { frameworkFailure ->
             assertEquals(4, (frameworkFailure as? FailFastException)?.failureCount)
             with(finishedEvents()) {
                 val failedTests = filter { it.failed && it.element is de.infix.testBalloon.framework.core.Test }
@@ -334,8 +337,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixture() = withTestFramework {
-        val trace = ConcurrentList<String>()
+    fun suiteLevelFixture() = FrameworkTestUtilities.withTestFramework {
+        val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val invocationSuite by testSuite("invocationSuite") {
             val outerFixture =
@@ -392,7 +395,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(invocationSuite, parameterSuite, contextSuite) {
+        FrameworkTestUtilities.withTestReport(invocationSuite, parameterSuite, contextSuite) {
             assertContentEquals(
                 listOf(
                     "«invocationSuite${iSep}test1»",
@@ -414,8 +417,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testLevelFixture() = withTestFramework {
-        val trace = ConcurrentList<String>()
+    fun testLevelFixture() = FrameworkTestUtilities.withTestFramework {
+        val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val parameterSuite by testSuite("parameterSuite") {
             testFixture {
@@ -455,7 +458,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(parameterSuite, contextSuite) {
+        FrameworkTestUtilities.withTestReport(parameterSuite, contextSuite) {
             assertContentEquals(
                 listOf(
                     "«parameterSuite» fixture creating",
@@ -477,8 +480,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testLevelFixtureNested() = withTestFramework {
-        val trace = ConcurrentList<String>()
+    fun testLevelFixtureNested() = FrameworkTestUtilities.withTestFramework {
+        val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val parameterSuite by testSuite("parameterSuite") {
             testFixture {
@@ -533,7 +536,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(parameterSuite, contextSuite) {
+        FrameworkTestUtilities.withTestReport(parameterSuite, contextSuite) {
             assertContentEquals(
                 listOf(
                     "«parameterSuite» fixture '1' creating",
@@ -561,7 +564,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testLevelToSuiteLevelFixture() = withTestFramework {
+    fun testLevelToSuiteLevelFixture() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             val fixture1 = testFixture {
             } asParameterForEach {
@@ -573,7 +576,7 @@ class TestSuiteTests {
                 assertEquals(fixture1(), Unit)
             }
         }
-        withTestReport(suite1) { frameworkFailure ->
+        FrameworkTestUtilities.withTestReport(suite1) { frameworkFailure ->
             assertNull(frameworkFailure)
             with(finishedTestEvents()) {
                 assertEquals(2, size)
@@ -585,7 +588,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelToTestLevelFixture() = withTestFramework {
+    fun suiteLevelToTestLevelFixture() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             testFixture {
             } asParameterForAll {
@@ -596,7 +599,7 @@ class TestSuiteTests {
                 }
             }
         }
-        withTestReport(suite1) { frameworkFailure ->
+        FrameworkTestUtilities.withTestReport(suite1) { frameworkFailure ->
             assertNull(frameworkFailure)
             with(finishedTestEvents()) {
                 assertEquals(2, size)
@@ -608,8 +611,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureWithAroundAll() = withTestFramework {
-        val trace = ConcurrentList<String>()
+    fun suiteLevelFixtureWithAroundAll() = FrameworkTestUtilities.withTestFramework {
+        val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(
             "suite1",
@@ -634,7 +637,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             assertContentEquals(
                 listOf(
                     "«suite1» aroundAll begin",
@@ -650,8 +653,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureWithDisabledElements() = withTestFramework {
-        val trace = ConcurrentList<String>()
+    fun suiteLevelFixtureWithDisabledElements() = FrameworkTestUtilities.withTestFramework {
+        val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite("suite1") {
             val suite1Fixture =
@@ -696,7 +699,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1, suite2, suite3) {
+        FrameworkTestUtilities.withTestReport(suite1, suite2, suite3) {
             assertContentEquals(
                 listOf(
                     "«suite2» fixture creating",
@@ -712,8 +715,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureWithFailedTest() = withTestFramework {
-        val trace = ConcurrentList<String>()
+    fun suiteLevelFixtureWithFailedTest() = FrameworkTestUtilities.withTestFramework {
+        val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite("suite1") {
             val fixture1 =
@@ -730,7 +733,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             with(finishedTestEvents()) {
                 assertEquals(2, size)
                 assertTrue(this[0].succeeded)
@@ -749,8 +752,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun fixturesWithCloseResult() = withTestFramework {
-        val results = ConcurrentList<String>()
+    fun fixturesWithCloseResult() = FrameworkTestUtilities.withTestFramework {
+        val results = FrameworkTestUtilities.ConcurrentList<String>()
 
         fun TestSuite.testFixtureChecking() = testFixture {} closeWith { testsSucceeded ->
             results.add(
@@ -821,7 +824,7 @@ class TestSuiteTests {
             )
         }
 
-        withTestReport(*suites.toTypedArray()) {
+        FrameworkTestUtilities.withTestReport(*suites.toTypedArray()) {
             // println(results.elements().joinToString("\n") { "\"$it\"," })
             assertContentEquals(
                 listOf(
@@ -855,7 +858,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureActionFailure() = withTestFramework {
+    fun suiteLevelFixtureActionFailure() = FrameworkTestUtilities.withTestFramework {
         var failCount = 0
         var closeCount = 0
 
@@ -872,7 +875,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             with(finishedTestEvents()) {
                 assertEquals(2, size)
                 forEach { event ->
@@ -886,8 +889,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureWithSetupFailures() = withTestFramework {
-        val trace = ConcurrentList<String>()
+    fun suiteLevelFixtureWithSetupFailures() = FrameworkTestUtilities.withTestFramework {
+        val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite("suite1") {
             val fixtures = listOf(
@@ -930,7 +933,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             assertContentEquals(
                 listOf(
                     "«suite1${iSep}test1» begin",
@@ -975,7 +978,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureConcurrency() = assertSuccessfulSuite {
+    fun suiteLevelFixtureConcurrency() = FrameworkTestUtilities.assertSuccessfulSuite {
         val instanceCount = atomic(0)
 
         testSuite("suite1", testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent)) {
@@ -990,7 +993,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun disabled() = assertSuccessfulSuite {
+    fun disabled() = FrameworkTestUtilities.assertSuccessfulSuite {
         test("test1", testConfig = TestConfig.disable()) {
             fail("test $testElementPath should be disabled")
         }
@@ -1012,7 +1015,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun uniqueElementPaths() = withTestFramework {
+    fun uniqueElementPaths() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             test("test1") {
             }
@@ -1021,7 +1024,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             with(finishedTestEvents()) {
                 assertEquals(
                     size,
@@ -1033,19 +1036,19 @@ class TestSuiteTests {
     }
 
     @Test
-    fun displayNameTopLevel() = withTestFramework {
+    fun displayNameTopLevel() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1", displayName = "top-level suite #1") {
             test("test1") {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             verifyDisplayNames(listOf("suite1${iSep}test1", "suite1/top-level suite #1"))
         }
     }
 
     @Test
-    fun displayNameInnerSuite() = withTestFramework {
+    fun displayNameInnerSuite() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             test("test1") {
             }
@@ -1056,7 +1059,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             verifyDisplayNames(
                 listOf(
                     "suite1${iSep}test1",
@@ -1068,7 +1071,7 @@ class TestSuiteTests {
         }
     }
 
-    private fun InMemoryTestExecutionReport.verifyDisplayNames(expectation: List<String>) {
+    private fun FrameworkTestUtilities.InMemoryTestExecutionReport.verifyDisplayNames(expectation: List<String>) {
         assertContentEquals(
             expectation,
             finishedEvents().map {
@@ -1084,7 +1087,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun additionalReports() = withTestFramework {
+    fun additionalReports() = FrameworkTestUtilities.withTestFramework {
         val eventLog = mutableListOf<String>()
 
         class AdditionalExecutionReport(val name: String) : TestExecutionReport() {
@@ -1119,7 +1122,7 @@ class TestSuiteTests {
             }
         }
 
-        withTestReport(suite1) {
+        FrameworkTestUtilities.withTestReport(suite1) {
             // [*] means: disabled test element, will be reported without actual execution
             assertContentEquals(
                 listOf(

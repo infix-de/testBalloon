@@ -2,12 +2,9 @@ package de.infix.testBalloon.framework.core.internal
 
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestElement
-import de.infix.testBalloon.framework.core.assertMessageStartsWith
+import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.disable
-import de.infix.testBalloon.framework.core.reference
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.core.withTestFramework
-import de.infix.testBalloon.framework.core.withTestReport
 import de.infix.testBalloon.framework.shared.internal.Constants
 import kotlinx.coroutines.test.TestResult
 import kotlin.test.Test
@@ -104,7 +101,7 @@ class TestFrameworkTests {
     private fun verifyElementSelection(
         selection: TestElement.Selection,
         expectedResult: List<Pair<String, Boolean>>
-    ): TestResult = withTestFramework {
+    ): TestResult = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
             test("test1") {}
             test("test2", testConfig = TestConfig.disable()) {}
@@ -125,7 +122,7 @@ class TestFrameworkTests {
             test("test2", testConfig = TestConfig.disable()) {}
         }
 
-        withTestReport(suite1, suite2, selection = selection) {
+        FrameworkTestUtilities.withTestReport(suite1, suite2, selection = selection) {
             with(finishedTestEvents()) {
                 assertContentEquals(
                     expectedResult,
@@ -134,4 +131,9 @@ class TestFrameworkTests {
             }
         }
     }
+}
+
+/** References a [TestSuite], resolving the lazy initialization for top-level suites. */
+private fun TestSuite.reference() {
+    require(toString().isNotEmpty())
 }

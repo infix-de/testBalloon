@@ -1,6 +1,7 @@
 package de.infix.testBalloon.dokka
 
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalTestingApi
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.transformers.documentables.SuppressedByConditionDocumentableFilterTransformer
 import org.jetbrains.dokka.model.Annotations
@@ -35,12 +36,13 @@ private class InternalApiHidingTransformer(context: DokkaContext) :
                 ?.flatMap { it.directAnnotations.values.flatten() }
                 ?: emptyList()
 
-        return annotations.any { it.fqn() == internalApiAnnotationFqn }
+        return annotations.any { it.fqn() in internalApiAnnotationFqn }
     }
 
     private fun Annotations.Annotation.fqn() = "${dri.packageName}.${dri.classNames}"
 
     companion object {
-        val internalApiAnnotationFqn = TestBalloonInternalApi::class.qualifiedName
+        val internalApiAnnotationFqn =
+            setOf(TestBalloonInternalApi::class.qualifiedName, TestBalloonInternalTestingApi::class.qualifiedName)
     }
 }

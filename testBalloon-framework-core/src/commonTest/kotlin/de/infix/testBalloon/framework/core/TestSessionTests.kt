@@ -1,5 +1,7 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.internal.FrameworkTestUtilities
+import de.infix.testBalloon.framework.core.internal.assertMessageStartsWith
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.currentCoroutineContext
 import kotlin.test.Test
@@ -10,7 +12,7 @@ import kotlin.test.assertNull
 
 class TestSessionTests {
     @Test
-    fun defaultConfiguration() = assertSuccessfulSuite {
+    fun defaultConfiguration() = FrameworkTestUtilities.assertSuccessfulSuite {
         test("invocation") {
             assertEquals(TestConfig.Invocation.Sequential, TestConfig.Invocation.current())
         }
@@ -23,7 +25,7 @@ class TestSessionTests {
     }
 
     @Test
-    fun customConfiguration() = assertSuccessfulSuite(
+    fun customConfiguration() = FrameworkTestUtilities.assertSuccessfulSuite(
         testSession = object : TestSession(testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent)) {}
     ) {
         test("invocation") {
@@ -32,7 +34,7 @@ class TestSessionTests {
     }
 
     @Test
-    fun onlySingleInstance() = withTestFramework {
+    fun onlySingleInstance() = FrameworkTestUtilities.withTestFramework {
         // `withTestFramework` has set up a `TestSession`, creating another one should fail.
         assertFailsWith<IllegalArgumentException> {
             object : TestSession(testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent)) {}

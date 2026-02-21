@@ -15,8 +15,8 @@ nav:
       - Configuration: getting-started/configuration.md
       - Integration: getting-started/integration.md
       - Examples: getting-started/examples.md
-  - Integrations:
       - Background: getting-started/background.md
+  - Integrations:
       - Roboelectric: integrations/roboelectric.md
       - Kotest Assertions: integrations/kotest-assertions.md
       - Blocking Detection: integrations/blocking-detection.md

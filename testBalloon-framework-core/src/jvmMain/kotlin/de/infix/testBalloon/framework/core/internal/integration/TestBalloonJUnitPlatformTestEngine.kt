@@ -41,7 +41,7 @@ private val testElementDescriptors = ConcurrentHashMap<TestElement, AbstractTest
  * JUnit Platform will instantiate it and invoke its methods.
  */
 internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
-    override fun getId(): String = Constants.JUNIT_ENGINE_ID
+    override fun getId(): String = Constants.JUNIT_PLATFORM_ENGINE_ID
 
     override fun discover(discoveryRequest: EngineDiscoveryRequest, uniqueId: UniqueId): TestDescriptor {
         // We use the framework's compiler plugin to discover tests. That means we are ignoring the

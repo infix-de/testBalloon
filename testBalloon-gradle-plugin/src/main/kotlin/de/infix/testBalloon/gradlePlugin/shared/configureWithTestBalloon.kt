@@ -116,7 +116,7 @@ private fun Project.configureTestTasks(
             if (junitPlatformGradleAutoConfigurationEnabled) {
                 useJUnitPlatform {
                     if (jvmTestBalloonTestsOnly || testBalloonPriorityIncludePatternsExist) {
-                        includeEngines(Constants.JUNIT_ENGINE_ID)
+                        includeEngines(Constants.JUNIT_PLATFORM_ENGINE_ID)
                     }
                 }
             }
@@ -392,7 +392,7 @@ private fun Project.configureDiagnosticsTask() = afterEvaluate {
             }.toMap()
 
             mapOf(
-                "de.infix.testBalloon" to null,
+                Constants.COMPILER_PLUGIN_NAME to null,
                 "org.jetbrains.kotlin.jvm" to null,
                 "org.jetbrains.kotlin.multiplatform" to null,
                 "com.android.application" to "Sharing a module with KMP is unsupported.",
@@ -450,9 +450,9 @@ private fun Project.configureDiagnosticsTask() = afterEvaluate {
                             resolvedDependencyResult.selected.withAllChildren()
                         }
                         .mapNotNull { component ->
-                            (component.id as? ModuleComponentIdentifier)?.let {
-                                if (it.group == "de.infix.testBalloon") VersionNumber.parse(it.version) else null
-                            }
+                            (component.id as? ModuleComponentIdentifier)
+                                ?.takeIf { it.group == Constants.ARTIFACT_GROUP_ID }
+                                ?.let { VersionNumber.parse(it.version) }
                         }
                         .toSet()
 

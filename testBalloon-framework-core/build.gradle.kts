@@ -23,6 +23,7 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.addAll(
             "-opt-in=${Constants.SHARED_INTERNAL_PACKAGE_NAME}.TestBalloonInternalApi",
+            "-opt-in=${Constants.SHARED_INTERNAL_PACKAGE_NAME}.TestBalloonInternalTestingApi",
             "-opt-in=${Constants.CORE_PACKAGE_NAME}.TestBalloonExperimentalApi"
         )
     }
@@ -90,7 +91,7 @@ kotlin {
 tasks.withType<Test>().configureEach {
     // https://docs.gradle.org/current/userguide/java_testing.html
     useJUnitPlatform {
-        excludeEngines(Constants.JUNIT_ENGINE_ID) // Do not use TestBalloon in this project
+        excludeEngines(Constants.JUNIT_PLATFORM_ENGINE_ID) // Do not use TestBalloon in this project
     }
 }
 

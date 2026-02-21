@@ -1,3 +1,7 @@
+!!! note
+
+    This chapter describes TestBalloon's integration on Kotlin's diverse target platforms. [TestBalloon integrations with third-party libraries can be found here.](../integrations/roboelectric.md)
+
 TestBalloon has a unified API for all Kotlin target platforms, residing in the `common` source set.
 
 TestBalloon supports multi-level nesting of test suites and [deep concurrency](coroutines.md#deep-concurrency-and-parallelism) on platforms whose test infrastructure can handle concurrent test execution.

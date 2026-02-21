@@ -1,8 +1,5 @@
 import buildLogic.addTestBalloonPluginFromProject
-import buildLogic.testBalloon
 import buildLogic.versionFromCatalog
-import de.infix.testBalloon.framework.shared.internal.DebugLevel
-import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import tapmoc.Severity
 
 plugins {
@@ -20,26 +17,14 @@ tapmoc {
     checkDependencies(Severity.ERROR)
 }
 
-testBalloon {
-    browserSafeEnvironmentPattern = "SHELL"
-    @OptIn(TestBalloonInternalApi::class)
-    debugLevel = DebugLevel.DISCOVERY
-}
-
 kotlin {
-    jvm()
-    js {
-        browser()
-        nodejs()
-    }
-
     androidLibrary {
         namespace = "org.example.android.multiplatform.library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
         withHostTestBuilder {}.configure {
-            // isIncludeAndroidResources = true
+            isIncludeAndroidResources = true
         }
         withDeviceTestBuilder {
             sourceSetTreeName = "test"
@@ -69,9 +54,10 @@ kotlin {
         named("androidHostTest") {
             dependencies {
                 // required for host-side tests with TestBalloon outside this project:
-                //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
+                //     implementation("de.infix.testBalloon:testBalloon-integration-roboelectric:${testBalloonVersion}")
                 // instead of this project-internal dependency:
-                implementation(projects.testBalloonFrameworkCore)
+                implementation(projects.testBalloonIntegrationRoboelectric)
+                implementation(libs.androidx.test.core)
             }
         }
 

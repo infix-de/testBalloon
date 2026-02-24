@@ -1,6 +1,7 @@
 name: 'CI: Push on main or release branch'
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'main'

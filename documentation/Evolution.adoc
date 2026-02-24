@@ -13,7 +13,7 @@ While TestBalloon's core structure is stable, some aspects of its public API may
 ==== Next Steps
 
 * Provide complete documentation, showing common use cases for the entire API.
-* Determine common use cases and evolve the `TestConfig` builder to support them.
+* Determine common use cases and evolve the `TestConfig` decorator chain to support them.
 * Extract the compiler/Gradle plugin combination into a separate project with its own versioning.
 * Extract existing extensions into separate projects with their own versioning.
 * Create additional extensions for common use cases.

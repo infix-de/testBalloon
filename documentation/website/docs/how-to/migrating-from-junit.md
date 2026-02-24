@@ -173,7 +173,7 @@ To run tests in a chosen order, JUnit 5+ requires interventions (like an `@Order
 
 JUnit 5+ extensions are reusable classes whose methods can run code before, after, or around tests.
 
-TestBalloon's [TestConfig builder](../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html) provides 4 functional mechanisms which achieve the same:
+TestBalloon's [TestConfig decorator chain](../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html) provides 4 functional mechanisms which achieve the same:
 
 * two universal functions: `aroundEach()` and `traversal()`,
 * two convenience variants: `aroundAll()` and `aroundEachTest()`.
@@ -194,4 +194,4 @@ TestBalloon's [TestConfig builder](../api/testBalloon-framework-core/de.infix.te
 
 **Nested** and **dynamic tests** are covered as TestBalloon's `testSuite` functions nest and everything is dynamic by nature.
 
-Most other JUnit 5+ features like **disabling tests**, **conditional execution**, **tagging**, **repeated tests** have a natural replacement using plain Kotlin, TestBalloon's [TestConfig builder](../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html), and environment variables [(see this example)](effective-testing.md#conditional-tag-based-testing).
+Most other JUnit 5+ features like **disabling tests**, **conditional execution**, **tagging**, **repeated tests** have a natural replacement using plain Kotlin, TestBalloon's [TestConfig decorator chain](../api/testBalloon-framework-core/de.infix.testBalloon.framework.core/-test-config/index.html), and environment variables [(see this example)](effective-testing.md#conditional-tag-based-testing).

@@ -51,7 +51,7 @@ val Concurrency by testSuite(testConfig = TestConfig.testScope(isEnabled = false
     }
 }
 
-// Define your own test series builder.
+// Define your own test series.
 private fun TestSuiteScope.testSeries() {
     for (testId in 1..10) {
         test("test $testId") {

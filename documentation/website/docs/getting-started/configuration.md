@@ -4,7 +4,7 @@ TestBalloon provides two mechanisms to adapt the testing process to your needs v
 
 1. `TestSuite` extensions to register custom tests or test suites.
 
-2. `TestConfig`, a uniform builder API to configure test elements at any level:
+2. `TestConfig`, a uniform decorator chain API to configure test elements at any level:
 
     === "Single test"
 
@@ -56,7 +56,7 @@ Using the same technique, you can create custom test suites, or test suite serie
 
 ## `TestConfig`
 
-Use the `testConfig` parameter in conjunction with the `TestConfig` builder to configure any part of the test element hierarchy – your tests, test suites, up to global settings.
+Use the `testConfig` parameter in conjunction with the `TestConfig` decorator chain to configure any part of the test element hierarchy – your tests, test suites, up to global settings.
 
 ```kotlin
 --8<-- "Configuration.kt:concurrency"

@@ -4,8 +4,8 @@ import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.integration.roboelectric.ApplicationLifetime
 import de.infix.testBalloon.integration.roboelectric.RoboelectricTestSuiteContent
+import de.infix.testBalloon.integration.roboelectric.internal.roboelectricContext
 import de.infix.testBalloon.integration.roboelectric.roboelectric
-import de.infix.testBalloon.integration.roboelectric.roboelectricContext
 import de.infix.testBalloon.integration.roboelectric.roboelectricTestSuite
 import kotlin.test.assertEquals
 

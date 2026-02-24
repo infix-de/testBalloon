@@ -11,6 +11,7 @@ import de.infix.testBalloon.framework.core.traversal
 import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
+import de.infix.testBalloon.integration.roboelectric.internal.roboelectricContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
 import kotlin.reflect.KClass
@@ -90,6 +91,7 @@ public fun TestSuiteScope.roboelectricTestSuite(
  * })
  * ```
  */
+@TestRegistering
 public abstract class RoboelectricTestSuiteContent protected constructor(
     private val content: TestSuiteScope.() -> Unit
 ) : TestSuiteScope {

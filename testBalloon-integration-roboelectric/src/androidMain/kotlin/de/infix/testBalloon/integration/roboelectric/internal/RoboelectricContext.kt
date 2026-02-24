@@ -1,10 +1,12 @@
-package de.infix.testBalloon.integration.roboelectric
+package de.infix.testBalloon.integration.roboelectric.internal
 
 import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.internal.logDebug
 import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
+import de.infix.testBalloon.integration.roboelectric.RoboelectricSettings
+import de.infix.testBalloon.integration.roboelectric.RoboelectricTestSuiteContent
 import local.org.robolectric.runner.common.ExperimentalRunnerApi
 import local.org.robolectric.runner.common.ManifestResolver
 import local.org.robolectric.runner.common.RobolectricDependencies

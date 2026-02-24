@@ -4,6 +4,7 @@ import android.app.Application
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.parameter
+import de.infix.testBalloon.integration.roboelectric.internal.RoboelectricContext
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.ConscryptMode
 import kotlin.reflect.KClass

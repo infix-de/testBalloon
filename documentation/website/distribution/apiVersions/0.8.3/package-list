@@ -1,0 +1,16 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:de.infix.testBalloon.framework.core.internal.integration////PointingToDeclaration/testBalloon-framework-core/de.infix.testBalloon.framework.core.internal.integration.html
+module:testBalloon-framework-core
+de.infix.testBalloon.framework.core
+de.infix.testBalloon.framework.core.internal
+de.infix.testBalloon.framework.core.internal.integration
+module:testBalloon-framework-shared
+de.infix.testBalloon.framework.shared
+de.infix.testBalloon.framework.shared.internal
+module:testBalloon-integration-blocking-detection
+de.infix.testBalloon.integration.blockingDetection
+module:testBalloon-integration-kotest-assertions
+de.infix.testBalloon.integration.kotest.assertions
+module:testBalloon-integration-roboelectric
+de.infix.testBalloon.integration.roboelectric

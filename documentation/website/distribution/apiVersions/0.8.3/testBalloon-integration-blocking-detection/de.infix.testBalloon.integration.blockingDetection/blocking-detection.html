@@ -1,0 +1,151 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>blockingDetection</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
+                    TestBalloon
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;de.infix.testBalloon.integration.blockingDetection/blocking-detection.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="0.8.3"><span class="versions-dropdown-button-text">0.8.3</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="blocking-detection.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.8.3"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">0.8.3</span></a><a href="../../not-found-version.html?v=0.8.0" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.8.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.8.0</span></a><a href="../../not-found-version.html?v=0.7.0" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.7.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.7.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":testBalloon-integration-blocking-detection/androidMain">android</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":testBalloon-integration-blocking-detection/commonMain">common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":testBalloon-integration-blocking-detection/jvmMain">jvm</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":testBalloon-integration-blocking-detection/nonJvmMain">nonJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":testBalloon-integration-blocking-detection/androidMain" data-filter=":testBalloon-integration-blocking-detection/androidMain">
+                                <span class="checkbox--icon"></span>
+                                android
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":testBalloon-integration-blocking-detection/commonMain" data-filter=":testBalloon-integration-blocking-detection/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":testBalloon-integration-blocking-detection/jvmMain" data-filter=":testBalloon-integration-blocking-detection/jvmMain">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":testBalloon-integration-blocking-detection/nonJvmMain" data-filter=":testBalloon-integration-blocking-detection/nonJvmMain">
+                                <span class="checkbox--icon"></span>
+                                nonJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    TestBalloon
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="member" id="content" pageids="testBalloon-integration-blocking-detection::de.infix.testBalloon.integration.blockingDetection//blockingDetection/de.infix.testBalloon.framework.core.TestConfig#de.infix.testBalloon.integration.blockingDetection.BlockingDetection/PointingToDeclaration//-937915704">
+  <div class="breadcrumbs"><a href="../index.html">testBalloon-integration-blocking-detection</a><span class="delimiter">/</span><a href="index.html">de.infix.testBalloon.integration.blockingDetection</a><span class="delimiter">/</span><span class="current">blockingDetection</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>blocking</span><wbr><span><span>Detection</span></span></h1>
+  </div>
+  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":testBalloon-integration-blocking-detection/androidMain" data-filterable-set=":testBalloon-integration-blocking-detection/androidMain" data-active="" data-toggle=":testBalloon-integration-blocking-detection/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":testBalloon-integration-blocking-detection/commonMain" data-filterable-set=":testBalloon-integration-blocking-detection/commonMain" data-toggle=":testBalloon-integration-blocking-detection/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":testBalloon-integration-blocking-detection/jvmMain" data-filterable-set=":testBalloon-integration-blocking-detection/jvmMain" data-toggle=":testBalloon-integration-blocking-detection/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":testBalloon-integration-blocking-detection/nonJvmMain" data-filterable-set=":testBalloon-integration-blocking-detection/nonJvmMain" data-toggle=":testBalloon-integration-blocking-detection/nonJvmMain">nonJvm</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":testBalloon-integration-blocking-detection/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="../../testBalloon-framework-core/de.infix.test-balloon.framework.core/-test-config/index.html">TestConfig</a><span class="token punctuation">.</span><a href="blocking-detection.html"><span class="token function">blockingDetection</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><a href="-blocking-detection/index.html">BlockingDetection</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../testBalloon-framework-core/de.infix.test-balloon.framework.core/-test-config/index.html">TestConfig</a><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/infix-de/testBalloon/tree/main/testBalloon-integration-blocking-detection/src/androidMain/kotlin/de/infix/testBalloon/integration/blockingDetection/Integration.android.kt#L5">source</a>)</span></span></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":testBalloon-integration-blocking-detection/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="../../testBalloon-framework-core/de.infix.test-balloon.framework.core/-test-config/index.html">TestConfig</a><span class="token punctuation">.</span><a href="blocking-detection.html"><span class="token function">blockingDetection</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><a href="-blocking-detection/index.html">BlockingDetection</a><span class="token operator"> = </span>BlockingDetection.ERROR</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../testBalloon-framework-core/de.infix.test-balloon.framework.core/-test-config/index.html">TestConfig</a><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/infix-de/testBalloon/tree/main/testBalloon-integration-blocking-detection/src/commonMain/kotlin/de/infix/testBalloon/integration/blockingDetection/Integration.kt#L25">source</a>)</span></span></div><p class="paragraph">Returns a test configuration which determines blocking call detection for a <a href="../../testBalloon-framework-core/de.infix.test-balloon.framework.core/-test-element/index.html">TestElement</a> hierarchy.</p><p class="paragraph">NOTES:</p><ul><li><p class="paragraph">Blocking call detection is only available on the JVM. This configuration has no effect on other platforms.</p></li><li><p class="paragraph">Blocking call detection is only available with <span data-unresolved-link="kotlinx.coroutines/Dispatchers/Default/#/PointingToDeclaration/">kotlinx.coroutines.Dispatchers.Default</span>, which is used by default.</p></li><li><p class="paragraph">Enabling blocking call detection disables <a href="../../testBalloon-framework-core/de.infix.testBalloon.framework.core/index.html">TestConfig.testScope</a>. This is necessary since kotlinx-coroutines uses blocking calls in <code class="lang-kotlin">TestScope</code>.</p></li></ul><p class="paragraph">Child elements inherit this setting's effect.</p></div><div class="content sourceset-dependent-content" data-togglable=":testBalloon-integration-blocking-detection/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="../../testBalloon-framework-core/de.infix.test-balloon.framework.core/-test-config/index.html">TestConfig</a><span class="token punctuation">.</span><a href="blocking-detection.html"><span class="token function">blockingDetection</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><a href="-blocking-detection/index.html">BlockingDetection</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../testBalloon-framework-core/de.infix.test-balloon.framework.core/-test-config/index.html">TestConfig</a><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/infix-de/testBalloon/tree/main/testBalloon-integration-blocking-detection/src/jvmMain/kotlin/de/infix/testBalloon/integration/blockingDetection/Integration.jvm.kt#L13">source</a>)</span></span></div></div><div class="content sourceset-dependent-content" data-togglable=":testBalloon-integration-blocking-detection/nonJvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="../../testBalloon-framework-core/de.infix.test-balloon.framework.core/-test-config/index.html">TestConfig</a><span class="token punctuation">.</span><a href="blocking-detection.html"><span class="token function">blockingDetection</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><a href="-blocking-detection/index.html">BlockingDetection</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../testBalloon-framework-core/de.infix.test-balloon.framework.core/-test-config/index.html">TestConfig</a><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/infix-de/testBalloon/tree/main/testBalloon-integration-blocking-detection/src/nonJvmMain/kotlin/de/infix/testBalloon/integration/blockingDetection/Integration.nonJvm.kt#L5">source</a>)</span></span></div></div>  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

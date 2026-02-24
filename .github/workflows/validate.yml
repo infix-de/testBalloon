@@ -16,6 +16,9 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
+      - name: 'Upgrade package lock files'
+        run: ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
+
       - name: 'Check ABI compatibility'
         run: ./gradlew checkKotlinAbi
 

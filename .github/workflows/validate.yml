@@ -11,6 +11,11 @@ jobs:
     steps:
       - name: 'Check out the project'
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.1
+        with:
+          sparse-checkout-cone-mode: 'false'
+          sparse-checkout: |
+            /*
+            !documentation/website/distribution
 
       - uses: ./.github/actions/setup
         with:
@@ -52,6 +57,11 @@ jobs:
     steps:
       - name: 'Check out the project'
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.1
+        with:
+          sparse-checkout-cone-mode: 'false'
+          sparse-checkout: |
+            /*
+            !documentation/website/distribution
 
       - uses: ./.github/actions/setup
         with:

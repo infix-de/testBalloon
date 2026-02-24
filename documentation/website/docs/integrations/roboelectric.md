@@ -74,7 +74,7 @@ As with any other `TestConfig` configuration, Roboelectric settings can be confi
     ```kotlin
     testConfig = TestConfig.roboelectric {
         portableClasses += MyType::class
-        portablePackages += "com.example.mypackage."
+        portablePackages += "com.example.mypackage"
     }
     ```
 

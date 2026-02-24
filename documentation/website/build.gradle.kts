@@ -154,7 +154,8 @@ tasks {
                     "install",
                     "mkdocs-material",
                     "mkdocs-material[imaging]",
-                    "mkdocs-markdownextradata-plugin"
+                    "mkdocs-markdownextradata-plugin",
+                    "material-plausible-plugin"
                 )
             }
         }

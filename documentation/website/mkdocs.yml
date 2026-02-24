@@ -86,6 +86,7 @@ plugins:
   - search
   - privacy
   - blog
+  - material-plausible
   - markdownextradata:
       data: build/generated/documentationVariables
       jinja_options:
@@ -98,6 +99,23 @@ extra:
   social:
     - icon: fontawesome/solid/earth-europe
       link: https://infix.de
+  analytics:
+    provider: plausible
+    domain: infix-de.github.io
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: good
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: bad
+          note: >-
+            Thanks for your feedback! Help us improve this page by
+            <a href="https://github.com/infix-de/testBalloon/issues" target="_blank" rel="noopener">filing an issue</a>.
   version:
     provider: mike
   # consent:

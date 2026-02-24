@@ -1,3 +1,30 @@
+## 0.8.3 (February 24, 2026)
+
+TestBalloon release variants:
+
+| TestBalloon version | Supported Kotlin versions |
+|---------------------|---------------------------|
+| 0.8.3-K2.3.20-RC    | 2.3.20-RC                 |
+| 0.8.3-K2.3.0        | 2.3.0 … 2.3.10            |
+| 0.8.3-K2.2.21       | 2.2.21                    |
+| 0.8.3-K2.2.0        | 2.2.0 … 2.2.20            |
+| 0.8.3-K2.1.20       | 2.1.20 … 2.1.21           |
+| 0.8.3-K2.1.0        | 2.1.0 … 2.1.10            |
+| 0.8.3-K2.0.0        | 2.0.0 … 2.0.21            |
+
+### Highlights
+
+* A new [Roboelectric integration](https://infix-de.github.io/testBalloon/0.8.3/integrations/roboelectric/) for fast, reliable and configurable Android testing (#65).
+* A [new Blog](https://infix-de.github.io/testBalloon/latest/blog/) was born (absorbing the Articles section).
+
+### Other Changes
+
+* Documentation: Added a section for integrations
+* TestConfig, TestElement: Added typed parameters identified by keys
+* Gradle plugin: Now propagates a custom environment to Apple simulators
+* Gradle plugin: New 'testBalloonDiagnostics' task (in the 'help' group) (#63)
+* TestBalloon add-ons can now use FrameworkTestUtilities for expanded testing 
+
 ## 0.8.2 (January 27, 2026)
 
 TestBalloon release variants:

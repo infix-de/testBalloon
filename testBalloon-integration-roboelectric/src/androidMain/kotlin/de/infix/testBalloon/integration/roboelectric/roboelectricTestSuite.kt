@@ -33,7 +33,7 @@ import kotlin.reflect.KClass
  * ```
  * testConfig = TestConfig.roboelectric {
  *     portableClasses += MyType::class
- *     portablePackages += "com.example.mypackage."
+ *     portablePackages += "com.example.mypackage"
  * }
  * ```
  */

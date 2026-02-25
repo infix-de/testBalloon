@@ -8,11 +8,11 @@ description = "Compiler plugin for the TestBalloon framework"
 
 dependencies {
     implementation(projects.testBalloonFrameworkShared)
-    implementation(kotlin("compiler-embeddable"))
+    implementation(libs.org.jetbrains.kotlin.compiler.embeddable)
     implementation(libs.org.jetbrains.kotlinx.coroutines.core)
 
     testImplementation(libs.dev.zacsweers.kctfork)
-    testImplementation(kotlin("test"))
+    testImplementation(libs.org.jetbrains.kotlin.test)
 }
 
 buildConfig {

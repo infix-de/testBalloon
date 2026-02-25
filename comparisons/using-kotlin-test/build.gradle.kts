@@ -45,7 +45,7 @@ kotlin {
     sourceSets {
         commonTest {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(libs.org.jetbrains.kotlin.test)
             }
         }
 

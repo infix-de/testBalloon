@@ -62,7 +62,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(projects.testBalloonFrameworkCore)
-                implementation(kotlin("test")) // for assertions only
+                implementation(libs.org.jetbrains.kotlin.test) // for assertions only
                 implementation(libs.com.benwoodworth.parameterize)
 
                 implementation(composeBom)

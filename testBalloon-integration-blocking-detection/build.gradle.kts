@@ -32,7 +32,7 @@ kotlin {
 
         commonTest {
             dependencies {
-                implementation(kotlin("test")) // for assertions only
+                implementation(libs.org.jetbrains.kotlin.test) // for assertions only
             }
         }
 

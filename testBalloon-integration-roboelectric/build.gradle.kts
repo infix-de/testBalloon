@@ -38,7 +38,7 @@ kotlin {
         // With AGP 8.3.2, Android+KMP host tests could not be configured
         // named("androidHostTest") {
         //     dependencies {
-        //         implementation(kotlin("test")) // for assertions and specific JUnit 4 tests
+        //         implementation(libs.org.jetbrains.kotlin.test) // for assertions and specific JUnit 4 tests
         //         implementation(libs.junit.junit4)
         //         implementation(libs.androidx.test.core)
         //     }

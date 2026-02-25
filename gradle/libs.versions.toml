@@ -105,6 +105,7 @@ org-jetbrains-dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.
 org-jetbrains-dokka-gradle-plugin = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version.ref = "org-jetbrains-dokka" }
 
 org-jetbrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "org-jetbrains-kotlin" }
 
 org-jetbrains-kotlin-android-gradle-plugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-assignment-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin" }

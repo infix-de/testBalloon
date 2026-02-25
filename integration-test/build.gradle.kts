@@ -9,7 +9,7 @@ addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.tes
 
 dependencies {
     testImplementation(projects.testBalloonFrameworkCore)
-    testImplementation(kotlin("test")) // for assertions only
+    testImplementation(libs.org.jetbrains.kotlin.test) // for assertions only
 }
 
 tasks {

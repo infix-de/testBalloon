@@ -30,13 +30,13 @@ kotlin {
             dependencies {
                 api(projects.testBalloonFrameworkCore)
                 api(libs.org.robolectric)
-                implementation(kotlin("reflect"))
+                implementation(libs.org.jetbrains.kotlin.reflect)
             }
         }
 
         named("androidHostTest") {
             dependencies {
-                implementation(kotlin("test")) // for assertions and specific JUnit 4 tests
+                implementation(libs.org.jetbrains.kotlin.test) // for assertions and specific JUnit 4 tests
                 implementation(libs.junit.junit4)
                 implementation(libs.androidx.test.core)
             }

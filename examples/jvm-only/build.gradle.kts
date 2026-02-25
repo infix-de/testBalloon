@@ -14,5 +14,5 @@ dependencies {
     // instead of this project-internal dependency:
     implementation(projects.testBalloonFrameworkCore)
 
-    implementation(kotlin("test")) // for assertions only
+    implementation(libs.org.jetbrains.kotlin.test) // for assertions only
 }

@@ -102,6 +102,7 @@ extra:
   analytics:
     provider: plausible
     domain: infix-de.github.io
+    src: "https://plausible.io/js/pa-QX5GLBOPVuwA1rWXdcXc5.js"
     feedback:
       title: Was this page helpful?
       ratings:

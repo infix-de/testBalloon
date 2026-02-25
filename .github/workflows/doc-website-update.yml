@@ -1,9 +1,9 @@
-name: "Provide the documentation's website artifact"
+name: "Update the documentation website artifact"
 
 on: [ workflow_call ]
 
 jobs:
-  upload:
+  update:
     if: github.event.repository.fork == false
 
     runs-on: ubuntu-latest
@@ -16,10 +16,10 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: "Update the documentation's 'dev' version"
+      - name: "Update the documentation website ('dev' version)"
         run: ./gradlew documentationWebsiteUpdate
 
-      - name: 'Upload the GitHub Pages artifact'
+      - name: 'Package the artifact for GitHub Pages'
         # https://github.com/actions/upload-pages-artifact/releases
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:

@@ -12,11 +12,11 @@ on:
       - 'testBalloon-framework-shared/**'
 
 jobs:
-  upload:
-    uses: ./.github/workflows/doc-website-upload.yml
+  update:
+    uses: ./.github/workflows/doc-website-update.yml
 
   publish:
-    needs: [ upload ]
+    needs: [ update ]
     uses: ./.github/workflows/doc-website-publish.yml
     permissions:
       contents: read

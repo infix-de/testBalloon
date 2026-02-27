@@ -1,6 +1,6 @@
 !!! note
 
-    This chapter describes TestBalloon's integration on Kotlin's diverse target platforms. [TestBalloon integrations with third-party libraries can be found here.](../integrations/roboelectric.md)
+    This chapter describes TestBalloon's integration on Kotlin's diverse target platforms. [TestBalloon integrations with third-party libraries can be found here.](../integrations/robolectric.md)
 
 TestBalloon has a unified API for all Kotlin target platforms, residing in the `common` source set.
 

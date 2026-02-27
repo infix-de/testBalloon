@@ -9,13 +9,7 @@ You're not viewing the latest version.
 
 {% block analytics %}
 
-<!-- Privacy-friendly analytics by Plausible -->
-<script
-        defer
-        data-domain="{{ config.extra.analytics.domain }}"
-        src="{{ config.extra.analytics.src | default("https://plausible.io/js/plausible.js", true) }}"
-{% if config.extra.analytics.api %}data-api="{{ config.extra.analytics.api }}"{% endif %}
-></script>
+<script defer data-domain="{{ config.extra.analytics.domain }}" src="{{ config.extra.analytics.src }}"></script>
 
 <script>
     window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};

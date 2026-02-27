@@ -37,5 +37,5 @@ NOTE: In April 2025, work on https://issuetracker.google.com/issues/127100532#co
 
 ==== Test support libraries
 
-* *https://developer.android.com/training/testing/local-tests/robolectric[Roboelectric]*: A simulated Android environment that runs inside a JVM. Faster and less flaky than using an emulator, but does not support all features and APIs.
+* *https://developer.android.com/training/testing/local-tests/robolectric[Robolectric]*: A simulated Android environment that runs inside a JVM. Faster and less flaky than using an emulator, but does not support all features and APIs.
 * *Espresso*: A library for Android view tests.

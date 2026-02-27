@@ -54,9 +54,9 @@ kotlin {
         named("androidHostTest") {
             dependencies {
                 // required for host-side tests with TestBalloon outside this project:
-                //     implementation("de.infix.testBalloon:testBalloon-integration-roboelectric:${testBalloonVersion}")
+                //     implementation("de.infix.testBalloon:testBalloon-integration-robolectric:${testBalloonVersion}")
                 // instead of this project-internal dependency:
-                implementation(projects.testBalloonIntegrationRoboelectric)
+                implementation(projects.testBalloonIntegrationRobolectric)
                 implementation(libs.androidx.test.core)
             }
         }

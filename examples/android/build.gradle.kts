@@ -73,9 +73,9 @@ dependencies {
     testImplementation(projects.testBalloonFrameworkCore)
     testImplementation(libs.junit.junit4)
     // required for host-side tests with TestBalloon outside this project:
-    //     testImplementation("de.infix.testBalloon:testBalloon-integration-roboelectric:${testBalloonVersion}")
+    //     testImplementation("de.infix.testBalloon:testBalloon-integration-robolectric:${testBalloonVersion}")
     // instead of this project-internal dependency:
-    testImplementation(projects.testBalloonIntegrationRoboelectric)
+    testImplementation(projects.testBalloonIntegrationRobolectric)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.org.jetbrains.kotlin.test) // for assertions only
 

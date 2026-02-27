@@ -1,3 +1,13 @@
+## 0.8.4 (Unreleased)
+
+### Breaking (Robolectric integration only)
+
+* Correct the spelling of `Robolectric` (drop the extra `e`)
+
+Migration required:
+
+* In the IDE, use _Replace in Files_: _Search_ `roboelectric` _Replace_ `robolectric`, enable _Preserve case_.
+
 ## 0.8.3 (February 24, 2026)
 
 TestBalloon release variants:
@@ -14,7 +24,7 @@ TestBalloon release variants:
 
 ### Highlights
 
-* A new [Roboelectric integration](https://infix-de.github.io/testBalloon/0.8.3/integrations/roboelectric/) for fast, reliable and configurable Android testing (#65).
+* A new [Robolectric integration](https://infix-de.github.io/testBalloon/0.8.3/integrations/roboelectric/) for fast, reliable and configurable Android testing (#65).
 * A [new Blog](https://infix-de.github.io/testBalloon/latest/blog/) was born (absorbing the Articles section).
 
 ### Other Changes

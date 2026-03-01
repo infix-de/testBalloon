@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.core.TestSuite.Companion.suitesInRegistrationScope
 import de.infix.testBalloon.framework.core.internal.GuardedBy
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
@@ -39,14 +40,20 @@ public fun testSuite(
     compartment: () -> TestCompartment,
     testConfig: TestConfig = TestConfig,
     content: TestSuite.() -> Unit
-): Lazy<TestSuite> = lazy {
-    TestSuite(
-        parent = compartment(),
-        name = name,
-        displayName = displayName,
-        testConfig = testConfig,
-        content = content
-    )
+): Lazy<TestSuite> {
+    require(suitesInRegistrationScope.isEmpty()) {
+        "«$name» cannot register as a top-level suite inside ${suitesInRegistrationScope.firstOrNull()}."
+    }
+
+    return lazy {
+        TestSuite(
+            parent = compartment(),
+            name = name,
+            displayName = displayName,
+            testConfig = testConfig,
+            content = content
+        )
+    }
 }
 
 /**
@@ -69,14 +76,20 @@ public fun testSuite(
     @TestDisplayName displayName: String = name,
     testConfig: TestConfig = TestConfig,
     content: TestSuite.() -> Unit
-): Lazy<TestSuite> = lazy {
-    TestSuite(
-        parent = TestSession.global.defaultCompartment,
-        name = name,
-        displayName = displayName,
-        testConfig = testConfig,
-        content = content
-    )
+): Lazy<TestSuite> {
+    require(suitesInRegistrationScope.isEmpty()) {
+        "«$name» cannot register as a top-level suite inside ${suitesInRegistrationScope.firstOrNull()}."
+    }
+
+    return lazy {
+        TestSuite(
+            parent = TestSession.global.defaultCompartment,
+            name = name,
+            displayName = displayName,
+            testConfig = testConfig,
+            content = content
+        )
+    }
 }
 
 /**
@@ -266,7 +279,7 @@ public open class TestSuite internal constructor(
         private fun appendix(number: Int) = " 〈$number〉"
 
         /** A stack of suites in registration scope, innermost scope first */
-        private val suitesInRegistrationScope = mutableListOf<TestSuite>()
+        internal val suitesInRegistrationScope = mutableListOf<TestSuite>()
 
         /** Executes [action] in the registration scope of [this] suite. */
         private fun TestSuite.inRegistrationScope(action: () -> Unit) {

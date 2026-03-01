@@ -14,7 +14,7 @@ tasks {
 
             dependsOn(":testBalloon-integration-kotest-assertions:$kmpTaskName")
             dependsOn(":testBalloon-integration-blocking-detection:$kmpTaskName")
-            dependsOn(":testBalloon-integration-robolectric:$kmpTaskName")
+            dependsOn(":testBalloon-integration-robolectric:testAndroidHostTest")
         }
     }
 

@@ -113,6 +113,52 @@ class TestSuiteTests {
     }
 
     @Test
+    fun lowerLevelSuiteOutOfHierarchy() = FrameworkTestUtilities.withTestFramework {
+        val suite1 by testSuite("suite1") {
+            val suite1 = this
+            testSuite("childSuite") {
+                suite1.testSuite("child of wrong parent") {
+                }
+            }
+        }
+
+        assertFails {
+            FrameworkTestUtilities.withTestReport(suite1) {}
+        }.also {
+            assertContains(it.cause?.message ?: "", "not the closest registration scope")
+        }
+    }
+
+    @Test
+    fun topLevelSuiteOutOfHierarchy1() = FrameworkTestUtilities.withTestFramework {
+        val suite1 by testSuite("suite1") {
+            testSuite("top-level suite inside a top-level suite", compartment = { TestCompartment.Default }) {
+            }
+        }
+
+        assertFails {
+            FrameworkTestUtilities.withTestReport(suite1) {}
+        }.also {
+            assertContains(it.cause?.message ?: "", "cannot register as a top-level suite inside")
+        }
+    }
+
+    @Test
+    fun topLevelSuiteOutOfHierarchy2() = FrameworkTestUtilities.withTestFramework {
+        fun myTopLevelSuite(name: String, content: TestSuite.() -> Unit) = testSuite(name, content = content)
+        val suite1 by testSuite("suite1") {
+            myTopLevelSuite("top-level suite inside a top-level suite") {
+            }
+        }
+
+        assertFails {
+            FrameworkTestUtilities.withTestReport(suite1) {}
+        }.also {
+            assertContains(it.cause?.message ?: "", "cannot register as a top-level suite inside")
+        }
+    }
+
+    @Test
     fun suiteWithoutChildren() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite("suite1") {
         }

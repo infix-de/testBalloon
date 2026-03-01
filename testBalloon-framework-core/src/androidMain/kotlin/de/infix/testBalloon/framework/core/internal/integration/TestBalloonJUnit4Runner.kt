@@ -150,8 +150,6 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
     }
 
     is Test -> {
-        testElementParent as TestSuite
-
         Description.createTestDescription(
             topLevelSuiteReportingName,
             when {

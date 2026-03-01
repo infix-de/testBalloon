@@ -78,14 +78,15 @@ internal inline fun <R> configureTestsWithExceptionHandling(action: () -> R): Re
  * Executes [action] to run tests, handling errors at the framework level.
  *
  * On failure, this function will attempt to exit the process or throw an exception. However, this may not be
- * possible on all platforms. It is the invoker's responsibility to return immediately if this function
- * returns a failure result.
+ * possible on all platforms. It is the invoker's responsibility to return immediately from this function.
  */
-internal inline fun <R> executeTestsWithExceptionHandling(action: () -> R): Result<R> = runCatching {
-    action()
-}.onFailure { throwable ->
-    throwable.logErrorWithStacktrace("Test framework failure during execution.")
-    handleFrameworkLevelError(throwable)
+internal inline fun <R> executeTestsWithExceptionHandling(action: () -> R) {
+    runCatching {
+        action()
+    }.onFailure { throwable ->
+        throwable.logErrorWithStacktrace("Test framework failure during execution.")
+        handleFrameworkLevelError(throwable)
+    }
 }
 
 /**

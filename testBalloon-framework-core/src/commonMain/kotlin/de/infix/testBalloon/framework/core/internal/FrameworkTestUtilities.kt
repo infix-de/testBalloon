@@ -153,7 +153,7 @@ public object FrameworkTestUtilities {
 
         override suspend fun add(event: TestElement.Event) {
             // println("REPORT: $event")
-            allEvents.add(event)
+            check(allEvents.add(event))
         }
 
         public fun List<TestElement.Event.Finished>.assertAllSucceeded() {

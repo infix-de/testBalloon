@@ -345,12 +345,14 @@ private fun Project.configureDiagnosticsTask() = afterEvaluate {
             }
         }
 
-        fun doLastSafely(block: () -> Unit) = doLast {
-            try {
-                block()
-            } catch (throwable: Throwable) {
-                println("WARNING: Problem executing task step in '$taskName': $throwable")
-                throwable.printStackTrace()
+        fun doLastSafely(block: () -> Unit) {
+            doLast {
+                try {
+                    block()
+                } catch (throwable: Throwable) {
+                    println("WARNING: Problem executing task step in '$taskName': $throwable")
+                    throwable.printStackTrace()
+                }
             }
         }
 

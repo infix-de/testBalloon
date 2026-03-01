@@ -108,7 +108,9 @@ public class RobolectricSettings internal constructor(
     // endregion
 ) {
     internal fun config(): Config = Config.Builder().also { builder ->
-        fun <Value : Any> Value?.ifSet(set: (Value) -> Unit) = this?.let { set(it) }
+        fun <Value : Any> Value?.ifSet(set: (Value) -> Unit) {
+            this?.let { set(it) }
+        }
 
         sdk.ifSet { builder.setSdk(it) }
         fontScale.ifSet(builder::setFontScale)

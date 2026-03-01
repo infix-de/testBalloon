@@ -34,7 +34,9 @@ internal fun initializeTestFramework(testSession: AbstractTestSession? = null, a
     if (!arguments.isNullOrEmpty()) {
         argumentsBasedElementSelection = ArgumentsBasedElementSelection(arguments)
     }
-    if (testSession == null) TestSession()
+    if (testSession == null) {
+        val _ = TestSession()
+    }
 }
 
 /**

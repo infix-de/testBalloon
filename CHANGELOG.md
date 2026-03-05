@@ -14,7 +14,7 @@ TestBalloon release variants:
 
 | TestBalloon version | Supported Kotlin versions |
 |---------------------|---------------------------|
-| 0.8.3-K2.3.20-RC    | 2.3.20-RC                 |
+| 0.8.3-K2.3.20-RC    | 2.3.20-RC … 2.3.20-RC2    |
 | 0.8.3-K2.3.0        | 2.3.0 … 2.3.10            |
 | 0.8.3-K2.2.21       | 2.2.21                    |
 | 0.8.3-K2.2.0        | 2.2.0 … 2.2.20            |
@@ -33,7 +33,7 @@ TestBalloon release variants:
 * TestConfig, TestElement: Added typed parameters identified by keys
 * Gradle plugin: Now propagates a custom environment to Apple simulators
 * Gradle plugin: New 'testBalloonDiagnostics' task (in the 'help' group) (#63)
-* TestBalloon add-ons can now use FrameworkTestUtilities for expanded testing 
+* TestBalloon add-ons can now use FrameworkTestUtilities for expanded testing
 
 ## 0.8.2 (January 27, 2026)
 

@@ -18,6 +18,10 @@ tapmoc {
 kotlin {
     jvm()
 
+    js {
+        nodejs()
+    }
+
     extensions.configure<KotlinMultiplatformAndroidLibraryExtension>("androidLibrary") {
         namespace = "org.example.android.multiplatform.library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()

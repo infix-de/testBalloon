@@ -1,4 +1,4 @@
-## 0.8.4 (Unreleased)
+## (Unreleased)
 
 ### Breaking (Robolectric integration only)
 
@@ -8,13 +8,17 @@ Migration required:
 
 * In the IDE, use _Replace in Files_: _Search_ `roboelectric` _Replace_ `robolectric`, enable _Preserve case_.
 
+### Other Changes
+
+* The `@TestElementName` annotation now supports optional `prefix` and `postfix` parameters, making the IDE plugin aware of modifications to the test element name.
+
 ## 0.8.3 (February 24, 2026)
 
 TestBalloon release variants:
 
 | TestBalloon version | Supported Kotlin versions |
 |---------------------|---------------------------|
-| 0.8.3-K2.3.20-RC    | 2.3.20-RC … 2.3.20-RC2    |
+| 0.8.3-K2.3.20-RC    | 2.3.20-RC … 2.3.20-RC3    |
 | 0.8.3-K2.3.0        | 2.3.0 … 2.3.10            |
 | 0.8.3-K2.2.21       | 2.2.21                    |
 | 0.8.3-K2.2.0        | 2.2.0 … 2.2.20            |

@@ -15,10 +15,25 @@ public annotation class TestRegistering
  *
  * If the call site of the function or constructor does not supply an actual value for that `@[TestElementName]`
  * parameter, the compiler will insert the caller's fully qualified class or property name.
+ *
+ * The optional [prefix] and [postfix] parameters make the IDE plugin aware of modifications to the element name,
+ * so that a valid test element path can be produced by static analysis. Example for a Behavior/Gherkin-style
+ * `Scenario` function creating a test suite:
+ * ```
+ * @TestRegistering
+ * fun <Context : Any> TestSuiteScope.Scenario(
+ *     @TestElementName(prefix = "Scenario: ") description: String,
+ *     // ...
+ * ) {
+ *     testSuite("Scenario: $description", testConfig = testConfig) {
+ *         // ...
+ *     }
+ * }
+ * ```
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
-public annotation class TestElementName
+public annotation class TestElementName(val prefix: String = "", val postfix: String = "")
 
 /**
  * Makes a String parameter receive the simple name of its function's or constructor's caller.

@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: '#testballoon Channel on Kotlinlang Slack'
+    url: https://kotlinlang.slack.com/archives/C09FQGG85EC
+    about: Please ask and answer usage-related questions here.

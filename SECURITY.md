@@ -14,6 +14,9 @@ Before reporting a vulnerability originating with a dependency (third-party comp
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, please reach out to oliver.o456i at gmail dot com.
+To report a vulnerability, please either
+
+* [open a draft security advisory](https://github.com/infix-de/testBalloon/security/advisories/new), which can be privately discussed and collaborated on, or
+* reach out to oliver.o456i at gmail dot com.
 
 When we receive such reports, we will investigate and subsequently address any potential vulnerabilities as quickly as possible.

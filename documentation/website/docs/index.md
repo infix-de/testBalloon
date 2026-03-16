@@ -1,16 +1,22 @@
-TestBalloon is a **next generation Kotlin test framework**, built from the ground up for Kotlin Multiplatform and coroutines.
+# ![TestBalloon logo](assets/Logo_Text_291x74-light.png#only-light)![TestBalloon logo](assets/Logo_Text_291x74-dark.png#only-dark)
 
-TestBalloon has a unique combination of characteristics which make it powerful, blazingly fast, _and_ easy to use:
+TestBalloon is a DSL-based Kotlin-first test framework. Powered by a compiler plugin, TestBalloon lets you configure tests with plain Kotlin instead of restrictive, annotation-based magic. TestBalloon's concise API is extremely flexible and easy to customize for any test setup.
+
+TestBalloon is compatible with existing assertion libraries and Kotlin Power Assert. It supports all Kotlin target platforms in first-party quality (including Android device tests and Robolectric). TestBalloon has full coroutine support built in and can run your tests with the highest degree of parallelism available.
+
+## Characteristics
 
 <div class="annotate" markdown>
 
-- [x] **State-of-the-art capabilities**: Parameterized tests, multi-level hierarchy, coroutine context inheritance, deep parallelism, fixtures, expressive names, and a scope-friendly DSL-based API.
+- [x] **State-of-the-art capabilities**: Parameterized tests, multi-level hierarchy, coroutines, coroutine context inheritance, deep parallelism, fixtures, expressive names, scope-friendly DSL, decorator chains for configuration.
 - [x] **Deep native integration** with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
-- [x] Support for **all Kotlin target platforms** (JVM, JS, WebAssembly, Native(1), Android host-side tests, Android device-side tests).
+- [x] Support for **all Kotlin target platforms**: JVM, JS(1), WebAssembly(2), Native(3), Android host-side tests, Android device-side tests, Robolectric.
 
 </div>
 
-1. Native includes Linux, Windows, iOS, macOS and other Apple targets.
+1. JavaScript support includes JS/Node and JS/browser.
+2. WebAssembly support includes Wasm/JS and Wasm/WASI.
+3. Native support includes Linux, Windows, iOS, macOS and other Apple targets.
 
 === "Kotlin Multiplatform"
 

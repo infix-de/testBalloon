@@ -1,22 +1,22 @@
-<h1>
-  <img src="documentation/images/Logo.svg" alt="TestBalloon logo" style="height: 60px; vertical-align: middle;">
-  <span>TestBalloon</span>
-</h1>
+![TestBalloon logo](documentation/images/Logo_Text_291x74-light.png#gh-light-mode-only)
+![TestBalloon logo](documentation/images/Logo_Text_291x74-dark.png#gh-dark-mode-only)
 
 [![Maven Central](https://img.shields.io/maven-central/v/de.infix.testBalloon/testBalloon-framework-core)](https://central.sonatype.com/artifact/de.infix.testBalloon/testBalloon-framework-core)
 [![IntelliJ IDEA plugin](https://img.shields.io/jetbrains/plugin/v/27749?label=IntelliJ%20IDEA%20plugin)](https://plugins.jetbrains.com/plugin/27749-testballoon)
 [![Slack channel](https://img.shields.io/static/v1?logo=slack&color=green&label=kotlinlang&message=%23testballoon)](https://kotlinlang.slack.com/archives/C09FQGG85EC)
 [![GitHub License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
-TestBalloon is a **next generation Kotlin test framework**, built from the ground up for Kotlin Multiplatform and coroutines.
+TestBalloon is a DSL-based Kotlin-first test framework. Powered by a compiler plugin, TestBalloon lets you configure tests with plain Kotlin instead of restrictive, annotation-based magic. TestBalloon's concise API is extremely flexible and easy to customize for any test setup.
 
-TestBalloon has a unique combination of characteristics which make it 🌋 powerful, 🚀 blazingly fast, _and_ ☺️ so easy to use:
+TestBalloon is compatible with existing assertion libraries and Kotlin Power Assert. It supports all Kotlin target platforms in first-party quality (including Android device tests and Robolectric). TestBalloon has full coroutine support built in and can run your tests with the highest degree of parallelism available.
 
-✅️ **State-of-the-art capabilities**: Parameterized tests, multi-level hierarchy, coroutine context inheritance, deep parallelism, fixtures, expressive names, and a scope-friendly DSL-based API.
+## Characteristics
+
+✅️ **State-of-the-art capabilities**: Parameterized tests, multi-level hierarchy, coroutines, coroutine context inheritance, deep parallelism, fixtures, expressive names, scope-friendly DSL, decorator chains for configuration.
 
 ✅️ **Deep native integration** with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
 
-✅️ Support for **all Kotlin target platforms**: JVM, JS, WebAssembly, Native (Linux, Windows, iOS, macOS and other Apple targets), Android host-side tests, Android device-side tests.
+✅️ Full support for **all Kotlin target platforms**: JVM, JS, WebAssembly, Native (Linux, Windows, iOS, macOS and other Apple targets), Android host-side tests, Android device-side tests, Robolectric.
 
 For details and quick start information, please visit [TestBalloon's documentation](https://infix-de.github.io/testBalloon/).
 

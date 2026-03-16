@@ -1,18 +1,38 @@
-## Unique
+> _I didn't know Kotlin testing could be that easy._
 
-TestBalloon combines
+## Kotlin first
 
-<div class="annotate" markdown>
+DSL-based and powered by a compiler plugin, TestBalloon **eliminates bloat** from test code.(1)
+{ .annotate }
 
-- [x] **state-of-the-art capabilities**(1) with
-- [x] **deep native integration**(2)
-- [x] **on all platforms**.(3)
+1. Find examples in the documentation's sections on [Migrating from JUnit](../how-to/migrating-from-junit.md#extensions) and other test frameworks.
 
-</div>
+With its concise DSL and decorator chains for configuration, TestBalloon is **so easy to customize that it's actually yours**.
 
-1. Parameterized tests, multi-level hierarchy, coroutine context inheritance, deep parallelism, fixtures, expressive names, and a scope-friendly DSL-based API.
-2. TestBalloon integrates thoroughly with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
-3. TestBalloon supports all Kotlin target platforms (JVM, JS, WebAssembly, Android host-side tests, Android device-side tests, Linux, Windows, iOS, macOS and other Apple targets).
+## Perfectly integrated
+
+TestBalloon is **compatible with existing assertion libraries** and Kotlin Power Assert.
+
+TestBalloon **integrates thoroughly** with the platforms' existing APIs and build tooling, using the familiar Gradle tasks and Kotlin's own platform-specific test runtimes.
+
+It supports **all Kotlin target platforms(1) in first-party quality** (including Android device tests and Robolectric). TestBalloon has full coroutine support built in.
+{ .annotate }
+
+1. TestBalloon supports all Kotlin target platforms (JVM, JS, WebAssembly, Android host-side tests, Android device-side tests, Linux, Windows, iOS, macOS and other Apple targets).
+
+## Capable
+
+TestBalloon provides **easy access to the most advanced capabilities** in Kotlin testing:
+
+- [x] Parameterized tests
+- [x] Multi-level hierarchy
+- [x] Coroutines
+- [x] Coroutine context inheritance
+- [x] Deep parallelism
+- [x] Fixtures
+- [x] Expressive names
+- [x] Scope-friendly DSL
+- [x] Configuration via decorator chains
 
 ## Empowering
 

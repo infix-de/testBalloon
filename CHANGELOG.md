@@ -1,4 +1,16 @@
-## (Unreleased)
+## 0.8.4 (March 16, 2026)
+
+TestBalloon release variants:
+
+| TestBalloon version | Supported Kotlin versions |
+|---------------------|---------------------------|
+| 0.8.4-K2.3.20       | 2.3.20                    |
+| 0.8.4-K2.3.0        | 2.3.0 … 2.3.10            |
+| 0.8.4-K2.2.21       | 2.2.21                    |
+| 0.8.4-K2.2.0        | 2.2.0 … 2.2.20            |
+| 0.8.4-K2.1.20       | 2.1.20 … 2.1.21           |
+| 0.8.4-K2.1.0        | 2.1.0 … 2.1.10            |
+| 0.8.4-K2.0.0        | 2.0.0 … 2.0.21            |
 
 ### Breaking (Robolectric integration only)
 

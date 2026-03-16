@@ -33,6 +33,6 @@ Unacceptable behavior from any community member will not be tolerated. Anyone as
 
 ## License and attribution
 
-This code of conduct is derived from [JetBrains' Code of Conduct](https://github.com/JetBrains/.github/blob/585b49585d5a128b1eaa67ec05b4de722825334e/profile/README.md)
+This code of conduct is derived from [JetBrains' Code of Conduct](https://github.com/JetBrains/.github/blob/585b49585d5a128b1eaa67ec05b4de722825334e/profile/README.md).
 
 The license is based off of [The Citizen Code of Conduct](https://github.com/stumpsyn/policies/blob/7caa4699ba74e341a46b3266d4610af477ba2c3d/citizen_code_of_conduct.md) as distributed by Stumptown Syndicate under a Creative Commons Attribution-ShareAlike license.

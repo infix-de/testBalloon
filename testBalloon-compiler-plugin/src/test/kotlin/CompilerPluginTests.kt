@@ -167,6 +167,7 @@ private fun compilation(
                 if (debugLevel != null) option("debugLevel", debugLevel) else null
             )
             messageOutputStream = OutputStream.nullOutputStream()
+            optIn = listOf()
         }.compile().run {
             println("--- Compilation ---")
             println(messages)

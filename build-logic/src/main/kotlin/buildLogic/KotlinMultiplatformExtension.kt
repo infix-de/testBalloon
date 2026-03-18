@@ -5,7 +5,6 @@ import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalTesting
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 
@@ -43,11 +42,7 @@ fun KotlinMultiplatformExtension.nativeTargets() {
     androidNativeX64()
     mingwX64()
     watchosDeviceArm64()
-    // Tier 3 – scheduled for removal in Kotlin 2.4.0
-    macosX64()
     iosX64()
-    watchosX64()
-    tvosX64()
 }
 
 fun KotlinMultiplatformExtension.allTargets(includeWasmWasi: Boolean = true) {
@@ -90,7 +85,7 @@ fun KotlinMultiplatformExtension.applyHierarchy(nonJvm: KotlinHierarchyBuilder.(
 
 fun KotlinMultiplatformExtension.enableAbiValidation() {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    extensions.configure<AbiValidationMultiplatformExtension>("abiValidation") {
+    abiValidation {
         enabled.set(true)
         filters {
             exclude {

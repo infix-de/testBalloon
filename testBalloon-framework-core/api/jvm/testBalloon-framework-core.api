@@ -80,7 +80,6 @@ public final class de/infix/testBalloon/framework/core/TestConfigKt {
 }
 
 public abstract class de/infix/testBalloon/framework/core/TestElement : de/infix/testBalloon/framework/shared/AbstractTestElement {
-	public synthetic fun <init> (Lde/infix/testBalloon/framework/core/TestSuite;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lde/infix/testBalloon/framework/core/TestSuite;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getTestElementIsEnabled ()Z
 	public fun getTestElementPath ()Lde/infix/testBalloon/framework/core/TestElement$Path;

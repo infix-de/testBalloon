@@ -1,3 +1,9 @@
+## Unreleased
+
+### Other Changes
+
+* Robolectric integration: `robolectricTestSuite` provides a type parameter for the content class instead of a `KClass` parameter. The latter variant is now deprecated.
+
 ## 0.8.4 (March 16, 2026)
 
 TestBalloon release variants:
@@ -12,9 +18,11 @@ TestBalloon release variants:
 | 0.8.4-K2.1.0        | 2.1.0 … 2.1.10            |
 | 0.8.4-K2.0.0        | 2.0.0 … 2.0.21            |
 
+_This release aligns with Kotlin 2.3.20._ 🎉 _And a typo had to be fixed._ 🙃
+
 ### Breaking (Robolectric integration only)
 
-* Correct the spelling of `Robolectric` (drop the extra `e`)
+* `Robolectric` is now spelled correctly (dropping the extra `e`)
 
 Migration required:
 

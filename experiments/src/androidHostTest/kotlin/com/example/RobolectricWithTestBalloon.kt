@@ -29,14 +29,12 @@ val RobolectricWithTestBalloon by testSuite {
             }
         ) {
             val myFixture = testFixture { MyType() }
-            robolectricTestSuite(
+            robolectricTestSuite<RobolectricWithTestBalloonVariantContent>(
                 "Portrait",
-                RobolectricWithTestBalloonVariantContent::class,
                 arguments = arrayOf(myFixture)
             )
-            robolectricTestSuite(
+            robolectricTestSuite<RobolectricWithTestBalloonVariantContent>(
                 "Landscape",
-                RobolectricWithTestBalloonVariantContent::class,
                 arguments = arrayOf(myFixture),
                 testConfig = TestConfig.robolectric {
                     qualifiers = "+land"

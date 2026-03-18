@@ -28,23 +28,21 @@ To test our app's rendering on a set of display formats combined with several An
 val RenderingTests by testSuite {
     for (display in listOf("xlarge-port", "xlarge-land")) {
         for (apiLevel in listOf(36, 34, 28)) {
-            robolectricTestSuite( // (1)!
+            robolectricTestSuite<RenderingTestSuiteContent>( // (1)!
                 "Display: $display, API $apiLevel",
-                RenderingTestSuiteContent::class, // (2)!
-                testConfig = TestConfig.robolectric { // (3)!
+                testConfig = TestConfig.robolectric { // (2)!
                     sdk = apiLevel
                     qualifiers = display
                 }
-            ) // (4)!
+            ) // (3)!
         }
     }
 }
 ```
 
-1. This invocation creates a special kind of test suite for Robolectric.
-2. Test suites and tests inside the Robolectric environment reside in their own class.
-3. We use the usual TestBalloon configuration mechanism.
-4. Because the Robolectric test suite's content resides in its own class, there is no trailing lambda.
+1. This invocation creates a special kind of test suite for Robolectric, where test suites and tests reside in their own class and live inside the Robolectric environment.
+2. We use the usual TestBalloon configuration mechanism.
+3. Because the Robolectric test suite's content resides in its own class, there is no trailing lambda.
 
 `RenderingTestSuiteContent` contains the corresponding test suites and tests, which execute for each combination (6 in total):
 

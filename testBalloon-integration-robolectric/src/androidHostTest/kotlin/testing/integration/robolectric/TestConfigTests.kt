@@ -23,23 +23,20 @@ val TestConfigTests by testSuite {
         val lowerLevelFontScale = 1.021f.also { check(it != upperLevelFontScale) }
         val lowerLevelApplicationLifetime = ApplicationLifetime.Test.also { check(it != upperLevelApplicationLifetime) }
 
-        robolectricTestSuite(
+        robolectricTestSuite<TestConfigFontScaleTestsContent>(
             "initial setting",
-            TestConfigFontScaleTestsContent::class,
             arguments = arrayOf(upperLevelFontScale, upperLevelApplicationLifetime)
         )
-        robolectricTestSuite(
+        robolectricTestSuite<TestConfigFontScaleTestsContent>(
             "overriding at a lower level",
-            TestConfigFontScaleTestsContent::class,
             arguments = arrayOf(lowerLevelFontScale, lowerLevelApplicationLifetime),
             testConfig = TestConfig.robolectric {
                 fontScale = lowerLevelFontScale
                 applicationLifetime = lowerLevelApplicationLifetime
             }
         )
-        robolectricTestSuite(
+        robolectricTestSuite<TestConfigFontScaleTestsContent>(
             "override preserves the parent's setting",
-            TestConfigFontScaleTestsContent::class,
             arguments = arrayOf(upperLevelFontScale, upperLevelApplicationLifetime)
         )
     }

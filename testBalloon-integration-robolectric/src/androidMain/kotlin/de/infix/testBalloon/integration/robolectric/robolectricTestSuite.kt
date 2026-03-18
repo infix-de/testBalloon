@@ -19,10 +19,10 @@ import kotlin.reflect.KClass
 /**
  * Registers a Robolectric test suite as a child of the [TestSuiteScope.testSuiteInScope].
  *
- * The test suite's [content] resides in a separate [RobolectricTestSuiteContent] class which will be dynamically
- * loaded by the Robolectric Sandbox class loader for instrumentation.
+ * The test suite's content resides in a separate [Content] class which will be dynamically loaded by the
+ * Robolectric Sandbox class loader for instrumentation.
  *
- * Optionally, [arguments] can be provided for the [content] constructor's parameters, if it has any.
+ * Optionally, [arguments] can be provided for the [Content] constructor's parameters, if it has any.
  *
  * **Note:** [arguments] is the boundary where types and values travel between the "normal" JVM world and the
  * Robolectric environment. By default, Robolectric will re-load all classes it encounters with its own sandbox
@@ -38,6 +38,20 @@ import kotlin.reflect.KClass
  * ```
  */
 @TestRegistering
+public inline fun <reified Content : RobolectricTestSuiteContent> TestSuiteScope.robolectricTestSuite(
+    @TestElementName name: String,
+    arguments: Array<Any> = arrayOf(),
+    testConfig: TestConfig = TestConfig
+) {
+    @Suppress("DEPRECATION")
+    robolectricTestSuite(name, Content::class, arguments, testConfig)
+}
+
+@TestRegistering
+@Deprecated(
+    "Deprecated in favor of robolectricTestSuite<ContentClass>",
+    level = DeprecationLevel.WARNING
+)
 public fun TestSuiteScope.robolectricTestSuite(
     @TestElementName name: String,
     content: KClass<out RobolectricTestSuiteContent>,

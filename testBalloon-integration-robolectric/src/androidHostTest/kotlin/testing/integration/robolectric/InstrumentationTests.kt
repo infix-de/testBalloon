@@ -18,9 +18,8 @@ import kotlin.test.assertTrue
 
 val InstrumentationTests by testSuite {
     for (apiLevel in listOf(34, 28)) {
-        robolectricTestSuite(
+        robolectricTestSuite<InstrumentationTestsApiLevelContent>(
             "API level $apiLevel",
-            InstrumentationTestsApiLevelContent::class,
             arguments = arrayOf(apiLevel),
             testConfig = TestConfig.robolectric {
                 sdk = apiLevel
@@ -30,9 +29,8 @@ val InstrumentationTests by testSuite {
         )
     }
 
-    robolectricTestSuite(
+    robolectricTestSuite<InstrumentationTestsPortabilityContent>(
         "Portability",
-        InstrumentationTestsPortabilityContent::class,
         arguments = arrayOf(InstrumentationTestsPortableClass(), InstrumentationTestsNonPortableClass()),
         testConfig = TestConfig.robolectric {
             portableClasses += InstrumentationTestsPortableClass::class

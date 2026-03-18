@@ -20,7 +20,7 @@ class RobolectricTestSuiteTests {
     @Test
     fun `robolectricTestSuite calls must not nest`() = FrameworkTestUtilities.withTestFramework {
         val topLevelSuite by testSuite("topLevel") {
-            robolectricTestSuite("outer robolectric suite", RobolectricTestSuiteTestsOuterContent::class)
+            robolectricTestSuite<RobolectricTestSuiteTestsOuterContent>("outer robolectric suite")
         }
 
         assertFails {
@@ -33,7 +33,7 @@ class RobolectricTestSuiteTests {
 
 internal class RobolectricTestSuiteTestsOuterContent :
     RobolectricTestSuiteContent({
-        robolectricTestSuite("inner robolectric suite", RobolectricTestSuiteTestsInnerContent::class)
+        robolectricTestSuite<RobolectricTestSuiteTestsInnerContent>("inner robolectric suite")
     })
 
 internal class RobolectricTestSuiteTestsInnerContent :

@@ -1,4 +1,8 @@
 name: 'Deploy the documentation website'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 on:
   workflow_dispatch:
@@ -18,7 +22,3 @@ jobs:
   publish:
     needs: [ update ]
     uses: ./.github/workflows/doc-website-publish.yml
-    permissions:
-      contents: read
-      pages: write
-      id-token: write

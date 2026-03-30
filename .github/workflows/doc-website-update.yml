@@ -1,4 +1,6 @@
 name: "Update the documentation website artifact"
+permissions:
+  contents: read
 
 on: [ workflow_call ]
 

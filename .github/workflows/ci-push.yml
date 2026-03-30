@@ -1,4 +1,6 @@
 name: 'CI: Push on main or release branch'
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

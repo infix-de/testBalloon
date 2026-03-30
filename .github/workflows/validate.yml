@@ -1,4 +1,6 @@
 name: 'Validate the build'
+permissions:
+  contents: read
 
 on:
   workflow_call

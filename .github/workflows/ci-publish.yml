@@ -1,4 +1,6 @@
 name: 'CI: Publish a release'
+permissions:
+  contents: read
 
 on:
   push:

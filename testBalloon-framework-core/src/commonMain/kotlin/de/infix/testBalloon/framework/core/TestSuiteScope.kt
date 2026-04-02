@@ -27,7 +27,14 @@ public interface TestSuiteScope {
         testConfig: TestConfig = TestConfig,
         content: TestSuite.() -> Unit
     ) {
-        TestSuite(testSuiteInScope, name = name, displayName = displayName, testConfig = testConfig, content = content)
+        val _ =
+            TestSuite(
+                testSuiteInScope,
+                name = name,
+                displayName = displayName,
+                testConfig = testConfig,
+                content = content
+            )
     }
 
     /**
@@ -41,7 +48,7 @@ public interface TestSuiteScope {
         testConfig: TestConfig = TestConfig,
         action: suspend Test.ExecutionScope.() -> Unit
     ) {
-        Test(testSuiteInScope, name = name, displayName = displayName, testConfig = testConfig, action)
+        val _ = Test(testSuiteInScope, name = name, displayName = displayName, testConfig = testConfig, action)
     }
 
     /**

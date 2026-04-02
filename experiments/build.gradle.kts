@@ -1,5 +1,6 @@
 import buildLogic.addTestBalloonPluginFromProject
-import buildLogic.versionFromCatalog
+import buildLogic.kotlinVersion
+import buildLogic.robolectricJdkVersion
 import tapmoc.Severity
 
 plugins {
@@ -11,8 +12,8 @@ plugins {
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 tapmoc {
-    java(versionFromCatalog("jdk").toInt())
-    kotlin(versionFromCatalog("org.jetbrains.kotlin"))
+    java(robolectricJdkVersion())
+    kotlin(kotlinVersion())
 
     checkDependencies(Severity.ERROR)
 }

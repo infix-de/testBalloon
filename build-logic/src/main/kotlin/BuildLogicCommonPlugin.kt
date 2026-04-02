@@ -1,4 +1,5 @@
-import buildLogic.versionFromCatalog
+import buildLogic.jdkVersion
+import buildLogic.kotlinVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jmailen.gradle.kotlinter.KotlinterExtension
@@ -16,8 +17,8 @@ class BuildLogicCommonPlugin : Plugin<Project> {
         group = project.property("local.PROJECT_GROUP_ID")!!
 
         extensions.configure<tapmoc.TapmocExtension>("tapmoc") {
-            java(versionFromCatalog("jdk").toInt())
-            kotlin(versionFromCatalog("org.jetbrains.kotlin"))
+            java(jdkVersion())
+            kotlin(kotlinVersion())
             checkDependencies(tapmoc.Severity.ERROR)
         }
 

@@ -1,5 +1,7 @@
 import buildLogic.addTestBalloonPluginFromProject
-import buildLogic.versionFromCatalog
+import buildLogic.junitJupiterJdkVersion
+import buildLogic.kotlinVersion
+import buildLogic.robolectricJdkVersion
 import tapmoc.Severity
 
 plugins {
@@ -12,8 +14,8 @@ plugins {
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 tapmoc {
-    java(versionFromCatalog("jdk").toInt().coerceAtLeast(17)) // JUnit Jupiter requires JVM 17 or higher
-    kotlin(versionFromCatalog("org.jetbrains.kotlin"))
+    java(junitJupiterJdkVersion().coerceAtLeast(robolectricJdkVersion()))
+    kotlin(kotlinVersion())
 
     checkDependencies(Severity.ERROR)
 }

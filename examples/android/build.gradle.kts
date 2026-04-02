@@ -1,4 +1,5 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.robolectricJdkVersion
 
 plugins {
     id("buildLogic.android-application")
@@ -8,6 +9,10 @@ plugins {
 
 // The following invocation supplements the TestBalloon plugin declaration inside this project:
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
+
+tapmoc {
+    java(robolectricJdkVersion())
+}
 
 android {
     namespace = "org.example.android"

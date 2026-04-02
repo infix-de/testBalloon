@@ -1,4 +1,5 @@
 import buildLogic.libraryFromCatalog
+import tapmoc.Severity
 
 plugins {
     id("buildLogic.kotlin-jvm")
@@ -22,6 +23,11 @@ samWithReceiver {
 
 assignment {
     annotation(SupportsKotlinAssignmentOverloading::class.qualifiedName!!)
+}
+
+tapmoc {
+    // WORKAROUND Dependency validation fails on Gradle plugins – https://github.com/GradleUp/Tapmoc/issues/69
+    checkJavaClassFiles(Severity.IGNORE)
 }
 
 buildConfig {

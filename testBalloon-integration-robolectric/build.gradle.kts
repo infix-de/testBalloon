@@ -2,6 +2,7 @@
 
 import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.enableAbiValidation
+import buildLogic.robolectricJdkVersion
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 
 plugins {
@@ -13,6 +14,10 @@ plugins {
 description = "Library supporting Robolectric with the TestBalloon framework"
 
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
+
+tapmoc {
+    java(robolectricJdkVersion())
+}
 
 kotlin {
     enableAbiValidation()

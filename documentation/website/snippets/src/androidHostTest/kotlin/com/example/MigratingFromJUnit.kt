@@ -138,6 +138,7 @@ class JUnitMixedFixture {
         private lateinit var service: WeatherService
 
         @JvmStatic
+        @JvmName("setupStatic")
         @BeforeClass // (1)!
         fun setup(): Unit = runTest {
             service = FakeWeatherService()

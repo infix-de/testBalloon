@@ -55,7 +55,12 @@ org-jmailen-kotlinter = "5.4.2"
 
 # https://github.com/junit-team/junit5/releases
 org-junit-jupiter = "6.0.3"
+org-junit-jupiter-jdk = "17"
 org-junit-platform = "1.13.4"
+
+# https://github.com/robolectric/robolectric/releases
+org-robolectric = "4.16.1"
+org-robolectric-jdk = "17"
 
 [libraries]
 
@@ -134,7 +139,7 @@ org-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", 
 org-junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "org-junit-platform" }
 org-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "org-junit-platform" }
 
-org-robolectric = "org.robolectric:robolectric:4.16.1"
+org-robolectric = { module = "org.robolectric:robolectric", version.ref = "org-robolectric" }
 
 [plugins]
 

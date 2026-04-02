@@ -1,5 +1,6 @@
 import buildLogic.addTestBalloonPluginFromProject
-import buildLogic.versionFromCatalog
+import buildLogic.jdkVersion
+import buildLogic.kotlinVersion
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import tapmoc.Severity
 
@@ -12,8 +13,8 @@ plugins {
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
 
 tapmoc {
-    java(versionFromCatalog("jdk").toInt())
-    kotlin(versionFromCatalog("org.jetbrains.kotlin"))
+    java(jdkVersion())
+    kotlin(kotlinVersion())
 
     checkDependencies(Severity.ERROR)
 }

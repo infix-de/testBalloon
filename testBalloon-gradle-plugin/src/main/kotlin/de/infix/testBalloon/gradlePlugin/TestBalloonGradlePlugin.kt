@@ -26,9 +26,12 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 @Suppress("unused")
 class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
+    private lateinit var project: Project
     private lateinit var testBalloonProperties: TestBalloonGradleProperties
+    private val extension by lazy { project.extensions.getByType(TestBalloonGradleExtension::class.java) }
 
     override fun apply(target: Project): Unit = with(target) {
+        this@TestBalloonGradlePlugin.project = target
         testBalloonProperties = TestBalloonGradleProperties(this)
 
         try {
@@ -43,12 +46,21 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
             // The configuration "kotlinNativeCompilerPluginClasspath" is unavailable with AGP9's built-in Kotlin.
         }
 
-        val junitPlatformLauncherDependentConfigurationRegex =
-            testBalloonProperties.junitPlatformLauncherDependentConfigurationRegex
+        // Why afterEvaluate? The value of junitPlatformLauncherDependentConfigurationRegex depends on specific
+        // plugins being applied. We need to make sure that all plugins are applied before using it.
+        afterEvaluate {
+            val junitPlatformLauncherDependentConfigurationRegex =
+                testBalloonProperties.junitPlatformLauncherDependentConfigurationRegex
 
-        configurations.configureEach {
-            if (junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
-                dependencies.add(project.dependencies.create(PROJECT_JUNIT_PLATFORM_LAUNCHER))
+            configurations.configureEach {
+                if (junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
+                    dependencies.add(project.dependencies.create(PROJECT_JUNIT_PLATFORM_LAUNCHER))
+                    if (extension.debugLevel > DebugLevel.NONE) {
+                        project.logger.warn(
+                            "$PLUGIN_DISPLAY_NAME: [DEBUG] adding JUnit Platform launcher to $this."
+                        )
+                    }
+                }
             }
         }
 
@@ -56,28 +68,31 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
-        val project = kotlinCompilation.target.project
-        val extension = project.extensions.getByType(TestBalloonGradleExtension::class.java)
-        return testBalloonProperties.testCompilationRegex.containsMatchIn(kotlinCompilation.name).also { applies ->
-            if (extension.debugLevel > DebugLevel.NONE) {
+        // NOTE: Before using `testBalloonProperties.testSourceSetsRegex`, all plugins must have been applied to the
+        // project. We rely on the documentation of `KotlinCompilerPluginSupportPlugin`, which states:
+        // > the Kotlin plugin inspects the project model in an afterEvaluate handler.
+        return testBalloonProperties.testSourceSetsRegex.containsMatchIn(
+            kotlinCompilation.defaultSourceSet.name
+        ).also { applies ->
+            if (!applies && extension.debugLevel > DebugLevel.NONE) {
                 project.logger.warn(
-                    "[DEBUG] $PLUGIN_DISPLAY_NAME is ${if (applies) "" else "not "}applicable" +
-                        " for Kotlin compilation '${kotlinCompilation.name}'"
+                    "$PLUGIN_DISPLAY_NAME: [DEBUG] compiler plugin is not applicable" +
+                        " (source set '${kotlinCompilation.defaultSourceSet.name}'" +
+                        " does not match '${testBalloonProperties.testSourceSetsRegex}')."
                 )
             }
         }
     }
 
-    override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
-        val project = kotlinCompilation.target.project
-        val extension = project.extensions.getByType(TestBalloonGradleExtension::class.java)
-
-        return project.provider {
+    override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> =
+        project.provider {
+            // NOTE: Before invoking `compilerPluginOptionValues()`, all plugins must have been applied to the
+            // project. We rely on the documentation of `KotlinCompilerPluginSupportPlugin`, which states:
+            // > the Kotlin plugin inspects the project model in an afterEvaluate handler.
             compilerPluginOptionValues(extension, testBalloonProperties).map { (key, value) ->
                 SubpluginOption(key, value)
             }
         }
-    }
 
     override fun getCompilerPluginId(): String = PROJECT_COMPILER_PLUGIN_ID
 

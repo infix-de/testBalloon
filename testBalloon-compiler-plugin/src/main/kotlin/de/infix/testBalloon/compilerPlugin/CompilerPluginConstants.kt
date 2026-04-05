@@ -2,6 +2,7 @@
 
 package de.infix.testBalloon.compilerPlugin
 
+import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.name.CallableId
@@ -19,3 +20,5 @@ val nativeEntryPointPropertyId = CallableId(
     packageName = entryPointPackageFqName,
     callableName = Name.identifier("testFrameworkNativeEntryPoint")
 )
+
+const val PLUGIN_DISPLAY_NAME = "Plugin $PROJECT_COMPILER_PLUGIN_ID"

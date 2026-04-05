@@ -96,36 +96,6 @@ private class CompilerPluginTests {
     }
 
     @Test
-    fun disableForNonTestModule() {
-        compilation(
-            """
-                val foo = 1
-            """,
-            isTestModule = false,
-            classPathInheritanceEnabled = false,
-            debugLevel = "BASIC"
-        ) {
-            assertTrue("[DEBUG] Disabling the plugin for module <module>: It is not a test module" in messages)
-        }
-    }
-
-    @Test
-    fun disableOnMissingFrameworkLibraryDependency() {
-        compilation(
-            """
-                val foo = 1
-            """,
-            classPathInheritanceEnabled = false,
-            debugLevel = "BASIC"
-        ) {
-            assertTrue(
-                "[DEBUG] Disabling the plugin for module <module_test>: It has no framework library dependency." in
-                    messages
-            )
-        }
-    }
-
-    @Test
     fun defectiveFrameworkLibraryDependency() {
         compilation(
             """
@@ -144,7 +114,6 @@ private class CompilerPluginTests {
 @OptIn(ExperimentalCompilerApi::class)
 private fun compilation(
     sourceCode: String,
-    isTestModule: Boolean = true,
     debugLevel: String? = null,
     executionEnabled: Boolean = false,
     classPathInheritanceEnabled: Boolean = true,
@@ -157,7 +126,7 @@ private fun compilation(
 
     try {
         compilation.apply {
-            moduleName = if (isTestModule) "module_test" else "module"
+            moduleName = "module"
             sources = listOf(SourceFile.kotlin("Main.kt", sourceCode.trimIndent()))
             verbose = false
             compilerPluginRegistrars = listOf(CompilerPluginRegistrar())

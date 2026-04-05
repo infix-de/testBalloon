@@ -13,6 +13,5 @@ internal fun compilerPluginOptionValues(
     "debugLevel" to testBalloonExtension.debugLevel.toString(),
     "junit4AutoIntegrationEnabled" to (
         testBalloonExtension.junit4AutoIntegrationEnabled ?: testBalloonProperties.junit4AutoIntegrationEnabled ?: true
-        ).toString(),
-    "testModuleRegex" to testBalloonProperties.testModuleRegex
+        ).toString()
 )

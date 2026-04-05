@@ -4,6 +4,7 @@
 package de.infix.testBalloon.gradlePlugin.shared
 
 import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
@@ -18,11 +19,12 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.internal.VersionNumber
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import java.nio.file.DirectoryNotEmptyException
 import kotlin.io.path.Path
@@ -43,13 +45,37 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
 
     afterEvaluate {
         val nonIncrementalTestCompileTaskRegex = testBalloonProperties.nonIncrementalTestCompileTaskRegex
+        val testCompileTasksRegex = testBalloonProperties.testCompileTasksRegex
+        fun disablePluginOptions(taskName: String) = listOf(
+            "-P",
+            "plugin:${Constants.COMPILER_PLUGIN_NAME}" +
+                ":disablingReason='$taskName' does not match '$testCompileTasksRegex'"
+        )
+
+        fun debugLog(message: String) {
+            if (testBalloonExtension.debugLevel > DebugLevel.NONE) {
+                project.logger.warn("Plugin ${Constants.COMPILER_PLUGIN_NAME}: [DEBUG] $message")
+            }
+        }
+
         tasks.withType(AbstractKotlinCompile::class.java).configureEach {
-            if (nonIncrementalTestCompileTaskRegex.containsMatchIn(name)) {
-                incremental = false
-                if (this is Kotlin2JsCompile) {
-                    @Suppress("INVISIBLE_REFERENCE")
-                    incrementalJsKlib = false
+            if (testCompileTasksRegex.containsMatchIn(name)) {
+                if (nonIncrementalTestCompileTaskRegex.containsMatchIn(name)) {
+                    debugLog("disabling incremental compilation for $project, task '$name'.")
+                    incremental = false
+                    if (this is Kotlin2JsCompile) {
+                        @Suppress("INVISIBLE_REFERENCE")
+                        incrementalJsKlib = false
+                    }
                 }
+            } else {
+                compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(name))
+            }
+        }
+
+        tasks.withType(KotlinNativeCompile::class.java).configureEach {
+            if (!testCompileTasksRegex.containsMatchIn(name)) {
+                compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(name))
             }
         }
     }
@@ -328,8 +354,8 @@ private fun Project.configureTestTasks(
 
 private fun Project.configureDiagnosticsTask() = afterEvaluate {
     val taskName = "testBalloonDiagnostics"
-    val kotlinMultiplatformExtension =
-        runCatching { extensions.findByName("kotlin") as? KotlinMultiplatformExtension }.getOrNull()
+    val kotlinExtension =
+        runCatching { extensions.findByName("kotlin") as? KotlinProjectExtension }.getOrNull()
 
     tasks.register(taskName) {
         group = "help"
@@ -483,23 +509,21 @@ private fun Project.configureDiagnosticsTask() = afterEvaluate {
         }
 
         val testSourceSetsDiagram = safeProvider {
-            kotlinMultiplatformExtension?.let { kotlin ->
-                val testSourceSetRegex = Regex("[tT]est")
-
-                val testSourceSets = kotlin.sourceSets.filter { testSourceSetRegex.containsMatchIn(it.name) }
+            kotlinExtension?.let { kotlin ->
+                val sourceSets = kotlin.sourceSets
 
                 buildString {
                     appendLine()
                     appendLine("Diagram for display on https://mermaid.live/")
                     appendLine()
                     appendLine("---")
-                    appendLine("title: KMP test source sets of ${project.path}")
+                    appendLine("title: Source sets of ${project.path}")
                     appendLine("---")
                     appendLine("classDiagram")
-                    for (sourceSet in testSourceSets) {
+                    for (sourceSet in sourceSets) {
                         appendLine("    class ${sourceSet.name}")
                     }
-                    for (sourceSet in testSourceSets) {
+                    for (sourceSet in sourceSets) {
                         for (dependsOnSourceSet in sourceSet.dependsOn.map { it.name }) {
                             appendLine("    $dependsOnSourceSet <|-- ${sourceSet.name}")
                         }

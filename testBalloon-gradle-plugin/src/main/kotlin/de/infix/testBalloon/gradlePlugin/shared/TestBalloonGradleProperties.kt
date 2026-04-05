@@ -10,42 +10,87 @@ import kotlin.reflect.KProperty
 internal class TestBalloonGradleProperties(val project: Project) {
 
     /**
-     * Name pattern for test compilations in which the compiler plugin will look up test suites and a test session.
+     * Name pattern for source sets in which the compiler plugin will look up test suites and a test session.
      *
      * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
+     *
+     * IMPLEMENTATION NOTES:
+     * - Before using this value, ensure that all plugins are applied to the project.
+     * - This property is not effective with `addTestBalloonPluginFromProject()`.
      */
-    val testCompilationRegex by gradleTestSuiteEnhancedRegexProperty("""(^test)|Test""")
+    val testSourceSetsRegex by testsOnlyProjectDependentRegexProperty(
+        defaultValue = """[tT]est""",
+        testsOnlyProjectValue = { testSourceSetsRegexTestsOnlyProject }
+    )
+    private val testSourceSetsRegexTestsOnlyProject by stringProperty(".*")
+
+    /**
+     * Name pattern for compile tasks in which the compiler plugin will be enabled.
+     *
+     * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
+     *
+     * IMPLEMENTATION NOTES:
+     * - Before using this value, ensure that all plugins are applied to the project.
+     * - This property is effective with `addTestBalloonPluginFromProject()`, and basically mirrors the
+     *   effect of `testSourceSetsRegex` for in-project use.
+     */
+    val testCompileTasksRegex by testsOnlyProjectDependentRegexProperty(
+        defaultValue = """[tT]est""",
+        testsOnlyProjectValue = { testCompileTasksRegexTestsOnlyProject }
+    )
+    private val testCompileTasksRegexTestsOnlyProject by stringProperty(".*")
 
     /**
      * Name pattern for test compile tasks in which the compiler plugin will disable incremental compilation.
      *
      * WORKAROUND: Kotlin IC on JS does not support compiler plugins generating top-level declarations
      *     https://youtrack.jetbrains.com/issue/KT-82395
+     *
+     * IMPLEMENTATION NOTE: Before using this value, ensure that all plugins are applied to the project.
      */
-    val nonIncrementalTestCompileTaskRegex by regexProperty("""^compileTestKotlin(Js|Wasm)""")
-
-    /**
-     * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.
-     */
-    val junitPlatformLauncherDependentConfigurationRegex by regexProperty(
-        """^(test|jvmTest)RuntimeOnly$"""
+    val nonIncrementalTestCompileTaskRegex by testsOnlyProjectDependentRegexProperty(
+        defaultValue = """^compileTest.*Kotlin(Js|Wasm)""",
+        testsOnlyProjectValue = { nonIncrementalTestCompileTaskRegexTestsOnlyProject }
+    )
+    private val nonIncrementalTestCompileTaskRegexTestsOnlyProject by stringProperty(
+        """^compile(Test)?Kotlin(Js|Wasm)"""
     )
 
     /**
-     * Name pattern for test modules in which the compiler plugin will look up test suites and a test session.
+     * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.
      *
-     * The Compiler plugin will disable itself for modules not matching this pattern.
+     * This extra launcher dependency is required per the following Gradle docs:
+     * - https://docs.gradle.org/8.3/userguide/upgrading_version_8.html#manually_declaring_dependencies
+     * - https://docs.gradle.org/current/userguide/java_testing.html#sec:java_testing_basics
+     * - https://docs.gradle.org/current/userguide/java_testing.html#test_process_starts_but_test_dependencies_are_missing
+     * (The launcher dependency is not required for Gradle JVM Test Suites, but we don't differentiate between those
+     * and other test-only project plugins.)
+     *
+     * IMPLEMENTATION NOTE: Before using this value, ensure that all plugins are applied to the project.
      */
-    val testModuleRegex by gradleTestSuiteEnhancedStringProperty("""(^android|_test|Test)$""")
+    val junitPlatformLauncherDependentConfigurationRegex by testsOnlyProjectDependentRegexProperty(
+        defaultValue = """^(test|jvmTest)RuntimeOnly$""",
+        testsOnlyProjectValue = { junitPlatformLauncherDependentConfigurationRegexTestsOnlyProject }
+    )
+    private val junitPlatformLauncherDependentConfigurationRegexTestsOnlyProject by stringProperty(
+        """RuntimeOnly$"""
+    )
 
     /**
-     * Name pattern for Gradle JVM Test Suites (incubating).
+     * Comma-separated list of Gradle plugins which use all source sets for tests.
      *
-     * The pattern will extend [testCompilationRegex] and [testModuleRegex] to enable
-     * TestBalloon tests in Gradle JVM Test Suites, which can have arbitrary names and would otherwise not
-     * be recognized as test source sets, modules, or compilations.
+     * If one of those plugins is present in a project, TestBalloon will cover all compilations and all source sets.
      */
-    val gradleTestSuiteNamesRegex by stringProperty("")
+    private val testsOnlyProjectPlugins by stringProperty("jvm-test-suite,com.android.test")
+
+    /**
+     * Returns true if [project] is a tests-only project which uses all source sets for tests.
+     *
+     * IMPLEMENTATION NOTE: Before using this value, ensure that all plugins are applied to the project.
+     */
+    private val isTestsOnlyProject by lazy {
+        testsOnlyProjectPlugins.split(',').any { project.pluginManager.hasPlugin(it) }
+    }
 
     /**
      * Name pattern for browser-based test tasks using Karma.
@@ -64,12 +109,12 @@ internal class TestBalloonGradleProperties(val project: Project) {
     )
 
     /**
-     * Setting to enable or disable Gradle auto-configuration for JUnit Platform. `true` (default) or `false`.
+     * Setting to enable or disable Gradle autoconfiguration for JUnit Platform. `true` (default) or `false`.
      */
     val junitPlatformGradleAutoConfigurationEnabled by booleanProperty("true")
 
     /**
-     * Setting to enable or disable Gradle auto-configuration for JUnit 4. `true` (default) or `false`.
+     * Setting to enable or disable Gradle autoconfiguration for JUnit 4. `true` (default) or `false`.
      */
     val junit4GradleAutoConfigurationEnabled by booleanProperty("true")
 
@@ -145,17 +190,13 @@ internal class TestBalloonGradleProperties(val project: Project) {
     @Suppress("SameParameterValue")
     private fun stringProperty(default: String) = Delegate(default) { it }
 
-    @Suppress("SameParameterValue")
-    private fun gradleTestSuiteEnhancedStringProperty(default: String) = Delegate(default) {
-        if (gradleTestSuiteNamesRegex.isEmpty()) it else "($it)|($gradleTestSuiteNamesRegex)"
-    }
-
     private fun regexProperty(default: String) = Delegate(default) { Regex(it) }
 
     @Suppress("SameParameterValue")
-    private fun gradleTestSuiteEnhancedRegexProperty(default: String) = Delegate(default) {
-        Regex(if (gradleTestSuiteNamesRegex.isEmpty()) it else "($it)|($gradleTestSuiteNamesRegex)")
-    }
+    private fun testsOnlyProjectDependentRegexProperty(defaultValue: String, testsOnlyProjectValue: () -> String) =
+        Delegate(defaultValue) {
+            Regex(if (isTestsOnlyProject) testsOnlyProjectValue() else it)
+        }
 
     @Suppress("SameParameterValue")
     private fun intProperty(default: String) = Delegate(default) { it.toIntOrNull() }

@@ -3,6 +3,7 @@
 package buildLogic
 
 import de.infix.testBalloon.framework.shared.internal.Constants
+import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleExtension
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleProperties
@@ -35,14 +36,24 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
         }
     }
 
-    val junitPlatformLauncherDependentConfigurationRegex =
-        testBalloonProperties.junitPlatformLauncherDependentConfigurationRegex
+    // We use afterEvaluate here to ensure that `extension.debugLevel` is initialized.
+    afterEvaluate {
+        val extension by lazy { project.extensions.getByType(TestBalloonGradleExtension::class.java) }
 
-    configurations.configureEach {
-        if (junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
-            dependencies.add(
-                project.dependencies.create(libraryFromCatalog("org.junit.platform.launcher"))
-            )
+        val junitPlatformLauncherDependentConfigurationRegex =
+            testBalloonProperties.junitPlatformLauncherDependentConfigurationRegex
+
+        configurations.configureEach {
+            if (junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
+                if (extension.debugLevel > DebugLevel.NONE) {
+                    project.logger.warn(
+                        "Plugin ${Constants.COMPILER_PLUGIN_NAME}: [DEBUG] adding JUnit Platform launcher to $this."
+                    )
+                }
+                dependencies.add(
+                    project.dependencies.create(libraryFromCatalog("org.junit.platform.launcher"))
+                )
+            }
         }
     }
 

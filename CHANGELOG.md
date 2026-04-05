@@ -3,6 +3,7 @@
 ### Other Changes
 
 * Robolectric integration: `robolectricTestSuite` provides a type parameter for the content class instead of a `KClass` parameter. The latter variant is now deprecated.
+* The Gradle integration supports the incubating Gradle JVM Test Suite Plugin and the `com.android.test` plugin out of the box. If one of these plugins is present, tests will be detected in all source sets of the respective Gradle (sub)project. The Gradle property `testBalloon.gradleTestSuiteNamesRegex` is now obsolete and can be deleted.
 
 ## 0.8.4 (March 16, 2026)
 

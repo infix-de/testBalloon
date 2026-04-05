@@ -2,7 +2,6 @@
 
 package de.infix.testBalloon.compilerPlugin
 
-import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import buildConfig.BuildConfig.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
@@ -114,38 +113,13 @@ class CompilerPluginIrGenerationExtension(private val compilerConfiguration: Com
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         val debugLevel = Options.debugLevel.value(compilerConfiguration)
-        val testModuleRegex = Options.testModuleRegex.value(compilerConfiguration)
 
         if (debugLevel > DebugLevel.NONE) {
             messageCollector.report(
                 CompilerMessageSeverity.WARNING,
-                "$PLUGIN_DISPLAY_NAME: [DEBUG] Plugin version $PROJECT_VERSION is processing" +
+                "$PLUGIN_DISPLAY_NAME: [DEBUG] version $PROJECT_VERSION is processing" +
                     " module ${moduleFragment.name}."
             )
-        }
-
-        fun reportDisablingReason(detail: String) {
-            if (debugLevel > DebugLevel.NONE) {
-                messageCollector.report(
-                    CompilerMessageSeverity.WARNING,
-                    "$PLUGIN_DISPLAY_NAME: [DEBUG] Disabling the plugin for module ${moduleFragment.name}: $detail"
-                )
-            }
-        }
-
-        // If we are not compiling a test module: Disable the compiler plugin.
-        // Otherwise, we end up defining the discovery result property twice (one for the main module, another one
-        // for the test module). If the test module picks up the main module's symbol, no suites will be considered
-        // discovered.
-        if (!Regex(testModuleRegex).containsMatchIn(moduleFragment.name.asStringStripSpecialMarkers())) {
-            reportDisablingReason("It is not a test module (matching '$testModuleRegex').")
-            return
-        }
-
-        // If we are not compiling a module with the framework library dependency: Disable the compiler plugin.
-        if (!ModuleProbe(pluginContext, messageCollector).hasFrameworkLibraryDependency()) {
-            reportDisablingReason("It has no framework library dependency.")
-            return
         }
 
         val configuration: Configuration = try {
@@ -157,14 +131,6 @@ class CompilerPluginIrGenerationExtension(private val compilerConfiguration: Com
 
         moduleFragment.transform(ModuleTransformer(pluginContext, messageCollector, configuration), null)
     }
-}
-
-private class ModuleProbe(
-    override val pluginContext: IrPluginContext,
-    override val messageCollector: MessageCollector
-) : ModuleWideSymbolResolving {
-    /** Returns true if the currently compiled module is `TestSuite`-aware. */
-    fun hasFrameworkLibraryDependency(): Boolean = irClassSymbolOrNull(AbstractTestSuite::class.qualifiedName!!) != null
 }
 
 private class Configuration(
@@ -235,7 +201,7 @@ private class ModuleTransformer(
         sourceFileForReporting = irFile
 
         if (configuration.debugLevel >= DebugLevel.BASIC) {
-            reportDebug("Analyzing source file", irFile)
+            reportDebug("Analyzing source file.", irFile)
         }
 
         // For debugging only: Print the IR code from 'DumpIr.kt' anywhere in the module.
@@ -257,7 +223,7 @@ private class ModuleTransformer(
             if (irClass.isSameOrSubTypeOf(configuration.abstractSessionSymbol)) {
                 if (customSessionClass == null) {
                     if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
-                        reportDebug("Found test session '${irClass.fqName()}'", irClass)
+                        reportDebug("Found test session '${irClass.fqName()}'.", irClass)
                     }
                     customSessionClass = irClass
                 } else {
@@ -278,7 +244,7 @@ private class ModuleTransformer(
         @Suppress("UnnecessaryVariable", "RedundantSuppression")
         val irProperty = declaration
 
-        withErrorReporting(irProperty, "Could not analyze property '${irProperty.fqNameWhenAvailable}'") {
+        withErrorReporting(irProperty, "Could not analyze property '${irProperty.fqNameWhenAvailable}'.") {
             // Fast path: Top-level delegating properties only.
             if (!(irProperty.isDelegated && irProperty.parent is IrFile)) return@withErrorReporting
 
@@ -289,7 +255,7 @@ private class ModuleTransformer(
 
             if (initializerCallFunction.hasAnnotation(configuration.testRegisteringAnnotationSymbol)) {
                 if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
-                    reportDebug("Found top-level test suite property '${irProperty.fqNameWhenAvailable}'", irProperty)
+                    reportDebug("Found top-level test suite property '${irProperty.fqNameWhenAvailable}'.", irProperty)
                 }
 
                 irProperty.addNameValueArgumentsToInitializerCallIfApplicable(
@@ -314,14 +280,14 @@ private class ModuleTransformer(
 
         withErrorReporting(
             moduleFragment,
-            "Could not generate entry point code"
+            "Could not generate entry point code."
         ) {
             if (configuration.debugLevel >= DebugLevel.CODE) {
+                val customSessionAppendix =
+                    if (customSessionClass == null) "" else "and custom session '${customSessionClass?.fqName()}'"
                 reportDebug(
-                    "Generating code in module '${moduleFragment.name}'," +
-                        " for  ${discoveredSuites.size} discovered top-level suites," +
-                        " custom session: " +
-                        if (customSessionClass == null) "default" else "${customSessionClass?.fqName()}",
+                    "Generating code in module '${moduleFragment.name}'" +
+                        " for  ${discoveredSuites.size} discovered top-level suites$customSessionAppendix.",
                     moduleFragment
                 )
             }
@@ -342,7 +308,7 @@ private class ModuleTransformer(
                     entryPointFile = irTestFrameworkEntryPointProperty().fileParent
                 }
 
-                else -> throw UnsupportedOperationException("Cannot generate entry points for platform '$platform'")
+                else -> throw UnsupportedOperationException("Cannot generate entry points for platform '$platform'.")
             }
 
             if (configuration.debugLevel >= DebugLevel.CODE) {
@@ -415,7 +381,7 @@ private class ModuleTransformer(
                                 if (configuration.debugLevel >= DebugLevel.CODE) {
                                     reportDebug(
                                         "${irProperty.fqName()}: Setting parameter '${valueParameters[index].name}'" +
-                                            " to '$value'"
+                                            " to '$value'."
                                     )
                                 }
                             }
@@ -590,15 +556,15 @@ private class ModuleTransformer(
                 when {
                     jUnit4Found && testBalloonJUnit4RunnerFound -> {
                         if (configuration.junit4AutoIntegrationEnabled) {
-                            "Integrating with JUnit 4"
+                            "Integrating with JUnit 4."
                         } else {
-                            "Suppressing JUnit 4 auto-integration (not enabled)"
+                            "Suppressing JUnit 4 auto-integration (not enabled)."
                         }
                     }
 
-                    jUnit4Found -> "JUnit 4 is not on the classpath"
+                    jUnit4Found -> "JUnit 4 is not on the classpath."
 
-                    else -> "JUnit 4 is on the classpath, but the TestBalloon JUnit 4 runner is not"
+                    else -> "JUnit 4 is on the classpath, but the TestBalloon JUnit 4 runner is not."
                 }
             )
         }
@@ -804,7 +770,7 @@ private interface ModuleWideSymbolResolving : Reporting {
                 throw MissingFrameworkSymbol("property '${callableId.asFqNameForDebugInfo()}'")
             } else {
                 reportWarning(
-                    "Property '${callableId.asFqNameForDebugInfo()}' found ${it.size} times\n" +
+                    "Property '${callableId.asFqNameForDebugInfo()}' found ${it.size} times.\n" +
                         "\tThis may be caused by a misconfiguration of the module's dependencies."
                 )
                 it.first()
@@ -861,5 +827,3 @@ private fun FqName?.asQualificationPrefix(): String = if (this == null || isRoot
 
 private fun <T> Collection<T>.singleOrElse(alternative: (collection: Collection<T>) -> T): T =
     singleOrNull() ?: alternative(this)
-
-private const val PLUGIN_DISPLAY_NAME = "Plugin $PROJECT_COMPILER_PLUGIN_ID"

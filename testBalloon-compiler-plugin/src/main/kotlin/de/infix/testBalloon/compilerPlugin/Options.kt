@@ -32,11 +32,11 @@ internal object Options {
         stringValue.toBooleanStrictOrNull() ?: throwValueError(stringValue)
     }
 
-    val testModuleRegex = Option(
-        optionName = "testModuleRegex",
+    val disablingReason = Option(
+        optionName = "disablingReason",
         valueDescription = "string",
-        description = "Regular expression qualifying a test module name",
-        defaultValue = """(_test|Test)$"""
+        description = "Disables the compiler plugin, specifying the reason",
+        defaultValue = ""
     ) { it }
 
     val all = registeredOptions.toList()

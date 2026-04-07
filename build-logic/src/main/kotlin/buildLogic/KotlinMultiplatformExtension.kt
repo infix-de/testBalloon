@@ -95,7 +95,6 @@ fun KotlinMultiplatformExtension.applyHierarchy(nonJvm: KotlinHierarchyBuilder.(
 fun KotlinMultiplatformExtension.enableAbiValidation() {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
     abiValidation {
-        enabled.set(true)
         filters {
             exclude {
                 byNames.add(TestBalloonInternalApi::class.qualifiedName!!)

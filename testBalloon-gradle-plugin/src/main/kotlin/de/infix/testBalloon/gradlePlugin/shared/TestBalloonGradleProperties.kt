@@ -44,12 +44,12 @@ internal class TestBalloonGradleProperties(val project: Project) {
      * Name pattern for test source sets in which the Gradle plugin will disable incremental compilation.
      * This pattern will only be used on source sets matching [testSourceSetsRegex].
      *
-     * WORKAROUND: Kotlin IC on JS does not support compiler plugins generating top-level declarations
-     *     https://youtrack.jetbrains.com/issue/KT-82395
+     * A non-matching pattern (like `^---NONE---$`) indicates that incremental compilation can be left enabled
+     * for all source sets.
      *
      * IMPLEMENTATION NOTE: Before using this value, ensure that all plugins are applied to the project.
      */
-    val notIncrementallyCompilableTestSourceSetsRegex by regexProperty("""^(js|wasm)""")
+    val notIncrementallyCompilableTestSourceSetsRegex by regexProperty("""^---NONE---$""")
 
     /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.

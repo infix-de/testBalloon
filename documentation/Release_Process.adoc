@@ -39,7 +39,7 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 ----
 . Run `./gradlew updateKotlinAbi`
 . Run CI tests via the IntelliJ IDEA run configuration `ciTests`.
-. Run `./gradlew clean check -x test --continue` and verify that everything compiles and runs, accepting failed tests (from examples and experiments).
+. Run `./gradlew check -x test --continue` and verify that everything compiles and runs, accepting failed tests (from examples and experiments).
 . Check in the integration test project that no newer Kotlin artifacts sneak in, using a Terminal:
 ** `++(cd integration-test/build/projects/element-selection; ./gradlew dependencies) | awk '/kotlin-stdlib:/ { gsub(/.*kotlin-stdlib:/, ""); gsub(/.* -> /, ""); gsub(/ \(.\)$/, ""); print }' | sort -u++`
 . Commit changes

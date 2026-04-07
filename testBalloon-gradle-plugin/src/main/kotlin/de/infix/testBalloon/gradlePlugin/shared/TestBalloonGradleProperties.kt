@@ -14,47 +14,42 @@ internal class TestBalloonGradleProperties(val project: Project) {
      *
      * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
      *
-     * IMPLEMENTATION NOTES:
-     * - Before using this value, ensure that all plugins are applied to the project.
-     * - This property is not effective with `addTestBalloonPluginFromProject()`.
+     * Naming of test-related source sets created by various Gradle plugins, (`*` marks source sets containing utility
+     * code, not tests):
+     * - `kotlin("multiplatform")`: ends with `Test`
+     * - `kotlin("jvm")`: `test`
+     * - `com.android.application` (AGP 8.13.2):
+     *     - default:
+     *         - `androidTest`, `androidTestDebug`, `androidTestRelease`,
+     *           `debugAndroidTest`, `debugUnitTest`, `releaseUnitTest`,
+     *           `test`, `testDebug`, `testRelease`
+     *         - also: `testFixtures` *, `testFixturesDebug` *, `testFixturesRelease` *
+     *     - with a single flavor dimension and flavor `prod`, additionally:
+     *         - `androidTestProd`, `androidTestProdDebug`,
+     *           `prodDebugAndroidTest`, `prodDebugUnitTest`, `prodReleaseUnitTest`,
+     *           `testProd`, `testProdDebug`, `testProdRelease`
+     *         - also: `testFixturesProd` *
+     * - `com.android.kotlin.multiplatform.library` (AGP 8.13.2): ends with `Test` (like Kotlin/Multiplatform)
+     * - `java-test-fixtures`: `testFixtures` *
+     *
+     * IMPLEMENTATION NOTES: Before using this value, ensure that all plugins are applied to the project.
      */
     val testSourceSetsRegex by testsOnlyProjectDependentRegexProperty(
-        defaultValue = """[tT]est""",
+        defaultValue = """[tT]est(?!Fixtures)""",
         testsOnlyProjectValue = { testSourceSetsRegexTestsOnlyProject }
     )
     private val testSourceSetsRegexTestsOnlyProject by stringProperty(".*")
 
     /**
-     * Name pattern for compile tasks in which the compiler plugin will be enabled.
-     *
-     * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
-     *
-     * IMPLEMENTATION NOTES:
-     * - Before using this value, ensure that all plugins are applied to the project.
-     * - This property is effective with `addTestBalloonPluginFromProject()`, and basically mirrors the
-     *   effect of `testSourceSetsRegex` for in-project use.
-     */
-    val testCompileTasksRegex by testsOnlyProjectDependentRegexProperty(
-        defaultValue = """[tT]est""",
-        testsOnlyProjectValue = { testCompileTasksRegexTestsOnlyProject }
-    )
-    private val testCompileTasksRegexTestsOnlyProject by stringProperty(".*")
-
-    /**
-     * Name pattern for test compile tasks in which the compiler plugin will disable incremental compilation.
+     * Name pattern for test source sets in which the Gradle plugin will disable incremental compilation.
+     * This pattern will only be used on source sets matching [testSourceSetsRegex].
      *
      * WORKAROUND: Kotlin IC on JS does not support compiler plugins generating top-level declarations
      *     https://youtrack.jetbrains.com/issue/KT-82395
      *
      * IMPLEMENTATION NOTE: Before using this value, ensure that all plugins are applied to the project.
      */
-    val nonIncrementalTestCompileTaskRegex by testsOnlyProjectDependentRegexProperty(
-        defaultValue = """^compileTest.*Kotlin(Js|Wasm)""",
-        testsOnlyProjectValue = { nonIncrementalTestCompileTaskRegexTestsOnlyProject }
-    )
-    private val nonIncrementalTestCompileTaskRegexTestsOnlyProject by stringProperty(
-        """^compile(Test)?Kotlin(Js|Wasm)"""
-    )
+    val notIncrementallyCompilableTestSourceSetsRegex by regexProperty("""^(js|wasm)""")
 
     /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.

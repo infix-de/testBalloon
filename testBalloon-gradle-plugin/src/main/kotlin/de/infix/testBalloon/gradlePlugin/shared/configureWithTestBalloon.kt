@@ -19,12 +19,13 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.internal.VersionNumber
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import java.nio.file.DirectoryNotEmptyException
 import kotlin.io.path.Path
@@ -44,12 +45,14 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
     configureDiagnosticsTask()
 
     afterEvaluate {
-        val nonIncrementalTestCompileTaskRegex = testBalloonProperties.nonIncrementalTestCompileTaskRegex
-        val testCompileTasksRegex = testBalloonProperties.testCompileTasksRegex
-        fun disablePluginOptions(taskName: String) = listOf(
+        val testSourceSetsRegex = testBalloonProperties.testSourceSetsRegex
+        val notIncrementallyCompilableTestSourceSetsRegex =
+            testBalloonProperties.notIncrementallyCompilableTestSourceSetsRegex
+
+        fun disablePluginOptions(sourceSetName: String) = listOf(
             "-P",
             "plugin:${Constants.COMPILER_PLUGIN_NAME}" +
-                ":disablingReason='$taskName' does not match '$testCompileTasksRegex'"
+                ":disablingReason=source set '$sourceSetName' does not match '$testSourceSetsRegex'"
         )
 
         fun debugLog(message: String) {
@@ -58,24 +61,42 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
             }
         }
 
-        tasks.withType(AbstractKotlinCompile::class.java).configureEach {
-            if (testCompileTasksRegex.containsMatchIn(name)) {
-                if (nonIncrementalTestCompileTaskRegex.containsMatchIn(name)) {
-                    debugLog("disabling incremental compilation for $project, task '$name'.")
-                    incremental = false
-                    if (this is Kotlin2JsCompile) {
-                        @Suppress("INVISIBLE_REFERENCE")
-                        incrementalJsKlib = false
+        extensions.configure<Any>("kotlin") {
+            when (this) {
+                is KotlinMultiplatformExtension ->
+                    targets.all {
+                        compilations.all {
+                            val sourceSetName = defaultSourceSet.name
+                            if (testSourceSetsRegex.containsMatchIn(sourceSetName)) {
+                                if (notIncrementallyCompilableTestSourceSetsRegex.containsMatchIn(sourceSetName)) {
+                                    compileTaskProvider.configure {
+                                        if (this is AbstractKotlinCompile<*>) {
+                                            debugLog("disabling incremental compilation for $project, task '$name'.")
+                                            incremental = false
+                                            if (this is Kotlin2JsCompile) {
+                                                @Suppress("INVISIBLE_REFERENCE")
+                                                incrementalJsKlib = false
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                compileTaskProvider.configure {
+                                    this.compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(sourceSetName))
+                                }
+                            }
+                        }
                     }
-                }
-            } else {
-                compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(name))
-            }
-        }
 
-        tasks.withType(KotlinNativeCompile::class.java).configureEach {
-            if (!testCompileTasksRegex.containsMatchIn(name)) {
-                compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(name))
+                is KotlinSingleTargetExtension<*> ->
+                    target.compilations.all {
+                        val sourceSetName = defaultSourceSet.name
+                        if (!testSourceSetsRegex.containsMatchIn(sourceSetName)) {
+                            compileTaskProvider.configure {
+                                this.compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(sourceSetName))
+                            }
+                        }
+                    }
             }
         }
     }

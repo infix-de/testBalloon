@@ -1,9 +1,6 @@
-@file:OptIn(TestBalloonInternalApi::class)
-
 import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.enableAbiValidation
 import buildLogic.robolectricJdkVersion
-import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 
 plugins {
     id("buildLogic.kotlin-multiplatform")

@@ -30,3 +30,13 @@ public abstract interface annotation class de/infix/testBalloon/framework/shared
 public abstract interface annotation class de/infix/testBalloon/framework/shared/TestRegistering : java/lang/annotation/Annotation {
 }
 
+public final class de/infix/testBalloon/framework/shared/internal/DebugLevel : java/lang/Enum {
+	public static final field BASIC Lde/infix/testBalloon/framework/shared/internal/DebugLevel;
+	public static final field CODE Lde/infix/testBalloon/framework/shared/internal/DebugLevel;
+	public static final field DISCOVERY Lde/infix/testBalloon/framework/shared/internal/DebugLevel;
+	public static final field NONE Lde/infix/testBalloon/framework/shared/internal/DebugLevel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lde/infix/testBalloon/framework/shared/internal/DebugLevel;
+	public static fun values ()[Lde/infix/testBalloon/framework/shared/internal/DebugLevel;
+}
+

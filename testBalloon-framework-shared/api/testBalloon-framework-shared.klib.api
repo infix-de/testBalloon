@@ -27,6 +27,19 @@ open annotation class de.infix.testBalloon.framework.shared/TestRegistering : ko
     constructor <init>() // de.infix.testBalloon.framework.shared/TestRegistering.<init>|<init>(){}[0]
 }
 
+final enum class de.infix.testBalloon.framework.shared.internal/DebugLevel : kotlin/Enum<de.infix.testBalloon.framework.shared.internal/DebugLevel> { // de.infix.testBalloon.framework.shared.internal/DebugLevel|null[0]
+    enum entry BASIC // de.infix.testBalloon.framework.shared.internal/DebugLevel.BASIC|null[0]
+    enum entry CODE // de.infix.testBalloon.framework.shared.internal/DebugLevel.CODE|null[0]
+    enum entry DISCOVERY // de.infix.testBalloon.framework.shared.internal/DebugLevel.DISCOVERY|null[0]
+    enum entry NONE // de.infix.testBalloon.framework.shared.internal/DebugLevel.NONE|null[0]
+
+    final val entries // de.infix.testBalloon.framework.shared.internal/DebugLevel.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<de.infix.testBalloon.framework.shared.internal/DebugLevel> // de.infix.testBalloon.framework.shared.internal/DebugLevel.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): de.infix.testBalloon.framework.shared.internal/DebugLevel // de.infix.testBalloon.framework.shared.internal/DebugLevel.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<de.infix.testBalloon.framework.shared.internal/DebugLevel> // de.infix.testBalloon.framework.shared.internal/DebugLevel.values|values#static(){}[0]
+}
+
 abstract interface de.infix.testBalloon.framework.shared/AbstractTest : de.infix.testBalloon.framework.shared/AbstractTestElement // de.infix.testBalloon.framework.shared/AbstractTest|null[0]
 
 abstract interface de.infix.testBalloon.framework.shared/AbstractTestElement { // de.infix.testBalloon.framework.shared/AbstractTestElement|null[0]

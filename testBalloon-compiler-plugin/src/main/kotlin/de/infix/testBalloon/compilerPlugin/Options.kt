@@ -1,9 +1,6 @@
-@file:OptIn(TestBalloonInternalApi::class)
-
 package de.infix.testBalloon.compilerPlugin
 
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
-import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey

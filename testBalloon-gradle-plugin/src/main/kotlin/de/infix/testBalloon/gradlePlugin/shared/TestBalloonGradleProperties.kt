@@ -12,7 +12,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
     /**
      * Name pattern for source sets in which the compiler plugin will look up test suites and a test session.
      *
-     * The Gradle plugin will only apply the compiler plugin for compilations matching this pattern.
+     * The Gradle plugin will only apply the compiler plugin for compilations of source sets matching this pattern.
      *
      * Naming of test-related source sets created by various Gradle plugins, (`*` marks source sets containing utility
      * code, not tests):

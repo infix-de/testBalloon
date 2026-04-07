@@ -1,7 +1,6 @@
 package de.infix.testBalloon.gradlePlugin.shared
 
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
-import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 
 open class TestBalloonGradleExtension {
     /**
@@ -38,7 +37,6 @@ open class TestBalloonGradleExtension {
      */
     var junit4AutoIntegrationEnabled: Boolean? = null
 
-    /** The framework-internal debug level. */
-    @TestBalloonInternalApi
+    /** The debug level controlling reporting by the Gradle and compiler plugin. */
     var debugLevel: DebugLevel = DebugLevel.NONE
 }

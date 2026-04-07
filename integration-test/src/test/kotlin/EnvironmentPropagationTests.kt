@@ -1,10 +1,7 @@
-@file:OptIn(TestBalloonInternalApi::class)
-
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
-import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import java.util.Locale
 import kotlin.time.Duration.Companion.minutes
 

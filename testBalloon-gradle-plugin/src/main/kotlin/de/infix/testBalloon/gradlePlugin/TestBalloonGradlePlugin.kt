@@ -1,5 +1,3 @@
-@file:OptIn(TestBalloonInternalApi::class)
-
 package de.infix.testBalloon.gradlePlugin
 
 import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ARTIFACT_ID
@@ -9,7 +7,6 @@ import buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
 import buildConfig.BuildConfig.PROJECT_SHARED_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
-import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleExtension
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleProperties
 import de.infix.testBalloon.gradlePlugin.shared.compilerPluginOptionValues

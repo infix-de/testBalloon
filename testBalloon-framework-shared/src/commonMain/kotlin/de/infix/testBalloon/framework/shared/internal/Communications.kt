@@ -27,7 +27,6 @@ public enum class EnvironmentVariable {
 /**
  * The framework-internal debug level.
  */
-@TestBalloonInternalApi
 public enum class DebugLevel {
     NONE,
     BASIC,

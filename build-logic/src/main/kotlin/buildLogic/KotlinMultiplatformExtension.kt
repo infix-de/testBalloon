@@ -43,6 +43,15 @@ fun KotlinMultiplatformExtension.nativeTargets() {
     mingwX64()
     watchosDeviceArm64()
     iosX64()
+    // Tier 3, planned deprecation:
+    // - https://kotlinlang.org/docs/native-target-support.html#deprecated-targets
+    // - https://youtrack.jetbrains.com/issue/KT-78660
+    @Suppress("DEPRECATION")
+    macosX64()
+    @Suppress("DEPRECATION")
+    watchosX64()
+    @Suppress("DEPRECATION")
+    tvosX64()
 }
 
 fun KotlinMultiplatformExtension.allTargets(includeWasmWasi: Boolean = true) {

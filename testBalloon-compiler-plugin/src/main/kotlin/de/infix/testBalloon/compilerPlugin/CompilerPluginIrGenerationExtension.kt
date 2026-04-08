@@ -551,7 +551,7 @@ private class ModuleTransformer(
     private fun irJUnit4RunnerEntryPointClass(entryPointFile: IrFile): IrDeclaration? {
         if (configuration.debugLevel > DebugLevel.NONE) {
             val jUnit4Found = configuration.jUnit4RunWithAnnotationSymbol != null
-            val testBalloonJUnit4RunnerFound = configuration.jUnit4RunWithAnnotationSymbol != null
+            val testBalloonJUnit4RunnerFound = configuration.testBalloonJUnit4RunnerSymbol != null
             reportDebug(
                 when {
                     jUnit4Found && testBalloonJUnit4RunnerFound -> {
@@ -562,7 +562,7 @@ private class ModuleTransformer(
                         }
                     }
 
-                    jUnit4Found -> "JUnit 4 is not on the classpath."
+                    !jUnit4Found -> "JUnit 4 is not on the classpath."
 
                     else -> "JUnit 4 is on the classpath, but the TestBalloon JUnit 4 runner is not."
                 }

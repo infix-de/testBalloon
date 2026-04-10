@@ -220,7 +220,7 @@ public sealed class TestElement(
                 // significant content, which must be unchanged. The phrase can be used to identify a missing IDE
                 // plugin, which would normally extract and show the element's display name.
                 reportingCoordinates(
-                    suiteMode = CoordinatesMode.FullyQualified,
+                    suiteMode = CoordinatesMode.WithoutTopLevelPackage,
                     testMode = CoordinatesMode.DisplayName
                 ) + ".$testElementDisplayName"
             }

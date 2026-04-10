@@ -79,16 +79,19 @@ public sealed class TestElement(
         /**
          * This path's reporting name, excluding the top-level suite name, made globally unique.
          *
-         * This name is used exclusively in Android device tests. To avoid crashing the Android test infrastructure,
-         * the name
+         * For a top-level suite, the value will be the unqualified suite name, made globally unique.
+         *
+         * This name is used in Android device tests. To avoid crashing the Android test infrastructure, the name
          * - must not exceed a certain length, and
          * - it must be globally unique.
          *
          * For details, see comment for `defaultReportingPathLimitBelowTopLevel` in `TestFramework.android.kt`.
          */
         internal val reportingNameBelowTopLevel: String by lazy {
-            val parentReportingNameBelowTopLevel = element.testElementParent?.takeIf { !it.isTopLevelSuite }
-                ?.testElementPath?.reportingNameBelowTopLevel
+            val parentReportingNameBelowTopLevel =
+                element.testElementParent
+                    ?.takeIf { !it.isTopLevelSuite && !element.isTopLevelSuite }
+                    ?.testElementPath?.reportingNameBelowTopLevel
             val originalName = buildString {
                 if (parentReportingNameBelowTopLevel != null) {
                     append(parentReportingNameBelowTopLevel)

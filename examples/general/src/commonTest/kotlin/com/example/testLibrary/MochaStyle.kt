@@ -5,6 +5,7 @@ import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testSuite
+import de.infix.testBalloon.framework.shared.TestDisplayName
 import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
 
@@ -20,6 +21,7 @@ fun TestSuiteScope.it(
 @TestRegistering
 fun describe(
     @TestElementName name: String = "",
+    @TestDisplayName displayName: String = name,
     testConfig: TestConfig = TestConfig,
     content: TestSuite.() -> Unit
-): Lazy<TestSuite> = testSuite(name = name, testConfig = testConfig, content = content)
+): Lazy<TestSuite> = testSuite(name = name, displayName = displayName, testConfig = testConfig, content = content)

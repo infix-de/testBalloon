@@ -226,19 +226,29 @@ private class TestElementJUnitPlatformDescriptor(
     override fun toString(): String = "PD(uId=$uniqueId, dN=\"$displayName\", t=$type)"
 }
 
+private val reportingMode get() = TestSession.global.reportingMode
+
 private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestElementJUnitPlatformDescriptor {
     val uniqueId: UniqueId
-    val source: TestSource? = if (isTopLevelSuite) ClassSource.from(testElementName) else null
+    val source: TestSource? = if (isTopLevelSuite && reportingMode != ReportingMode.Amper) {
+        ClassSource.from(testElementPath.reportingNameWithTopLevelPackage)
+    } else {
+        null
+    }
     val segmentType = when (this) {
         is Test -> "test"
         is TestSuite -> "suite"
     }
 
     uniqueId = parentUniqueId.append(segmentType, testElementName)
-    val displayName = when (TestSession.global.reportingMode) {
-        ReportingMode.IntellijIdeaLegacy -> testElementDisplayName
-        ReportingMode.IntellijIdea -> reportingCoordinates(mode = TestElement.CoordinatesMode.DisplayName)
-        else -> testElementPath.reportingNameBelowTopLevel
+    val displayName = if (reportingMode == ReportingMode.Amper) {
+        testElementDisplayName
+    } else {
+        when (TestSession.global.reportingMode) {
+            ReportingMode.IntellijIdeaLegacy -> testElementDisplayName
+            ReportingMode.IntellijIdea -> reportingCoordinates(mode = TestElement.CoordinatesMode.DisplayName)
+            else -> testElementPath.reportingNameBelowTopLevel
+        }
     }
 
     return TestElementJUnitPlatformDescriptor(

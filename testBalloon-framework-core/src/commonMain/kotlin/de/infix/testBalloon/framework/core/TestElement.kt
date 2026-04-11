@@ -234,6 +234,8 @@ public sealed class TestElement(
                     testElementPath.elementReportingName
                 }
             }
+
+            ReportingMode.Amper -> testElementPath.elementReportingName
         }
 
     internal val topLevelSuiteReportingName: String

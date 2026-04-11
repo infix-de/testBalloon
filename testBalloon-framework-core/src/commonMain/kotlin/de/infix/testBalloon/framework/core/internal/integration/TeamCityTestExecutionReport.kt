@@ -3,12 +3,10 @@ package de.infix.testBalloon.framework.core.internal.integration
 import de.infix.testBalloon.framework.core.Test
 import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.TestExecutionReport
-import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.printlnFixed
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.char
-import kotlin.text.iterator
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -33,29 +31,24 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
 
         when (event) {
             is TestElement.Event.Starting -> {
+                message(messageName = "flowStarted") {
+                    flowId(
+                        flowId = element.testElementPath.internalId,
+                        parentId = elementParent
+                            ?.takeIf { !element.isTopLevelSuite }
+                            ?.testElementPath?.internalId
+                    )
+                }
                 if (isIgnoredTest) {
                     eventMessage(event, eventName = "Ignored")
                     // Note: TeamCity does not recognize an ignored suite, so all suites are reported normally.
                 } else {
                     eventMessage(event, eventName = "Started")
-                    if (element is TestSuite) {
-                        message(messageName = "flowStarted") {
-                            flowId(
-                                flowId = element.testElementPath.internalId,
-                                parentId = elementParent?.testElementPath?.internalId
-                            )
-                        }
-                    }
                 }
             }
 
             is TestElement.Event.Finished -> {
                 if (!isIgnoredTest) {
-                    if (element is TestSuite) {
-                        message(messageName = "flowFinished") {
-                            flowId(flowId = element.testElementPath.internalId)
-                        }
-                    }
                     event.throwable?.let { throwable ->
                         eventMessage(event, eventName = "Failed") {
                             throwable.message?.let { attribute("message", it) }
@@ -64,6 +57,9 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
                         }
                     }
                     eventMessage(event, eventName = "Finished")
+                }
+                message(messageName = "flowFinished") {
+                    flowId(flowId = element.testElementPath.internalId)
                 }
             }
         }
@@ -77,6 +73,7 @@ internal class TeamCityTestExecutionReport(val outputEntry: (String) -> Unit = :
             name(element.reportingNameForJsAndTeamCity)
             timestamp(event.instant)
             content()
+            flowId(flowId = element.testElementPath.internalId)
         }
     }
 

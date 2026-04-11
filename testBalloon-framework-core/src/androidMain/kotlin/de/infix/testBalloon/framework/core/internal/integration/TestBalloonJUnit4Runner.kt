@@ -128,14 +128,22 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
     }
 }
 
+private val reportingMode get() = TestSession.global.reportingMode
+
 private fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
+        val displayName =
+            when {
+                reportingMode == ReportingMode.Amper -> testElementPath.elementReportingName
+
+                reportingMode == ReportingMode.IntellijIdea && !testInfrastructureIsAndroidDevice -> {
+                    reportingCoordinates(mode = TestElement.CoordinatesMode.FullyQualified)
+                }
+
+                else -> testElementPath.reportingNameWithTopLevelPackage
+            }
         Description.createSuiteDescription(
-            if (TestSession.global.reportingMode == ReportingMode.IntellijIdea && !testInfrastructureIsAndroidDevice) {
-                reportingCoordinates(mode = TestElement.CoordinatesMode.FullyQualified)
-            } else {
-                testElementPath.reportingNameWithTopLevelPackage
-            }.safeForDeviceSideTests(),
+            displayName.safeForDeviceSideTests(),
             testElementPath.internalId
         ).apply {
             testElementChildren.forEach {
@@ -153,9 +161,11 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
         Description.createTestDescription(
             topLevelSuiteReportingName,
             when {
+                reportingMode == ReportingMode.Amper -> testElementPath.elementReportingName
+
                 testInfrastructureIsAndroidDevice -> testElementPath.reportingNameBelowTopLevel
 
-                TestSession.global.reportingMode == ReportingMode.IntellijIdea -> {
+                reportingMode == ReportingMode.IntellijIdea -> {
                     reportingCoordinates(mode = TestElement.CoordinatesMode.WithoutTopLevelPackage)
                 }
 

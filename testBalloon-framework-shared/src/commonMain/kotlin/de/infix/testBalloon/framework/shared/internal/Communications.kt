@@ -9,7 +9,8 @@ package de.infix.testBalloon.framework.shared.internal
 public enum class ReportingMode {
     IntellijIdeaLegacy,
     IntellijIdea,
-    Files
+    Files,
+    Amper
 }
 
 /**

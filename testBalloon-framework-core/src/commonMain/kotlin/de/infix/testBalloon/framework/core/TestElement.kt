@@ -204,7 +204,7 @@ public sealed class TestElement(
 
     internal val reportingNameForJsAndTeamCity: String
         get() = when (TestSession.global.reportingMode) {
-            ReportingMode.IntellijIdeaLegacy -> {
+            ReportingMode.GradleIntellijIdeaLegacy -> {
                 if (this is TestSuite) {
                     // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA.
                     testElementPath.reportingNameWithTopLevelPackage
@@ -214,7 +214,7 @@ public sealed class TestElement(
                 }
             }
 
-            ReportingMode.IntellijIdea -> {
+            ReportingMode.GradleIntellijIdea -> {
                 // The attached ".$testElementDisplayName" can be replaced by a dot followed by a phrase like ".WoT".
                 // JS frameworks will replace the last dot in an element's name, so we place it after our
                 // significant content, which must be unchanged. The phrase can be used to identify a missing IDE
@@ -225,7 +225,7 @@ public sealed class TestElement(
                 ) + ".$testElementDisplayName"
             }
 
-            ReportingMode.Files -> {
+            ReportingMode.GradleFiles -> {
                 if (isTopLevelSuite) {
                     // Restricting the qualified path name to top-level suites avoids duplicated path elements.
                     testElementPath.reportingNameWithTopLevelPackage
@@ -234,6 +234,8 @@ public sealed class TestElement(
                     testElementPath.elementReportingName
                 }
             }
+
+            ReportingMode.Amper -> testElementPath.elementReportingName
         }
 
     internal val topLevelSuiteReportingName: String
@@ -456,7 +458,7 @@ private fun String.safeAsLowerLevelSuiteDisplayName() = safelyTransformed(lowerL
 
 private fun String.safeAsTestDisplayName() = safelyTransformed(testDisplayNameReplacements)
 
-private val suiteDisplayNameReplacements = if (TestSession.global.reportingMode == ReportingMode.Files) {
+private val suiteDisplayNameReplacements = if (TestSession.global.reportingMode == ReportingMode.GradleFiles) {
     // These characters are potentially file-system-incompatible on Windows. Gradle reporting does not escape
     // characters in what it considers to be a "package name", which in our hierarchy is every non-leaf suite.
     mapOf(

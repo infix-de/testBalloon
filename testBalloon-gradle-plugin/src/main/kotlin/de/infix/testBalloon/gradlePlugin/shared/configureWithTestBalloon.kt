@@ -111,23 +111,23 @@ private fun Project.configureTestTasks(
 ) {
     val reportingMode = when (testBalloonProperties.reportingMode) {
         "intellij-legacy" -> if (providers.systemProperty("idea.active").isPresent) {
-            ReportingMode.IntellijIdeaLegacy
+            ReportingMode.GradleIntellijIdeaLegacy
         } else {
-            ReportingMode.Files
+            ReportingMode.GradleFiles
         }
 
-        "intellij" -> ReportingMode.IntellijIdea
+        "intellij" -> ReportingMode.GradleIntellijIdea
 
-        "files" -> ReportingMode.Files
+        "files" -> ReportingMode.GradleFiles
 
         else -> if (providers.systemProperty("idea.active").isPresent) {
-            ReportingMode.IntellijIdea
+            ReportingMode.GradleIntellijIdea
         } else {
-            ReportingMode.Files
+            ReportingMode.GradleFiles
         }
     }
 
-    val reportsEnabled = testBalloonProperties.reportsEnabled ?: (reportingMode == ReportingMode.Files)
+    val reportsEnabled = testBalloonProperties.reportsEnabled ?: (reportingMode == ReportingMode.GradleFiles)
 
     if (!reportsEnabled) {
         tasks.withType(AbstractTestTask::class.java).configureEach {

@@ -7,9 +7,26 @@ package de.infix.testBalloon.framework.shared.internal
  */
 @TestBalloonInternalApi
 public enum class ReportingMode {
-    IntellijIdeaLegacy,
-    IntellijIdea,
-    Files
+    /**
+     * Legacy mode for IDE plugin versions < 0.5.0: Hierarchical reporting in human-readable format without IDE
+     * plugin assistance. Does not support Run/Debug/"Jump to source" from test results or test status in gutter icons.
+     */
+    GradleIntellijIdeaLegacy,
+
+    /**
+     * Mode for IDE plugin versions >= 0.5.0: Hierarchical reporting in a format requiring IDE plugin assistance
+     * for readability. Supports Run/Debug/"Jump to source" from test results and test status in gutter icons.
+     */
+    GradleIntellijIdea,
+
+    /**
+     * Mode for Gradle HTML and XML file reports, extracting package and "class" name at the top level, flattening
+     * names below.
+     */
+    GradleFiles,
+
+    /** Mode for Amper, with simple element names at each hierarchy level. */
+    Amper
 }
 
 /**

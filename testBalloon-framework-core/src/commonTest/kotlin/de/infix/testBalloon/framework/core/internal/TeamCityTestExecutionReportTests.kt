@@ -25,64 +25,84 @@ class TeamCityTestExecutionReportTests {
 
     @Test
     fun basicOutputIntelliJ() = basicOutputTest(
-        ReportingMode.IntellijIdea,
+        ReportingMode.GradleIntellijIdea,
         @Suppress("LongLine", "ktlint:standard:max-line-length")
         listOf(
-            "##teamcity[testSuiteStarted name='${iBegin}topSuite${iCSep}topSuite$iEnd.topSuite' timestamp='...']",
-            "##teamcity[flowStarted flowId='topSuite' parent='TestSession$iESep@Default']",
-            "##teamcity[testStarted name='${iBegin}topSuite${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
-            "##teamcity[testFinished name='${iBegin}topSuite${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
-            "##teamcity[testStarted name='${iBegin}topSuite${iESep}test2${iCSep}test2$iEnd.test2' timestamp='...']",
-            "##teamcity[testFailed name='${iBegin}topSuite${iESep}test2${iCSep}test2$iEnd.test2' timestamp='...' message='intentionally' details='AssertionError']",
-            "##teamcity[testFinished name='${iBegin}topSuite${iESep}test2${iCSep}test2$iEnd.test2' timestamp='...']",
-            "##teamcity[testSuiteStarted name='${iBegin}topSuite${iESep}subSuite1${iCSep}topSuite${dESep}subSuite1$iEnd.subSuite1' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite']",
+            "##teamcity[testSuiteStarted name='${iBegin}topSuite${iCSep}topSuite$iEnd.topSuite' timestamp='...' flowId='topSuite']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}test1' parent='topSuite']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...' flowId='topSuite${iESep}test1']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...' flowId='topSuite${iESep}test1']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}test1']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}test2' parent='topSuite']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}test2${iCSep}test2$iEnd.test2' timestamp='...' flowId='topSuite${iESep}test2']",
+            "##teamcity[testFailed name='${iBegin}topSuite${iESep}test2${iCSep}test2$iEnd.test2' timestamp='...' message='intentionally' details='AssertionError' flowId='topSuite${iESep}test2']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}test2${iCSep}test2$iEnd.test2' timestamp='...' flowId='topSuite${iESep}test2']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}test2']",
             "##teamcity[flowStarted flowId='topSuite${iESep}subSuite1' parent='topSuite']",
-            "##teamcity[testStarted name='${iBegin}topSuite${iESep}subSuite1${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
-            "##teamcity[testFinished name='${iBegin}topSuite${iESep}subSuite1${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
+            "##teamcity[testSuiteStarted name='${iBegin}topSuite${iESep}subSuite1${iCSep}topSuite${dESep}subSuite1$iEnd.subSuite1' timestamp='...' flowId='topSuite${iESep}subSuite1']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}subSuite1${iESep}test1' parent='topSuite${iESep}subSuite1']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}subSuite1${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...' flowId='topSuite${iESep}subSuite1${iESep}test1']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}subSuite1${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...' flowId='topSuite${iESep}subSuite1${iESep}test1']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}subSuite1${iESep}test1']",
+            "##teamcity[testSuiteFinished name='${iBegin}topSuite${iESep}subSuite1${iCSep}topSuite${dESep}subSuite1$iEnd.subSuite1' timestamp='...' flowId='topSuite${iESep}subSuite1']",
             "##teamcity[flowFinished flowId='topSuite${iESep}subSuite1']",
-            "##teamcity[testSuiteFinished name='${iBegin}topSuite${iESep}subSuite1${iCSep}topSuite${dESep}subSuite1$iEnd.subSuite1' timestamp='...']",
-            "##teamcity[testStarted name='${iBegin}topSuite${iESep}test3${iCSep}test3$iEnd.test3' timestamp='...']",
-            "##teamcity[testFinished name='${iBegin}topSuite${iESep}test3${iCSep}test3$iEnd.test3' timestamp='...']",
-            "##teamcity[testSuiteStarted name='${iBegin}topSuite${iESep}subSuite2${iCSep}topSuite${dESep}subSuite2$iEnd.subSuite2' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}test3' parent='topSuite']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}test3${iCSep}test3$iEnd.test3' timestamp='...' flowId='topSuite${iESep}test3']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}test3${iCSep}test3$iEnd.test3' timestamp='...' flowId='topSuite${iESep}test3']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}test3']",
             "##teamcity[flowStarted flowId='topSuite${iESep}subSuite2' parent='topSuite']",
-            "##teamcity[testStarted name='${iBegin}topSuite${iESep}subSuite2${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
-            "##teamcity[testFailed name='${iBegin}topSuite${iESep}subSuite2${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...' message='intentionally' details='AssertionError']",
-            "##teamcity[testFinished name='${iBegin}topSuite${iESep}subSuite2${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...']",
+            "##teamcity[testSuiteStarted name='${iBegin}topSuite${iESep}subSuite2${iCSep}topSuite${dESep}subSuite2$iEnd.subSuite2' timestamp='...' flowId='topSuite${iESep}subSuite2']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}subSuite2${iESep}test1' parent='topSuite${iESep}subSuite2']",
+            "##teamcity[testStarted name='${iBegin}topSuite${iESep}subSuite2${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...' flowId='topSuite${iESep}subSuite2${iESep}test1']",
+            "##teamcity[testFailed name='${iBegin}topSuite${iESep}subSuite2${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...' message='intentionally' details='AssertionError' flowId='topSuite${iESep}subSuite2${iESep}test1']",
+            "##teamcity[testFinished name='${iBegin}topSuite${iESep}subSuite2${iESep}test1${iCSep}test1$iEnd.test1' timestamp='...' flowId='topSuite${iESep}subSuite2${iESep}test1']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}subSuite2${iESep}test1']",
+            "##teamcity[testSuiteFinished name='${iBegin}topSuite${iESep}subSuite2${iCSep}topSuite${dESep}subSuite2$iEnd.subSuite2' timestamp='...' flowId='topSuite${iESep}subSuite2']",
             "##teamcity[flowFinished flowId='topSuite${iESep}subSuite2']",
-            "##teamcity[testSuiteFinished name='${iBegin}topSuite${iESep}subSuite2${iCSep}topSuite${dESep}subSuite2$iEnd.subSuite2' timestamp='...']",
-            "##teamcity[flowFinished flowId='topSuite']",
-            "##teamcity[testSuiteFinished name='${iBegin}topSuite${iCSep}topSuite$iEnd.topSuite' timestamp='...']"
+            "##teamcity[testSuiteFinished name='${iBegin}topSuite${iCSep}topSuite$iEnd.topSuite' timestamp='...' flowId='topSuite']",
+            "##teamcity[flowFinished flowId='topSuite']"
         )
     )
 
     @Test
     fun basicOutputFiles() = basicOutputTest(
-        ReportingMode.Files,
+        ReportingMode.GradleFiles,
         listOf(
-            "##teamcity[testSuiteStarted name='topSuite' timestamp='...']",
-            "##teamcity[flowStarted flowId='topSuite' parent='TestSession$iESep@Default']",
-            "##teamcity[testStarted name='test1' timestamp='...']",
-            "##teamcity[testFinished name='test1' timestamp='...']",
-            "##teamcity[testStarted name='test2' timestamp='...']",
-            "##teamcity[testFailed name='test2' timestamp='...' message='intentionally' details='AssertionError']",
-            "##teamcity[testFinished name='test2' timestamp='...']",
-            "##teamcity[testSuiteStarted name='subSuite1' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite']",
+            "##teamcity[testSuiteStarted name='topSuite' timestamp='...' flowId='topSuite']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}test1' parent='topSuite']",
+            "##teamcity[testStarted name='test1' timestamp='...' flowId='topSuite${iESep}test1']",
+            "##teamcity[testFinished name='test1' timestamp='...' flowId='topSuite${iESep}test1']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}test1']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}test2' parent='topSuite']",
+            "##teamcity[testStarted name='test2' timestamp='...' flowId='topSuite${iESep}test2']",
+            "##teamcity[testFailed name='test2' timestamp='...' message='intentionally' details='AssertionError' flowId='topSuite${iESep}test2']",
+            "##teamcity[testFinished name='test2' timestamp='...' flowId='topSuite${iESep}test2']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}test2']",
             "##teamcity[flowStarted flowId='topSuite${iESep}subSuite1' parent='topSuite']",
-            "##teamcity[testStarted name='test1' timestamp='...']",
-            "##teamcity[testFinished name='test1' timestamp='...']",
+            "##teamcity[testSuiteStarted name='subSuite1' timestamp='...' flowId='topSuite${iESep}subSuite1']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}subSuite1${iESep}test1' parent='topSuite${iESep}subSuite1']",
+            "##teamcity[testStarted name='test1' timestamp='...' flowId='topSuite${iESep}subSuite1${iESep}test1']",
+            "##teamcity[testFinished name='test1' timestamp='...' flowId='topSuite${iESep}subSuite1${iESep}test1']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}subSuite1${iESep}test1']",
+            "##teamcity[testSuiteFinished name='subSuite1' timestamp='...' flowId='topSuite${iESep}subSuite1']",
             "##teamcity[flowFinished flowId='topSuite${iESep}subSuite1']",
-            "##teamcity[testSuiteFinished name='subSuite1' timestamp='...']",
-            "##teamcity[testStarted name='test3' timestamp='...']",
-            "##teamcity[testFinished name='test3' timestamp='...']",
-            "##teamcity[testSuiteStarted name='subSuite2' timestamp='...']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}test3' parent='topSuite']",
+            "##teamcity[testStarted name='test3' timestamp='...' flowId='topSuite${iESep}test3']",
+            "##teamcity[testFinished name='test3' timestamp='...' flowId='topSuite${iESep}test3']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}test3']",
             "##teamcity[flowStarted flowId='topSuite${iESep}subSuite2' parent='topSuite']",
-            "##teamcity[testStarted name='test1' timestamp='...']",
-            "##teamcity[testFailed name='test1' timestamp='...' message='intentionally' details='AssertionError']",
-            "##teamcity[testFinished name='test1' timestamp='...']",
+            "##teamcity[testSuiteStarted name='subSuite2' timestamp='...' flowId='topSuite${iESep}subSuite2']",
+            "##teamcity[flowStarted flowId='topSuite${iESep}subSuite2${iESep}test1' parent='topSuite${iESep}subSuite2']",
+            "##teamcity[testStarted name='test1' timestamp='...' flowId='topSuite${iESep}subSuite2${iESep}test1']",
+            "##teamcity[testFailed name='test1' timestamp='...' message='intentionally' details='AssertionError' flowId='topSuite${iESep}subSuite2${iESep}test1']",
+            "##teamcity[testFinished name='test1' timestamp='...' flowId='topSuite${iESep}subSuite2${iESep}test1']",
+            "##teamcity[flowFinished flowId='topSuite${iESep}subSuite2${iESep}test1']",
+            "##teamcity[testSuiteFinished name='subSuite2' timestamp='...' flowId='topSuite${iESep}subSuite2']",
             "##teamcity[flowFinished flowId='topSuite${iESep}subSuite2']",
-            "##teamcity[testSuiteFinished name='subSuite2' timestamp='...']",
-            "##teamcity[flowFinished flowId='topSuite']",
-            "##teamcity[testSuiteFinished name='topSuite' timestamp='...']"
+            "##teamcity[testSuiteFinished name='topSuite' timestamp='...' flowId='topSuite']",
+            "##teamcity[flowFinished flowId='topSuite']"
         )
     )
 
@@ -109,17 +129,17 @@ class TeamCityTestExecutionReportTests {
                 val report = TeamCityTestExecutionReport { output.add(it) }
                 allEvents().forEach { report.add(it) }
 
-                output.comparableElements()
-                    .assertContainsInOrder(
-                        expectedElements,
-                        exhaustive = true
-                    )
+                val actualElements = output.comparableElements()
+                actualElements.assertContainsInOrder(
+                    expectedElements,
+                    exhaustive = true
+                )
             }
         }
 
     @Test
     fun concurrentOutput() =
-        FrameworkTestUtilities.withTestFramework(TestSession(reportingMode = ReportingMode.Files)) {
+        FrameworkTestUtilities.withTestFramework(TestSession(reportingMode = ReportingMode.GradleFiles)) {
             val suite by testSuite("concurrent") {
                 test("test1") {}
                 test("test2") {}
@@ -182,32 +202,45 @@ class TeamCityTestExecutionReportTests {
             report.add(TestElement.Event.Finished(compartmentStartingEvent.element, compartmentStartingEvent))
             report.add(TestElement.Event.Finished(sessionStartingEvent.element, sessionStartingEvent))
 
-            output.comparableElements().assertContainsInOrder(
+            val actualElements = output.comparableElements()
+            actualElements.assertContainsInOrder(
                 listOf(
-                    "##teamcity[testSuiteStarted name='concurrent' timestamp='...']",
-                    "##teamcity[flowStarted flowId='concurrent' parent='TestSession$iESep@Default']",
-                    "##teamcity[testSuiteStarted name='suite-1' timestamp='...']",
+                    "##teamcity[flowStarted flowId='concurrent']",
+                    "##teamcity[testSuiteStarted name='concurrent' timestamp='...' flowId='concurrent']",
                     "##teamcity[flowStarted flowId='concurrent${iESep}suite-1' parent='concurrent']",
-                    "##teamcity[testStarted name='suite-1-test2' timestamp='...']",
-                    "##teamcity[testFinished name='suite-1-test2' timestamp='...']",
-                    "##teamcity[testStarted name='suite-1-test1' timestamp='...']",
-                    "##teamcity[testFinished name='suite-1-test1' timestamp='...']",
+                    "##teamcity[testSuiteStarted name='suite-1' timestamp='...' flowId='concurrent${iESep}suite-1']",
+                    "##teamcity[flowStarted flowId='concurrent${iESep}suite-1${iESep}suite-1-test2' parent='concurrent${iESep}suite-1']",
+                    "##teamcity[testStarted name='suite-1-test2' timestamp='...' flowId='concurrent${iESep}suite-1${iESep}suite-1-test2']",
+                    "##teamcity[testFinished name='suite-1-test2' timestamp='...' flowId='concurrent${iESep}suite-1${iESep}suite-1-test2']",
+                    "##teamcity[flowFinished flowId='concurrent${iESep}suite-1${iESep}suite-1-test2']",
+                    "##teamcity[flowStarted flowId='concurrent${iESep}suite-1${iESep}suite-1-test1' parent='concurrent${iESep}suite-1']",
+                    "##teamcity[testStarted name='suite-1-test1' timestamp='...' flowId='concurrent${iESep}suite-1${iESep}suite-1-test1']",
+                    "##teamcity[testFinished name='suite-1-test1' timestamp='...' flowId='concurrent${iESep}suite-1${iESep}suite-1-test1']",
+                    "##teamcity[flowFinished flowId='concurrent${iESep}suite-1${iESep}suite-1-test1']",
+                    "##teamcity[testSuiteFinished name='suite-1' timestamp='...' flowId='concurrent${iESep}suite-1']",
                     "##teamcity[flowFinished flowId='concurrent${iESep}suite-1']",
-                    "##teamcity[testSuiteFinished name='suite-1' timestamp='...']",
-                    "##teamcity[testSuiteStarted name='suite-2' timestamp='...']",
                     "##teamcity[flowStarted flowId='concurrent${iESep}suite-2' parent='concurrent']",
-                    "##teamcity[testStarted name='suite-2-test1' timestamp='...']",
-                    "##teamcity[testFinished name='suite-2-test1' timestamp='...']",
-                    "##teamcity[testStarted name='suite-2-test2' timestamp='...']",
-                    "##teamcity[testFinished name='suite-2-test2' timestamp='...']",
+                    "##teamcity[testSuiteStarted name='suite-2' timestamp='...' flowId='concurrent${iESep}suite-2']",
+                    "##teamcity[flowStarted flowId='concurrent${iESep}suite-2${iESep}suite-2-test1' parent='concurrent${iESep}suite-2']",
+                    "##teamcity[testStarted name='suite-2-test1' timestamp='...' flowId='concurrent${iESep}suite-2${iESep}suite-2-test1']",
+                    "##teamcity[testFinished name='suite-2-test1' timestamp='...' flowId='concurrent${iESep}suite-2${iESep}suite-2-test1']",
+                    "##teamcity[flowFinished flowId='concurrent${iESep}suite-2${iESep}suite-2-test1']",
+                    "##teamcity[flowStarted flowId='concurrent${iESep}suite-2${iESep}suite-2-test2' parent='concurrent${iESep}suite-2']",
+                    "##teamcity[testStarted name='suite-2-test2' timestamp='...' flowId='concurrent${iESep}suite-2${iESep}suite-2-test2']",
+                    "##teamcity[testFinished name='suite-2-test2' timestamp='...' flowId='concurrent${iESep}suite-2${iESep}suite-2-test2']",
+                    "##teamcity[flowFinished flowId='concurrent${iESep}suite-2${iESep}suite-2-test2']",
+                    "##teamcity[testSuiteFinished name='suite-2' timestamp='...' flowId='concurrent${iESep}suite-2']",
                     "##teamcity[flowFinished flowId='concurrent${iESep}suite-2']",
-                    "##teamcity[testSuiteFinished name='suite-2' timestamp='...']",
-                    "##teamcity[testStarted name='test2' timestamp='...']",
-                    "##teamcity[testFinished name='test2' timestamp='...']",
-                    "##teamcity[testStarted name='test1' timestamp='...']",
-                    "##teamcity[testFinished name='test1' timestamp='...']",
-                    "##teamcity[flowFinished flowId='concurrent']",
-                    "##teamcity[testSuiteFinished name='concurrent' timestamp='...']"
+                    "##teamcity[flowStarted flowId='concurrent${iESep}test2' parent='concurrent']",
+                    "##teamcity[testStarted name='test2' timestamp='...' flowId='concurrent${iESep}test2']",
+                    "##teamcity[testFinished name='test2' timestamp='...' flowId='concurrent${iESep}test2']",
+                    "##teamcity[flowFinished flowId='concurrent${iESep}test2']",
+                    "##teamcity[flowStarted flowId='concurrent${iESep}test1' parent='concurrent']",
+                    "##teamcity[testStarted name='test1' timestamp='...' flowId='concurrent${iESep}test1']",
+                    "##teamcity[testFinished name='test1' timestamp='...' flowId='concurrent${iESep}test1']",
+                    "##teamcity[flowFinished flowId='concurrent${iESep}test1']",
+                    "##teamcity[testSuiteFinished name='concurrent' timestamp='...' flowId='concurrent']",
+                    "##teamcity[flowFinished flowId='concurrent']"
                 ),
                 exhaustive = true
             )

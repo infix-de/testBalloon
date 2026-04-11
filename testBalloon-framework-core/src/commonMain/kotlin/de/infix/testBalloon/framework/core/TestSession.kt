@@ -53,7 +53,7 @@ public open class TestSession protected constructor(
                     )
                 }
             }
-            ?: ReportingMode.Files
+            ?: ReportingMode.Amper
 
     internal val reportingNamesBelowTopLevelRegistry = PotentiallyDuplicateNamesRegistry()
 

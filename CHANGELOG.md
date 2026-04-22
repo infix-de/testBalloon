@@ -11,6 +11,7 @@ TestBalloon release variants:
 
 | TestBalloon version | Supported Kotlin versions |
 |---------------------|---------------------------|
+| 0.8.4-K2.4.0-Beta2  | 2.4.0-Beta2               |
 | 0.8.4-K2.4.0-Beta1  | 2.4.0-Beta1               |
 | 0.8.4-K2.3.20       | 2.3.20                    |
 | 0.8.4-K2.3.0        | 2.3.0 … 2.3.10            |

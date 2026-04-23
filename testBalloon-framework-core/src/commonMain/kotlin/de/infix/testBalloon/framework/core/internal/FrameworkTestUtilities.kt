@@ -141,15 +141,13 @@ public object FrameworkTestUtilities {
 
         public fun allEvents(): List<TestElement.Event> = allEvents.elements()
 
-        public fun finishedEvents(): List<TestElement.Event.Finished> = allEvents().mapNotNull {
-            it as? TestElement.Event.Finished
-        }
+        public fun finishedEvents(): List<TestElement.Event.Finished> =
+            allEvents().filterIsInstance<TestElement.Event.Finished>()
 
         public fun allTestEvents(): List<TestElement.Event> = allEvents().filter { it.element is Test }
 
-        public fun finishedTestEvents(): List<TestElement.Event.Finished> = allTestEvents().mapNotNull {
-            it as? TestElement.Event.Finished
-        }
+        public fun finishedTestEvents(): List<TestElement.Event.Finished> =
+            allTestEvents().filterIsInstance<TestElement.Event.Finished>()
 
         override suspend fun add(event: TestElement.Event) {
             // println("REPORT: $event")

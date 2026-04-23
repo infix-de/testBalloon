@@ -128,8 +128,17 @@ public open class TestConfig internal constructor(
         require(
             elementActionInvoked || Permit.WrapperWithoutInnerInvocation in testElement.parameters.permits
         ) {
-            "$testElement: the element action has not been invoked.\n" +
-                "\tThis is typically caused by a wrapper not invoking its element action."
+            buildString {
+                appendLine("$testElement: the element action has not been invoked.")
+                appendLine(
+                    "\tThis is typically caused by a wrapper not invoking its element action. If this is intentional"
+                )
+                appendLine("\tIf this is intentional, you can allow it by adding")
+                append(
+                    "\t'testConfig = TestConfig.addPermits(TestConfig.Permit.WrapperWithoutInnerInvocation)'" +
+                        " to $testElement."
+                )
+            }
         }
     }
 

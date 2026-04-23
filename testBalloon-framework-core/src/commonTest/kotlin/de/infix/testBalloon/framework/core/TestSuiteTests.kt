@@ -92,9 +92,11 @@ class TestSuiteTests {
         }
 
         FrameworkTestUtilities.withTestReport(suite1) {
-            finishedTestEvents().any {
-                it.throwable?.message?.contains("the element action has not been invoked") == true
-            }
+            assertTrue(
+                finishedEvents().any {
+                    it.throwable?.message?.contains("the element action has not been invoked") == true
+                }
+            )
         }
     }
 
@@ -108,7 +110,7 @@ class TestSuiteTests {
         }
 
         FrameworkTestUtilities.withTestReport(suite1) {
-            finishedTestEvents().all { it.succeeded }
+            finishedEvents().assertAllSucceeded()
         }
     }
 
@@ -176,7 +178,7 @@ class TestSuiteTests {
         }
 
         FrameworkTestUtilities.withTestReport(suite1) {
-            finishedTestEvents().all { it.succeeded }
+            finishedEvents().assertAllSucceeded()
         }
     }
 

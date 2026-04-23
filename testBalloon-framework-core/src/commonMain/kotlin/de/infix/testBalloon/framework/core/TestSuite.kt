@@ -215,9 +215,16 @@ public open class TestSuite internal constructor(
                     this is TestSession ||
                     TestConfig.Permit.SuiteWithoutChildren in parameters.permits
             ) {
+                val testSuite = this
                 buildString {
-                    append("$this does not contain any child tests or test suites.\n")
-                    append("\tPlease add at least one test or test suite to this test suite, or remove it.")
+                    appendLine("$testSuite does not contain any child tests or test suites.")
+                    appendLine("\tPlease either")
+                    appendLine("\t- add at least one test or test suite to $testSuite,")
+                    appendLine("\t- remove $testSuite, or")
+                    appendLine(
+                        "\t- use 'testConfig = TestConfig.addPermits(TestConfig.Permit.SuiteWithoutChildren)'" +
+                            " on $testSuite."
+                    )
                 }
             }
 

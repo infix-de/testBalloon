@@ -14,7 +14,8 @@ class BuildLogicKotlinJvmPlugin : Plugin<Project> {
             compilerOptions {
                 // WORKAROUND: Disable until KLIB resolver warnings can be suppressed or no longer appear.
                 //     See also: https://youtrack.jetbrains.com/issue/KT-78277
-                // freeCompilerArgs.addAll("-Werror")
+                // freeCompilerArgs.add("-Werror")
+                freeCompilerArgs.addAll("-Xreturn-value-checker=full", "-XXLanguage:+UnnamedLocalVariables")
             }
         }
     }

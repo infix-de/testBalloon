@@ -222,7 +222,7 @@ public sealed class TestElement(
                 reportingCoordinates(
                     suiteMode = CoordinatesMode.WithoutTopLevelPackage,
                     testMode = CoordinatesMode.DisplayName
-                ) + ".$testElementDisplayName"
+                ) + ".${testElementPath.elementReportingName}"
             }
 
             ReportingMode.GradleFiles -> {

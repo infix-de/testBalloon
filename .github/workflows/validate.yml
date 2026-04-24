@@ -30,6 +30,9 @@ jobs:
       - name: 'Check ABI compatibility'
         run: ./gradlew checkKotlinAbi
 
+      - name: 'Check code style consistency'
+        run: ./gradlew lintKotlin
+
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets
 

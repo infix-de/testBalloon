@@ -30,9 +30,9 @@ public abstract class de/infix/testBalloon/integration/robolectric/RobolectricTe
 	protected fun <init> (Lkotlin/jvm/functions/Function1;)V
 	public fun getTestSuiteInScope ()Lde/infix/testBalloon/framework/core/TestSuite;
 	public fun setTestSuiteInScope (Lde/infix/testBalloon/framework/core/TestSuite;)V
-	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
+	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
 	public fun testFixture (Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestFixture;
-	public fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
+	public fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class de/infix/testBalloon/integration/robolectric/RobolectricTestSuiteKt {

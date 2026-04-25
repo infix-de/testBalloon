@@ -25,7 +25,7 @@ class TestSuiteTests {
         val testCount = 3
         val expectedTestElementPaths = FrameworkTestUtilities.ConcurrentList<String>()
 
-        val suite by testSuite("topSuite") {
+        val suite by testSuite(propertyFqn = "topSuite") {
             for (suiteNumber in 1..subSuiteCount) {
                 testSuite("subSuite$suiteNumber") {
                     for (testNumber in 1..testCount) {
@@ -54,7 +54,7 @@ class TestSuiteTests {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(
-            "suite1",
+            propertyFqn = "suite1",
             testConfig = TestConfig.aroundAll { tests ->
                 trace.add("$testElementPath aroundAll begin")
                 tests()
@@ -87,7 +87,7 @@ class TestSuiteTests {
 
     @Test
     fun aroundAllWithoutInnerInvocation() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1", testConfig = TestConfig.aroundAll {}) {
+        val suite1 by testSuite(propertyFqn = "suite1", testConfig = TestConfig.aroundAll {}) {
             test("test1") {}
         }
 
@@ -103,7 +103,7 @@ class TestSuiteTests {
     @Test
     fun aroundAllWithoutInnerInvocationPermitted() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite(
-            "suite1",
+            propertyFqn = "suite1",
             testConfig = TestConfig.permits(TestConfig.Permit.WrapperWithoutInnerInvocation).aroundAll {}
         ) {
             test("test1") {}
@@ -116,7 +116,7 @@ class TestSuiteTests {
 
     @Test
     fun lowerLevelSuiteOutOfHierarchy() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             val suite1 = this
             testSuite("childSuite") {
                 suite1.testSuite("child of wrong parent") {
@@ -133,8 +133,8 @@ class TestSuiteTests {
 
     @Test
     fun topLevelSuiteOutOfHierarchy1() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
-            testSuite("top-level suite inside a top-level suite", compartment = { TestCompartment.Default }) {
+        val suite1 by testSuite(propertyFqn = "suite1") {
+            testSuite("top-level suite inside a top-level suite", propertyFqn = "inside suite1") {
             }
         }
 
@@ -147,8 +147,10 @@ class TestSuiteTests {
 
     @Test
     fun topLevelSuiteOutOfHierarchy2() = FrameworkTestUtilities.withTestFramework {
-        fun myTopLevelSuite(name: String, content: TestSuite.() -> Unit) = testSuite(name, content = content)
-        val suite1 by testSuite("suite1") {
+        fun myTopLevelSuite(name: String, content: TestSuite.() -> Unit) =
+            testSuite(name, propertyFqn = name, content = content)
+
+        val suite1 by testSuite(propertyFqn = "suite1") {
             myTopLevelSuite("top-level suite inside a top-level suite") {
             }
         }
@@ -162,7 +164,7 @@ class TestSuiteTests {
 
     @Test
     fun suiteWithoutChildren() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
         }
 
         assertFails {
@@ -174,7 +176,10 @@ class TestSuiteTests {
 
     @Test
     fun suiteWithoutChildrenPermitted() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1", testConfig = TestConfig.permits(TestConfig.Permit.SuiteWithoutChildren)) {
+        val suite1 by testSuite(
+            propertyFqn = "suite1",
+            testConfig = TestConfig.permits(TestConfig.Permit.SuiteWithoutChildren)
+        ) {
         }
 
         FrameworkTestUtilities.withTestReport(suite1) {
@@ -183,20 +188,19 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteWithEmptyName() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("") {
-        }
-
+    fun suiteWithEmptyPropertyFqn() = FrameworkTestUtilities.withTestFramework {
         assertFails {
-            FrameworkTestUtilities.withTestReport(suite1) {}
+            val suite1 by testSuite(propertyFqn = "") {
+            }
+            suite1
         }.also {
-            assertContains(it.message ?: "", "with an empty or blank name ''")
+            assertContains(it.message ?: "", "was not initialized with a non-empty 'propertyFqn'")
         }
     }
 
     @Test
     fun suiteWithBlankName() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite(" ") {
+        val suite1 by testSuite(propertyFqn = " ") {
         }
 
         assertFails {
@@ -207,32 +211,8 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteWithEmptyDisplayName() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1", displayName = "") {
-        }
-
-        assertFails {
-            FrameworkTestUtilities.withTestReport(suite1) {}
-        }.also {
-            assertContains(it.message ?: "", "with an empty or blank displayName ''")
-        }
-    }
-
-    @Test
-    fun suiteWithBlankDisplayName() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1", displayName = " ") {
-        }
-
-        assertFails {
-            FrameworkTestUtilities.withTestReport(suite1) {}
-        }.also {
-            assertContains(it.message ?: "", "with an empty or blank displayName ' '")
-        }
-    }
-
-    @Test
     fun testWithEmptyName() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             test("") {
             }
         }
@@ -246,7 +226,7 @@ class TestSuiteTests {
 
     @Test
     fun testWithBlankName() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             test(" ") {
             }
         }
@@ -259,39 +239,11 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testWithEmptyDisplayName() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
-            test("test1", displayName = "") {
-            }
-        }
-
-        assertFails {
-            FrameworkTestUtilities.withTestReport(suite1) {}
-        }.also {
-            assertContains(it.cause?.message ?: "", "with an empty or blank displayName ''")
-        }
-    }
-
-    @Test
-    fun testWithBlankDisplayName() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
-            test("test1", displayName = " ") {
-            }
-        }
-
-        assertFails {
-            FrameworkTestUtilities.withTestReport(suite1) {}
-        }.also {
-            assertContains(it.cause?.message ?: "", "with an empty or blank displayName ' '")
-        }
-    }
-
-    @Test
     fun aroundEach() = FrameworkTestUtilities.withTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(
-            "suite1",
+            propertyFqn = "suite1",
             testConfig = TestConfig
                 .aroundEach { elementAction ->
                     trace.add("$testElementPath aroundEach1.1 begin")
@@ -362,7 +314,7 @@ class TestSuiteTests {
 
     @Test
     fun failFast() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1", testConfig = TestConfig.failFast(3)) {
+        val suite1 by testSuite(propertyFqn = "suite1", testConfig = TestConfig.failFast(3)) {
             for (testId in 1..15) {
                 test("test$testId") {
                     if (testId.mod(2) == 0) {
@@ -388,7 +340,7 @@ class TestSuiteTests {
     fun suiteLevelFixture() = FrameworkTestUtilities.withTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
-        val invocationSuite by testSuite("invocationSuite") {
+        val invocationSuite by testSuite(propertyFqn = "invocationSuite") {
             val outerFixture =
                 testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
                     { trace.add("$testElementPath fixture closing") }
@@ -405,7 +357,7 @@ class TestSuiteTests {
             }
         }
 
-        val parameterSuite by testSuite("parameterSuite") {
+        val parameterSuite by testSuite(propertyFqn = "parameterSuite") {
             testFixture {
                 trace.also { it.add("$testElementPath fixture creating") }
             } closeWith {
@@ -424,7 +376,7 @@ class TestSuiteTests {
             }
         }
 
-        val contextSuite by testSuite("contextSuite") {
+        val contextSuite by testSuite(propertyFqn = "contextSuite") {
             testFixture {
                 trace.also { it.add("$testElementPath fixture creating") }
             } closeWith {
@@ -468,7 +420,7 @@ class TestSuiteTests {
     fun testLevelFixture() = FrameworkTestUtilities.withTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
-        val parameterSuite by testSuite("parameterSuite") {
+        val parameterSuite by testSuite(propertyFqn = "parameterSuite") {
             testFixture {
                 trace.also { it.add("$testElementPath fixture creating") }
             } closeWith {
@@ -487,7 +439,7 @@ class TestSuiteTests {
             }
         }
 
-        val contextSuite by testSuite("contextSuite") {
+        val contextSuite by testSuite(propertyFqn = "contextSuite") {
             testFixture {
                 trace.also { it.add("$testElementPath fixture creating") }
             } closeWith {
@@ -531,7 +483,7 @@ class TestSuiteTests {
     fun testLevelFixtureNested() = FrameworkTestUtilities.withTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
-        val parameterSuite by testSuite("parameterSuite") {
+        val parameterSuite by testSuite(propertyFqn = "parameterSuite") {
             testFixture {
                 1.also { trace.add("$testElementPath fixture '$it' creating") }
             } closeWith {
@@ -557,7 +509,7 @@ class TestSuiteTests {
             }
         }
 
-        val contextSuite by testSuite("contextSuite") {
+        val contextSuite by testSuite(propertyFqn = "contextSuite") {
             testFixture {
                 1.also { trace.add("$testElementPath fixture '$it' creating") }
             } closeWith {
@@ -613,7 +565,7 @@ class TestSuiteTests {
 
     @Test
     fun testLevelToSuiteLevelFixture() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             val fixture1 = testFixture {
             } asParameterForEach {
                 test("test1") { _ ->
@@ -637,7 +589,7 @@ class TestSuiteTests {
 
     @Test
     fun suiteLevelToTestLevelFixture() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             testFixture {
             } asParameterForAll {
                 test("test1") { _ ->
@@ -663,7 +615,7 @@ class TestSuiteTests {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(
-            "suite1",
+            propertyFqn = "suite1",
             testConfig = TestConfig.aroundAll { tests ->
                 trace.add("$testElementPath aroundAll begin")
                 tests()
@@ -704,7 +656,7 @@ class TestSuiteTests {
     fun suiteLevelFixtureWithDisabledElements() = FrameworkTestUtilities.withTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             val suite1Fixture =
                 testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
                     { trace.add("$testElementPath fixture closing") }
@@ -714,7 +666,7 @@ class TestSuiteTests {
             }
         }
 
-        val suite2 by testSuite("suite2") {
+        val suite2 by testSuite(propertyFqn = "suite2") {
             val suite2Fixture =
                 testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
                     { trace.add("$testElementPath fixture closing") }
@@ -728,7 +680,7 @@ class TestSuiteTests {
             }
         }
 
-        val suite3 by testSuite("suite3") {
+        val suite3 by testSuite(propertyFqn = "suite3") {
             val suite3Fixture =
                 testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
                     { trace.add("$testElementPath fixture closing") }
@@ -766,7 +718,7 @@ class TestSuiteTests {
     fun suiteLevelFixtureWithFailedTest() = FrameworkTestUtilities.withTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             val fixture1 =
                 testFixture { trace.also { it.add("$testElementPath fixture creating") } } closeWith
                     { trace.add("$testElementPath fixture closing") }
@@ -821,7 +773,7 @@ class TestSuiteTests {
         }
 
         fun testSuiteWithTestLevelFixture(name: String, testSuccesses: List<Boolean>): TestSuite =
-            testSuite("test-level, $name") {
+            testSuite(propertyFqn = "test-level, $name") {
                 testFixtureChecking() asParameterForEach {
                     testSuccesses.forEachIndexed { index, testSuccess ->
                         test("test-$index") {
@@ -834,13 +786,13 @@ class TestSuiteTests {
             }.value
 
         fun testSuiteWithSuiteLevelFixture(name: String, testSuccesses: List<Boolean>): TestSuite =
-            testSuite("suite-level, $name") {
+            testSuite(propertyFqn = "suite-level, $name") {
                 val fixture = testFixtureChecking()
                 testSeries(suiteLevelFixture = fixture, testSuccesses)
             }.value
 
         fun testSuiteWithSuiteLevelFixtureAndSubSuite(name: String, testSuccesses: List<Boolean>): TestSuite =
-            testSuite("suite-level+sub, $name") {
+            testSuite(propertyFqn = "suite-level+sub, $name") {
                 val fixture = testFixtureChecking()
                 testSuite("sub") {
                     testSeries(suiteLevelFixture = fixture, testSuccesses)
@@ -848,7 +800,7 @@ class TestSuiteTests {
             }.value
 
         fun testSuiteWithSuiteLevelFixtureAndSubSubSuite(name: String, testSuccesses: List<Boolean>): TestSuite =
-            testSuite("suite-level+sub+sub, $name") {
+            testSuite(propertyFqn = "suite-level+sub+sub, $name") {
                 val fixture = testFixtureChecking()
                 testSuite("sub") {
                     testSuite("sub") {
@@ -910,7 +862,7 @@ class TestSuiteTests {
         var failCount = 0
         var closeCount = 0
 
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             val fixture1 =
                 testFixture { fail("fixture failing intentionally (${++failCount})") } closeWith { closeCount++ }
 
@@ -940,7 +892,7 @@ class TestSuiteTests {
     fun suiteLevelFixtureWithSetupFailures() = FrameworkTestUtilities.withTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             val fixtures = listOf(
                 testFixture { trace.add("$testElementPath fixture1 creating") } closeWith
                     { trace.add("$testElementPath fixture1 closing") },
@@ -1064,7 +1016,7 @@ class TestSuiteTests {
 
     @Test
     fun uniqueElementPaths() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             test("test1") {
             }
 
@@ -1084,57 +1036,6 @@ class TestSuiteTests {
     }
 
     @Test
-    fun displayNameTopLevel() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1", displayName = "top-level suite #1") {
-            test("test1") {
-            }
-        }
-
-        FrameworkTestUtilities.withTestReport(suite1) {
-            verifyDisplayNames(listOf("suite1${iSep}test1", "suite1/top-level suite #1"))
-        }
-    }
-
-    @Test
-    fun displayNameInnerSuite() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
-            test("test1") {
-            }
-
-            testSuite("innerSuite1", displayName = "inner suite #1") {
-                test("test1") {
-                }
-            }
-        }
-
-        FrameworkTestUtilities.withTestReport(suite1) {
-            verifyDisplayNames(
-                listOf(
-                    "suite1${iSep}test1",
-                    "suite1${iSep}innerSuite1${iSep}test1",
-                    "suite1${iSep}innerSuite1/inner suite #1",
-                    "suite1"
-                )
-            )
-        }
-    }
-
-    private fun FrameworkTestUtilities.InMemoryTestExecutionReport.verifyDisplayNames(expectation: List<String>) {
-        assertContentEquals(
-            expectation,
-            finishedEvents().map {
-                with(it.element) {
-                    if (testElementDisplayName != testElementName) {
-                        "${testElementPath.internalId}/$testElementDisplayName"
-                    } else {
-                        testElementPath.internalId
-                    }
-                }
-            }.takeWhile { it.startsWith("suite1") } // ignore compartment and session
-        )
-    }
-
-    @Test
     fun additionalReports() = FrameworkTestUtilities.withTestFramework {
         val eventLog = mutableListOf<String>()
 
@@ -1151,7 +1052,7 @@ class TestSuiteTests {
         val additionalReportA = AdditionalExecutionReport("A")
         val additionalReportB = AdditionalExecutionReport("B")
 
-        val suite1 by testSuite("suite1", testConfig = TestConfig.executionReport(additionalReportA)) {
+        val suite1 by testSuite(propertyFqn = "suite1", testConfig = TestConfig.executionReport(additionalReportA)) {
             test("test1", testConfig = TestConfig.disable()) {
             }
 

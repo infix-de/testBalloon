@@ -24,10 +24,9 @@ import kotlin.time.Duration.Companion.seconds
 public class Test internal constructor(
     parent: TestSuite,
     name: String,
-    displayName: String = name,
     testConfig: TestConfig,
     private val action: suspend ExecutionScope.() -> Unit
-) : TestElement(parent, name = name, displayName = displayName, testConfig = testConfig),
+) : TestElement(parent, name = name, testConfig = testConfig),
     AbstractTest {
 
     /**

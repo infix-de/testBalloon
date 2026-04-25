@@ -18,7 +18,7 @@ class TestFrameworkTests {
     @Test
     fun frameworkNotInitialized() {
         assertFailsWith<IllegalStateException> {
-            val suite by testSuite("default configuration") {}
+            val suite by testSuite(propertyFqn = "default configuration") {}
             suite.reference()
         }.assertMessageStartsWith("The test framework was not initialized.")
     }
@@ -102,7 +102,7 @@ class TestFrameworkTests {
         selection: TestElement.Selection,
         expectedResult: List<Pair<String, Boolean>>
     ): TestResult = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite("suite1") {
+        val suite1 by testSuite(propertyFqn = "suite1") {
             test("test1") {}
             test("test2", testConfig = TestConfig.disable()) {}
 
@@ -117,7 +117,7 @@ class TestFrameworkTests {
             }
         }
 
-        val suite2 by testSuite("suite2") {
+        val suite2 by testSuite(propertyFqn = "suite2") {
             test("test1") {}
             test("test2", testConfig = TestConfig.disable()) {}
         }

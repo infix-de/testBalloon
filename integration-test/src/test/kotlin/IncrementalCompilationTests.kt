@@ -57,7 +57,7 @@ private fun TestSuiteScope.incrementalCompilationTestSuite(
     projectName: String,
     testConfig: TestConfig = TestConfig,
     action: IncrementalCompilationTestProject.() -> Unit
-) = testSuite(projectName, displayName = "project: $projectName", testConfig) {
+) = testSuite("project: $projectName", testConfig) {
     IncrementalCompilationTestProject(this, projectName).action()
 }
 

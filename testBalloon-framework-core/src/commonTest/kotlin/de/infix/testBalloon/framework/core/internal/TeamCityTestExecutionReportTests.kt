@@ -108,7 +108,7 @@ class TeamCityTestExecutionReportTests {
 
     private fun basicOutputTest(reportingMode: ReportingMode, expectedElements: List<String>): TestResult =
         FrameworkTestUtilities.withTestFramework(TestSession(reportingMode = reportingMode)) {
-            val suite by testSuite("topSuite") {
+            val suite by testSuite(propertyFqn = "topSuite") {
                 test("test1") {}
 
                 test("test2") { fail("intentionally") }
@@ -140,7 +140,7 @@ class TeamCityTestExecutionReportTests {
     @Test
     fun concurrentOutput() =
         FrameworkTestUtilities.withTestFramework(TestSession(reportingMode = ReportingMode.GradleFiles)) {
-            val suite by testSuite("concurrent") {
+            val suite by testSuite(propertyFqn = "concurrent") {
                 test("test1") {}
                 test("test2") {}
 

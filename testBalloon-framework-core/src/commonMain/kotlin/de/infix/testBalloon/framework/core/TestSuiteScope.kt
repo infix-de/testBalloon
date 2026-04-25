@@ -1,6 +1,5 @@
 package de.infix.testBalloon.framework.core
 
-import de.infix.testBalloon.framework.shared.TestDisplayName
 import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
 
@@ -23,11 +22,10 @@ public interface TestSuiteScope {
     @TestRegistering
     public fun TestSuiteScope.testSuite(
         @TestElementName name: String,
-        @TestDisplayName displayName: String = name,
         testConfig: TestConfig = TestConfig,
         content: TestSuite.() -> Unit
     ) {
-        TestSuite(testSuiteInScope, name = name, displayName = displayName, testConfig = testConfig, content = content)
+        TestSuite(testSuiteInScope, name = name, testConfig = testConfig, content = content)
     }
 
     /**
@@ -37,11 +35,10 @@ public interface TestSuiteScope {
     @TestRegistering
     public fun TestSuiteScope.test(
         @TestElementName name: String,
-        @TestDisplayName displayName: String = name,
         testConfig: TestConfig = TestConfig,
         action: suspend Test.ExecutionScope.() -> Unit
     ) {
-        Test(testSuiteInScope, name = name, displayName = displayName, testConfig = testConfig, action)
+        Test(testSuiteInScope, name = name, testConfig = testConfig, action)
     }
 
     /**

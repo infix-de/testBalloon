@@ -58,7 +58,7 @@ private class CompilerPluginTests {
                 """
                     $packageName.MyTestSession
                     $packageName.TestSuiteOne
-                    my test suite two
+                    $packageName.testSuiteTwo
                 """.trimIndent()
             )
         }

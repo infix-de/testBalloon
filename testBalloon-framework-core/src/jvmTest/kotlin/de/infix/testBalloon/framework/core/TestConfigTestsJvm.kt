@@ -20,7 +20,11 @@ class TestConfigTestsJvm {
         FrameworkTestUtilities.withTestFramework {
             @OptIn(ExperimentalCoroutinesApi::class)
             withSingleThreadedDispatcher { defaultDispatcher ->
-                val testSuite by testSuite("testSuite", testConfig = TestConfig.coroutineContext(defaultDispatcher)) {}
+                val testSuite by testSuite(
+                    propertyFqn = "testSuite",
+                    testConfig = TestConfig.coroutineContext(defaultDispatcher)
+                ) {
+                }
 
                 val defaultDispatcherThreadId = testPlatform.threadId()
 
@@ -48,7 +52,7 @@ class TestConfigTestsJvm {
     private suspend fun testMainDispatcher() {
         initializeTestFramework()
         try {
-            val testSuite by testSuite("testSuite") {}
+            val testSuite by testSuite(propertyFqn = "testSuite") {}
 
             // Using the platform's main dispatcher.
             val platformMainThreadId = withContext(Dispatchers.Main) { testPlatform.threadId() }
@@ -96,7 +100,7 @@ class TestConfigTestsJvm {
     @Test
     fun mainDispatcherSetMoreThanOnce() {
         FrameworkTestUtilities.withTestFramework {
-            val testSuite by testSuite("testSuite") {}
+            val testSuite by testSuite(propertyFqn = "testSuite") {}
 
             @OptIn(ExperimentalCoroutinesApi::class)
             withSingleThreadedDispatcher { alternativeMainDispatcher ->

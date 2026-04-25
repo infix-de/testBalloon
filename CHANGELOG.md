@@ -1,5 +1,16 @@
 ## Unreleased
 
+### Breaking
+
+* `testSuite` and `test` no longer provide a `displayName` parameter. The `@TestDisplayName` annotation was also removed.
+* Top-level `testSuite` functions have an additional parameter `@TestElementPropertyFqn propertyFqn: String = ""`, meant to be initialized by the compiler plugin.
+
+Migration required:
+
+* Top-level `testSuite` invocations using the `displayName` parameter: Use the `name` parameter instead.
+* Custom top-level `testSuite`-like implementations: Replicate the `propertyFqn` parameter from `testSuite` and pass it through.
+* Remove the `displayName` parameter from lower-level `testSuite` and `test` functions and their invocations.
+
 ### Other Changes
 
 * Robolectric integration: `robolectricTestSuite` provides a type parameter for the content class instead of a `KClass` parameter. The latter variant is now deprecated.

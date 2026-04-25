@@ -142,13 +142,13 @@ public final class de/infix/testBalloon/framework/core/TestFixture {
 
 public final class de/infix/testBalloon/framework/core/TestFixture$Scope : de/infix/testBalloon/framework/core/TestSuiteScope {
 	public fun getTestSuiteInScope ()Lde/infix/testBalloon/framework/core/TestSuite;
-	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
+	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
 	public fun testFixture (Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestFixture;
-	public final fun testFixtureScoped (Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/Object;)V
-	public static synthetic fun testFixtureScoped$default (Lde/infix/testBalloon/framework/core/TestFixture$Scope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/Object;ILjava/lang/Object;)V
-	public fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
-	public final fun testSuiteFixtureScoped (Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun testSuiteFixtureScoped$default (Lde/infix/testBalloon/framework/core/TestFixture$Scope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun testFixtureScoped (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/Object;)V
+	public static synthetic fun testFixtureScoped$default (Lde/infix/testBalloon/framework/core/TestFixture$Scope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/Object;ILjava/lang/Object;)V
+	public fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
+	public final fun testSuiteFixtureScoped (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun testSuiteFixtureScoped$default (Lde/infix/testBalloon/framework/core/TestFixture$Scope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public abstract interface class de/infix/testBalloon/framework/core/TestPlatform {
@@ -201,33 +201,33 @@ public class de/infix/testBalloon/framework/core/TestSuite : de/infix/testBalloo
 	public fun getTestElementIsEnabled ()Z
 	public final fun getTestSuiteCoroutineScope ()Lkotlinx/coroutines/CoroutineScope;
 	public fun getTestSuiteInScope ()Lde/infix/testBalloon/framework/core/TestSuite;
-	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
+	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
 	public fun testFixture (Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestFixture;
-	public fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
+	public fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class de/infix/testBalloon/framework/core/TestSuiteKt {
-	public static final fun testSuite (Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)Lkotlin/Lazy;
-	public static final fun testSuite (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)Lkotlin/Lazy;
-	public static synthetic fun testSuite$default (Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/Lazy;
-	public static synthetic fun testSuite$default (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/Lazy;
+	public static final fun testSuite (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/Lazy;
+	public static final fun testSuite (Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/Lazy;
+	public static synthetic fun testSuite$default (Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/Lazy;
+	public static synthetic fun testSuite$default (Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lde/infix/testBalloon/framework/core/TestConfig;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/Lazy;
 }
 
 public abstract interface class de/infix/testBalloon/framework/core/TestSuiteScope {
 	public abstract fun getTestSuiteInScope ()Lde/infix/testBalloon/framework/core/TestSuite;
-	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
-	public static synthetic fun test$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+	public fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
+	public static synthetic fun test$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
 	public fun testFixture (Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestFixture;
-	public fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun testSuite$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun testSuite$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public final class de/infix/testBalloon/framework/core/TestSuiteScope$DefaultImpls {
-	public static fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
-	public static synthetic fun test$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+	public static fun test (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;)V
+	public static synthetic fun test$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
 	public static fun testFixture (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lkotlin/jvm/functions/Function2;)Lde/infix/testBalloon/framework/core/TestFixture;
-	public static fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun testSuite$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static fun testSuite (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun testSuite$default (Lde/infix/testBalloon/framework/core/TestSuiteScope;Lde/infix/testBalloon/framework/core/TestSuiteScope;Ljava/lang/String;Lde/infix/testBalloon/framework/core/TestConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public final class de/infix/testBalloon/framework/core/Test_androidKt {

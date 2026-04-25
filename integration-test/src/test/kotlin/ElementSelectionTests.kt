@@ -64,7 +64,8 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
         "com.example.SimpleSuite*test 1" to 1,
         "com.example.SimpleSuite|test 1" to 1,
         ";com.example.SimpleSuite;test 1" to 1,
-        "NoMatch" to 0
+        "NoMatch" to 0,
+        "com.example.SpecialNameSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1
     )) {
         for (variant in variants) {
             test(

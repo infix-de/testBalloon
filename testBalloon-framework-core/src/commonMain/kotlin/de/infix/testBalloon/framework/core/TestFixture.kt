@@ -1,7 +1,6 @@
 package de.infix.testBalloon.framework.core
 
 import de.infix.testBalloon.framework.core.internal.GuardedBy
-import de.infix.testBalloon.framework.shared.TestDisplayName
 import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlinx.coroutines.NonCancellable
@@ -264,11 +263,10 @@ public class TestFixture<Value : Any> internal constructor(
         @JvmName("testSuiteFixtureScoped")
         public fun testSuite(
             @TestElementName name: String,
-            @TestDisplayName displayName: String = name,
             testConfig: TestConfig = TestConfig,
             content: Scope<FixtureScopedAction>.() -> Unit
         ) {
-            testSuiteInScope.testSuite(name = name, displayName = displayName, testConfig = testConfig) {
+            testSuiteInScope.testSuite(name = name, testConfig = testConfig) {
                 Scope(this.testSuiteInScope, envelopeValue, scopingAction).content()
             }
         }
@@ -280,13 +278,11 @@ public class TestFixture<Value : Any> internal constructor(
         @JvmName("testFixtureScoped")
         public fun test(
             @TestElementName name: String,
-            @TestDisplayName displayName: String = name,
             testConfig: TestConfig = TestConfig,
             fixtureScopedAction: FixtureScopedAction
         ) {
             testSuiteInScope.test(
                 name = name,
-                displayName = displayName,
                 testConfig = testConfig.envelopeContext(envelopeValue)
             ) {
                 scopingAction(this, fixtureScopedAction)

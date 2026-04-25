@@ -7,8 +7,7 @@ import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.AbstractTestSession
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
-import de.infix.testBalloon.framework.shared.TestDisplayName
-import de.infix.testBalloon.framework.shared.TestElementName
+import de.infix.testBalloon.framework.shared.TestElementPropertyFqn
 import de.infix.testBalloon.framework.shared.TestRegistering
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
@@ -59,7 +58,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
@@ -149,8 +147,7 @@ private class Configuration(
     val abstractSuiteSymbol = irClassSymbol(AbstractTestSuite::class)
     val abstractSessionSymbol = irClassSymbol(AbstractTestSession::class)
     val testRegisteringAnnotationSymbol = irClassSymbol(TestRegistering::class)
-    val testElementNameAnnotationSymbol = irClassSymbol(TestElementName::class)
-    val testDisplayNameAnnotationSymbol = irClassSymbol(TestDisplayName::class)
+    val testElementPropertyFqnAnnotationSymbol = irClassSymbol(TestElementPropertyFqn::class)
 
     @OptIn(TestBalloonInternalApi::class)
     val testFrameworkDiscoveryResultClassSymbol by lazy { irClassSymbol(TestFrameworkDiscoveryResult::class) }
@@ -253,12 +250,13 @@ private class ModuleTransformer(
             val initializerCall = initializer.expression as? IrCall ?: return@withErrorReporting
             val initializerCallFunction = initializerCall.symbol.owner
 
+            // Consider properties initialized by `@TestRegistering` functions only.
             if (initializerCallFunction.hasAnnotation(configuration.testRegisteringAnnotationSymbol)) {
                 if (configuration.debugLevel >= DebugLevel.DISCOVERY) {
                     reportDebug("Found top-level test suite property '${irProperty.fqNameWhenAvailable}'.", irProperty)
                 }
 
-                irProperty.addNameValueArgumentsToInitializerCallIfApplicable(
+                irProperty.addTestElementPropertyFqnToInitializerCall(
                     initializer,
                     initializerCall,
                     initializerCallFunction
@@ -332,29 +330,40 @@ private class ModuleTransformer(
     }
 
     /**
-     * Adds value arguments for element and display name to [this] property's initializer function call, if applicable.
+     * Adds the property's FQN as a value argument to [this] property's initializer function call.
      *
-     * Parameters are added according to `@[TestElementName]` and `@[TestDisplayName]` annotations.
+     * The property's FQN will be assigned to the parameter annotated with [TestElementPropertyFqn].
      */
-    private fun IrProperty.addNameValueArgumentsToInitializerCallIfApplicable(
+    private fun IrProperty.addTestElementPropertyFqnToInitializerCall(
         initializer: IrExpressionBody,
         initializerCall: IrCall,
         initializerCallFunction: IrSimpleFunction
     ) {
         val irProperty = this
-        val valueParameters = initializerCallFunction.parameters
-        val valueArguments = initializerCall.arguments
 
-        val nameValueArgumentsToAdd = nameValueArgumentsToAdd(
-            mapOf(
-                configuration.testElementNameAnnotationSymbol to { irProperty.fqName() },
-                configuration.testDisplayNameAnnotationSymbol to { "${irProperty.name}" }
-            ),
-            valueParameters,
-            valueArguments
-        )
+        val propertyFqnParameter = initializerCallFunction.parameters.firstOrNull {
+            it.hasAnnotation(configuration.testElementPropertyFqnAnnotationSymbol)
+        } ?: run {
+            reportError(
+                "The top-level test suite function '${initializerCallFunction.name}' is missing a" +
+                    " parameter annotated with @${TestElementPropertyFqn::class.simpleName}.",
+                irProperty
+            )
+            return
+        }
 
-        if (nameValueArgumentsToAdd.isEmpty()) return
+        if (initializerCall.arguments[propertyFqnParameter.indexInParameters] != null) {
+            reportError(
+                "The '${initializerCallFunction.name}' invocation must not pass a value for parameter" +
+                    " '${propertyFqnParameter.name}'.\n" +
+                    "\t'${propertyFqnParameter.name}' is annotated with" +
+                    " @${TestElementPropertyFqn::class.simpleName}. The compiler plugin will assign a value.",
+                irProperty
+            )
+            return
+        }
+
+        val propertyFqnValue = irProperty.fqName()
 
         initializer.transformChildren(
             object : IrElementTransformerVoid() {
@@ -376,14 +385,12 @@ private class ModuleTransformer(
                         @Suppress("DuplicatedCode")
                         irCall(originalCall.symbol).apply {
                             copyTypeAndValueArgumentsFrom(originalCall)
-                            nameValueArgumentsToAdd.forEach { (index, value) ->
-                                arguments[index] = irString(value)
-                                if (configuration.debugLevel >= DebugLevel.CODE) {
-                                    reportDebug(
-                                        "${irProperty.fqName()}: Setting parameter '${valueParameters[index].name}'" +
-                                            " to '$value'."
-                                    )
-                                }
+                            arguments[propertyFqnParameter.indexInParameters] = irString(propertyFqnValue)
+                            if (configuration.debugLevel >= DebugLevel.CODE) {
+                                reportDebug(
+                                    "${irProperty.fqName()}: Setting parameter '${propertyFqnParameter.name}'" +
+                                        " to '$propertyFqnValue'."
+                                )
                             }
                         }
                     }
@@ -392,30 +399,6 @@ private class ModuleTransformer(
             null
         )
     }
-
-    /**
-     * Returns an (index -> value) map of value arguments to add for element and display name.
-     *
-     * [generatedValuesByAnnotation] specifies which annotation translates to which generated argument value.
-     * Annotated candidates in a call's [valueParameters], which are missing a [valueArguments], generate
-     * a value argument in the result map.
-     */
-    private fun nameValueArgumentsToAdd(
-        generatedValuesByAnnotation: Map<IrClassSymbol, () -> String>,
-        valueParameters: List<IrValueParameter>,
-        valueArguments: List<IrExpression?>
-    ): Map<Int, String> = valueParameters.mapNotNull { valueParameter ->
-        generatedValuesByAnnotation.firstNotNullOfOrNull { (annotationSymbol, value) ->
-            // Annotated parameters with a missing value argument only.
-            if (valueParameter.hasAnnotation(annotationSymbol) &&
-                valueArguments[valueParameter.indexInParameters] == null
-            ) {
-                Pair(valueParameter.indexInParameters, value())
-            } else {
-                null
-            }
-        }
-    }.toMap()
 
     private fun IrProperty.fqName(): String = fqNameWhenAvailable.toString()
 

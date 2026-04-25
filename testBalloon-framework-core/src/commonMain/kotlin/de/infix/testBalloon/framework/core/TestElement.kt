@@ -16,7 +16,7 @@ import kotlin.time.Instant
 public sealed class TestElement(
     parent: TestSuite?,
     name: String,
-    displayName: String = name,
+    propertyFqn: String? = null,
     internal var testConfig: TestConfig
 ) : AbstractTestElement {
 
@@ -25,29 +25,20 @@ public sealed class TestElement(
         require(name.isNotEmpty() && name.isNotBlank()) {
             "Could not register ${elementInfo()} with an empty or blank name '$name'"
         }
-        require(displayName.isNotEmpty() && displayName.isNotBlank()) {
-            "Could not register ${elementInfo()} with an empty or blank displayName '$displayName'"
-        }
     }
 
     internal val testElementParent: TestSuite? = parent
-    internal val testElementName: String = parent?.childElementNamesRegistry?.uniqueName(name) ?: name
+
+    /** The element's identifying name (made unique per hierarchy level, otherwise unmodified). */
+    internal val testElementName: String =
+        propertyFqn ?: parent?.childElementNamesRegistry?.uniqueName(name) ?: name
+
+    /** The element's display name (length-limited, unique per hierarchy level). */
     internal val testElementDisplayName: String =
-        parent?.childDisplayNamesRegistry?.uniqueName(displayName.asLengthLimitedReportingPathName())
-            ?: displayName.asLengthLimitedReportingPathName()
+        parent?.childDisplayNamesRegistry?.uniqueName(name.asLengthLimitedReportingPathName())
+            ?: name.asLengthLimitedReportingPathName()
 
-    /**
-     * `true`, if the element (including all of its child elements) executed successfully so far.
-     */
-    private val executedSuccessfully = atomic(true)
-
-    internal fun executedSuccessfully() = executedSuccessfully.value
-
-    internal fun registerFailure() {
-        if (executedSuccessfully.compareAndSet(expect = true, update = false)) {
-            testElementParent?.registerFailure()
-        }
-    }
+    override val testElementPath: Path = Path(this)
 
     /**
      * A path uniquely identifying a test element in its test hierarchy.
@@ -166,8 +157,6 @@ public sealed class TestElement(
             private const val INTERNAL_PATH_ELEMENT_SEPARATOR_STRING = "${Constants.INTERNAL_PATH_ELEMENT_SEPARATOR}"
         }
     }
-
-    override val testElementPath: Path = Path(this)
 
     internal enum class CoordinatesMode {
         FullyQualified,
@@ -324,6 +313,19 @@ public sealed class TestElement(
         }
 
         override fun toString(): String = "$element: ${this::class.simpleName}"
+    }
+
+    /**
+     * `true`, if the element (including all of its child elements) executed successfully so far.
+     */
+    private val executedSuccessfully = atomic(true)
+
+    internal fun executedSuccessfully() = executedSuccessfully.value
+
+    internal fun registerFailure() {
+        if (executedSuccessfully.compareAndSet(expect = true, update = false)) {
+            testElementParent?.registerFailure()
+        }
     }
 
     /** The most recent event observed by a `SequencingExecutionReport`. */

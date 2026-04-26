@@ -20,23 +20,32 @@ public sealed class TestElement(
     internal var testConfig: TestConfig
 ) : AbstractTestElement {
 
+    internal val testElementParent: TestSuite? = parent
+
+    internal val isSessionOrCompartment: Boolean = parent == null || this is TestCompartment
+
+    internal val isTopLevelSuite: Boolean = parent is TestCompartment
+
+    /** The element's identifying name (made unique per hierarchy level, otherwise unmodified). */
+    internal val testElementName: String
+
+    /** The element's display name (length-limited, unique per hierarchy level). */
+    internal val testElementDisplayName: String
+
     init {
         fun elementInfo() = if (parent == null) "a test element" else "a test element in $parent"
         require(name.isNotEmpty() && name.isNotBlank()) {
             "Could not register ${elementInfo()} with an empty or blank name '$name'"
         }
+
+        val namingParent = if (isTopLevelSuite) TestSession.global else parent
+
+        testElementName = propertyFqn ?: namingParent?.childElementNamesRegistry?.uniqueName(name) ?: name
+
+        testElementDisplayName =
+            namingParent?.childDisplayNamesRegistry?.uniqueName(name.asLengthLimitedReportingPathName())
+                ?: name.asLengthLimitedReportingPathName()
     }
-
-    internal val testElementParent: TestSuite? = parent
-
-    /** The element's identifying name (made unique per hierarchy level, otherwise unmodified). */
-    internal val testElementName: String =
-        propertyFqn ?: parent?.childElementNamesRegistry?.uniqueName(name) ?: name
-
-    /** The element's display name (length-limited, unique per hierarchy level). */
-    internal val testElementDisplayName: String =
-        parent?.childDisplayNamesRegistry?.uniqueName(name.asLengthLimitedReportingPathName())
-            ?: name.asLengthLimitedReportingPathName()
 
     override val testElementPath: Path = Path(this)
 
@@ -235,10 +244,6 @@ public sealed class TestElement(
             }
             return element.testElementName.safeAsSuiteDisplayName()
         }
-
-    internal val isSessionOrCompartment: Boolean = parent == null || this is TestCompartment
-
-    internal val isTopLevelSuite: Boolean = parent is TestCompartment
 
     override val testElementIsEnabled: Boolean get() = parameters.isEnabled
 

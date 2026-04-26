@@ -11,6 +11,7 @@ import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -1015,7 +1016,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun uniqueElementPaths() = FrameworkTestUtilities.withTestFramework {
+    fun uniqueTestPaths() = FrameworkTestUtilities.withTestFramework {
         val suite1 by testSuite(propertyFqn = "suite1") {
             test("test1") {
             }
@@ -1033,6 +1034,50 @@ class TestSuiteTests {
                 )
             }
         }
+    }
+
+    @Test
+    fun uniqueTopLevelSuitePathsInSameCompartment() = FrameworkTestUtilities.withTestFramework {
+        val suite1 by testSuite(name = "common name", propertyFqn = "suite1") {
+            test("test1") {
+            }
+        }
+
+        val suite2 by testSuite(name = "common name", propertyFqn = "suite2") {
+            test("test1") {
+            }
+        }
+
+        FrameworkTestUtilities.withTestReport(suite1, suite2) {
+            assertNotEquals(suite1.testElementDisplayName, suite2.testElementDisplayName)
+        }
+    }
+
+    @Test
+    fun uniqueTopLevelSuitePathsInDifferentCompartments() = FrameworkTestUtilities.withTestFramework {
+        val suite1 by testSuite(name = "common name", propertyFqn = "suite1") {
+            test("test1") {
+            }
+        }
+
+        val suite2 by testSuite(name = "common name", propertyFqn = "suite2", compartment = {
+            TestCompartment.Concurrent
+        }) {
+            test("test1") {
+            }
+        }
+
+        FrameworkTestUtilities.withTestReport(suite1, suite2) {
+            assertNotEquals(suite1.testElementDisplayName, suite2.testElementDisplayName)
+        }
+    }
+
+    @Test
+    fun uniqueCompartmentNames() = FrameworkTestUtilities.withTestFramework {
+        val compartment1 = TestCompartment("common name", TestConfig)
+        val compartment2 = TestCompartment("common name", TestConfig)
+
+        assertNotEquals(compartment1.testElementDisplayName, compartment2.testElementDisplayName)
     }
 
     @Test

@@ -1,5 +1,10 @@
 ## Unreleased
 
+### Highlights
+
+* Tests and test suites now use exactly one `name` parameter. The former separate `displayName` was a workaround for JUnit 5 limitations which do not affect TestBalloon.
+* IDE: The editor's gutter icons can now run top-level test suites with an individual name.
+
 ### Breaking
 
 * `testSuite` and `test` no longer provide a `displayName` parameter. The `@TestDisplayName` annotation was also removed.
@@ -15,7 +20,7 @@ Migration required:
 
 * Robolectric integration: `robolectricTestSuite` provides a type parameter for the content class instead of a `KClass` parameter. The latter variant is now deprecated.
 * The Gradle integration supports the incubating Gradle JVM Test Suite Plugin and the `com.android.test` plugin out of the box. If one of these plugins is present, tests will be detected in all source sets of the respective Gradle (sub)project. The Gradle property `testBalloon.gradleTestSuiteNamesRegex` is now obsolete and can be deleted.
-* Initial support for the Amper build tool.
+* Initial support for the Amper build tool (without IDE support for gutter icons).
 
 ## 0.8.4 (March 16, 2026)
 

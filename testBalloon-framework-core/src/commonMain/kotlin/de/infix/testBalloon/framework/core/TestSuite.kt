@@ -29,9 +29,10 @@ import kotlin.coroutines.CoroutineContext
  * }
  * ```
  *
- * Note: The compiler plugin initializes [propertyFqn] with the fully qualified name of the corresponding property.
- * [name] will inherit that fully qualified name property name by default. If you provide a [name] explicitly, you
- * are responsible for making it unique within the compilation module for proper results reporting.
+ * [name] defaults to the simple name of the corresponding top-level property at the call site (from [propertyFqn]).
+ *
+ * Note: The compiler plugin initializes [propertyFqn] with the fully qualified name of the corresponding property
+ * at the call site. It must not be changed except for internal testing.
  */
 @TestRegistering
 public fun testSuite(
@@ -71,9 +72,10 @@ public fun testSuite(
  * }
  * ```
  *
- * Note: The compiler plugin initializes [propertyFqn] with the fully qualified name of the corresponding property.
- * [name] will inherit that fully qualified name property name by default. If you provide a [name] explicitly, you
- * are responsible for making it unique within the compilation module for proper results reporting.
+ * [name] defaults to the simple name of the corresponding top-level property at the call site (from [propertyFqn]).
+ *
+ * Note: The compiler plugin initializes [propertyFqn] with the fully qualified name of the corresponding property
+ * at the call site. It must not be changed except for internal testing.
  */
 @TestRegistering
 public fun testSuite(

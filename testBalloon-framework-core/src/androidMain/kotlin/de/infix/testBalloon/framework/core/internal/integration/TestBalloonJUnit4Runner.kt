@@ -1,6 +1,7 @@
 package de.infix.testBalloon.framework.core.internal.integration
 
 import de.infix.testBalloon.framework.core.Test
+import de.infix.testBalloon.framework.core.TestCompartment
 import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.TestExecutionReport
 import de.infix.testBalloon.framework.core.TestSession
@@ -8,6 +9,7 @@ import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.EnvironmentBasedElementSelection
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
+import de.infix.testBalloon.framework.core.internal.supportsNesting
 import de.infix.testBalloon.framework.core.internal.testInfrastructureIsAndroidDevice
 import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.internal.Constants
@@ -89,6 +91,10 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
 
                     override suspend fun add(event: TestElement.Event) {
                         val element = event.element
+
+                        // Let top-level suites appear directly under the session, skipping the compartment layer.
+                        if (element is TestCompartment) return
+
                         val description = element.platformDescription
 
                         when (event) {
@@ -128,25 +134,42 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
     }
 }
 
-private val reportingMode get() = TestSession.global.reportingMode
+private val reportingMode by lazy { TestSession.global.reportingMode }
+
+private val reportingSupportsNesting by lazy { reportingMode.supportsNesting && !testInfrastructureIsAndroidDevice }
 
 private fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
         val displayName =
             when {
-                reportingMode == ReportingMode.Amper -> testElementPath.elementReportingName
-
                 reportingMode == ReportingMode.GradleIntellijIdea && !testInfrastructureIsAndroidDevice -> {
-                    reportingCoordinates(mode = TestElement.CoordinatesMode.FullyQualified)
+                    reportingCoordinates(
+                        mode = if (reportingSupportsNesting) {
+                            TestElement.CoordinatesMode.DisplayName
+                        } else {
+                            TestElement.CoordinatesMode.FullyQualified
+                        }
+                    )
                 }
+
+                reportingSupportsNesting -> testElementPath.elementReportingName
 
                 else -> testElementPath.reportingNameWithTopLevelPackage
             }
+
         Description.createSuiteDescription(
             displayName.safeForDeviceSideTests(),
             testElementPath.internalId
         ).apply {
-            testElementChildren.forEach {
+            val children = if (this@newPlatformDescription is TestSession) {
+                // Let top-level suites appear directly under the session, skipping the compartment layer.
+                testElementChildren.flatMap {
+                    (it as TestCompartment).testElementChildren
+                }
+            } else {
+                testElementChildren
+            }
+            children.forEach {
                 if (it.isIncluded) {
                     // Create descriptions only for included elements: These will be used to count the
                     // total number of tests. If the number of executed tests is less than the number of
@@ -161,15 +184,19 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
         Description.createTestDescription(
             topLevelSuiteReportingName,
             when {
-                reportingMode == ReportingMode.Amper -> testElementPath.elementReportingName
-
-                testInfrastructureIsAndroidDevice -> testElementPath.reportingNameBelowTopLevel
-
-                reportingMode == ReportingMode.GradleIntellijIdea -> {
-                    reportingCoordinates(mode = TestElement.CoordinatesMode.WithoutTopLevelPackage)
+                reportingMode == ReportingMode.GradleIntellijIdea && !testInfrastructureIsAndroidDevice -> {
+                    reportingCoordinates(
+                        mode = if (reportingSupportsNesting) {
+                            TestElement.CoordinatesMode.DisplayName
+                        } else {
+                            TestElement.CoordinatesMode.WithoutTopLevelPackage
+                        }
+                    )
                 }
 
-                else -> testElementPath.elementReportingName
+                reportingSupportsNesting -> testElementPath.elementReportingName
+
+                else -> testElementPath.reportingNameBelowTopLevel
             }.safeForDeviceSideTests(),
             Category(TestBalloonJUnit4Runner::class) // Support JUnit 4 runner selection via 'includeCategories'.
         )

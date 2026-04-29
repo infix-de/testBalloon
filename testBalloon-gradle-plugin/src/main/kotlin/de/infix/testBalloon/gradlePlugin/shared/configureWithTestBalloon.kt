@@ -61,7 +61,7 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
             }
         }
 
-        extensions.configure<Any>("kotlin") {
+        runCatching { extensions.findByName("kotlin") as? KotlinProjectExtension }.getOrNull()?.run {
             when (this) {
                 is KotlinMultiplatformExtension ->
                     targets.all {
@@ -178,6 +178,8 @@ private fun Project.configureTestTasks(
         }
             ?: testBalloonProperties.reportingPathLimit?.toString()
 
+    val gradleVersion = VersionNumber.parse(gradle.gradleVersion)
+
     gradle.taskGraph.whenReady {
         // Why use `taskGraph.whenReady` at this point?
         // We want to
@@ -211,6 +213,11 @@ private fun Project.configureTestTasks(
                     )
 
                 this[EnvironmentVariable.TESTBALLOON_REPORTING.name] = reportingMode.name
+                if (gradleVersion >= VersionNumber.version(9, 3)) {
+                    // Gradle 9.3.0 introduces hierarchical test results reporting.
+                    // See https://docs.gradle.org/9.3.0/release-notes.html#test-reporting-improvements
+                    this[EnvironmentVariable.TESTBALLOON_REPORTING_FEATURES.name] = "nesting"
+                }
                 if (reportingPathLimit != null) {
                     this[EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name] = reportingPathLimit
                 }

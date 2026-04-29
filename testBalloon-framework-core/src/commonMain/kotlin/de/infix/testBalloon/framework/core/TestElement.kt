@@ -3,6 +3,7 @@ package de.infix.testBalloon.framework.core
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.reportingPathLimit
 import de.infix.testBalloon.framework.core.internal.reportingPathLimitBelowTopLevel
+import de.infix.testBalloon.framework.core.internal.supportsNesting
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
@@ -201,7 +202,7 @@ public sealed class TestElement(
     }
 
     internal val reportingNameForJsAndTeamCity: String
-        get() = when (TestSession.global.reportingMode) {
+        get() = when (reportingMode) {
             ReportingMode.GradleIntellijIdeaLegacy -> {
                 if (this is TestSuite) {
                     // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA.
@@ -224,7 +225,7 @@ public sealed class TestElement(
             }
 
             ReportingMode.GradleFiles -> {
-                if (isTopLevelSuite) {
+                if (isTopLevelSuite && !reportingMode.supportsNesting) {
                     // Restricting the qualified path name to top-level suites avoids duplicated path elements.
                     testElementPath.reportingNameWithTopLevelPackage
                 } else {
@@ -465,28 +466,33 @@ private fun String.safeAsLowerLevelSuiteDisplayName() = safelyTransformed(lowerL
 
 private fun String.safeAsTestDisplayName() = safelyTransformed(testDisplayNameReplacements)
 
-private val suiteDisplayNameReplacements = if (TestSession.global.reportingMode == ReportingMode.GradleFiles) {
-    // These characters are potentially file-system-incompatible on Windows. Gradle reporting does not escape
-    // characters in what it considers to be a "package name", which in our hierarchy is every non-leaf suite.
-    mapOf(
-        '<' to '＜',
-        '>' to '＞',
-        ':' to '։',
-        '"' to '＂',
-        '/' to '⧸', // The slash is also a problem on other platforms, making Gradle create unexpected directories.
-        '\\' to '⧹',
-        '|' to '❘',
-        '?' to '？',
-        '*' to '＊'
-    )
-} else {
-    mapOf()
+private val suiteDisplayNameReplacements by lazy {
+    if (reportingMode == ReportingMode.GradleFiles) {
+        // These characters are potentially file-system-incompatible on Windows. Gradle reporting does not escape
+        // characters in what it considers to be a "package name", which in our hierarchy is every non-leaf suite.
+        mapOf(
+            '<' to '＜',
+            '>' to '＞',
+            ':' to '։',
+            '"' to '＂',
+            '/' to '⧸', // The slash is also a problem on other platforms, making Gradle create unexpected directories.
+            '\\' to '⧹',
+            '|' to '❘',
+            '?' to '？',
+            '*' to '＊'
+        )
+    } else {
+        mapOf()
+    }
 }
 
-private val lowerLevelSuiteDisplayNameReplacements =
+private val lowerLevelSuiteDisplayNameReplacements by lazy {
     mapOf(' ' to Constants.ESCAPED_SPACE, '.' to ESCAPED_DOT) + suiteDisplayNameReplacements
+}
 
 private val testDisplayNameReplacements = mapOf('.' to ESCAPED_DOT)
 
 private const val ESCAPED_DOT = '·' // middle dot
 private const val REPORTING_SEPARATOR: String = "${Constants.ESCAPED_SPACE}↘${Constants.ESCAPED_SPACE}"
+
+private val reportingMode by lazy { TestSession.global.reportingMode }

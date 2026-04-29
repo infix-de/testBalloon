@@ -8,6 +8,7 @@ import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
+import de.infix.testBalloon.framework.core.internal.supportsNesting
 import de.infix.testBalloon.framework.core.internal.value
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.internal.Constants
@@ -226,11 +227,11 @@ private class TestElementJUnitPlatformDescriptor(
     override fun toString(): String = "PD(uId=$uniqueId, dN=\"$displayName\", t=$type)"
 }
 
-private val reportingMode get() = TestSession.global.reportingMode
+private val reportingMode by lazy { TestSession.global.reportingMode }
 
 private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestElementJUnitPlatformDescriptor {
     val uniqueId: UniqueId
-    val source: TestSource? = if (isTopLevelSuite && reportingMode != ReportingMode.Amper) {
+    val source: TestSource? = if (isTopLevelSuite && !reportingMode.supportsNesting) {
         ClassSource.from(testElementPath.reportingNameWithTopLevelPackage)
     } else {
         null
@@ -243,8 +244,15 @@ private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestEle
     uniqueId = parentUniqueId.append(segmentType, testElementName)
     val displayName = when (reportingMode) {
         ReportingMode.GradleIntellijIdeaLegacy -> testElementPath.elementReportingName
+
         ReportingMode.GradleIntellijIdea -> reportingCoordinates(mode = TestElement.CoordinatesMode.DisplayName)
-        ReportingMode.GradleFiles -> testElementPath.reportingNameBelowTopLevel
+
+        ReportingMode.GradleFiles -> if (reportingMode.supportsNesting) {
+            testElementPath.elementReportingName
+        } else {
+            testElementPath.reportingNameBelowTopLevel
+        }
+
         ReportingMode.Amper -> testElementPath.elementReportingName
     }
 

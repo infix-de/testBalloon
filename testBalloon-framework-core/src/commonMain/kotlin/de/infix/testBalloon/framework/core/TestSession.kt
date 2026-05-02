@@ -3,11 +3,13 @@ package de.infix.testBalloon.framework.core
 import de.infix.testBalloon.framework.core.internal.EnvironmentBasedElementSelection
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.argumentsBasedElementSelection
+import de.infix.testBalloon.framework.core.internal.testInfrastructureIsAndroidDevice
 import de.infix.testBalloon.framework.core.internal.value
 import de.infix.testBalloon.framework.shared.AbstractTestSession
 import de.infix.testBalloon.framework.shared.TestRegistering
 import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -53,19 +55,18 @@ public open class TestSession protected constructor(
                     )
                 }
             }
-            ?: ReportingMode.Amper
+            ?: if (testInfrastructureIsAndroidDevice) ReportingMode.AndroidDevice else ReportingMode.Amper
 
     internal val reportingNamesBelowTopLevelRegistry = PotentiallyDuplicateNamesRegistry()
 
     init {
-        if (singleton != null) {
+        @Suppress("LeakingThis")
+        if (singleton.getAndSet(this) != null) {
             throw IllegalArgumentException(
                 "The module has been initialized with a TestSession before." +
                     " There must be only one TestSession per compilation module."
             )
         }
-        @Suppress("LeakingThis")
-        singleton = this
     }
 
     internal constructor(reportingMode: ReportingMode? = null) : this(
@@ -97,11 +98,11 @@ public open class TestSession protected constructor(
                 .coroutineContext(Dispatchers.Default)
                 .testScope(true)
 
-        private var singleton: TestSession? = null
+        private val singleton = atomic<TestSession?>(null)
 
         internal val global: TestSession
             get() =
-                singleton ?: throw IllegalStateException(
+                singleton.value ?: throw IllegalStateException(
                     "The test framework was not initialized." +
                         " A TestSession must exist before creating any top-level TestSuite." +
                         "\n\tPlease ensure that the test framework's Gradle plugin is configured."
@@ -109,7 +110,7 @@ public open class TestSession protected constructor(
 
         /** Resets global state, enabling the execution of multiple test sessions in one process. */
         internal fun resetState() {
-            singleton = null
+            singleton.getAndSet(null)
         }
     }
 }

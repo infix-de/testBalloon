@@ -9,7 +9,6 @@ import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.EnvironmentBasedElementSelection
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
-import de.infix.testBalloon.framework.core.internal.supportsNesting
 import de.infix.testBalloon.framework.core.internal.testInfrastructureIsAndroidDevice
 import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.internal.Constants
@@ -25,8 +24,6 @@ import org.junit.runner.Runner
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
 import java.util.concurrent.ConcurrentHashMap
-
-private val testElementDescriptions = ConcurrentHashMap<TestElement, Description>()
 
 /**
  * The [Runner] interfacing with JUnit 4 (Android only).
@@ -132,29 +129,42 @@ public class TestBalloonJUnit4Runner(@Suppress("unused") testClass: Class<*>) : 
             )
         }
     }
+
+    internal companion object {
+        internal val testElementDescriptions = ConcurrentHashMap<TestElement, Description>()
+
+        internal fun reset() {
+            testElementDescriptions.clear()
+        }
+    }
 }
 
-private val reportingMode by lazy { TestSession.global.reportingMode }
-
-private val reportingSupportsNesting by lazy { reportingMode.supportsNesting && !testInfrastructureIsAndroidDevice }
-
-private fun TestElement.newPlatformDescription(): Description = when (this) {
+/**
+ * Returns a JUnit 4 [Description] for the test element, creating all descriptions for the hierarchy below.
+ *
+ * This function is internal for testing. Tests must call [TestBalloonJUnit4Runner.reset] in a `finally` block
+ * after use.
+ */
+internal fun TestElement.newPlatformDescription(): Description = when (this) {
     is TestSuite -> {
         val displayName =
-            when {
-                reportingMode == ReportingMode.GradleIntellijIdea && !testInfrastructureIsAndroidDevice -> {
-                    reportingCoordinates(
-                        mode = if (reportingSupportsNesting) {
-                            TestElement.CoordinatesMode.DisplayName
-                        } else {
-                            TestElement.CoordinatesMode.FullyQualified
-                        }
-                    )
+            when (TestSession.global.reportingMode) {
+                ReportingMode.GradleIntellijIdeaWithoutNesting -> {
+                    reportingCoordinates(mode = TestElement.DisplayNameMode.PathFullyQualified)
                 }
 
-                reportingSupportsNesting -> testElementPath.elementReportingName
+                ReportingMode.GradleIntellijIdeaWithNesting -> {
+                    reportingCoordinates(mode = TestElement.DisplayNameMode.ElementOnly)
+                }
 
-                else -> testElementPath.reportingNameWithTopLevelPackage
+                ReportingMode.GradleFilesWithNesting,
+                ReportingMode.Amper ->
+                    testElementPath.elementReportingName
+
+                ReportingMode.GradleIntellijIdeaLegacy,
+                ReportingMode.GradleFilesWithoutNesting,
+                ReportingMode.AndroidDevice ->
+                    testElementPath.reportingNameFullyQualified
             }
 
         Description.createSuiteDescription(
@@ -183,33 +193,38 @@ private fun TestElement.newPlatformDescription(): Description = when (this) {
     is Test -> {
         Description.createTestDescription(
             topLevelSuiteReportingName,
-            when {
-                reportingMode == ReportingMode.GradleIntellijIdea && !testInfrastructureIsAndroidDevice -> {
-                    reportingCoordinates(
-                        mode = if (reportingSupportsNesting) {
-                            TestElement.CoordinatesMode.DisplayName
-                        } else {
-                            TestElement.CoordinatesMode.WithoutTopLevelPackage
-                        }
-                    )
+            when (TestSession.global.reportingMode) {
+                ReportingMode.GradleIntellijIdeaWithoutNesting -> {
+                    reportingCoordinates(mode = TestElement.DisplayNameMode.PathWithoutTopLevelPackage)
                 }
 
-                reportingSupportsNesting -> testElementPath.elementReportingName
+                ReportingMode.GradleIntellijIdeaWithNesting -> {
+                    reportingCoordinates(mode = TestElement.DisplayNameMode.ElementOnly)
+                }
 
-                else -> testElementPath.reportingNameBelowTopLevel
+                ReportingMode.GradleFilesWithNesting,
+                ReportingMode.Amper ->
+                    testElementPath.elementReportingName
+
+                ReportingMode.GradleIntellijIdeaLegacy,
+                ReportingMode.GradleFilesWithoutNesting,
+                ReportingMode.AndroidDevice ->
+                    testElementPath.reportingNameBelowTopLevel
             }.safeForDeviceSideTests(),
             Category(TestBalloonJUnit4Runner::class) // Support JUnit 4 runner selection via 'includeCategories'.
         )
     }
 }.also {
-    testElementDescriptions[this] = it
+    TestBalloonJUnit4Runner.testElementDescriptions[this] = it
 }
 
 // Returns a suite or test name guarded against slashes, which are suspected to crash Android device-side tests.
 private fun String.safeForDeviceSideTests() = if (testInfrastructureIsAndroidDevice) replace('/', '⧸') else this
 
 internal val TestElement.platformDescription: Description
-    get() = checkNotNull(testElementDescriptions[this]) { "$this is missing its test description" }
+    get() = checkNotNull(TestBalloonJUnit4Runner.testElementDescriptions[this]) {
+        "$this is missing its test description"
+    }
 
 private class TestBalloonInitializationError(message: String, cause: Throwable) : Error(message, cause)
 

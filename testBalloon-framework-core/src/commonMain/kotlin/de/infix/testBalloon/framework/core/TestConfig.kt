@@ -171,6 +171,8 @@ public open class TestConfig internal constructor(
         internal companion object {
             internal suspend fun current(): Invocation =
                 currentCoroutineContext()[InvocationContext.Key]?.mode ?: Sequential
+
+            internal val ConcurrentIfSupported = if (testInfrastructureSupportsConcurrency) Concurrent else Sequential
         }
     }
 

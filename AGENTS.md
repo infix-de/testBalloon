@@ -1,6 +1,12 @@
-# Agent Guidelines for testBalloon
+# Agent Guidelines for TestBalloon
 
 TestBalloon is a DSL-based, Kotlin-first test framework powered by a compiler plugin. It supports all Kotlin target platforms (JVM, JS, WebAssembly, Native, Android). This document guides AI agents working in this repository.
+
+## Important
+
+This project requires context beyond the contents of this repository, as indicated in `documentation/Kotlin_IDE_and_Build_Tool_Interoperability.adoc`.
+
+Everything – including issues, pull request messages, comments, code – should be written with brevity and clarity.
 
 ## Repository Structure
 
@@ -89,7 +95,7 @@ Always use the Gradle wrapper (`./gradlew`). Do **not** invoke `gradle` directly
 
 ## PR instructions
 
-- Before preparing a PR, create an issue clearly and concisely describing the problem to solve and the suggested approach.
+- Before preparing a PR, create an issue which clearly and concisely describes the problem to solve and the suggested approach.
 - Before preparing a larger PR or a PR doing substantial changes, request feedback on its issue(s) from persons maintaining the repository.
 - A PR should always refer to related issues.
 - Do not force push to a PR branch, once a PR has received comments or a review, unless reviewing or commenting persons agree.

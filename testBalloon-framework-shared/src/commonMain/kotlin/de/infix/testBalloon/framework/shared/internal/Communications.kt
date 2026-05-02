@@ -17,16 +17,30 @@ public enum class ReportingMode {
      * Mode for IDE plugin versions >= 0.5.0: Hierarchical reporting in a format requiring IDE plugin assistance
      * for readability. Supports Run/Debug/"Jump to source" from test results and test status in gutter icons.
      */
-    GradleIntellijIdea,
+    GradleIntellijIdeaWithoutNesting,
+    GradleIntellijIdeaWithNesting,
 
     /**
      * Mode for Gradle HTML and XML file reports, extracting package and "class" name at the top level, flattening
      * names below.
      */
-    GradleFiles,
+    GradleFilesWithoutNesting,
+
+    /**
+     * Mode for Gradle >= 9.3.0 HTML and XML file reports, with simple element names at each hierarchy level.
+     */
+    GradleFilesWithNesting,
+
+    /**
+     * Mode for Android device (instrumented) tests, extracting package and "class" name at the top level, flattening
+     * names below.
+     */
+    AndroidDevice,
 
     /** Mode for Amper, with simple element names at each hierarchy level. */
-    Amper
+    Amper;
+
+    public val isGradleFiles: Boolean get() = this == GradleFilesWithNesting || this == GradleFilesWithoutNesting
 }
 
 /**
@@ -37,7 +51,6 @@ public enum class EnvironmentVariable {
     TESTBALLOON_INCLUDE_PATTERNS,
     TESTBALLOON_EXCLUDE_PATTERNS,
     TESTBALLOON_REPORTING,
-    TESTBALLOON_REPORTING_FEATURES,
     TESTBALLOON_REPORTING_PATH_LIMIT,
     TESTBALLOON_REPORTING_PATH_LIMIT_BELOW_TOP_LEVEL
 }

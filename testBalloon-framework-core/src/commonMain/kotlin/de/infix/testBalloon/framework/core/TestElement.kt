@@ -3,7 +3,6 @@ package de.infix.testBalloon.framework.core
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.reportingPathLimit
 import de.infix.testBalloon.framework.core.internal.reportingPathLimitBelowTopLevel
-import de.infix.testBalloon.framework.core.internal.supportsNesting
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
@@ -53,7 +52,7 @@ public sealed class TestElement(
     /**
      * A path uniquely identifying a test element in its test hierarchy.
      */
-    public class Path internal constructor(private val element: TestElement) : AbstractTestElement.Path {
+    public class Path internal constructor(private val targetElement: TestElement) : AbstractTestElement.Path {
         override fun toString(): String = "«$internalId»"
 
         /**
@@ -66,7 +65,7 @@ public sealed class TestElement(
         /**
          * This path's fully qualified reporting name, including the top-level suite's package name, if present.
          */
-        internal val reportingNameWithTopLevelPackage: String by lazy {
+        internal val reportingNameFullyQualified: String by lazy {
             asString(separator = REPORTING_SEPARATOR) { externalizedName(includeTopLevelPackageName = true) }
         }
 
@@ -90,15 +89,15 @@ public sealed class TestElement(
          */
         internal val reportingNameBelowTopLevel: String by lazy {
             val parentReportingNameBelowTopLevel =
-                element.testElementParent
-                    ?.takeIf { !it.isTopLevelSuite && !element.isTopLevelSuite }
+                targetElement.testElementParent
+                    ?.takeIf { !it.isTopLevelSuite && !targetElement.isTopLevelSuite }
                     ?.testElementPath?.reportingNameBelowTopLevel
             val originalName = buildString {
                 if (parentReportingNameBelowTopLevel != null) {
                     append(parentReportingNameBelowTopLevel)
                     append(REPORTING_SEPARATOR)
                 }
-                append(element.externalizedName(includeTopLevelPackageName = false))
+                append(targetElement.externalizedName(includeTopLevelPackageName = false))
             }
             val originalUniquePathLength = originalName.length + TestSuite.UNIQUE_APPENDIX_LENGTH_LIMIT
 
@@ -121,7 +120,8 @@ public sealed class TestElement(
         /**
          * This path element's reporting name.
          */
-        internal val elementReportingName: String get() = element.externalizedName(includeTopLevelPackageName = false)
+        internal val elementReportingName: String
+            get() = targetElement.externalizedName(includeTopLevelPackageName = false)
 
         private fun TestElement.externalizedName(includeTopLevelPackageName: Boolean): String =
             if (isTopLevelSuite && includeTopLevelPackageName) {
@@ -143,22 +143,22 @@ public sealed class TestElement(
             separator: String,
             topLevelSuiteExcluded: Boolean = false,
             elementName: TestElement.() -> String
-        ): String = if (element.testElementParent == null ||
-            element.isTopLevelSuite ||
-            (topLevelSuiteExcluded && element.testElementParent.isTopLevelSuite)
+        ): String = if (targetElement.testElementParent == null ||
+            targetElement.isTopLevelSuite ||
+            (topLevelSuiteExcluded && targetElement.testElementParent.isTopLevelSuite)
         ) {
-            element.elementName()
+            targetElement.elementName()
         } else {
             buildString {
                 append(
-                    element.testElementParent.testElementPath.asString(
+                    targetElement.testElementParent.testElementPath.asString(
                         separator = separator,
                         topLevelSuiteExcluded = topLevelSuiteExcluded,
                         elementName = elementName
                     )
                 )
                 append(separator)
-                append(elementName(element))
+                append(elementName(targetElement))
             }
         }
 
@@ -168,10 +168,10 @@ public sealed class TestElement(
         }
     }
 
-    internal enum class CoordinatesMode {
-        FullyQualified,
-        WithoutTopLevelPackage,
-        DisplayName
+    internal enum class DisplayNameMode {
+        PathFullyQualified,
+        PathWithoutTopLevelPackage,
+        ElementOnly
     }
 
     /**
@@ -179,62 +179,57 @@ public sealed class TestElement(
      *
      * The format must be synchronized with the IDE plugin's `TestElementReportingCoordinates.from()`.
      */
-    internal fun reportingCoordinates(mode: CoordinatesMode): String =
+    internal fun reportingCoordinates(mode: DisplayNameMode): String =
         reportingCoordinates(suiteMode = mode, testMode = mode)
 
     /**
      * Returns the element's reporting coordinates in a form to be parsed by the IDE plugin.
      *
+     * The format is: <BEGIN_MARK><elementPathInternalId><COMPONENT_SEPARATOR><displayName><END_MARK>
      * The format must be synchronized with the IDE plugin's `TestElementReportingCoordinates.from()`.
      */
-    internal fun reportingCoordinates(suiteMode: CoordinatesMode, testMode: CoordinatesMode): String = buildString {
+    internal fun reportingCoordinates(suiteMode: DisplayNameMode, testMode: DisplayNameMode): String = buildString {
         append(Constants.INTERNAL_ELEMENT_REPORTING_COORDINATES_BEGIN_MARK)
         append(testElementPath.internalId)
         append(Constants.INTERNAL_ELEMENT_REPORTING_COORDINATES_COMPONENT_SEPARATOR)
         append(
             when (if (this@TestElement is TestSuite) suiteMode else testMode) {
-                CoordinatesMode.FullyQualified -> testElementPath.reportingNameWithTopLevelPackage
-                CoordinatesMode.WithoutTopLevelPackage -> testElementPath.reportingNameWithoutTopLevelPackage
-                CoordinatesMode.DisplayName -> testElementDisplayName
+                DisplayNameMode.PathFullyQualified -> testElementPath.reportingNameFullyQualified
+                DisplayNameMode.PathWithoutTopLevelPackage -> testElementPath.reportingNameWithoutTopLevelPackage
+                DisplayNameMode.ElementOnly -> testElementDisplayName
             }
         )
         append(Constants.INTERNAL_ELEMENT_REPORTING_COORDINATES_END_MARK)
     }
 
     internal val reportingNameForJsAndTeamCity: String
-        get() = when (reportingMode) {
-            ReportingMode.GradleIntellijIdeaLegacy -> {
-                if (this is TestSuite) {
-                    // A qualified path name for suites ensures proper nesting display in IntelliJ IDEA.
-                    testElementPath.reportingNameWithTopLevelPackage
-                } else {
-                    // Simple element names below the top level work for file reports.
-                    testElementPath.elementReportingName
-                }
-            }
-
-            ReportingMode.GradleIntellijIdea -> {
-                // The attached ".$testElementDisplayName" can be replaced by a dot followed by a phrase like ".WoT".
+        get() = when (TestSession.global.reportingMode) {
+            ReportingMode.GradleIntellijIdeaWithNesting,
+            ReportingMode.GradleIntellijIdeaWithoutNesting -> {
                 // JS frameworks will replace the last dot in an element's name, so we place it after our
-                // significant content, which must be unchanged. The phrase can be used to identify a missing IDE
-                // plugin, which would normally extract and show the element's display name.
+                // significant content, which must be unchanged. The phrase "FOR_IDE_PLUGIN" exposes a missing IDE
+                // plugin. An IDE plugin always relies on the reporting coordinates and ignores everything outside.
                 reportingCoordinates(
-                    suiteMode = CoordinatesMode.WithoutTopLevelPackage,
-                    testMode = CoordinatesMode.DisplayName
-                ) + ".${testElementPath.elementReportingName}"
+                    suiteMode = DisplayNameMode.PathWithoutTopLevelPackage,
+                    testMode = DisplayNameMode.ElementOnly
+                ) + ".FOR_IDE_PLUGIN"
             }
 
-            ReportingMode.GradleFiles -> {
-                if (isTopLevelSuite && !reportingMode.supportsNesting) {
-                    // Restricting the qualified path name to top-level suites avoids duplicated path elements.
-                    testElementPath.reportingNameWithTopLevelPackage
+            ReportingMode.GradleIntellijIdeaLegacy,
+            ReportingMode.GradleFilesWithoutNesting -> {
+                if (isTopLevelSuite) {
+                    testElementPath.reportingNameFullyQualified
                 } else {
-                    // Simple element names below the top level work for file reports.
                     testElementPath.elementReportingName
                 }
             }
 
-            ReportingMode.Amper -> testElementPath.elementReportingName
+            ReportingMode.GradleFilesWithNesting,
+            ReportingMode.Amper ->
+                testElementPath.elementReportingName
+
+            ReportingMode.AndroidDevice ->
+                throw IllegalArgumentException("JS/TeamCity reporting is unsuitable for Android device tests")
         }
 
     internal val topLevelSuiteReportingName: String
@@ -432,7 +427,7 @@ public sealed class TestElement(
      * with a unique appendix, stays within the length limits, if possible.
      */
     private fun String.asLengthLimitedReportingPathName(): String {
-        val parentPathPlusSeparatorLength = testElementParent?.testElementPath?.reportingNameWithTopLevelPackage?.length
+        val parentPathPlusSeparatorLength = testElementParent?.testElementPath?.reportingNameFullyQualified?.length
             ?.plus(Path.REPORTING_SEPARATOR_LENGTH)
             ?: 0
         val originalUniquePathLength = parentPathPlusSeparatorLength + length + TestSuite.UNIQUE_APPENDIX_LENGTH_LIMIT
@@ -451,7 +446,7 @@ public sealed class TestElement(
 
     internal companion object {
         /**
-         * A [TestElement.Selection] including all test elements.
+         * A [Selection] including all test elements.
          */
         internal val AllInSelection = object : Selection {
             override fun includes(testElement: TestElement): Boolean = true
@@ -466,25 +461,26 @@ private fun String.safeAsLowerLevelSuiteDisplayName() = safelyTransformed(lowerL
 
 private fun String.safeAsTestDisplayName() = safelyTransformed(testDisplayNameReplacements)
 
-private val suiteDisplayNameReplacements by lazy {
-    if (reportingMode == ReportingMode.GradleFiles) {
-        // These characters are potentially file-system-incompatible on Windows. Gradle reporting does not escape
-        // characters in what it considers to be a "package name", which in our hierarchy is every non-leaf suite.
-        mapOf(
-            '<' to '＜',
-            '>' to '＞',
-            ':' to '։',
-            '"' to '＂',
-            '/' to '⧸', // The slash is also a problem on other platforms, making Gradle create unexpected directories.
-            '\\' to '⧹',
-            '|' to '❘',
-            '?' to '？',
-            '*' to '＊'
-        )
+private val suiteDisplayNameReplacements: Map<Char, Char>
+    get() = if (TestSession.global.reportingMode.isGradleFiles) {
+        suiteDisplayNameReplacementsForGradleFileReporting
     } else {
-        mapOf()
+        emptyMap()
     }
-}
+
+// These characters are potentially file-system-incompatible on Windows. Gradle reporting does not escape
+// characters in what it considers to be a "package name", which in our hierarchy is every non-leaf suite.
+private val suiteDisplayNameReplacementsForGradleFileReporting = mapOf(
+    '<' to '＜',
+    '>' to '＞',
+    ':' to '։',
+    '"' to '＂',
+    '/' to '⧸', // The slash is also a problem on other platforms, making Gradle create unexpected directories.
+    '\\' to '⧹',
+    '|' to '❘',
+    '?' to '？',
+    '*' to '＊'
+)
 
 private val lowerLevelSuiteDisplayNameReplacements by lazy {
     mapOf(' ' to Constants.ESCAPED_SPACE, '.' to ESCAPED_DOT) + suiteDisplayNameReplacements
@@ -493,6 +489,4 @@ private val lowerLevelSuiteDisplayNameReplacements by lazy {
 private val testDisplayNameReplacements = mapOf('.' to ESCAPED_DOT)
 
 private const val ESCAPED_DOT = '·' // middle dot
-private const val REPORTING_SEPARATOR: String = "${Constants.ESCAPED_SPACE}↘${Constants.ESCAPED_SPACE}"
-
-private val reportingMode by lazy { TestSession.global.reportingMode }
+internal const val REPORTING_SEPARATOR: String = "${Constants.ESCAPED_SPACE}↘${Constants.ESCAPED_SPACE}"

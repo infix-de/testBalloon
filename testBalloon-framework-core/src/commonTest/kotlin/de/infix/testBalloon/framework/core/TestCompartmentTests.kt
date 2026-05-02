@@ -3,6 +3,7 @@ package de.infix.testBalloon.framework.core
 import de.infix.testBalloon.framework.core.internal.FrameworkTestUtilities
 import de.infix.testBalloon.framework.core.internal.assertElementPathsContainInOrder
 import de.infix.testBalloon.framework.core.internal.assertMessageStartsWith
+import de.infix.testBalloon.framework.core.internal.testInfrastructureSupportsConcurrency
 import de.infix.testBalloon.framework.shared.internal.Constants
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
@@ -108,6 +109,11 @@ class TestCompartmentTests {
 
     @Test
     fun concurrency() = FrameworkTestUtilities.withTestFramework {
+        if (!testInfrastructureSupportsConcurrency) {
+            println(">>> Skipping – test infrastructure on ${testPlatform.displayName} does not support concurrency")
+            return@withTestFramework
+        }
+
         val suiteCount = 8
         val testCount = 8
 

@@ -109,25 +109,39 @@ private fun Project.configureTestTasks(
     testBalloonProperties: TestBalloonGradleProperties,
     testBalloonExtension: TestBalloonGradleExtension
 ) {
+    // Gradle 9.3.0 introduces hierarchical test results reporting.
+    // See https://docs.gradle.org/9.3.0/release-notes.html#test-reporting-improvements
+    val gradleSupportsNesting = VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.version(9, 3)
+    val gradleFilesMode = if (gradleSupportsNesting) {
+        ReportingMode.GradleFilesWithNesting
+    } else {
+        ReportingMode.GradleFilesWithoutNesting
+    }
+    val gradleIntellijIdeaMode = if (gradleSupportsNesting) {
+        ReportingMode.GradleIntellijIdeaWithNesting
+    } else {
+        ReportingMode.GradleIntellijIdeaWithoutNesting
+    }
+
     val reportingMode = when (testBalloonProperties.reportingMode) {
         "intellij-legacy" -> if (providers.systemProperty("idea.active").isPresent) {
             ReportingMode.GradleIntellijIdeaLegacy
         } else {
-            ReportingMode.GradleFiles
+            gradleFilesMode
         }
 
-        "intellij" -> ReportingMode.GradleIntellijIdea
+        "intellij" -> gradleIntellijIdeaMode
 
-        "files" -> ReportingMode.GradleFiles
+        "files" -> gradleFilesMode
 
         else -> if (providers.systemProperty("idea.active").isPresent) {
-            ReportingMode.GradleIntellijIdea
+            gradleIntellijIdeaMode
         } else {
-            ReportingMode.GradleFiles
+            gradleFilesMode
         }
     }
 
-    val reportsEnabled = testBalloonProperties.reportsEnabled ?: (reportingMode == ReportingMode.GradleFiles)
+    val reportsEnabled = testBalloonProperties.reportsEnabled ?: (reportingMode.isGradleFiles)
 
     if (!reportsEnabled) {
         tasks.withType(AbstractTestTask::class.java).configureEach {
@@ -178,8 +192,6 @@ private fun Project.configureTestTasks(
         }
             ?: testBalloonProperties.reportingPathLimit?.toString()
 
-    val gradleVersion = VersionNumber.parse(gradle.gradleVersion)
-
     gradle.taskGraph.whenReady {
         // Why use `taskGraph.whenReady` at this point?
         // We want to
@@ -213,11 +225,6 @@ private fun Project.configureTestTasks(
                     )
 
                 this[EnvironmentVariable.TESTBALLOON_REPORTING.name] = reportingMode.name
-                if (gradleVersion >= VersionNumber.version(9, 3)) {
-                    // Gradle 9.3.0 introduces hierarchical test results reporting.
-                    // See https://docs.gradle.org/9.3.0/release-notes.html#test-reporting-improvements
-                    this[EnvironmentVariable.TESTBALLOON_REPORTING_FEATURES.name] = "nesting"
-                }
                 if (reportingPathLimit != null) {
                     this[EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name] = reportingPathLimit
                 }

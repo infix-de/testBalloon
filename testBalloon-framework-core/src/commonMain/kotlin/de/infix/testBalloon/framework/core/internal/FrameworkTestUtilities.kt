@@ -18,6 +18,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -59,16 +60,20 @@ public object FrameworkTestUtilities {
     /** Performs [action] in an initialized framework session. */
     @OptIn(DelicateCoroutinesApi::class)
     public fun withTestFramework(testSession: AbstractTestSession? = null, action: suspend () -> Unit): TestResult {
+        // Why don't we run our framework tests directly inside a TestScope?
+        // Because the framework may use TestScope to execute its own tests, and TestScopes cannot nest.
         val deferredJob = GlobalScope.async(Dispatchers.Default) {
             initializeTestFramework(testSession)
             try {
-                action()
-                if (testPlatform.type == TestPlatform.Type.WasmWasi) {
-                    logInfo { "Primary coroutine on ${testPlatform.displayName} completed." }
+                coroutineScope {
+                    action()
                 }
             } finally {
                 // Reset global state for another round of test framework initialization.
                 TestFramework.resetState()
+                if (testPlatform.type == TestPlatform.Type.WasmWasi) {
+                    logInfo { "Primary coroutine on ${testPlatform.displayName} completed." }
+                }
             }
         }
 

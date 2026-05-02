@@ -1,6 +1,7 @@
 package de.infix.testBalloon.framework.core
 
 import de.infix.testBalloon.framework.core.internal.FrameworkTestUtilities
+import de.infix.testBalloon.framework.core.internal.testInfrastructureSupportsConcurrency
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.currentCoroutineContext
 import kotlin.test.Test
@@ -35,12 +36,17 @@ class TestConfigTests {
         }
 
         TestConfig.invocation(TestConfig.Invocation.Concurrent).executeWrapped(testSuite) {
-            assertEquals(TestConfig.Invocation.Concurrent, TestConfig.Invocation.current())
+            assertEquals(TestConfig.Invocation.ConcurrentIfSupported, TestConfig.Invocation.current())
         }
     }
 
     @Test
     fun concurrencyAndTestScope() = FrameworkTestUtilities.withTestFramework {
+        if (!testInfrastructureSupportsConcurrency) {
+            println(">>> Skipping – test infrastructure on ${testPlatform.displayName} does not support concurrency")
+            return@withTestFramework
+        }
+
         val testSuite by testSuite(propertyFqn = "testSuite") {}
 
         TestSession.DefaultConfiguration.executeWrapped(testSuite) {
@@ -228,7 +234,7 @@ class TestConfigTests {
             assertEquals(TestConfig.Invocation.Sequential, TestConfig.Invocation.current())
             TestConfig.invocation(TestConfig.Invocation.Concurrent).executeWrapped(testSuite) {
                 assertEquals(coroutineNameElement, currentCoroutineContext()[CoroutineName.Key])
-                assertEquals(TestConfig.Invocation.Concurrent, TestConfig.Invocation.current())
+                assertEquals(TestConfig.Invocation.ConcurrentIfSupported, TestConfig.Invocation.current())
             }
         }
     }
@@ -244,7 +250,7 @@ class TestConfigTests {
             .coroutineContext(coroutineNameElement)
             .invocation(TestConfig.Invocation.Concurrent).executeWrapped(testSuite) {
                 assertEquals(coroutineNameElement, currentCoroutineContext()[CoroutineName.Key])
-                assertEquals(TestConfig.Invocation.Concurrent, TestConfig.Invocation.current())
+                assertEquals(TestConfig.Invocation.ConcurrentIfSupported, TestConfig.Invocation.current())
             }
     }
 }

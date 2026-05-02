@@ -29,7 +29,7 @@ class TestSessionTests {
         testSession = object : TestSession(testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent)) {}
     ) {
         test("invocation") {
-            assertEquals(TestConfig.Invocation.Concurrent, TestConfig.Invocation.current())
+            assertEquals(TestConfig.Invocation.ConcurrentIfSupported, TestConfig.Invocation.current())
         }
     }
 

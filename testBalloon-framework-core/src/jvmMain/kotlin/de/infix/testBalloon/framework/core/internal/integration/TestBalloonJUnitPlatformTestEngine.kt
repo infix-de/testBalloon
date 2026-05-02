@@ -8,7 +8,6 @@ import de.infix.testBalloon.framework.core.TestSession
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.core.internal.logDebug
-import de.infix.testBalloon.framework.core.internal.supportsNesting
 import de.infix.testBalloon.framework.core.internal.value
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.internal.Constants
@@ -31,9 +30,6 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor
 import org.junit.platform.engine.support.descriptor.ClassSource
 import org.junit.platform.engine.support.descriptor.EngineDescriptor
 import java.util.concurrent.ConcurrentHashMap
-
-private var topLevelTestSuites = setOf<AbstractTestSuite>()
-private val testElementDescriptors = ConcurrentHashMap<TestElement, AbstractTestDescriptor>()
 
 /**
  * The [TestEngine] interfacing with JUnit Platform (JVM only).
@@ -211,6 +207,16 @@ internal class TestBalloonJUnitPlatformTestEngine : TestEngine {
             )
         }
     }
+
+    companion object {
+        private var topLevelTestSuites = setOf<AbstractTestSuite>()
+        internal val testElementDescriptors = ConcurrentHashMap<TestElement, AbstractTestDescriptor>()
+
+        internal fun reset() {
+            topLevelTestSuites = emptySet()
+            testElementDescriptors.clear()
+        }
+    }
 }
 
 private class TestElementJUnitPlatformDescriptor(
@@ -227,12 +233,18 @@ private class TestElementJUnitPlatformDescriptor(
     override fun toString(): String = "PD(uId=$uniqueId, dN=\"$displayName\", t=$type)"
 }
 
-private val reportingMode by lazy { TestSession.global.reportingMode }
-
-private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestElementJUnitPlatformDescriptor {
+/**
+ * Returns a JUnit Platform [AbstractTestDescriptor] for the test element, creating descriptors for the hierarchy below.
+ *
+ * This function is internal for testing. Tests must call [TestBalloonJUnitPlatformTestEngine.reset] in a `finally`
+ * block after use.
+ */
+internal fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): AbstractTestDescriptor {
     val uniqueId: UniqueId
-    val source: TestSource? = if (isTopLevelSuite && !reportingMode.supportsNesting) {
-        ClassSource.from(testElementPath.reportingNameWithTopLevelPackage)
+    val source: TestSource? = if (isTopLevelSuite &&
+        TestSession.global.reportingMode == ReportingMode.GradleFilesWithoutNesting
+    ) {
+        ClassSource.from(testElementPath.reportingNameFullyQualified)
     } else {
         null
     }
@@ -242,37 +254,43 @@ private fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): TestEle
     }
 
     uniqueId = parentUniqueId.append(segmentType, testElementName)
-    val displayName = when (reportingMode) {
-        ReportingMode.GradleIntellijIdeaLegacy -> testElementPath.elementReportingName
+    val displayName = when (TestSession.global.reportingMode) {
+        ReportingMode.GradleIntellijIdeaWithoutNesting,
+        ReportingMode.GradleIntellijIdeaWithNesting ->
+            reportingCoordinates(mode = TestElement.DisplayNameMode.ElementOnly)
 
-        ReportingMode.GradleIntellijIdea -> reportingCoordinates(mode = TestElement.CoordinatesMode.DisplayName)
-
-        ReportingMode.GradleFiles -> if (reportingMode.supportsNesting) {
-            testElementPath.elementReportingName
-        } else {
+        ReportingMode.GradleFilesWithoutNesting ->
             testElementPath.reportingNameBelowTopLevel
-        }
 
-        ReportingMode.Amper -> testElementPath.elementReportingName
+        ReportingMode.GradleIntellijIdeaLegacy,
+        ReportingMode.GradleFilesWithNesting,
+        ReportingMode.Amper ->
+            testElementPath.elementReportingName
+
+        ReportingMode.AndroidDevice ->
+            throw IllegalArgumentException("JUnit Platform reporting is unsuitable for Android device tests")
     }
+
+    val element = this
 
     return TestElementJUnitPlatformDescriptor(
         uniqueId = uniqueId,
         displayName = displayName,
         source = source,
-        element = this
+        element = element
     ).apply {
         log { "created TestDescriptor($uniqueId, $displayName)" }
-        testElementDescriptors[element] = this
-        if (this@newPlatformDescriptor is TestSuite) {
+        TestBalloonJUnitPlatformTestEngine.testElementDescriptors[element] = this
+        if (element is TestSuite) {
             testElementChildren.forEach { addChild(it.newPlatformDescriptor(uniqueId)) }
         }
     }
 }
 
 private val TestElement.platformDescriptor: AbstractTestDescriptor
-    get() =
-        checkNotNull(testElementDescriptors[this]) { "$this is missing its TestDescriptor" }
+    get() = checkNotNull(TestBalloonJUnitPlatformTestEngine.testElementDescriptors[this]) {
+        "$this is missing its TestDescriptor"
+    }
 
 private val TestElement.Event.Finished.executionResult: TestExecutionResult
     get() =

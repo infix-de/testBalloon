@@ -48,6 +48,8 @@ kotlin {
     androidLibrary {
         namespace = Constants.CORE_PACKAGE_NAME
         compileSdk = versionFromCatalog("android-compileSdk").toInt()
+
+        withHostTestBuilder {}.configure {}
     }
 
     sourceSets {

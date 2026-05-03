@@ -19,6 +19,8 @@ tapmoc {
 }
 
 kotlin {
+    jvm()
+
     androidLibrary {
         namespace = "org.example.android.multiplatform.library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()

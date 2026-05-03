@@ -230,8 +230,14 @@ private class TestElementJUnitPlatformDescriptor(
         is TestSuite -> TestDescriptor.Type.CONTAINER
     }
 
-    override fun toString(): String = "PD(uId=$uniqueId, dN=\"$displayName\", t=$type)"
+    override fun toString(): String = "PD(uId=$uniqueId, dN=\"$displayName\", t=$type, s=${source.orElse(null)})"
 }
+
+private val reportingModesRequiringAClassSource = setOf(
+    ReportingMode.GradleFilesWithoutNesting,
+    ReportingMode.GradleIntellijIdeaLegacy,
+    ReportingMode.GradleIntellijIdeaWithoutNesting
+)
 
 /**
  * Returns a JUnit Platform [AbstractTestDescriptor] for the test element, creating descriptors for the hierarchy below.
@@ -242,7 +248,7 @@ private class TestElementJUnitPlatformDescriptor(
 internal fun TestElement.newPlatformDescriptor(parentUniqueId: UniqueId): AbstractTestDescriptor {
     val uniqueId: UniqueId
     val source: TestSource? = if (isTopLevelSuite &&
-        TestSession.global.reportingMode == ReportingMode.GradleFilesWithoutNesting
+        TestSession.global.reportingMode in reportingModesRequiringAClassSource
     ) {
         ClassSource.from(testElementPath.reportingNameFullyQualified)
     } else {

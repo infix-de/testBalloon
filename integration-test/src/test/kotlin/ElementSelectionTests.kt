@@ -15,10 +15,20 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
 
     class TestVariant(
         val type: VariantType,
-        val execution: suspend (taskName: String, pattern: String) -> TestProject.Execution
+        val execution: suspend (taskName: String, pattern: String) -> TestProject.Execution,
+        val patternMatches: Map<String, Int>
     )
 
-    val commonVariants = listOf(
+    val commonPatternMatches = mapOf("com.example.SimpleSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1)
+    val extraPatternMatches = mapOf(
+        "com.example.SimpleSuite*test 1" to 1,
+        "com.example.SimpleSuite|test 1" to 1,
+        ";com.example.SimpleSuite;test 1" to 1,
+        "NoMatch" to 0,
+        "com.example.SpecialNameSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1
+    )
+
+    val primaryVariants = listOf(
         TestVariant(
             type = VariantType.CLI,
             execution = { taskName, pattern ->
@@ -28,11 +38,9 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
                     "--tests",
                     pattern
                 )
-            }
-        )
-    )
-
-    val primaryOnlyVariants = listOf(
+            },
+            patternMatches = commonPatternMatches + extraPatternMatches
+        ),
         TestVariant(
             type = VariantType.Environment,
             execution = { taskName, pattern ->
@@ -41,7 +49,8 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
                     ":$taskName",
                     environment = mapOf("TESTBALLOON_INCLUDE_PATTERNS" to pattern)
                 )
-            }
+            },
+            patternMatches = commonPatternMatches
         ),
         TestVariant(
             type = VariantType.Buildscript,
@@ -51,23 +60,32 @@ val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabl
                     ":$taskName",
                     "-Plocal.includeTestsMatching=$pattern"
                 )
-            }
+            },
+            patternMatches = commonPatternMatches
         )
     )
 
-    val variants = if (secondarySkippingEnabled) commonVariants else commonVariants + primaryOnlyVariants
+    val secondaryVariants = listOf(
+        TestVariant(
+            type = VariantType.CLI,
+            execution = { taskName, pattern ->
+                project.gradleExecution(
+                    ":clean${taskName.capitalizedTaskName()}",
+                    ":$taskName",
+                    "--tests",
+                    pattern
+                )
+            },
+            patternMatches = commonPatternMatches
+        )
+    )
+
+    val variants = if (secondarySkippingEnabled) secondaryVariants else primaryVariants
 
     val nativeTasksThatMayFail = setOf("macosArm64Test", "linuxX64Test", "mingwX64Test")
 
-    for ((pattern, expectedTestCount) in mapOf(
-        "com.example.SimpleSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1,
-        "com.example.SimpleSuite*test 1" to 1,
-        "com.example.SimpleSuite|test 1" to 1,
-        ";com.example.SimpleSuite;test 1" to 1,
-        "NoMatch" to 0,
-        "com.example.SpecialNameSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1
-    )) {
-        for (variant in variants) {
+    for (variant in variants) {
+        for ((pattern, expectedTestCount) in variant.patternMatches) {
             test(
                 "${variant.type.name}: '$pattern', $expectedTestCount test(s)",
                 testConfig = TestConfig.skipConditionally(pattern)

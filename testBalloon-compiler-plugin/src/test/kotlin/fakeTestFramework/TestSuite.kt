@@ -2,25 +2,25 @@ package fakeTestFramework
 
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.TestElementName
-import de.infix.testBalloon.framework.shared.TestElementPropertyFqn
 import de.infix.testBalloon.framework.shared.TestRegistering
+import de.infix.testBalloon.framework.shared.TestSuitePropertyName
 
 @Suppress("unused")
 @TestRegistering
 fun testSuite(
     @TestElementName name: String? = null,
-    @TestElementPropertyFqn propertyFqn: String = "",
+    @TestSuitePropertyName qualifiedPropertyName: String = "",
     content: TestSuite.() -> Unit
 ): Lazy<TestSuite> = lazy {
     TestSuite(
-        name = name ?: propertyFqn,
-        propertyFqn = propertyFqn,
+        name = name ?: qualifiedPropertyName,
+        qualifiedPropertyName = qualifiedPropertyName,
         content = content
     )
 }
 
-open class TestSuite(name: String = "", propertyFqn: String? = null, content: TestSuite.() -> Unit = {}) :
-    TestElement(name, propertyFqn = propertyFqn),
+open class TestSuite(name: String = "", qualifiedPropertyName: String? = null, content: TestSuite.() -> Unit = {}) :
+    TestElement(name, qualifiedPropertyName = qualifiedPropertyName),
     AbstractTestSuite {
 
     override var testElementIsEnabled: Boolean = true

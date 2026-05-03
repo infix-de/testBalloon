@@ -42,7 +42,7 @@ class TestTests {
         val launchCount = 10
         val completedLaunches = FrameworkTestUtilities.ConcurrentList<Int>()
 
-        val suite1 by testSuite(propertyFqn = "suite1", compartment = { TestCompartment.RealTime }) {
+        val suite1 by testSuite(qualifiedPropertyName = "suite1", compartment = { TestCompartment.RealTime }) {
             test("test1") {
                 repeat(launchCount) { launchIndex ->
                     launch {

@@ -77,7 +77,7 @@ class JUnitPlatformReportingTests {
 
     private fun descriptorTest(reportingMode: ReportingMode, expectedOutput: String): TestResult = try {
         FrameworkTestUtilities.withTestFramework(TestSession(reportingMode = reportingMode)) {
-            val suite1 by testSuite(propertyFqn = "c.e.topSuite") {
+            val suite1 by testSuite(qualifiedPropertyName = "c.e.topSuite") {
                 test("t-test 1") {}
 
                 testSuite("middle suite") {
@@ -89,7 +89,7 @@ class JUnitPlatformReportingTests {
                 }
             }
 
-            val suite2 by testSuite("top 2 named", propertyFqn = "c.e.topSuite2") {
+            val suite2 by testSuite("top 2 named", qualifiedPropertyName = "c.e.topSuite2") {
                 test("t2n-test1") {}
             }
 

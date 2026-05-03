@@ -16,7 +16,7 @@ import kotlin.time.Instant
 public sealed class TestElement(
     parent: TestSuite?,
     name: String,
-    propertyFqn: String? = null,
+    qualifiedPropertyName: String? = null,
     internal var testConfig: TestConfig
 ) : AbstractTestElement {
 
@@ -40,7 +40,7 @@ public sealed class TestElement(
 
         val namingParent = if (isTopLevelSuite) TestSession.global else parent
 
-        testElementName = propertyFqn ?: namingParent?.childElementNamesRegistry?.uniqueName(name) ?: name
+        testElementName = qualifiedPropertyName ?: namingParent?.childElementNamesRegistry?.uniqueName(name) ?: name
 
         testElementDisplayName =
             namingParent?.childDisplayNamesRegistry?.uniqueName(name.asLengthLimitedReportingPathName())

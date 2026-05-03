@@ -36,7 +36,7 @@ class TestCompartmentTests {
 
     @Test
     fun twoCompartments() = FrameworkTestUtilities.withTestFramework {
-        val suite1 by testSuite(propertyFqn = "suite1") {
+        val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             val compartment = testElementParent as? TestCompartment
             test("test1") {
                 assertEquals(TestCompartment.Default, compartment)
@@ -51,7 +51,7 @@ class TestCompartmentTests {
         val coroutineName2 = CoroutineName("#2")
         val compartment2 =
             TestCompartment("Compartment 2", testConfig = TestConfig.coroutineContext(coroutineName2))
-        val suite2 by testSuite(propertyFqn = "suite2", compartment = { compartment2 }) {
+        val suite2 by testSuite(qualifiedPropertyName = "suite2", compartment = { compartment2 }) {
             val compartment = testElementParent as? TestCompartment
             test("test1") {
                 assertEquals(compartment2, compartment)
@@ -63,7 +63,7 @@ class TestCompartmentTests {
             }
         }
 
-        val suite3 by testSuite(propertyFqn = "suite3") {
+        val suite3 by testSuite(qualifiedPropertyName = "suite3") {
             val compartment = testElementParent as? TestCompartment
             test("test1") {
                 assertEquals(TestCompartment.Default, compartment)
@@ -75,7 +75,7 @@ class TestCompartmentTests {
             }
         }
 
-        val suite4 by testSuite(propertyFqn = "suite4", compartment = { compartment2 }) {
+        val suite4 by testSuite(qualifiedPropertyName = "suite4", compartment = { compartment2 }) {
             val compartment = testElementParent as? TestCompartment
             test("test1") {
                 assertEquals(compartment, compartment2)
@@ -119,7 +119,7 @@ class TestCompartmentTests {
 
         val concurrentThreadIds = ConcurrentSet<ULong>()
 
-        val suite1 by testSuite(propertyFqn = "topSuite1", compartment = { TestCompartment.Concurrent }) {
+        val suite1 by testSuite(qualifiedPropertyName = "topSuite1", compartment = { TestCompartment.Concurrent }) {
             val outerSuiteThreadId = testPlatform.threadId()
 
             for (suiteNumber in 1..suiteCount) {
@@ -138,7 +138,7 @@ class TestCompartmentTests {
 
         val sequentialThreadIds = ConcurrentSet<ULong>()
 
-        val suite2 by testSuite(propertyFqn = "topSuite2") {
+        val suite2 by testSuite(qualifiedPropertyName = "topSuite2") {
             for (suiteNumber in 1..suiteCount) {
                 testSuite("subSuite$suiteNumber") {
                     for (testNumber in 1..testCount) {
@@ -227,7 +227,7 @@ class TestCompartmentTests {
     fun ui() = FrameworkTestUtilities.withTestFramework {
         val uiThreadIds = ConcurrentSet<ULong>()
 
-        val suite by testSuite(propertyFqn = "topSuite", compartment = {
+        val suite by testSuite(qualifiedPropertyName = "topSuite", compartment = {
             TestCompartment.MainDispatcher(Dispatchers.Unconfined)
         }) {
             for (suiteNumber in 1..3) {

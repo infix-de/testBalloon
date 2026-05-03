@@ -24,10 +24,10 @@ public abstract interface annotation class de/infix/testBalloon/framework/shared
 	public abstract fun prefix ()Ljava/lang/String;
 }
 
-public abstract interface annotation class de/infix/testBalloon/framework/shared/TestElementPropertyFqn : java/lang/annotation/Annotation {
+public abstract interface annotation class de/infix/testBalloon/framework/shared/TestRegistering : java/lang/annotation/Annotation {
 }
 
-public abstract interface annotation class de/infix/testBalloon/framework/shared/TestRegistering : java/lang/annotation/Annotation {
+public abstract interface annotation class de/infix/testBalloon/framework/shared/TestSuitePropertyName : java/lang/annotation/Annotation {
 }
 
 public final class de/infix/testBalloon/framework/shared/internal/DebugLevel : java/lang/Enum {

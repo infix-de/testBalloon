@@ -34,15 +34,15 @@ public annotation class TestRegistering
 public annotation class TestElementName(val prefix: String = "", val postfix: String = "")
 
 /**
- * Designates the String parameter of a top-level test suite function which receives the FQN of the property.
+ * Designates the String parameter of a top-level test suite function which receives qualified property name.
  *
- * A top-level [TestRegistering] test suite function must have exactly one `String?` parameter annotated with
- * `@TestElementPropertyFqn` with a default value of `""`. At the call site of such function, the compiler plugin will
+ * A top-level [TestRegistering] test suite function must have exactly one `String` parameter annotated with
+ * `@TestSuitePropertyName` with a default value of `""`. At the call site of such function, the compiler plugin will
  * insert the fully qualified name of the corresponding top-level property.
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
-public annotation class TestElementPropertyFqn
+public annotation class TestSuitePropertyName
 
 /**
  * Makes the annotated class part of the test element DSL. See the Kotlin docs on [DslMarker] for details.

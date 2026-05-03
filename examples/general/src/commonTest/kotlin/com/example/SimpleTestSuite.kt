@@ -12,7 +12,7 @@ val Simple by testSuite {
     }
 }
 
-// Choose a name different from the default property FQN
+// Choose a name different from the default property name
 val SimpleWithASpecialName by testSuite("Suite with a special name") {
     test("string length") {
         assertEquals(8, "Test me!".length)

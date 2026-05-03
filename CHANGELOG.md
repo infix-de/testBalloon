@@ -8,12 +8,38 @@
 ### Breaking
 
 * `testSuite` and `test` no longer provide a `displayName` parameter. The `@TestDisplayName` annotation was also removed.
-* Top-level `testSuite` functions have an additional parameter `@TestElementPropertyFqn propertyFqn: String = ""`, meant to be initialized by the compiler plugin.
+* Top-level `testSuite` functions have an additional parameter `@TestSuitePropertyName qualifiedPropertyName: String = ""`, which is initialized by the compiler plugin. Also, their `name` parameter now defaults to `null`.
 
 Migration required:
 
 * Top-level `testSuite` invocations using the `displayName` parameter: Use the `name` parameter instead.
-* Custom top-level `testSuite`-like implementations: Replicate the `propertyFqn` parameter from `testSuite` and pass it through.
+* Change the signature of custom top-level `@TestRegistering` functions as follows:
+    * Before:
+        ```kotlin
+        @TestRegistering
+        fun customTestSuite(
+            @TestElementName name: String = "",
+            @TestDisplayName displayName: String = name,
+            testConfig: TestConfig = TestConfig,
+            content: TestSuite.() -> Unit
+        ): Lazy<TestSuite> = testSuite(name = name, displayName = displayName, testConfig = testConfig, content = content)
+        ```
+    * After:
+        ```kotlin
+        @TestRegistering
+        fun customTestSuite(
+            @TestElementName name: String? = null,
+            testConfig: TestConfig = TestConfig,
+            @TestSuitePropertyName qualifiedPropertyName: String = "",
+            content: TestSuite.() -> Unit
+        ): Lazy<TestSuite> =
+            testSuite(name = name, testConfig = testConfig, qualifiedPropertyName = qualifiedPropertyName, content = content)
+        ```
+    * Checklist:
+        1. Make `name` nullable, with `null` as its default value.
+        2. Remove `displayName`.
+        3. Add a parameter `@TestSuitePropertyName qualifiedPropertyName: String = ""` as the penultimate parameter.
+        4. Pass values to a top-level `testSuite` invocation in the order shown above.
 * Remove the `displayName` parameter from lower-level `testSuite` and `test` functions and their invocations.
 
 ### Other Changes

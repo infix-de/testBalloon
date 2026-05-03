@@ -32,7 +32,7 @@ class JUnit4TestSuiteTests {
                 fun log(message: String) = trace.add(message)
             }
 
-            val suite1 by testSuite(propertyFqn = "suite1") {
+            val suite1 by testSuite(qualifiedPropertyName = "suite1") {
                 testFixture {
                     object : JUnit4RulesContext() {
                         val myRule = rule(TestMethodLoggingRule())
@@ -44,7 +44,7 @@ class JUnit4TestSuiteTests {
                 }
             }
 
-            val suite2 by testSuite(propertyFqn = "suite2") {
+            val suite2 by testSuite(qualifiedPropertyName = "suite2") {
                 testFixture {
                     JUnit4RulesContext() // A context without rules should work just fine
                 } asContextForEach {

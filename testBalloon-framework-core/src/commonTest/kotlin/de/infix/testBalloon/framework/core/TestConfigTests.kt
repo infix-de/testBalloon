@@ -15,7 +15,7 @@ import kotlin.test.assertNull
 class TestConfigTests {
     @Test
     fun coroutineContext() = FrameworkTestUtilities.withTestFramework {
-        val testSuite by testSuite(propertyFqn = "testSuite") {}
+        val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
             assertNull(currentCoroutineContext()[CoroutineName.Key])
@@ -29,7 +29,7 @@ class TestConfigTests {
 
     @Test
     fun invocation() = FrameworkTestUtilities.withTestFramework {
-        val testSuite by testSuite(propertyFqn = "testSuite") {}
+        val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
             assertEquals(TestConfig.Invocation.Sequential, TestConfig.Invocation.current())
@@ -47,7 +47,7 @@ class TestConfigTests {
             return@withTestFramework
         }
 
-        val testSuite by testSuite(propertyFqn = "testSuite") {}
+        val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         TestSession.DefaultConfiguration.executeWrapped(testSuite) {
             assertEquals(TestConfig.Invocation.Sequential, TestConfig.Invocation.current())
@@ -127,7 +127,7 @@ class TestConfigTests {
 
     private fun testPermits(testConfig: TestConfig, vararg expectedPermits: TestConfig.Permit) =
         FrameworkTestUtilities.withTestFramework {
-            val testSuite by testSuite(propertyFqn = "testSuite") {}
+            val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
             testConfig.parameterize(testSuite)
 
@@ -198,7 +198,7 @@ class TestConfigTests {
 
     private fun testKeyedParameters(testConfig: TestConfig, vararg expectedParameters: TestElement.KeyedParameter) =
         FrameworkTestUtilities.withTestFramework {
-            val testSuite by testSuite(propertyFqn = "testSuite") {}
+            val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
             testConfig.parameterize(testSuite)
 
@@ -209,7 +209,7 @@ class TestConfigTests {
 
     @Test
     fun testScope() = FrameworkTestUtilities.withTestFramework {
-        val testSuite by testSuite(propertyFqn = "testSuite") {}
+        val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
             assertNull(TestScopeContext.current())
@@ -226,7 +226,7 @@ class TestConfigTests {
 
     @Test
     fun inheritance() = FrameworkTestUtilities.withTestFramework {
-        val testSuite by testSuite(propertyFqn = "testSuite") {}
+        val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         val coroutineNameElement = CoroutineName("TEST-CC")
         TestConfig.coroutineContext(coroutineNameElement).executeWrapped(testSuite) {
@@ -241,7 +241,7 @@ class TestConfigTests {
 
     @Test
     fun chaining() = FrameworkTestUtilities.withTestFramework {
-        val testSuite by testSuite(propertyFqn = "testSuite") {}
+        val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         val coroutineNameElement = CoroutineName("TEST-CC")
         assertNull(currentCoroutineContext()[CoroutineName.Key])

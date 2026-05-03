@@ -48,7 +48,7 @@ public object FrameworkTestUtilities {
         testConfig: TestConfig = TestConfig.Companion,
         content: TestSuite.() -> Unit
     ): TestResult = withTestFramework(testSession) {
-        val suite by testSuite(propertyFqn = "suite", testConfig = testConfig) {
+        val suite by testSuite(qualifiedPropertyName = "suite", testConfig = testConfig) {
             content()
         }
 

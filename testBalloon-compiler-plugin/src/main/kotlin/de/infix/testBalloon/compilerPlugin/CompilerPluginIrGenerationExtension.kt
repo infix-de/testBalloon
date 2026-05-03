@@ -7,8 +7,8 @@ import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.AbstractTestSession
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
-import de.infix.testBalloon.framework.shared.TestElementPropertyFqn
 import de.infix.testBalloon.framework.shared.TestRegistering
+import de.infix.testBalloon.framework.shared.TestSuitePropertyName
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
@@ -147,7 +147,7 @@ private class Configuration(
     val abstractSuiteSymbol = irClassSymbol(AbstractTestSuite::class)
     val abstractSessionSymbol = irClassSymbol(AbstractTestSession::class)
     val testRegisteringAnnotationSymbol = irClassSymbol(TestRegistering::class)
-    val testElementPropertyFqnAnnotationSymbol = irClassSymbol(TestElementPropertyFqn::class)
+    val testSuitePropertyNameAnnotationSymbol = irClassSymbol(TestSuitePropertyName::class)
 
     @OptIn(TestBalloonInternalApi::class)
     val testFrameworkDiscoveryResultClassSymbol by lazy { irClassSymbol(TestFrameworkDiscoveryResult::class) }
@@ -256,7 +256,7 @@ private class ModuleTransformer(
                     reportDebug("Found top-level test suite property '${irProperty.fqNameWhenAvailable}'.", irProperty)
                 }
 
-                irProperty.addTestElementPropertyFqnToInitializerCall(
+                irProperty.addTestSuitePropertyNameToInitializerCall(
                     initializer,
                     initializerCall,
                     initializerCallFunction
@@ -332,9 +332,9 @@ private class ModuleTransformer(
     /**
      * Adds the property's FQN as a value argument to [this] property's initializer function call.
      *
-     * The property's FQN will be assigned to the parameter annotated with [TestElementPropertyFqn].
+     * The property's FQN will be assigned to the parameter annotated with [TestSuitePropertyName].
      */
-    private fun IrProperty.addTestElementPropertyFqnToInitializerCall(
+    private fun IrProperty.addTestSuitePropertyNameToInitializerCall(
         initializer: IrExpressionBody,
         initializerCall: IrCall,
         initializerCallFunction: IrSimpleFunction
@@ -342,11 +342,11 @@ private class ModuleTransformer(
         val irProperty = this
 
         val propertyFqnParameter = initializerCallFunction.parameters.firstOrNull {
-            it.hasAnnotation(configuration.testElementPropertyFqnAnnotationSymbol)
+            it.hasAnnotation(configuration.testSuitePropertyNameAnnotationSymbol)
         } ?: run {
             reportError(
                 "The top-level test suite function '${initializerCallFunction.name}' is missing a" +
-                    " parameter annotated with @${TestElementPropertyFqn::class.simpleName}.",
+                    " parameter annotated with @${TestSuitePropertyName::class.simpleName}.",
                 irProperty
             )
             return
@@ -357,7 +357,7 @@ private class ModuleTransformer(
                 "The '${initializerCallFunction.name}' invocation must not pass a value for parameter" +
                     " '${propertyFqnParameter.name}'.\n" +
                     "\t'${propertyFqnParameter.name}' is annotated with" +
-                    " @${TestElementPropertyFqn::class.simpleName}. The compiler plugin will assign a value.",
+                    " @${TestSuitePropertyName::class.simpleName}. The compiler plugin will assign a value.",
                 irProperty
             )
             return

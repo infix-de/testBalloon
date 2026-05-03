@@ -5,8 +5,8 @@ import de.infix.testBalloon.framework.core.internal.GuardedBy
 import de.infix.testBalloon.framework.core.internal.TestSetupReport
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.TestElementName
-import de.infix.testBalloon.framework.shared.TestElementPropertyFqn
 import de.infix.testBalloon.framework.shared.TestRegistering
+import de.infix.testBalloon.framework.shared.TestSuitePropertyName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
@@ -29,22 +29,22 @@ import kotlin.coroutines.CoroutineContext
  * }
  * ```
  *
- * [name] defaults to the simple name of the corresponding top-level property at the call site (from [propertyFqn]).
+ * [name] defaults to the simple name of the top-level property at the call site (from [qualifiedPropertyName]).
  *
- * Note: The compiler plugin initializes [propertyFqn] with the fully qualified name of the corresponding property
- * at the call site. It must not be changed except for internal testing.
+ * Note: The compiler plugin initializes [qualifiedPropertyName] with the fully qualified name of the top-level
+ * property at the call site. It must not be changed except for internal testing.
  */
 @TestRegistering
 public fun testSuite(
     @TestElementName name: String? = null,
     compartment: () -> TestCompartment,
     testConfig: TestConfig = TestConfig,
-    @TestElementPropertyFqn propertyFqn: String = "",
+    @TestSuitePropertyName qualifiedPropertyName: String = "",
     content: TestSuite.() -> Unit
 ): Lazy<TestSuite> {
-    require(propertyFqn.isNotEmpty()) {
+    require(qualifiedPropertyName.isNotEmpty()) {
         "The top-level test suite (name=«$name») was not initialized" +
-            " with a non-empty 'propertyFqn' by the compiler plugin (or internal test code)."
+            " with a non-empty 'qualifiedPropertyName' by the compiler plugin (or internal test code)."
     }
 
     require(suitesInRegistrationScope.isEmpty()) {
@@ -54,8 +54,8 @@ public fun testSuite(
     return lazy {
         TestSuite(
             parent = compartment(),
-            name = name ?: propertyFqn.substringAfterLast('.'),
-            propertyFqn = propertyFqn,
+            name = name ?: qualifiedPropertyName.substringAfterLast('.'),
+            qualifiedPropertyName = qualifiedPropertyName,
             testConfig = testConfig,
             content = content
         )
@@ -72,21 +72,21 @@ public fun testSuite(
  * }
  * ```
  *
- * [name] defaults to the simple name of the corresponding top-level property at the call site (from [propertyFqn]).
+ * [name] defaults to the simple name of the top-level property at the call site (from [qualifiedPropertyName]).
  *
- * Note: The compiler plugin initializes [propertyFqn] with the fully qualified name of the corresponding property
- * at the call site. It must not be changed except for internal testing.
+ * Note: The compiler plugin initializes [qualifiedPropertyName] with the fully qualified name of the top-level
+ * property at the call site. It must not be changed except for internal testing.
  */
 @TestRegistering
 public fun testSuite(
     @TestElementName name: String? = null,
     testConfig: TestConfig = TestConfig,
-    @TestElementPropertyFqn propertyFqn: String = "",
+    @TestSuitePropertyName qualifiedPropertyName: String = "",
     content: TestSuite.() -> Unit
 ): Lazy<TestSuite> {
-    require(propertyFqn.isNotEmpty()) {
+    require(qualifiedPropertyName.isNotEmpty()) {
         "The top-level test suite (name=«$name») was not initialized" +
-            " with a non-empty 'propertyFqn' by the compiler plugin (or internal test code)."
+            " with a non-empty 'qualifiedPropertyName' by the compiler plugin (or internal test code)."
     }
 
     require(suitesInRegistrationScope.isEmpty()) {
@@ -96,8 +96,8 @@ public fun testSuite(
     return lazy {
         TestSuite(
             parent = TestSession.global.defaultCompartment,
-            name = name ?: propertyFqn.substringAfterLast('.'),
-            propertyFqn = propertyFqn,
+            name = name ?: qualifiedPropertyName.substringAfterLast('.'),
+            qualifiedPropertyName = qualifiedPropertyName,
             testConfig = testConfig,
             content = content
         )
@@ -112,10 +112,10 @@ public fun testSuite(
 public open class TestSuite internal constructor(
     parent: TestSuite?,
     name: String,
-    propertyFqn: String? = null,
+    qualifiedPropertyName: String? = null,
     testConfig: TestConfig = TestConfig,
     private val content: TestSuite.() -> Unit = {}
-) : TestElement(parent, name = name, propertyFqn = propertyFqn, testConfig = testConfig),
+) : TestElement(parent, name = name, qualifiedPropertyName = qualifiedPropertyName, testConfig = testConfig),
     AbstractTestSuite,
     TestSuiteScope {
 

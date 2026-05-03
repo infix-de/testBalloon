@@ -1,7 +1,6 @@
 package com.example
 
 import de.infix.testBalloon.framework.core.JUnit4RulesContext
-import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.testSuite
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -9,7 +8,6 @@ import org.junit.runners.model.Statement
 
 val TestsWithTestBalloon by testSuite {
     testFixture {
-        @OptIn(TestBalloonExperimentalApi::class)
         object : JUnit4RulesContext() {
             init {
                 rule(TestMethodLoggingRule())

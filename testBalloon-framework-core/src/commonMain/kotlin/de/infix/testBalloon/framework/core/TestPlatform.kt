@@ -42,5 +42,4 @@ public expect val testPlatform: TestPlatform
  *
  * Use this utility function for testing special cases.
  */
-@TestBalloonExperimentalApi
 public expect suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit)

@@ -124,13 +124,14 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
     }
 }
 
+@Suppress("MayBeConstant", "RedundantSuppression")
 private val LOG_ENABLED = true
 private val logDirectory = (Path("build") / "reports").also { it.toFile().mkdirs() }
 private val logFile = (logDirectory / "TestProject.log").toFile()
 private val logInitialized = AtomicBoolean(false)
 
 private fun log(message: String) {
-    @Suppress("KotlinConstantConditions")
+    @Suppress("KotlinConstantConditions", "RedundantSuppression")
     if (!LOG_ENABLED) return
 
     if (!logInitialized.getAndSet(true)) {

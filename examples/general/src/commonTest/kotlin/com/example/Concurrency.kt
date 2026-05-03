@@ -1,7 +1,6 @@
 package com.example
 
 import com.example.testLibrary.statisticsReport
-import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.invocation
@@ -31,7 +30,6 @@ val Concurrency by testSuite(testConfig = TestConfig.testScope(isEnabled = false
         testSeries()
     }
 
-    @OptIn(TestBalloonExperimentalApi::class) // required for singleThreaded()
     testSuite(
         "concurrent (single-threaded)",
         testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent).singleThreaded().statisticsReport()

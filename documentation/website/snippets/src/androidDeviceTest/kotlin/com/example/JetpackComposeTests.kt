@@ -13,7 +13,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import de.infix.testBalloon.framework.core.JUnit4RulesContext
-import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.testSuite
 import org.junit.Rule
 import org.junit.Test
@@ -49,8 +48,7 @@ class JetpackComposeWithJUnit4 {
 }
 // --8<-- [end:junit-jetpackCompose]
 
-@Suppress("ktlint:standard:annotation-spacing")
-@OptIn(TestBalloonExperimentalApi::class)
+@Suppress("ktlint:standard:annotation-spacing", "unused")
 // --8<-- [start:testballoon-jetpackCompose]
 val JetpackComposeWithTestBalloon by testSuite {
     testFixture {

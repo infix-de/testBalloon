@@ -31,7 +31,6 @@ val ConcurrentSuite by testSuite(
 
 // Register a test suite for UI tests. This will combine sequential execution with the presence of a Main dispatcher.
 
-@OptIn(TestBalloonExperimentalApi::class) // required for TestCompartment.MainDispatcher
 val UiSuite by testSuite(
     compartment = { TestCompartment.MainDispatcher() },
     testConfig = TestConfig.statisticsReport()
@@ -39,7 +38,7 @@ val UiSuite by testSuite(
     test("On UI thread") {
         launch(Dispatchers.Main) {
             delay(10.milliseconds)
-            @OptIn(TestBalloonInternalApi::class)
+            @OptIn(TestBalloonInternalApi::class, TestBalloonExperimentalApi::class)
             printlnFixed(testPlatform.threadDisplayName())
         }
     }

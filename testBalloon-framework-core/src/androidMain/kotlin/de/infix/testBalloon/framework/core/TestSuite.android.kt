@@ -24,7 +24,6 @@ import org.junit.runners.model.Statement
  * }
  * ```
  */
-@TestBalloonExperimentalApi
 public open class JUnit4RulesContext : TestFixture.BlockingEnvelope {
     /** Rules in reverse order of registration (LIFO). */
     private val rules = mutableListOf<TestRule>()

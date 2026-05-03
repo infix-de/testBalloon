@@ -10,16 +10,16 @@ public object TestPlatformWasmWasi : TestPlatform {
     override val type: TestPlatform.Type = TestPlatform.Type.WasmWasi
     override val displayName: String = "Wasm/WASI"
     override val parallelism: Int = 1
+
+    @TestBalloonExperimentalApi
     override fun threadId(): ULong = 0UL
 
     @TestBalloonExperimentalApi
     override fun threadDisplayName(): String = "single"
 
-    @TestBalloonExperimentalApi
     override fun environment(variableName: String): String? = wasmWasiEnvironment[variableName]
 }
 
-@TestBalloonExperimentalApi
 public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {
     action(Dispatchers.Default)
 }

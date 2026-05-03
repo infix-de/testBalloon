@@ -69,7 +69,6 @@ public open class TestCompartment(name: String, testConfig: TestConfig) :
          * [testConfig] overrides the compartment's default configuration.
          */
         @Suppress("FunctionName")
-        @TestBalloonExperimentalApi
         public fun MainDispatcher(
             mainDispatcher: CoroutineDispatcher? = null,
             testConfig: TestConfig = TestConfig

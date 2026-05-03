@@ -33,7 +33,6 @@ public object TestPlatformNative : TestPlatform {
     override fun environment(variableName: String): String? = getenv(variableName)?.toKString()
 }
 
-@TestBalloonExperimentalApi
 public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {
     @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     val dispatcher = newSingleThreadContext("single-threading")

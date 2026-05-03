@@ -22,7 +22,6 @@ public object TestPlatformJvm : TestPlatform {
     override fun environment(variableName: String): String? = System.getenv(variableName)
 }
 
-@TestBalloonExperimentalApi
 public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {
     @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     newSingleThreadContext("single-threading").use { dispatcher ->

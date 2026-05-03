@@ -22,7 +22,6 @@ public interface TestPlatformJsHosted : TestPlatform {
     override fun threadDisplayName(): String = "single"
 }
 
-@TestBalloonExperimentalApi
 public actual suspend fun withSingleThreadedDispatcher(action: suspend (dispatcher: CoroutineDispatcher) -> Unit) {
     action(Dispatchers.Default)
 }

@@ -194,7 +194,6 @@ public open class TestConfig internal constructor(
     /**
      * The permit to accept a situation which would otherwise trigger an error in TestBalloon.
      */
-    @TestBalloonExperimentalApi
     public enum class Permit {
         /** Accept a test suite not registering and child tests or suites. */
         SuiteWithoutChildren,
@@ -208,6 +207,7 @@ public open class TestConfig internal constructor(
          * Using `TestScope` with concurrent invocation on a dispatcher with a limited number of threads it known to
          * cause hangups due to thread starvation (see issue #49).
          */
+        @TestBalloonExperimentalApi
         TestScopeWithConcurrentInvocation
     }
 }
@@ -512,7 +512,6 @@ private class InvocationContext(val mode: TestConfig.Invocation) : AbstractCorou
  *
  * Child elements inherit [permits], unless configured otherwise.
  */
-@TestBalloonExperimentalApi
 public fun TestConfig.permits(vararg permits: TestConfig.Permit): TestConfig = parameterizing { parameters ->
     parameters.copy(permits = permits.toSet())
 }
@@ -522,7 +521,6 @@ public fun TestConfig.permits(vararg permits: TestConfig.Permit): TestConfig = p
  *
  * Child elements inherit [permits], unless configured otherwise.
  */
-@TestBalloonExperimentalApi
 public fun TestConfig.addPermits(vararg permits: TestConfig.Permit): TestConfig = parameterizing { parameters ->
     parameters.copy(permits = parameters.permits + permits.toSet())
 }
@@ -532,7 +530,6 @@ public fun TestConfig.addPermits(vararg permits: TestConfig.Permit): TestConfig 
  *
  * Child elements inherit [permits], unless configured otherwise.
  */
-@TestBalloonExperimentalApi
 public fun TestConfig.removePermits(vararg permits: TestConfig.Permit): TestConfig = parameterizing { parameters ->
     parameters.copy(permits = parameters.permits - permits.toSet())
 }
@@ -542,7 +539,6 @@ public fun TestConfig.removePermits(vararg permits: TestConfig.Permit): TestConf
  *
  * Child elements inherit the single-threaded dispatcher as part of their [CoroutineContext].
  */
-@TestBalloonExperimentalApi
 public fun TestConfig.singleThreaded(): TestConfig = executionWrapping { elementAction ->
     withSingleThreadedDispatcher { dispatcher ->
         withContext(dispatcher) {
@@ -561,7 +557,6 @@ public fun TestConfig.singleThreaded(): TestConfig = executionWrapping { element
  * - multiple [TestElement] hierarchies with a [mainDispatcher] configuration may not execute concurrently.
  * Child elements inherit the main dispatcher as part of their [CoroutineContext].
  */
-@TestBalloonExperimentalApi
 public fun TestConfig.mainDispatcher(dispatcher: CoroutineDispatcher? = null): TestConfig =
     executionWrapping { elementAction ->
         withMainDispatcher(dispatcher) {
@@ -610,7 +605,6 @@ internal class TestScopeContext(internal val isEnabled: Boolean, internal val ti
  * See [Dispatchers.setMain] for details. This function, if used exclusively, ensures that only one main dispatcher
  * is active at any point in time.
  */
-@TestBalloonExperimentalApi
 public suspend fun withMainDispatcher(dispatcher: CoroutineDispatcher? = null, action: suspend () -> Unit) {
     val previouslyChanged = mainDispatcherChanged.getAndSet(true)
     require(!previouslyChanged) {

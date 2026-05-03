@@ -11,10 +11,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import de.infix.testBalloon.framework.core.JUnit4RulesContext
-import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.testSuite
 
-@OptIn(TestBalloonExperimentalApi::class)
 val ComposeTestsWithTestBalloon by testSuite {
     testFixture {
         object : JUnit4RulesContext() {

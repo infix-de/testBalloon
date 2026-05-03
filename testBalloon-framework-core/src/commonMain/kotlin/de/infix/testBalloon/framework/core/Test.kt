@@ -47,7 +47,6 @@ public class Test internal constructor(
 
         /** The test timeout if set by [TestConfig.testScope], or null. */
         @Suppress("CanBePrimaryConstructorProperty")
-        @TestBalloonExperimentalApi
         public val testTimeout: Duration? = testTimeout
     }
 

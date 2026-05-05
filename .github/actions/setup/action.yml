@@ -45,25 +45,24 @@ runs:
     # Enable configuration-cache reuse with included builds – https://github.com/gradle/actions/issues/21
     - name: 'Cache build-settings/build'
       # https://github.com/actions/cache/releases
-      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: build-settings/build
         key: build-settings-${{ hashFiles('build-settings/src/**', 'build-settings/*.kts') }}
 
     - name: 'Cache build-logic/build'
-      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: build-logic/build
         key: build-logic-${{ hashFiles('build-logic/src/**', 'build-logic/*.kts', 'build-logic/build/generated/**') }}
 
     - name: 'Set up Gradle'
       # https://github.com/gradle/actions/releases
-      uses: gradle/actions/setup-gradle@f29f5a9d7b09a7c6b29859002d29d24e1674c884 # v5.0.1
+      # DO NOT UPDATE UNTIL CLEARING LICENSE CHANGES INTRODUCED WITH v6.0.0
+      uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
       with:
         build-scan-publish: true
         build-scan-terms-of-use-url: 'https://gradle.com/terms-of-service'
         build-scan-terms-of-use-agree: 'yes'
         cache-disabled: ${{ inputs.gradle-cache-disabled }}
         cache-encryption-key: ${{ inputs.gradle-cache-encryption-key }}
-        # Enable cache writes for branches other than 'main'.
-        cache-read-only: ${{ !(github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases/') || startsWith(github.ref, 'refs/heads/ci-experiments/')) }}

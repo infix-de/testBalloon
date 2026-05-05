@@ -16,15 +16,16 @@ jobs:
     steps:
       - name: 'Check out the project'
         # https://github.com/actions/checkout/releases
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - uses: ./.github/actions/setup
         with:
           gradle-cache-disabled: true
 
       - name: 'Publish to MavenCentral'
-        run: ./gradlew publishAndReleaseToMavenCentral -Pversion=${{ github.ref_name }}
+        run: ./gradlew publishAndReleaseToMavenCentral -Pversion="$PUBLICATION_VERSION"
         env:
+          PUBLICATION_VERSION: ${{ github.ref_name }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}

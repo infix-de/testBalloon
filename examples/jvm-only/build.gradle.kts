@@ -10,9 +10,9 @@ addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.tes
 
 dependencies {
     // required for TestBalloon outside this project:
-    //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
+    //     testImplementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
     // instead of this project-internal dependency:
-    implementation(projects.testBalloonFrameworkCore)
+    testImplementation(projects.testBalloonFrameworkCore)
 
-    implementation(libs.org.jetbrains.kotlin.test) // for assertions only
+    testImplementation(libs.org.jetbrains.kotlin.test) // for assertions only
 }

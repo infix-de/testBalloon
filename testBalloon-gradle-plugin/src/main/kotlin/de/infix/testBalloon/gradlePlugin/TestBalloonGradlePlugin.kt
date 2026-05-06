@@ -68,14 +68,13 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
         // NOTE: Before using `testBalloonProperties.testSourceSetsRegex`, all plugins must have been applied to the
         // project. We rely on the documentation of `KotlinCompilerPluginSupportPlugin`, which states:
         // > the Kotlin plugin inspects the project model in an afterEvaluate handler.
-        return testBalloonProperties.testSourceSetsRegex.containsMatchIn(
+        return testBalloonProperties.isTestSourceSet(
             kotlinCompilation.defaultSourceSet.name
         ).also { applies ->
             if (!applies && extension.debugLevel > DebugLevel.NONE) {
                 project.logger.warn(
                     "$PLUGIN_DISPLAY_NAME: [DEBUG] compiler plugin is not applicable" +
-                        " (source set '${kotlinCompilation.defaultSourceSet.name}'" +
-                        " does not match '${testBalloonProperties.testSourceSetsRegex}')."
+                        " ('${kotlinCompilation.defaultSourceSet.name}' is not a test source set)."
                 )
             }
         }

@@ -5,6 +5,7 @@ package de.infix.testBalloon.gradlePlugin.shared
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.gradle.api.Project
+import org.gradle.testing.base.TestingExtension
 import kotlin.reflect.KProperty
 
 internal class TestBalloonGradleProperties(val project: Project) {
@@ -34,7 +35,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
      *
      * IMPLEMENTATION NOTES: Before using this value, ensure that all plugins are applied to the project.
      */
-    val testSourceSetsRegex by testsOnlyProjectDependentRegexProperty(
+    private val testSourceSetsRegex by testsOnlyProjectDependentRegexProperty(
         defaultValue = """[tT]est(?!Fixtures)""",
         testsOnlyProjectValue = { testSourceSetsRegexTestsOnlyProject }
     )
@@ -203,5 +204,17 @@ internal class TestBalloonGradleProperties(val project: Project) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Result = conversion(
             project.findProperty("${Constants.GRADLE_PROPERTY_PREFIX}.${property.name}")?.toString() ?: default
         )
+    }
+
+    /**
+     * IMPLEMENTATION NOTES: Use this function only after the project has been fully configured (e.g. in
+     * `afterEvaluate` or at task execution time).
+     */
+    internal fun isTestSourceSet(name: String): Boolean =
+        testSourceSetsRegex.containsMatchIn(name) || jvmTestSuites?.contains(name) == true
+
+    private val jvmTestSuites by lazy {
+        @Suppress("UnstableApiUsage")
+        project.extensions.findByType(TestingExtension::class.java)?.suites?.map { it.name }
     }
 }

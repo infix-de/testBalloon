@@ -114,7 +114,7 @@ class CompilerPluginIrGenerationExtension(private val compilerConfiguration: Com
 
         if (debugLevel > DebugLevel.NONE) {
             messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+                CompilerMessageSeverity.STRONG_WARNING,
                 "$PLUGIN_DISPLAY_NAME: [DEBUG] version $PROJECT_VERSION is processing" +
                     " module ${moduleFragment.name}."
             )
@@ -774,10 +774,10 @@ private interface Reporting {
         }
 
     fun reportDebug(message: String, declaration: IrElement? = null) =
-        report(CompilerMessageSeverity.WARNING, "[DEBUG] $message", declaration)
+        report(CompilerMessageSeverity.STRONG_WARNING, "[DEBUG] $message", declaration)
 
     fun reportWarning(message: String, declaration: IrElement? = null) =
-        report(CompilerMessageSeverity.WARNING, message, declaration)
+        report(CompilerMessageSeverity.STRONG_WARNING, message, declaration)
 
     fun reportError(message: String, declaration: IrElement? = null) =
         report(CompilerMessageSeverity.ERROR, message, declaration)

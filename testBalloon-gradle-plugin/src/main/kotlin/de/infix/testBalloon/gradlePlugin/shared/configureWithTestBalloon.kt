@@ -45,14 +45,12 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
     configureDiagnosticsTask()
 
     afterEvaluate {
-        val testSourceSetsRegex = testBalloonProperties.testSourceSetsRegex
         val notIncrementallyCompilableTestSourceSetsRegex =
             testBalloonProperties.notIncrementallyCompilableTestSourceSetsRegex
 
         fun disablePluginOptions(sourceSetName: String) = listOf(
             "-P",
-            "plugin:${Constants.COMPILER_PLUGIN_NAME}" +
-                ":disablingReason=source set '$sourceSetName' does not match '$testSourceSetsRegex'"
+            "plugin:${Constants.COMPILER_PLUGIN_NAME}:disablingReason='$sourceSetName' is not a test source set"
         )
 
         fun debugLog(message: String) {
@@ -67,7 +65,7 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                     targets.all {
                         compilations.all {
                             val sourceSetName = defaultSourceSet.name
-                            if (testSourceSetsRegex.containsMatchIn(sourceSetName)) {
+                            if (testBalloonProperties.isTestSourceSet(sourceSetName)) {
                                 if (notIncrementallyCompilableTestSourceSetsRegex.containsMatchIn(sourceSetName)) {
                                     compileTaskProvider.configure {
                                         if (this is AbstractKotlinCompile<*>) {
@@ -91,7 +89,7 @@ internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloon
                 is KotlinSingleTargetExtension<*> ->
                     target.compilations.all {
                         val sourceSetName = defaultSourceSet.name
-                        if (!testSourceSetsRegex.containsMatchIn(sourceSetName)) {
+                        if (!testBalloonProperties.isTestSourceSet(sourceSetName)) {
                             compileTaskProvider.configure {
                                 this.compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(sourceSetName))
                             }

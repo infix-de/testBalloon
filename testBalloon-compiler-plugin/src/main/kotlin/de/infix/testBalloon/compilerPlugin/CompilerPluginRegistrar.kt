@@ -35,7 +35,7 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
 
             if (debugLevel > DebugLevel.NONE) {
                 messageCollector.report(
-                    CompilerMessageSeverity.WARNING,
+                    CompilerMessageSeverity.STRONG_WARNING,
                     "$PLUGIN_DISPLAY_NAME: [DEBUG] compiler plugin is disabled ($disablingReason)."
                 )
             }

@@ -116,7 +116,8 @@ TestBallon has a three-stage test process, built into the IDE run configuration 
 --
 To run the Gradle tasks `clean compileTestKotlinJvm` for the link:../examples/general[examples/general] project:
 
-* `gradlew -Dorg.gradle.debug=true -Pkotlin.compiler.execution.strategy=in-process :examples:general:clean :examples:general:compileTestKotlinJvm`
+1. Open a terminal (the following will probably not work correctly if invoked directly from the IDE).
+2. `gradlew -Dorg.gradle.debug=true -Pkotlin.compiler.execution.strategy=in-process :examples:general:clean :examples:general:compileTestKotlinJvm`
 --
 
 2. Attach the JVM debugger to port 5005. In IntelliJ IDEA, use the command _Run – Attach to Process_.

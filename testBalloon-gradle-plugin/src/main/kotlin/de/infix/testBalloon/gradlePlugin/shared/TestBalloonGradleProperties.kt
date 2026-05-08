@@ -77,7 +77,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
      *
      * If one of those plugins is present in a project, TestBalloon will cover all compilations and all source sets.
      */
-    private val testsOnlyProjectPlugins by stringProperty("jvm-test-suite,com.android.test")
+    private val testsOnlyProjectPlugins by stringProperty("com.android.test")
 
     /**
      * Returns true if [project] is a tests-only project which uses all source sets for tests.

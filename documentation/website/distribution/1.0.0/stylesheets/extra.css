@@ -1,0 +1,7 @@
+.green {
+    color: #00e676;
+}
+
+div.green-highlight .hll {
+    background-color: rgba(0, 230, 118, 0.4)
+}

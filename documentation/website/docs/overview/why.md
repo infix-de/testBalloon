@@ -7,7 +7,7 @@ DSL-based and powered by a compiler plugin, TestBalloon **eliminates bloat** fro
 
 1. Find examples in the documentation's sections on [Migrating from JUnit](../how-to/migrating-from-junit.md#extensions) and other test frameworks.
 
-With its concise DSL and decorator chains for configuration, TestBalloon is **so easy to customize that it's actually yours**.
+With its concise DSL and a single decorator chain for configuration, TestBalloon is **extremely easy to use and customize**.
 
 ## Perfectly integrated
 
@@ -71,7 +71,7 @@ Of course, advanced testing is often found in closed-source products, and TestBa
 
 ### Stability
 
-TestBalloon has a **stable feature set**. However, it is still **evolving**, so you should expect some migration issues. Breaking changes will be documented in the release notes, along with migration guidance.
+At version 1.0.0, TestBalloon became **stable**. It follows semantic versioning. Breaking changes are documented in the release notes, along with migration guidance.
 
 ## Why wait?
 

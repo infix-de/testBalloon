@@ -1,9 +1,24 @@
-## Unreleased
+## 1.0.0 (May 14, 2026)
+
+TestBalloon release variants:
+
+| TestBalloon version | Supported Kotlin versions |
+|---------------------|---------------------------|
+| 1.0.0-K2.4.0-Beta2  | 2.4.0-Beta2               |
+| 1.0.0-K2.3.20       | 2.3.20 … 2.3.21           |
+| 1.0.0-K2.3.0        | 2.3.0 … 2.3.10            |
+| 1.0.0-K2.2.21       | 2.2.21                    |
+| 1.0.0-K2.2.0        | 2.2.0 … 2.2.20            |
+| 1.0.0-K2.1.20       | 2.1.20 … 2.1.21           |
+| 1.0.0-K2.1.0        | 2.1.0 … 2.1.10            |
+| 1.0.0-K2.0.0        | 2.0.0 … 2.0.21            |
 
 ### Highlights
 
-* Tests and test suites now use exactly one `name` parameter. The former separate `displayName` was a workaround for JUnit 5 limitations which do not affect TestBalloon.
+* **TestBalloon's runtime API is now stable.**
+* Tests and test suites now use exactly one `name` parameter. The former separate `displayName` is no longer needed.
 * IDE: The editor's gutter icons can now run top-level test suites with an individual name.
+* TestBalloon now supports the Amper build tool (experimental, without IDE run gutters).
 
 ### Breaking
 

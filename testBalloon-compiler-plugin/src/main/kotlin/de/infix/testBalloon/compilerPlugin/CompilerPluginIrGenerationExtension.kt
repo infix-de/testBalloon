@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -70,10 +68,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -452,8 +448,8 @@ private class ModuleTransformer(
         val symbol = irPropertySymbol(nativeEntryPointPropertyId)
 
         with(symbol.owner) {
-            annotations +=
-                symbol.irAnnotation(irConstructorCall(irClassSymbol("kotlin.native.EagerInitialization")).symbol)
+            annotations += irConstructorCall(irClassSymbol("kotlin.native.EagerInitialization"))
+
             initializeWith(nativeEntryPointPropertyId.callableName, pluginContext.irBuiltIns.unitType) {
                 +irSimpleFunctionCall(
                     configuration.initializeTestFrameworkFunctionSymbol,
@@ -493,13 +489,10 @@ private class ModuleTransformer(
                 isStatic = true
             ).apply {
                 parent = classSymbol.owner
-                annotations +=
-                    classSymbol.irAnnotation(
-                        irConstructorCall(irClassSymbol(JvmName::class.qualifiedName!!)).symbol
-                    ).apply {
-                        arguments[0] =
-                            Constants.JVM_DISCOVERY_RESULT_METHOD_NAME.toIrConst(pluginContext.irBuiltIns.stringType)
-                    }
+                annotations += irConstructorCall(
+                    irClassSymbol(JvmName::class.qualifiedName!!),
+                    Constants.JVM_DISCOVERY_RESULT_METHOD_NAME.toIrConst(pluginContext.irBuiltIns.stringType)
+                )
 
                 body = DeclarationIrBuilder(pluginContext, symbol).irBlockBody {
                     +irSimpleFunctionCall(
@@ -583,15 +576,17 @@ private class ModuleTransformer(
 
             addFakeOverrides(IrTypeSystemContextImpl(irBuiltIns))
 
-            annotations += irClass.symbol.irAnnotation(irConstructorCall(jUnit4RunWithAnnotationSymbol).symbol).apply {
-                arguments[0] = IrClassReferenceImpl(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    type = irBuiltIns.kClassClass.typeWith(testBalloonJUnit4RunnerSymbol.defaultType),
-                    symbol = testBalloonJUnit4RunnerSymbol,
-                    classType = testBalloonJUnit4RunnerSymbol.defaultType
+            annotations +=
+                irConstructorCall(
+                    jUnit4RunWithAnnotationSymbol,
+                    IrClassReferenceImpl(
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET,
+                        type = irBuiltIns.kClassClass.typeWith(testBalloonJUnit4RunnerSymbol.defaultType),
+                        symbol = testBalloonJUnit4RunnerSymbol,
+                        classType = testBalloonJUnit4RunnerSymbol.defaultType
+                    )
                 )
-            }
         }
     }
 
@@ -683,9 +678,6 @@ private class ModuleTransformer(
             }
         }
     }
-
-    private fun IrSymbol.irAnnotation(irClassSymbol: IrConstructorSymbol) =
-        pluginContext.irBuiltIns.createIrBuilder(this).irAnnotation(irClassSymbol, emptyList())
 
     /**
      * Registers a reference from [entryPointFile] to [referencedDeclaration], residing in another file.

@@ -1,6 +1,6 @@
 # ![TestBalloon logo](assets/Logo_Text_291x74-light.png#only-light)![TestBalloon logo](assets/Logo_Text_291x74-dark.png#only-dark)
 
-TestBalloon is a DSL-based Kotlin-first test framework. Powered by a compiler plugin, TestBalloon lets you configure tests with plain Kotlin instead of restrictive, annotation-based magic. TestBalloon's concise API is extremely flexible and easy to customize for any test setup.
+TestBalloon is a DSL-based Kotlin-first test framework. It lets you configure tests with plain Kotlin instead of restrictive, annotation-based magic. TestBalloon's concise API is extremely flexible and easy to customize for any test setup.
 
 TestBalloon is compatible with existing assertion libraries and Kotlin Power Assert. It supports all Kotlin target platforms in first-party quality (including Android device tests and Robolectric). TestBalloon has full coroutine support built in and can run your tests with the highest degree of parallelism available.
 

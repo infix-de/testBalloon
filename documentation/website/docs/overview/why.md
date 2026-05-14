@@ -1,13 +1,13 @@
 > _I didn't know Kotlin testing could be that easy._
 
-## Kotlin first
+## Concise and easy like Kotlin
 
-DSL-based and powered by a compiler plugin, TestBalloon **eliminates bloat** from test code.(1)
+With its Kotlin-first, DSL-based API, TestBalloon **eliminates bloat** from test code, letting you focus on your domain.(1)
 { .annotate }
 
 1. Find examples in the documentation's sections on [Migrating from JUnit](../how-to/migrating-from-junit.md#extensions) and other test frameworks.
 
-With its concise DSL and a single decorator chain for configuration, TestBalloon is **extremely easy to use and customize**.
+TestBalloon's elegant, small-surface API and the power of Kotlin **keep testing easy as your projects grow**, and as you scale up (more complex interactions) or out (across targets).
 
 ## Perfectly integrated
 
@@ -58,7 +58,7 @@ TestBalloon **can cover large test sets** and has been observed running **1.7 mi
 
 ## Production-ready
 
-TestBalloon is **actively used in production**.
+TestBalloon is **actively used in production** at scale.
 
 Open source products using TestBalloon include:
 
@@ -73,7 +73,7 @@ Of course, advanced testing is often found in closed-source products, and TestBa
 
 At version 1.0.0, TestBalloon became **stable**. It follows semantic versioning. Breaking changes are documented in the release notes, along with migration guidance.
 
-## Why wait?
+## Start writing great tests!
 
 TestBalloon is your trouble reducer and helps you **release with confidence**.
 

@@ -1,10 +1,12 @@
 ## 1.0.0 (May 14, 2026)
 
-TestBalloon release variants:
+After its initial publication at KotlinConf 2025 and 50 public releases, **TestBalloon 1.0.0 is now stable**.
+
+### TestBalloon release variants
 
 | TestBalloon version | Supported Kotlin versions |
 |---------------------|---------------------------|
-| 1.0.0-K2.4.0-Beta2  | 2.4.0-Beta2               |
+| 1.0.0-K2.4.0-Beta2  | 2.4.0-Beta2 … 2.4.0-RC    |
 | 1.0.0-K2.3.20       | 2.3.20 … 2.3.21           |
 | 1.0.0-K2.3.0        | 2.3.0 … 2.3.10            |
 | 1.0.0-K2.2.21       | 2.2.21                    |
@@ -13,7 +15,7 @@ TestBalloon release variants:
 | 1.0.0-K2.1.0        | 2.1.0 … 2.1.10            |
 | 1.0.0-K2.0.0        | 2.0.0 … 2.0.21            |
 
-### Highlights
+### Highlights since 0.8.4
 
 * **TestBalloon's runtime API is now stable.**
 * Tests and test suites now use exactly one `name` parameter. The former separate `displayName` is no longer needed.

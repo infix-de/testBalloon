@@ -1,6 +1,6 @@
 # Agent Guidelines for TestBalloon
 
-TestBalloon is a DSL-based, Kotlin-first test framework powered by a compiler plugin. It supports all Kotlin target platforms (JVM, JS, WebAssembly, Native, Android). This document guides AI agents working in this repository.
+TestBalloon is a DSL-based, Kotlin-first test framework. It supports all Kotlin target platforms (JVM, JS, WebAssembly, Native, Android). This document guides AI agents working in this repository.
 
 ## Important
 
@@ -14,7 +14,7 @@ Everything – including issues, pull request messages, comments, code – shoul
 |---------------------------------|----------------------------------------------------------------------------|
 | `testBalloon-framework-core/`   | Core framework module (Kotlin Multiplatform)                               |
 | `testBalloon-framework-shared/` | Shared internal framework utilities                                        |
-| `testBalloon-compiler-plugin/`  | Kotlin compiler plugin that powers the DSL                                 |
+| `testBalloon-compiler-plugin/`  | Kotlin compiler plugin that discovers top-level test suites                |
 | `testBalloon-gradle-plugin/`    | Gradle plugin for test discovery and configuration                         |
 | `testBalloon-integration-*/`    | Optional integrations (Kotest assertions, Robolectric, blocking detection) |
 | `build-logic/`                  | Convention plugins for the build (compiled separately)                     |

@@ -80,7 +80,7 @@
 
         The repository contains configuration examples for [Android]({{ repo.main_url }}/examples/android/build.gradle.kts) and [Multiplatform library with Android]({{ repo.main_url }}/examples/multiplatform-library-with-android/build.gradle.kts).
 
-4. Add a dependency for the assertions library of your choice:
+4. Add a dependency for the assertion library of your choice:
 
     === "kotlin.test assertions"
 

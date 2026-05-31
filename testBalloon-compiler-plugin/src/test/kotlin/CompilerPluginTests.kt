@@ -82,6 +82,20 @@ private class CompilerPluginTests {
     }
 
     @Test
+    fun topLevelSuiteVisibility() {
+        compilation(
+            """
+                import fakeTestFramework.testSuite
+                
+                private val TestSuiteOne by testSuite {}
+            """,
+            expectedExitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR
+        ) {
+            assertTrue("Top-level test suite property must have 'internal' or 'public' visibility." in messages)
+        }
+    }
+
+    @Test
     fun debugEnabled() {
         compilation(
             """

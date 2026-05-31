@@ -256,6 +256,18 @@ private class ModuleTransformer(
                     reportDebug("Found top-level test suite property '${irProperty.fqNameWhenAvailable}'.", irProperty)
                 }
 
+                if (irProperty.visibility !in acceptableTopLevelSuiteVisibilities) {
+                    val acceptableVisibilityNames =
+                        acceptableTopLevelSuiteVisibilities.map { "'${it.externalDisplayName}'" }
+                            .sorted()
+                            .joinToString(separator = " or ")
+
+                    reportError(
+                        "Top-level test suite property must have $acceptableVisibilityNames visibility.",
+                        irProperty
+                    )
+                }
+
                 irProperty.addTestSuitePropertyNameToInitializerCall(
                     initializer,
                     initializerCall,
@@ -268,6 +280,9 @@ private class ModuleTransformer(
 
         return super.visitPropertyNew(declaration)
     }
+
+    private val acceptableTopLevelSuiteVisibilities =
+        setOf(DescriptorVisibilities.INTERNAL, DescriptorVisibilities.PUBLIC)
 
     override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
         // Process the entire module fragment first, collecting all test suites.

@@ -6,7 +6,7 @@ After its initial publication at KotlinConf 2025 and 50 public releases, **TestB
 
 | TestBalloon version | Supported Kotlin versions |
 |---------------------|---------------------------|
-| 1.0.0-K2.4.0-Beta2  | 2.4.0-Beta2 … 2.4.0-RC2   |
+| 1.0.0-K2.4.0        | 2.4.0                     |
 | 1.0.0-K2.3.20       | 2.3.20 … 2.3.21           |
 | 1.0.0-K2.3.0        | 2.3.0 … 2.3.10            |
 | 1.0.0-K2.2.21       | 2.2.21                    |

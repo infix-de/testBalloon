@@ -5,6 +5,7 @@ import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
+import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlin.io.path.div
 import kotlin.io.path.moveTo
@@ -54,7 +55,7 @@ val IncrementalCompilationTests by testSuite(
 
 @TestRegistering
 private fun TestSuiteScope.incrementalCompilationTestSuite(
-    projectName: String,
+    @TestElementName(prefix = "project: ") projectName: String,
     testConfig: TestConfig = TestConfig,
     action: IncrementalCompilationTestProject.() -> Unit
 ) = testSuite("project: $projectName", testConfig) {

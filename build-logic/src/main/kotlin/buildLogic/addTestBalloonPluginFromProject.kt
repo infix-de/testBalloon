@@ -3,7 +3,6 @@
 package buildLogic
 
 import de.infix.testBalloon.framework.shared.internal.Constants
-import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleExtension
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleProperties
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency, sharedDependency: Dependency) {
     val testBalloonProperties = TestBalloonGradleProperties(this)
 
+    // Add the compiler plugin as done by TestBalloonGradlePlugin.
     with(dependencies) {
         add(PLUGIN_CLASSPATH_CONFIGURATION_NAME, compilerPluginDependency)
         try {
@@ -36,40 +36,25 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
         }
     }
 
-    // We use afterEvaluate here to ensure that `extension.debugLevel` is initialized.
-    afterEvaluate {
-        val extension by lazy { project.extensions.getByType(TestBalloonGradleExtension::class.java) }
+    configureWithTestBalloon(
+        testBalloonProperties = testBalloonProperties,
+        pluginDisplayName = "Plugin ${Constants.COMPILER_PLUGIN_NAME}",
+        junitPlatformLauncher = libraryFromCatalog("org.junit.platform.launcher")
+    )
 
-        val junitPlatformLauncherDependentConfigurationRegex =
-            testBalloonProperties.junitPlatformLauncherDependentConfigurationRegex
-
-        configurations.configureEach {
-            if (junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
-                if (extension.debugLevel > DebugLevel.NONE) {
-                    project.logger.warn(
-                        "Plugin ${Constants.COMPILER_PLUGIN_NAME}: [DEBUG] adding JUnit Platform launcher to $this."
-                    )
+    // Configure compiler plugin options as done by KotlinCompilerPluginSupportPlugin.
+    extensions.configure<HasConfigurableKotlinCompilerOptions<*>>("kotlin") {
+        compilerOptions {
+            freeCompilerArgs.addAll(
+                provider {
+                    // Lazily configuring the compiler options ensures that the extension is guaranteed to be present
+                    // and the build script (including extension settings) has been completely evaluated.
+                    val extension = extensions.getByType(TestBalloonGradleExtension::class.java)
+                    compilerPluginOptionValues(extension, testBalloonProperties).flatMap { (key, value) ->
+                        listOf("-P", "plugin:${Constants.COMPILER_PLUGIN_NAME}:$key=$value")
+                    }
                 }
-                dependencies.add(
-                    project.dependencies.create(libraryFromCatalog("org.junit.platform.launcher"))
-                )
-            }
-        }
-    }
-
-    configureWithTestBalloon(testBalloonProperties)
-
-    // Set the compiler plugin options at a point in time where we can be sure that the testBalloon extension
-    // has either been invoked, or will not ever be invoked.
-    afterEvaluate {
-        extensions.configure<HasConfigurableKotlinCompilerOptions<*>>("kotlin") {
-            val testBalloonExtension =
-                extensions.getByName(Constants.GRADLE_EXTENSION_NAME) as TestBalloonGradleExtension
-            compilerOptions {
-                compilerPluginOptionValues(testBalloonExtension, testBalloonProperties).forEach { (key, value) ->
-                    freeCompilerArgs.addAll("-P", "plugin:${Constants.COMPILER_PLUGIN_NAME}:$key=$value")
-                }
-            }
+            )
         }
     }
 }

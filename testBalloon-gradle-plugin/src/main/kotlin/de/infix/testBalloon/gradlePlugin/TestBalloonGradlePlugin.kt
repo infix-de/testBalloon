@@ -43,25 +43,11 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
             // The configuration "kotlinNativeCompilerPluginClasspath" is unavailable with AGP9's built-in Kotlin.
         }
 
-        // Why afterEvaluate? The value of junitPlatformLauncherDependentConfigurationRegex depends on specific
-        // plugins being applied. We need to make sure that all plugins are applied before using it.
-        afterEvaluate {
-            val junitPlatformLauncherDependentConfigurationRegex =
-                testBalloonProperties.junitPlatformLauncherDependentConfigurationRegex
-
-            configurations.configureEach {
-                if (junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
-                    dependencies.add(project.dependencies.create(PROJECT_JUNIT_PLATFORM_LAUNCHER))
-                    if (extension.debugLevel > DebugLevel.NONE) {
-                        project.logger.warn(
-                            "$PLUGIN_DISPLAY_NAME: [DEBUG] adding JUnit Platform launcher to $this."
-                        )
-                    }
-                }
-            }
-        }
-
-        configureWithTestBalloon(testBalloonProperties)
+        configureWithTestBalloon(
+            testBalloonProperties = testBalloonProperties,
+            pluginDisplayName = PLUGIN_DISPLAY_NAME,
+            junitPlatformLauncher = PROJECT_JUNIT_PLATFORM_LAUNCHER
+        )
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {

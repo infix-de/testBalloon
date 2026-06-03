@@ -207,8 +207,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
     }
 
     /**
-     * IMPLEMENTATION NOTES: Use this function only after the project has been fully configured (e.g. in
-     * `afterEvaluate` or at task execution time).
+     * IMPLEMENTATION NOTES: Use this function only after the build script has been fully evaluated.
      */
     internal fun isTestSourceSet(name: String): Boolean =
         testSourceSetsRegex.containsMatchIn(name) || jvmTestSuites?.contains(name) == true

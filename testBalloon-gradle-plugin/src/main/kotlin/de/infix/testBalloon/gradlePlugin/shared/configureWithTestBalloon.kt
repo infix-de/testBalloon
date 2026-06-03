@@ -37,65 +37,87 @@ import kotlin.io.path.writeText
 /**
  * Configures the project for TestBalloon, given the precondition that the compiler plugin artifacts are set up.
  */
-internal fun Project.configureWithTestBalloon(testBalloonProperties: TestBalloonGradleProperties) {
+internal fun Project.configureWithTestBalloon(
+    testBalloonProperties: TestBalloonGradleProperties,
+    pluginDisplayName: String,
+    junitPlatformLauncher: String
+) {
     val testBalloonExtension =
         extensions.create(Constants.GRADLE_EXTENSION_NAME, TestBalloonGradleExtension::class.java)
 
     configureTestTasks(testBalloonProperties, testBalloonExtension)
     configureDiagnosticsTask()
 
-    afterEvaluate {
-        val notIncrementallyCompilableTestSourceSetsRegex =
-            testBalloonProperties.notIncrementallyCompilableTestSourceSetsRegex
-
-        fun disablePluginOptions(sourceSetName: String) = listOf(
-            "-P",
-            "plugin:${Constants.COMPILER_PLUGIN_NAME}:disablingReason='$sourceSetName' is not a test source set"
-        )
-
-        fun debugLog(message: String) {
-            if (testBalloonExtension.debugLevel > DebugLevel.NONE) {
-                project.logger.warn("Plugin ${Constants.COMPILER_PLUGIN_NAME}: [DEBUG] $message")
-            }
+    // Conditionally configure the JUnit Platform Launcher
+    configurations.configureEach {
+        // Lazy configuration ensures that all plugins are applied, which is a prerequisite for
+        // accessing `junitPlatformLauncherDependentConfigurationRegex`.
+        if (testBalloonProperties.junitPlatformLauncherDependentConfigurationRegex.containsMatchIn(name)) {
+            dependencies.addLater(
+                provider {
+                    // Lazily configuring the dependency ensures that the extension is guaranteed to be present
+                    // and the build script (including extension settings) has been completely evaluated.
+                    if (testBalloonExtension.debugLevel > DebugLevel.NONE) {
+                        project.logger.warn(
+                            "$pluginDisplayName: [DEBUG] adding JUnit Platform launcher to $this."
+                        )
+                    }
+                    project.dependencies.create(junitPlatformLauncher)
+                }
+            )
         }
+    }
 
-        runCatching { extensions.findByName("kotlin") as? KotlinProjectExtension }.getOrNull()?.run {
-            when (this) {
-                is KotlinMultiplatformExtension ->
-                    targets.all {
-                        compilations.all {
-                            val sourceSetName = defaultSourceSet.name
-                            if (testBalloonProperties.isTestSourceSet(sourceSetName)) {
-                                if (notIncrementallyCompilableTestSourceSetsRegex.containsMatchIn(sourceSetName)) {
-                                    compileTaskProvider.configure {
-                                        if (this is AbstractKotlinCompile<*>) {
-                                            debugLog("disabling incremental compilation for $project, task '$name'.")
-                                            incremental = false
-                                            if (this is Kotlin2JsCompile) {
-                                                @Suppress("INVISIBLE_REFERENCE")
-                                                incrementalJsKlib = false
-                                            }
+    val notIncrementallyCompilableTestSourceSetsRegex =
+        testBalloonProperties.notIncrementallyCompilableTestSourceSetsRegex
+
+    fun disablePluginOptions(sourceSetName: String) = listOf(
+        "-P",
+        "plugin:${Constants.COMPILER_PLUGIN_NAME}:disablingReason='$sourceSetName' is not a test source set"
+    )
+
+    fun debugLog(message: String) {
+        if (testBalloonExtension.debugLevel > DebugLevel.NONE) {
+            project.logger.warn("Plugin ${Constants.COMPILER_PLUGIN_NAME}: [DEBUG] $message")
+        }
+    }
+
+    extensions.findByType(KotlinProjectExtension::class.java)?.apply {
+        when (this) {
+            is KotlinMultiplatformExtension ->
+                targets.configureEach {
+                    compilations.configureEach {
+                        val sourceSetName = defaultSourceSet.name
+                        if (testBalloonProperties.isTestSourceSet(sourceSetName)) {
+                            if (notIncrementallyCompilableTestSourceSetsRegex.containsMatchIn(sourceSetName)) {
+                                compileTaskProvider.configure {
+                                    if (this is AbstractKotlinCompile<*>) {
+                                        debugLog("disabling incremental compilation for $project, task '$name'.")
+                                        incremental = false
+                                        if (this is Kotlin2JsCompile) {
+                                            @Suppress("INVISIBLE_REFERENCE")
+                                            incrementalJsKlib = false
                                         }
                                     }
                                 }
-                            } else {
-                                compileTaskProvider.configure {
-                                    this.compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(sourceSetName))
-                                }
                             }
-                        }
-                    }
-
-                is KotlinSingleTargetExtension<*> ->
-                    target.compilations.all {
-                        val sourceSetName = defaultSourceSet.name
-                        if (!testBalloonProperties.isTestSourceSet(sourceSetName)) {
+                        } else {
                             compileTaskProvider.configure {
                                 this.compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(sourceSetName))
                             }
                         }
                     }
-            }
+                }
+
+            is KotlinSingleTargetExtension<*> ->
+                target.compilations.configureEach {
+                    val sourceSetName = defaultSourceSet.name
+                    if (!testBalloonProperties.isTestSourceSet(sourceSetName)) {
+                        compileTaskProvider.configure {
+                            this.compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(sourceSetName))
+                        }
+                    }
+                }
         }
     }
 }
@@ -385,10 +407,9 @@ private fun Project.configureTestTasks(
     }
 }
 
-private fun Project.configureDiagnosticsTask() = afterEvaluate {
+private fun Project.configureDiagnosticsTask() {
     val taskName = "testBalloonDiagnostics"
-    val kotlinExtension =
-        runCatching { extensions.findByName("kotlin") as? KotlinProjectExtension }.getOrNull()
+    val kotlinExtension by lazy { extensions.findByType(KotlinProjectExtension::class.java) }
 
     tasks.register(taskName) {
         group = "help"

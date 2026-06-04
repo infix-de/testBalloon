@@ -266,6 +266,8 @@ private class ModuleTransformer(
                         "Top-level test suite property must have $acceptableVisibilityNames visibility.",
                         irProperty
                     )
+
+                    return@withErrorReporting
                 }
 
                 irProperty.addTestSuitePropertyNameToInitializerCall(

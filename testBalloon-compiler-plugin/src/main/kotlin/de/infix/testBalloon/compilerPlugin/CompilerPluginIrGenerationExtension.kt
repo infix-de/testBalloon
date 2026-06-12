@@ -61,10 +61,12 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -247,7 +249,7 @@ private class ModuleTransformer(
 
             // Look for an initialization via a function call.
             val initializer = irProperty.backingField?.initializer ?: return@withErrorReporting
-            val initializerCall = initializer.expression as? IrCall ?: return@withErrorReporting
+            val initializerCall = initializer.expression.irCall() ?: return@withErrorReporting
             val initializerCallFunction = initializerCall.symbol.owner
 
             // Consider properties initialized by `@TestRegistering` functions only.
@@ -384,12 +386,12 @@ private class ModuleTransformer(
 
         initializer.transformChildren(
             object : IrElementTransformerVoid() {
-                var callProcessed = false
-
                 override fun visitCall(expression: IrCall): IrExpression {
-                    // Fast path: Skip all calls after the first one.
-                    if (callProcessed) return super.visitCall(expression)
-                    callProcessed = true
+                    // Skip everything except the initializer call.
+                    // This is not just an optimization, but essential for correctness: In case the initializer
+                    // uses a block body for argument reordering, there may be other expressions present among
+                    // children (the transformation is recursive).
+                    if (expression != initializerCall) return super.visitCall(expression)
 
                     @Suppress("UnnecessaryVariable", "RedundantSuppression")
                     val originalCall = expression
@@ -718,6 +720,18 @@ private class ModuleTransformer(
 
     fun IrClass.isSameOrSubTypeOf(irSupertypeClassSymbol: IrClassSymbol): Boolean =
         symbol.owner.defaultType.isSubtypeOfClass(irSupertypeClassSymbol)
+
+    /**
+     * Returns the [IrCall] for an expression which represents a function call, otherwise null.
+     *
+     * In most cases, the result will be the expression itself. But if a function call has out-of-order arguments, the
+     * compiler may create a block with temporary variables for arguments to preserve the call site's evaluation order.
+     * The actual IrCall in the latter case will be the block's last statement.
+     */
+    private fun IrExpression.irCall(): IrCall? = this as? IrCall
+        ?: (this as? IrBlock)
+            ?.takeIf { it.origin == IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL }
+            ?.statements?.lastOrNull() as? IrCall
 }
 
 private fun IrBuilderWithScope.irSimpleFunctionCall(

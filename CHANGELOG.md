@@ -1,3 +1,13 @@
+## Unreleased
+
+_This is a maintenance release, binary-compatible with 1.0.0._
+
+### Fixes
+
+* Gradle plugin: Fix plugin order dependency problems ("A problem was found with the configuration of task…") with other plugins using `afterEvaluate`. (#80)
+* Compiler plugin: Properly diagnose unsupported private top-level suite properties, whose presence formerly produced `BackendException: Backend Internal error: Exception during IR lowering`. (#77)
+* Compiler plugin: Handle top-level properties initialized with argument reordering. (#81)
+
 ## 1.0.0 (May 14, 2026)
 
 After its initial publication at KotlinConf 2025 and 50 public releases, **TestBalloon 1.0.0 is now stable**.

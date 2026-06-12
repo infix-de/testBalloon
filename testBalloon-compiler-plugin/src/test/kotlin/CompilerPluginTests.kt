@@ -96,7 +96,36 @@ private class CompilerPluginTests {
     }
 
     @Test
-    fun debugEnabled() {
+    fun topLevelSuiteWithArgumentReordering() {
+        compilation(
+            """
+                import de.infix.testBalloon.framework.shared.TestRegistering
+                import de.infix.testBalloon.framework.shared.TestSuitePropertyName
+                import fakeTestFramework.testSuite
+                import fakeTestFramework.TestSuite
+
+                @TestRegistering
+                fun customTestSuite(
+                    @TestSuitePropertyName propertyName: String = "",
+                    first: List<Int>? = null,
+                    second: List<Int>? = null,
+                    content: TestSuite.() -> Unit
+                ): Lazy<TestSuite> = testSuite(qualifiedPropertyName = propertyName, content = content)
+                
+                val SuiteWithArgumentReordering by customTestSuite(
+                    second = listOf(2), // declared 2nd, passed 1st  -> out of order
+                    first = listOf(1) // declared 1st, passed 2nd  -> non-constant value forces a temporary
+                ) {
+                }
+            """,
+            debugLevel = "DISCOVERY"
+        ) {
+            assertTrue("[DEBUG] Found top-level test suite property 'SuiteWithArgumentReordering'" in messages)
+        }
+    }
+
+    @Test
+    fun discoveryDebugLogging() {
         compilation(
             """
                 import fakeTestFramework.testSuite

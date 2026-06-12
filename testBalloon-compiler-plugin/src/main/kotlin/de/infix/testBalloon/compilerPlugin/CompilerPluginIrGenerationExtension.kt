@@ -703,6 +703,15 @@ private class ModuleTransformer(
         }
     }
 
+    private fun IrBuilderWithScope.irSimpleFunctionCall(
+        irFunctionSymbol: IrSimpleFunctionSymbol,
+        vararg irValues: IrExpression?
+    ) = irCall(irFunctionSymbol).apply {
+        irValues.forEachIndexed { index, irValue ->
+            arguments[index] = irValue ?: irNull()
+        }
+    }
+
     private fun IrSymbol.irAnnotation(irClassSymbol: IrConstructorSymbol) =
         pluginContext.irBuiltIns.createIrBuilder(this).irAnnotation(irClassSymbol, emptyList())
 
@@ -718,7 +727,7 @@ private class ModuleTransformer(
         )
     }
 
-    fun IrClass.isSameOrSubTypeOf(irSupertypeClassSymbol: IrClassSymbol): Boolean =
+    private fun IrClass.isSameOrSubTypeOf(irSupertypeClassSymbol: IrClassSymbol): Boolean =
         symbol.owner.defaultType.isSubtypeOfClass(irSupertypeClassSymbol)
 
     /**
@@ -732,15 +741,6 @@ private class ModuleTransformer(
         ?: (this as? IrBlock)
             ?.takeIf { it.origin == IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL }
             ?.statements?.lastOrNull() as? IrCall
-}
-
-private fun IrBuilderWithScope.irSimpleFunctionCall(
-    irFunctionSymbol: IrSimpleFunctionSymbol,
-    vararg irValues: IrExpression?
-) = irCall(irFunctionSymbol).apply {
-    irValues.forEachIndexed { index, irValue ->
-        arguments[index] = irValue ?: irNull()
-    }
 }
 
 /**

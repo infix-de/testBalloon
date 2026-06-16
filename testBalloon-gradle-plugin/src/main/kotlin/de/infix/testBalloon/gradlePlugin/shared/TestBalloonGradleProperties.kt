@@ -207,13 +207,12 @@ internal class TestBalloonGradleProperties(val project: Project) {
     }
 
     /**
-     * IMPLEMENTATION NOTES: Use this function only after the build script has been fully evaluated.
+     * IMPLEMENTATION NOTES: Use this function in lazy task configuration or in `afterEvaluate`, not earlier.
      */
     internal fun isTestSourceSet(name: String): Boolean =
-        testSourceSetsRegex.containsMatchIn(name) || jvmTestSuites?.contains(name) == true
+        testSourceSetsRegex.containsMatchIn(name) || isJvmTestSuite(name)
 
-    private val jvmTestSuites by lazy {
-        @Suppress("UnstableApiUsage")
-        project.extensions.findByType(TestingExtension::class.java)?.suites?.map { it.name }
-    }
+    @Suppress("UnstableApiUsage")
+    private fun isJvmTestSuite(name: String) =
+        project.extensions.findByType(TestingExtension::class.java)?.suites?.any { name == it.name } == true
 }

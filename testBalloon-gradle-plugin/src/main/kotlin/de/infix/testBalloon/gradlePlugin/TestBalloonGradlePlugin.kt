@@ -51,8 +51,8 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
-        // NOTE: Before using `testBalloonProperties.testSourceSetsRegex`, all plugins must have been applied to the
-        // project. We rely on the documentation of `KotlinCompilerPluginSupportPlugin`, which states:
+        // NOTE: `testBalloonProperties.isTestSourceSet` must be used in lazy task configuration or in `afterEvaluate`.
+        // We rely on the documentation of `KotlinCompilerPluginSupportPlugin`, which states:
         // > the Kotlin plugin inspects the project model in an afterEvaluate handler.
         return testBalloonProperties.isTestSourceSet(
             kotlinCompilation.defaultSourceSet.name

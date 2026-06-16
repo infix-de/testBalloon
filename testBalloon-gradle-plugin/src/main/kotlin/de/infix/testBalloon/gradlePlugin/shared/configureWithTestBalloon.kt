@@ -22,6 +22,7 @@ import org.gradle.util.internal.VersionNumber
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -82,41 +83,38 @@ internal fun Project.configureWithTestBalloon(
         }
     }
 
+    fun KotlinCompilation<*>.configureForTestBalloon() {
+        val sourceSetName = defaultSourceSet.name
+        compileTaskProvider.configure {
+            if (testBalloonProperties.isTestSourceSet(sourceSetName)) {
+                if (notIncrementallyCompilableTestSourceSetsRegex.containsMatchIn(sourceSetName)) {
+                    if (this is AbstractKotlinCompile<*>) {
+                        debugLog("disabling incremental compilation for $project, task '$name'.")
+                        incremental = false
+                        if (this is Kotlin2JsCompile) {
+                            @Suppress("INVISIBLE_REFERENCE")
+                            incrementalJsKlib = false
+                        }
+                    }
+                }
+            } else {
+                this.compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(sourceSetName))
+            }
+        }
+    }
+
     extensions.findByType(KotlinProjectExtension::class.java)?.apply {
         when (this) {
             is KotlinMultiplatformExtension ->
                 targets.configureEach {
                     compilations.configureEach {
-                        val sourceSetName = defaultSourceSet.name
-                        if (testBalloonProperties.isTestSourceSet(sourceSetName)) {
-                            if (notIncrementallyCompilableTestSourceSetsRegex.containsMatchIn(sourceSetName)) {
-                                compileTaskProvider.configure {
-                                    if (this is AbstractKotlinCompile<*>) {
-                                        debugLog("disabling incremental compilation for $project, task '$name'.")
-                                        incremental = false
-                                        if (this is Kotlin2JsCompile) {
-                                            @Suppress("INVISIBLE_REFERENCE")
-                                            incrementalJsKlib = false
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            compileTaskProvider.configure {
-                                this.compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(sourceSetName))
-                            }
-                        }
+                        configureForTestBalloon()
                     }
                 }
 
             is KotlinSingleTargetExtension<*> ->
                 target.compilations.configureEach {
-                    val sourceSetName = defaultSourceSet.name
-                    if (!testBalloonProperties.isTestSourceSet(sourceSetName)) {
-                        compileTaskProvider.configure {
-                            this.compilerOptions.freeCompilerArgs.addAll(disablePluginOptions(sourceSetName))
-                        }
-                    }
+                    configureForTestBalloon()
                 }
         }
     }

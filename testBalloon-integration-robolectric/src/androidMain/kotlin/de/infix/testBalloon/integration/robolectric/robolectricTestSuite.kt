@@ -5,15 +5,11 @@ import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
-import de.infix.testBalloon.framework.core.aroundAll
 import de.infix.testBalloon.framework.core.parameter
 import de.infix.testBalloon.framework.core.traversal
-import de.infix.testBalloon.framework.core.withSingleThreadedDispatcher
 import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
 import de.infix.testBalloon.integration.robolectric.internal.robolectricContext
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.withContext
 import kotlin.reflect.KClass
 
 /**
@@ -70,14 +66,6 @@ public fun TestSuiteScope.robolectricTestSuite(
                         "\tPlease use regular test suites (inside or outside Robolectric test suites) for nesting."
                 }
                 ActiveRobolectricTestSuiteMarker(this)
-            }
-            .aroundAll { suiteAction ->
-                @OptIn(ExperimentalCoroutinesApi::class)
-                withSingleThreadedDispatcher { dispatcher ->
-                    withContext(dispatcher) {
-                        suiteAction()
-                    }
-                }
             }
             .traversal(ApplicationLifecycleTraversal())
     ) {

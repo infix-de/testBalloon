@@ -34,6 +34,9 @@ android {
         @Suppress("UnstableApiUsage")
         testOptions {
             animationsDisabled = true
+
+            unitTests.isIncludeAndroidResources = true
+
             managedDevices {
                 localDevices {
                     create("pixel2api30") {
@@ -77,6 +80,7 @@ dependencies {
     // instead of this project-internal dependency:
     testImplementation(projects.testBalloonFrameworkCore)
     testImplementation(libs.junit.junit4)
+    testImplementation("androidx.compose.ui:ui-test-junit4:1.10.0")
     // required for host-side tests with TestBalloon outside this project:
     //     testImplementation("de.infix.testBalloon:testBalloon-integration-robolectric:${testBalloonVersion}")
     // instead of this project-internal dependency:

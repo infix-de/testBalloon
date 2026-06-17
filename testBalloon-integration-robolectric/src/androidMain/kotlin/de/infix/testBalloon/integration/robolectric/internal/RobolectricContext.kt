@@ -7,6 +7,11 @@ import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.integration.robolectric.RobolectricSettings
 import de.infix.testBalloon.integration.robolectric.RobolectricTestSuiteContent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestDispatcher
 import local.org.robolectric.runner.common.ExperimentalRunnerApi
 import local.org.robolectric.runner.common.ManifestResolver
 import local.org.robolectric.runner.common.RobolectricDependencies
@@ -24,6 +29,7 @@ import org.robolectric.internal.bytecode.Interceptors
 import org.robolectric.pluginapi.Sdk
 import org.robolectric.pluginapi.config.ConfigurationStrategy
 import org.robolectric.plugins.SdkCollection
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.javaMethod
 
@@ -136,22 +142,34 @@ internal class RobolectricContext(
         try {
             val testEnvironment = sandbox.testEnvironment
 
+            val inheritableContext = inheritableContext()
+
             onSandboxMainThread {
                 testEnvironment.setUpApplicationState("${testElement.testElementPath}", configuration, manifest)
-            }
 
-            try {
-                withSandboxContextClassLoader {
-                    action()
-                }
-            } finally {
-                onSandboxMainThread {
+                try {
+                    // Ui tests using Compose test rules must run on the Robolectric sandbox main thread. Otherwise,
+                    // the following exception will be thrown (see issue #82):
+                    //     "UnsupportedOperationException: main looper can only be controlled from main thread."
+                    runBlocking(inheritableContext) {
+                        action()
+                    }
+                } finally {
                     testEnvironment.tearDownApplication()
                     testEnvironment.resetState()
                 }
             }
         } finally {
             applicationLifecycleTestElement = null
+        }
+    }
+
+    private suspend fun inheritableContext(): CoroutineContext = currentCoroutineContext().minusKey(Job).let {
+        @OptIn(ExperimentalStdlibApi::class)
+        if (it[CoroutineDispatcher] is TestDispatcher) {
+            it
+        } else {
+            it.minusKey(CoroutineDispatcher)
         }
     }
 
@@ -165,10 +183,8 @@ internal class RobolectricContext(
 
     /**
      * Executes [action] with a Thread-local sandbox class loader in effect.
-     *
-     * Note: 'inline' makes this function work in suspending and blocking contexts.
      */
-    inline fun <Result> withSandboxContextClassLoader(action: () -> Result): Result {
+    private fun <Result> withSandboxContextClassLoader(action: () -> Result): Result {
         val originalContextClassLoader = Thread.currentThread().contextClassLoader
         Thread.currentThread().contextClassLoader = sandbox.robolectricClassLoader
         try {

@@ -47,21 +47,21 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 
 ==== Publish a release to MavenCentral
 
-NOTE: Publish releases in the order they should appear on MavenCentral (and release badges):
-Pre-release first, then regular releases in increasing version number order.
+NOTE: The last regular release should be published last, after all other releases were published. This ensures that klibs.io will pick up the correct version number as "latest".
 
 . Wait for CI validation.
+. Run `./gradlew tagReleaseSet --release=1.0.1`
+. Run `./gradlew pushReleaseSetTags --release=1.0.1`
 . Wait for previous MavenCentral publications to finish.
-. Tag the release commit like `0.4.0-K2.2.0`.
-. Push the tag to GitHub – this will trigger the publication to MavenCentral.
+. Push the final outstanding tag to GitHub via IntelliJ's "Push all tags".
 
 ==== Publish a release on GitHub
 
-. Wait for the MavenCentral publication to finish.
-. https://github.com/infix-de/testBalloon/releases/new[Create a new release], selecting
-** The current release tag, and
-** The previous release tag for comparison.
-. Generate release notes.
+. Wait for the final MavenCentral publication to finish.
+. https://github.com/infix-de/testBalloon/tags[Choose its tag]
+. Select _ Create release from tag_
+. Choose the corresponding _Previous tag_.
+. Select _Generate release notes_.
 . Adapt release notes, extracting them from the xref:../CHANGELOG.md[CHANGELOG].
 . Adapt the comparison link as necessary.
 . Check or clear _Set as a pre-release_ and _Set as the latest release_.

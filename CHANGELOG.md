@@ -1,6 +1,19 @@
-## Unreleased
+## 1.0.1 (June 17, 2026)
 
 _This is a maintenance release, binary-compatible with 1.0.0._
+
+### TestBalloon release variants
+
+| TestBalloon version | Supported Kotlin versions |
+|---------------------|---------------------------|
+| 1.0.1-K2.4.0        | 2.4.0                     |
+| 1.0.1-K2.3.20       | 2.3.20 … 2.3.21           |
+| 1.0.1-K2.3.0        | 2.3.0 … 2.3.10            |
+| 1.0.1-K2.2.21       | 2.2.21                    |
+| 1.0.1-K2.2.0        | 2.2.0 … 2.2.20            |
+| 1.0.1-K2.1.20       | 2.1.20 … 2.1.21           |
+| 1.0.1-K2.1.0        | 2.1.0 … 2.1.10            |
+| 1.0.1-K2.0.0        | 2.0.0 … 2.0.21            |
 
 ### Fixes
 

@@ -1,3 +1,6 @@
+import buildLogic.PushReleaseSetTags
+import buildLogic.TagReleaseSet
+
 plugins {
     id("buildLogic.common").apply(false)
     id("buildLogic.dokka")
@@ -22,5 +25,15 @@ tasks {
         group = "verification"
 
         dependsOn(":integration-test:test")
+    }
+
+    register<TagReleaseSet>("tagReleaseSet") {
+        description = "Tags all the versions belonging to a release set"
+        group = "release"
+    }
+
+    register<PushReleaseSetTags>("pushReleaseSetTags") {
+        description = "Pushes tags for all versions belonging to a release set, except for the last regular release"
+        group = "release"
     }
 }

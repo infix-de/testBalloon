@@ -35,10 +35,9 @@ The Robolectric integration brings [Robolectric's fast, reliable and configurabl
     --8<-- "Robolectric.kt:robolectric-test-suite"
     ```
 
-    1. Registers a Robolectric test suite. This must occur inside an existing test suite.
-    2. Specifies the class which will contain the test suite's content.
-    3. Configure Robolectric as desired. As usual, this can also be done higher up in TestBalloon's [test element hierarchy](../getting-started/configuration.md).
-    4. There is no trailing lambda because the test suite's content resides in a separate class.
+    1. Registers a Robolectric test suite. This must occur inside an existing test suite. The type parameter specifies the class which will contain the test suite's content.
+    2. Configure Robolectric as desired. As usual, this can also be done higher up in TestBalloon's [test element hierarchy](../getting-started/configuration.md).
+    3. There is no trailing lambda because the test suite's content resides in a separate class.
 
 3. Add the Robolectric test suite contents to a separate class derived from `RobolectricTestSuiteContent`:
 

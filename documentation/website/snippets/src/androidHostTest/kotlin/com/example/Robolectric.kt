@@ -19,15 +19,14 @@ import kotlin.test.assertNotNull
 val RobolectricWithTestBalloon by testSuite {
     for (apiLevel in listOf(36, 34, 28)) {
 // --8<-- [start:robolectric-test-suite]
-        robolectricTestSuite( // (1)!
+        robolectricTestSuite<MyRobolectricTests>( // (1)!
             "API level $apiLevel",
-            MyRobolectricTests::class, // (2)!
-            testConfig = TestConfig.robolectric { // (3)!
+            testConfig = TestConfig.robolectric { // (2)!
                 sdk = apiLevel
                 qualifiers = "xlarge-port"
                 applicationLifetime = ApplicationLifetime.RobolectricTestSuite
             }
-        ) // (4)!
+        ) // (3)!
 // --8<-- [end:robolectric-test-suite]
     }
 }

@@ -6,7 +6,7 @@ _This is a maintenance release, binary-compatible with 1.0.0._
 
 | TestBalloon version | Supported Kotlin versions |
 |---------------------|---------------------------|
-| 1.0.1-K2.4.0        | 2.4.0                     |
+| 1.0.1-K2.4.0        | 2.4.0 … 2.4.10-RC (*)     |
 | 1.0.1-K2.3.20       | 2.3.20 … 2.3.21           |
 | 1.0.1-K2.3.0        | 2.3.0 … 2.3.10            |
 | 1.0.1-K2.2.21       | 2.2.21                    |
@@ -14,6 +14,12 @@ _This is a maintenance release, binary-compatible with 1.0.0._
 | 1.0.1-K2.1.20       | 2.1.20 … 2.1.21           |
 | 1.0.1-K2.1.0        | 2.1.0 … 2.1.10            |
 | 1.0.1-K2.0.0        | 2.0.0 … 2.0.21            |
+
+(*) Kotlin 2.4.20-Beta1 is supported with the following workaround in `gradle.properties`:
+```properties
+# WORKAROUND https://youtrack.jetbrains.com/issue/KT-87217 – JS/Wasm IC: "Could not close incremental caches"
+testBalloon.notIncrementallyCompilableTestSourceSetsRegex=^(js|wasm)
+``` 
 
 ### Fixes
 

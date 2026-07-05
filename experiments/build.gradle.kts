@@ -1,7 +1,9 @@
 import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.kotlinVersion
 import buildLogic.robolectricJdkVersion
+import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import tapmoc.Severity
+import java.time.Duration
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
@@ -19,6 +21,26 @@ tapmoc {
 }
 
 kotlin {
+    js {
+        browser {
+            @OptIn(ExperimentalJsTestDsl::class)
+            // Add and configure the new test{} block
+            test {
+                // Set up options common for all browsers
+                browserDefaults {
+                    timeout = Duration.ofSeconds(2)
+                    headless = true
+                }
+                // Enable Chromium test runner
+                chromium {
+                    // Override the common timeout option
+                    timeout = Duration.ofSeconds(5)
+                    launchArgs.add("--no-sandbox")
+                }
+            }
+        }
+    }
+
     jvm()
 
     androidLibrary {

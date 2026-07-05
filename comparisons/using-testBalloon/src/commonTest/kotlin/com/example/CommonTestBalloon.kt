@@ -13,7 +13,7 @@ val CommonTestBalloon by testSuite {
     }
 
     testSuite("inner suite") {
-        test("test2") {
+        test("test 2") {
             log("in $testElementPath")
         }
     }

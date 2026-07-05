@@ -11,8 +11,8 @@ class CommonKotlinTest {
     }
 
     @Test
-    fun test2() {
-        log("in CommonKotlinTest.test2")
+    fun `test 2`() {
+        log("in CommonKotlinTest.test 2")
     }
 }
 

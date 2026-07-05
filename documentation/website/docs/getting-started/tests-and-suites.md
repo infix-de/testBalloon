@@ -82,7 +82,7 @@ TestBalloon has two primary runtime phases:
 
 ![Runtime phases "Test Registration" and "Test Execution"](assets/tests-and-suites/runtime-phases.png){ width="600" }
 
-The :testballoon: **test registration phase** is part of TestBalloon's setup: It creates the test element hierarchy, registering test suites, tests and fixtures, and configuring test elements. At the end, it knows exactly what to run. (1)
+The :testballoon: **test registration phase** is part of TestBalloon's setup: It creates the test element hierarchy, registers test suites, tests and fixtures, and configures test elements. At the end, it knows exactly what to run. (1)
 { .annotate }
 
 1. TestBalloon is fast to register tests. It can register and configure 1.7 million tests in 7 seconds on a decent Laptop. It also knows shortcuts if only parts of the test element hierarchy have been selected for execution.

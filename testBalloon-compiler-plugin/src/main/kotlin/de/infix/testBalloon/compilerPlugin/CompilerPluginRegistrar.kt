@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -27,6 +28,7 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
             FirExtensionRegistrarAdapter.registerExtension(CompilerPluginFirExtensionRegistrar(configuration))
             IrGenerationExtension.registerExtension(CompilerPluginIrGenerationExtension(configuration))
         } else {
+            @OptIn(MessageCollectorAccess::class)
             val messageCollector = configuration.get(
                 CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY,
                 MessageCollector.NONE

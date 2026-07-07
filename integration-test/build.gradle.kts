@@ -5,7 +5,7 @@ plugins {
     id("buildLogic.kotlin-jvm")
 }
 
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 dependencies {
     testImplementation(projects.testBalloonFrameworkCore)

@@ -20,20 +20,15 @@ import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
  *
  * This enables the project's compiler plugin without loading it from a repository.
  */
-fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency, sharedDependency: Dependency) {
+fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency) {
     val testBalloonProperties = TestBalloonGradleProperties(this)
 
     // Add the compiler plugin as done by TestBalloonGradlePlugin.
-    with(dependencies) {
-        add(PLUGIN_CLASSPATH_CONFIGURATION_NAME, compilerPluginDependency)
-        try {
-            add(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, compilerPluginDependency)
-            // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin
-            //     dependencies
-            add(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, sharedDependency)
-        } catch (_: UnknownConfigurationException) {
-            // The configuration "kotlinNativeCompilerPluginClasspath" is unavailable with AGP9's built-in Kotlin.
-        }
+    dependencies.add(PLUGIN_CLASSPATH_CONFIGURATION_NAME, compilerPluginDependency)
+    try {
+        dependencies.add(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, compilerPluginDependency)
+    } catch (_: UnknownConfigurationException) {
+        // The configuration "kotlinNativeCompilerPluginClasspath" is unavailable with AGP9's built-in Kotlin.
     }
 
     configureWithTestBalloon(

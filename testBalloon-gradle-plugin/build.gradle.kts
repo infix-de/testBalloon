@@ -44,11 +44,6 @@ buildConfig {
     buildConfigField("String", "PROJECT_COMPILER_PLUGIN_ARTIFACT_ID", "\"${projects.testBalloonCompilerPlugin.name}\"")
     buildConfigField(
         "String",
-        "PROJECT_SHARED_ARTIFACT_ID",
-        "\"${projects.testBalloonFrameworkShared.name}\""
-    )
-    buildConfigField(
-        "String",
         "PROJECT_JUNIT_PLATFORM_LAUNCHER",
         "\"${libraryFromCatalog("org.junit.platform.launcher")}\""
     )

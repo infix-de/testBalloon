@@ -9,7 +9,7 @@ plugins {
     id("com.gradleup.tapmoc")
 }
 
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 tapmoc {
     java(robolectricJdkVersion())

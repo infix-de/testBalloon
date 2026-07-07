@@ -9,7 +9,7 @@ plugins {
 
 description = "Library supporting Kotest Assertions with the TestBalloon framework"
 
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 kotlin {
     enableAbiValidation()

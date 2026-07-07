@@ -11,7 +11,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 tapmoc {
     java(junitJupiterJdkVersion().coerceAtLeast(robolectricJdkVersion()))

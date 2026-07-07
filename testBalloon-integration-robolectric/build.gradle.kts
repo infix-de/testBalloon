@@ -10,7 +10,7 @@ plugins {
 
 description = "Library supporting Robolectric with the TestBalloon framework"
 
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 tapmoc {
     java(robolectricJdkVersion())

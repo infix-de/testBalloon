@@ -4,7 +4,6 @@ import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
-import buildConfig.BuildConfig.PROJECT_SHARED_ARTIFACT_ID
 import buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleExtension
@@ -12,11 +11,9 @@ import de.infix.testBalloon.gradlePlugin.shared.TestBalloonGradleProperties
 import de.infix.testBalloon.gradlePlugin.shared.compilerPluginOptionValues
 import de.infix.testBalloon.gradlePlugin.shared.configureWithTestBalloon
 import org.gradle.api.Project
-import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
-import org.jetbrains.kotlin.gradle.plugin.NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
@@ -30,18 +27,6 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project): Unit = with(target) {
         this@TestBalloonGradlePlugin.project = target
         testBalloonProperties = TestBalloonGradleProperties(this)
-
-        try {
-            // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin
-            //     dependencies
-            configurations.named(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME) {
-                dependencies.add(
-                    project.dependencies.create("$PROJECT_GROUP_ID:$PROJECT_SHARED_ARTIFACT_ID:$PROJECT_VERSION")
-                )
-            }
-        } catch (_: UnknownConfigurationException) {
-            // The configuration "kotlinNativeCompilerPluginClasspath" is unavailable with AGP9's built-in Kotlin.
-        }
 
         configureWithTestBalloon(
             testBalloonProperties = testBalloonProperties,

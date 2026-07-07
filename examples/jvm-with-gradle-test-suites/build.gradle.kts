@@ -7,7 +7,7 @@ plugins {
 }
 
 // The following invocation supplements the TestBalloon plugin declaration inside this project:
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin, projects.testBalloonFrameworkShared)
+addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 @Suppress("UnstableApiUsage")
 testing {

@@ -6,6 +6,10 @@
     }
     ```
 
+    !!! info
+
+        TestBalloon releases come as a set, with matching variants for specific Kotlin versions. Please look up the `$testBalloonVersion` matching your Kotlin version in the [CHANGELOG](https://github.com/infix-de/testBalloon/blob/main/CHANGELOG.md).
+
 2. Add a dependency for the TestBalloon framework core library:
 
     === "Kotlin Multiplatform"
@@ -22,7 +26,7 @@
 
         ```kotlin
         dependencies {
-            implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
+            testImplementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
         }
         ```
 
@@ -93,6 +97,10 @@
         ```kotlin
         implementation("de.infix.testBalloon:testBalloon-integration-kotest-assertions:$testBalloonVersion")
         ```
+
+    !!! info
+
+        The above is for a Kotlin Multiplatform test source set. For Kotlin JVM or Android, use `testImplementation(...)` or `androidTestImplementation(...)` as usual.
 
 5. Write a test:
 

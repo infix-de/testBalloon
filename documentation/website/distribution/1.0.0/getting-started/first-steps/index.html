@@ -1621,6 +1621,10 @@ You're not viewing the latest version.
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;de.infix.testBalloon&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;</span><span class="si">$</span><span class="n">testBalloonVersion</span><span class="s">&quot;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
 </span></code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>TestBalloon releases come as a set, with matching variants for specific Kotlin versions. Please look up the <code>$testBalloonVersion</code> matching your Kotlin version in the <a href="https://github.com/infix-de/testBalloon/blob/main/CHANGELOG.md">CHANGELOG</a>.</p>
+</div>
 </li>
 <li>
 <p>Add a dependency for the TestBalloon framework core library:</p>
@@ -1636,7 +1640,7 @@ You're not viewing the latest version.
 </div>
 <div class="tabbed-block">
 <div class="language-kotlin highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;de.infix.testBalloon:testBalloon-framework-core:</span><span class="si">$</span><span class="n">testBalloonVersion</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">testImplementation</span><span class="p">(</span><span class="s">&quot;de.infix.testBalloon:testBalloon-framework-core:</span><span class="si">$</span><span class="n">testBalloonVersion</span><span class="s">&quot;</span><span class="p">)</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">}</span>
 </span></code></pre></div>
 </div>
@@ -1709,6 +1713,10 @@ You're not viewing the latest version.
 </span></code></pre></div>
 </div>
 </div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The above is for a Kotlin Multiplatform test source set. For Kotlin JVM or Android, use <code>testImplementation(...)</code> or <code>androidTestImplementation(...)</code> as usual.</p>
 </div>
 </li>
 <li>

@@ -1,18 +1,50 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("buildLogic.kotlin-jvm")
     id("buildLogic.publishing-jvm")
     id("com.github.gmazzo.buildconfig")
-    id("com.gradleup.shadow")
+    id("com.gradleup.shadow").apply(false)
 }
 
 description = "Compiler plugin for the TestBalloon framework"
+
+/**
+ * See https://github.com/ZacSweers/metro/blob/56de400cf78edfb0f1f684976af92dc9fd018daf/compiler/build.gradle.kts#L131
+ *
+ * Kotlin native requires the compiler plugin to embed its dependencies. (See
+ * https://youtrack.jetbrains.com/issue/KT-53477)
+ *
+ * In order to do this, we replace the default jar task with a shadowJar task that embeds the
+ * dependencies from the "embedded" configuration.
+ */
+val embedded = configurations.dependencyScope("embedded")
+
+val embeddedClasspath = configurations.resolvable("embeddedClasspath") { extendsFrom(embedded) }
+
+configurations.named("compileOnly").configure { extendsFrom(embedded) }
+
+configurations.named("testImplementation").configure { extendsFrom(embedded) }
+
+val shadowJar = tasks.register("shadowJar", ShadowJar::class.java) {
+    from(java.sourceSets.main.map { it.output })
+    configurations.add(embeddedClasspath)
+
+    minimize()
+    dependencies {
+        exclude(dependency("org.jetbrains:.*"))
+        exclude(dependency("org.intellij:.*"))
+        exclude(dependency("org.jetbrains.kotlin:.*"))
+        exclude(dependency("dev.drewhamilton.poko:.*"))
+    }
+}
 
 @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
 dependencies {
     // region - `implementation` dependencies are included in the shadow jar.
 
     // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
-    implementation(projects.testBalloonFrameworkShared)
+    add(embedded.name, projects.testBalloonFrameworkShared)
 
     // TODO: Add version-specific modules here
 
@@ -60,12 +92,8 @@ configurations {
         named(configurationName) {
             outgoing {
                 artifacts.clear()
-                artifact(tasks.shadowJar)
+                artifact(shadowJar)
             }
         }
     }
-}
-
-tasks.shadowJar {
-    minimize()
 }

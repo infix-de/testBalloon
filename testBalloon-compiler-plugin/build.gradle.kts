@@ -4,7 +4,6 @@ plugins {
     id("buildLogic.kotlin-jvm")
     id("buildLogic.publishing-jvm")
     id("com.github.gmazzo.buildconfig")
-    id("com.gradleup.shadow").apply(false)
 }
 
 description = "Compiler plugin for the TestBalloon framework"
@@ -26,19 +25,22 @@ configurations.named("compileOnly").configure { extendsFrom(embedded) }
 
 configurations.named("testImplementation").configure { extendsFrom(embedded) }
 
-val shadowJar = tasks.register("shadowJar", ShadowJar::class.java) {
-    from(java.sourceSets.main.map { it.output })
-    configurations.add(embeddedClasspath)
-
-    minimize()
-    dependencies {
-        exclude(dependency("org.jetbrains:.*"))
-        exclude(dependency("org.intellij:.*"))
-        exclude(dependency("org.jetbrains.kotlin:.*"))
-        exclude(dependency("dev.drewhamilton.poko:.*"))
-    }
+abstract class Holder {
+    @get:Inject
+    abstract val archiveOperations: ArchiveOperations
 }
 
+
+val shadowJar = tasks.register("embeddedJar", Jar::class.java) {
+    val ops = project.objects.newInstance(Holder::class.java).archiveOperations
+    from(java.sourceSets.main.map { it.output })
+    from(embeddedClasspath.map { it.elements.map { it.map { ops.zipTree(it.asFile) } } })
+}
+
+embeddedClasspath.configure {
+    exclude(group = "org.jetbrains.kotlin")
+    exclude(group = "org.intellij")
+}
 @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
 dependencies {
     // region - `implementation` dependencies are included in the shadow jar.

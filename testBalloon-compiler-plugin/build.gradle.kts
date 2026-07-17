@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("buildLogic.kotlin-jvm")
     id("buildLogic.publishing-jvm")
@@ -31,10 +29,11 @@ abstract class Holder {
 }
 
 
-val shadowJar = tasks.register("embeddedJar", Jar::class.java) {
+val embeddedJar = tasks.register("embeddedJar", Jar::class.java) {
     val ops = project.objects.newInstance(Holder::class.java).archiveOperations
     from(java.sourceSets.main.map { it.output })
     from(embeddedClasspath.map { it.elements.map { it.map { ops.zipTree(it.asFile) } } })
+    archiveClassifier = "all"
 }
 
 embeddedClasspath.configure {
@@ -94,7 +93,7 @@ configurations {
         named(configurationName) {
             outgoing {
                 artifacts.clear()
-                artifact(shadowJar)
+                artifact(embeddedJar)
             }
         }
     }

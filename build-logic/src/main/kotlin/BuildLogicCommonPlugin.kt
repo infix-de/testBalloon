@@ -16,9 +16,16 @@ class BuildLogicCommonPlugin : Plugin<Project> {
 
         group = project.property("local.PROJECT_GROUP_ID")!!
 
+        val isStdlibDefaultDependencyEnabled =
+            project.findProperty("kotlin.stdlib.default.dependency")?.toString()?.toBooleanStrictOrNull() != false
+
         extensions.configure<tapmoc.TapmocExtension>("tapmoc") {
             java(jdkVersion())
-            kotlin(kotlinVersion())
+            if (isStdlibDefaultDependencyEnabled) {
+                // Configure the Kotlin version for regular projects, but prevent Tapmoc from pulling in a stdlib
+                // dependency where it must be avoided (the compiler plugin modules).
+                kotlin(kotlinVersion())
+            }
             checkDependencies(tapmoc.Severity.ERROR)
         }
 

@@ -26,11 +26,13 @@ dependencies {
     embedded(projects.testBalloonFrameworkShared)
     // TODO: Add version-specific modules here
 
-    // Add embedded elements as implementation dependencies, including their transitives.
-    project.configurations.named("implementation").configure { extendsFrom(embedded) }
+    project.configurations.named("compileOnly").configure { extendsFrom(embedded) }
+    compileOnly(libs.org.jetbrains.kotlin.stdlib)
+    compileOnly(libs.org.jetbrains.kotlin.compiler.embeddable)
 
-    implementation(libs.org.jetbrains.kotlin.compiler.embeddable)
-    implementation(libs.org.jetbrains.kotlinx.coroutines.core)
+    project.configurations.named("testImplementation").configure { extendsFrom(embedded) }
+    testImplementation(libs.org.jetbrains.kotlin.stdlib)
+    testImplementation(libs.org.jetbrains.kotlin.compiler.embeddable)
 
     testImplementation(libs.dev.zacsweers.kctfork)
     testImplementation(libs.org.jetbrains.kotlin.test)

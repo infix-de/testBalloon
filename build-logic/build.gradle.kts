@@ -14,7 +14,6 @@ dependencies {
     // Cf. https://discuss.gradle.org/t/why-duplicate-plugins-in-top-level-build-scripts/49087
     implementation(libs.com.android.gradle.plugin)
     implementation(libs.com.github.gmazzo.buildconfig.gradle.plugin)
-    implementation(libs.com.gradleup.shadow.gradle.plugin)
     implementation(libs.com.gradleup.tapmoc.gradle.plugin)
     implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
     implementation(libs.org.jetbrains.dokka.gradle.plugin)

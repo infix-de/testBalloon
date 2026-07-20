@@ -15,6 +15,8 @@ class BuildLogicKotlinMultiplatformPlugin : Plugin<Project> {
 
         val kotlin = extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
+        target.addStdlibDependency()
+        
         kotlin.compilerOptions {
             // WORKAROUND: Disable until KLIB resolver warnings can be suppressed or no longer appear.
             //     See also: https://youtrack.jetbrains.com/issue/KT-78277

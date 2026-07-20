@@ -40,6 +40,7 @@ gradlePlugin {
             "buildLogic.common" to "BuildLogicCommonPlugin",
             "buildLogic.dokka" to "BuildLogicDokkaPlugin",
             "buildLogic.kotlin-jvm" to "BuildLogicKotlinJvmPlugin",
+            "buildLogic.kotlin-jvm-base" to "BuildLogicKotlinJvmBasePlugin",
             "buildLogic.kotlin-multiplatform" to "BuildLogicKotlinMultiplatformPlugin",
             "buildLogic.android-application" to "BuildLogicAndroidApplicationPlugin",
             "buildLogic.publishing-base" to "BuildLogicPublishingBasePlugin",

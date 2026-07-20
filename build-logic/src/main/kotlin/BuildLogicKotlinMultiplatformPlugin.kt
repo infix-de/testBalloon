@@ -1,3 +1,4 @@
+import buildLogic.addKotlinStdlibDependency
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -12,6 +13,8 @@ class BuildLogicKotlinMultiplatformPlugin : Plugin<Project> {
             apply("buildLogic.common")
             apply("org.jetbrains.kotlin.multiplatform")
         }
+
+        addKotlinStdlibDependency()
 
         val kotlin = extensions.getByName("kotlin") as KotlinMultiplatformExtension
 

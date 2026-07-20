@@ -1,37 +1,41 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
-    id("buildLogic.kotlin-jvm")
+    id("buildLogic.kotlin-jvm-base")
     id("buildLogic.publishing-jvm")
     id("com.github.gmazzo.buildconfig")
-    id("com.gradleup.shadow")
 }
 
 description = "Compiler plugin for the TestBalloon framework"
 
+/** Dependencies to be embedded into the compiler plugin artifact. */
+val embedded = configurations.dependencyScope("embedded")
+
+/** The consumable configuration containing the resulting embedded elements. */
+val embeddedResult = configurations.resolvable("embeddedResult") {
+    extendsFrom(embedded)
+    exclude(module = "kotlin-stdlib")
+}
+
+/** Adds a dependency to the `embedded` configuration. */
+fun DependencyHandler.embedded(dependencyNotation: Any) = add(embedded.name, dependencyNotation)
+
 @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
 dependencies {
-    // region - `implementation` dependencies are included in the shadow jar.
-
     // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
-    implementation(projects.testBalloonFrameworkShared)
-
+    embedded(projects.testBalloonFrameworkShared)
     // TODO: Add version-specific modules here
 
-    // endregion
-
-    // region - `compileOnly` dependencies are excluded from the shadow jar.
-
-    compileOnly(libs.org.jetbrains.kotlin.compiler.embeddable)
-    compileOnly(libs.org.jetbrains.kotlinx.coroutines.core)
+    project.configurations.named("compileOnly").configure { extendsFrom(embedded) }
     compileOnly(libs.org.jetbrains.kotlin.stdlib)
+    compileOnly(libs.org.jetbrains.kotlin.compiler.embeddable)
 
-    // endregion
+    project.configurations.named("testImplementation").configure { extendsFrom(embedded) }
+    testImplementation(libs.org.jetbrains.kotlin.stdlib)
+    testImplementation(libs.org.jetbrains.kotlin.compiler.embeddable)
 
     testImplementation(libs.dev.zacsweers.kctfork)
     testImplementation(libs.org.jetbrains.kotlin.test)
-
-    // Not bundled in the shadow jar
-    testImplementation(libs.org.jetbrains.kotlin.compiler.embeddable)
-    testImplementation(libs.org.jetbrains.kotlinx.coroutines.core)
 }
 
 buildConfig {
@@ -52,20 +56,43 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
-// Publish the shadow jar instead of the default non-shadow jar.
-// WORKAROUND: The gradle-maven-publish-plugin does not support publishing the shadow plugin's artifacts.
-//     https://github.com/vanniktech/gradle-maven-publish-plugin/issues/1123#issuecomment-3670312723
+val integratedJar = tasks.register("integratedJar", Jar::class.java) {
+    group = "build"
+    description = "Creates the compiler plugin's integrated JAR, including embedded dependencies."
+
+    // The following is required for CC compatibility (Project.zipTree(Object) cannot be used).
+    val archiveOperations = run {
+        abstract class InjectionTarget {
+            @get:Inject
+            abstract val archiveOperations: ArchiveOperations
+        }
+        project.objects.newInstance(InjectionTarget::class.java).archiveOperations
+    }
+
+    // Include the compiler plugin's classes.
+    from(java.sourceSets.main.map { it.output })
+
+    // Include the compiler plugin's embedded dependency classes, unzipping JARs.
+    from(
+        embeddedResult.map { embeddedResult ->
+            embeddedResult.elements.map { location ->
+                location.map { archiveOperations.zipTree(it.asFile) }
+            }
+        }
+    )
+
+    archiveClassifier = "integrated"
+}
+
+// Publish the integrated JAR instead of the default one.
+// See https://github.com/vanniktech/gradle-maven-publish-plugin/issues/1123#issuecomment-3670312723
 configurations {
     for (configurationName in listOf("runtimeElements", "apiElements")) {
         named(configurationName) {
             outgoing {
                 artifacts.clear()
-                artifact(tasks.shadowJar)
+                artifact(integratedJar)
             }
         }
     }
-}
-
-tasks.shadowJar {
-    minimize()
 }

@@ -302,7 +302,10 @@ private val TestElement.Event.Finished.executionResult: TestExecutionResult
     get() =
         when (throwable) {
             null -> TestExecutionResult.successful()
-            is FailFastException -> TestExecutionResult.aborted(throwable)
+            is org.opentest4j.IncompleteExecutionException,
+            is FailFastException,
+                -> TestExecutionResult.aborted(throwable)
+
             else -> TestExecutionResult.failed(throwable)
         }
 

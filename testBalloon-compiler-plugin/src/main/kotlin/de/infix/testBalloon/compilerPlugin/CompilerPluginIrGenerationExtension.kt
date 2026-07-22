@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.fileMappingTracker
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -108,6 +109,7 @@ import kotlin.reflect.KClass
 class CompilerPluginIrGenerationExtension(private val compilerConfiguration: CompilerConfiguration) :
     IrGenerationExtension {
 
+    @OptIn(MessageCollectorAccess::class)
     private val messageCollector =
         compilerConfiguration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 

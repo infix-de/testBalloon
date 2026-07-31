@@ -2,6 +2,7 @@
 
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.disable
+import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.internal.Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
@@ -9,7 +10,11 @@ import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import java.util.Locale
 import kotlin.time.Duration.Companion.minutes
 
-val ElementSelectionTests by testSuite(testConfig = TestConfig.testScope(isEnabled = true, timeout = 24.minutes)) {
+val ElementSelectionTests by testSuite(
+    testConfig = TestConfig
+        .invocation(TestConfig.Invocation.Sequential)
+        .testScope(isEnabled = true, timeout = 24.minutes)
+) {
     val projectName = "element-selection"
     val project = TestProject(this, projectName)
 

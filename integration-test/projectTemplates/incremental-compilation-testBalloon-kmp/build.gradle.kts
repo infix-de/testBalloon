@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 plugins {
     kotlin("multiplatform") version "{{version:org.jetbrains.kotlin}}"
     id("com.gradleup.tapmoc") version "{{version:com.gradleup.tapmoc}}"
-    id("de.infix.testBalloon") version "{{prop:version}}"
+    id("de.infix.testBalloon") version "{{version:de.infix.testBalloon}}"
 }
 
 tapmoc {
@@ -41,7 +41,7 @@ kotlin {
     sourceSets {
         commonTest {
             dependencies {
-                implementation("de.infix.testBalloon:testBalloon-framework-core:{{prop:version}}")
+                implementation("de.infix.testBalloon:testBalloon-framework-core:{{version:de.infix.testBalloon}}")
             }
         }
     }

@@ -2,18 +2,15 @@ import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.disable
-import de.infix.testBalloon.framework.core.testScope
+import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
 import kotlin.io.path.div
 import kotlin.io.path.moveTo
-import kotlin.time.Duration.Companion.minutes
 
-val IncrementalCompilationTests by testSuite(
-    testConfig = TestConfig.testScope(isEnabled = true, timeout = 24.minutes)
-) {
+val IncrementalCompilationTests by testSuite {
     incrementalCompilationTestSuite(
         "incremental-compilation-kotlin-test",
         testConfig = TestConfig.disable() // enable to observe IC with kotlin.test
@@ -58,7 +55,7 @@ private fun TestSuiteScope.incrementalCompilationTestSuite(
     @TestElementName(prefix = "project: ") projectName: String,
     testConfig: TestConfig = TestConfig,
     action: IncrementalCompilationTestProject.() -> Unit
-) = testSuite("project: $projectName", testConfig) {
+) = testSuite("project: $projectName", testConfig.invocation(TestConfig.Invocation.Sequential)) {
     IncrementalCompilationTestProject(this, projectName).action()
 }
 

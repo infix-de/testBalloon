@@ -1,16 +1,24 @@
+import buildConfig.BuildConfig
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.testPlatform
+import java.nio.file.FileVisitResult
+import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.copyToRecursively
 import kotlin.io.path.createDirectories
+import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.div
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
+import kotlin.io.path.readText
+import kotlin.io.path.relativeTo
+import kotlin.io.path.visitFileTree
+import kotlin.io.path.writeText
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -18,28 +26,85 @@ import kotlin.time.ExperimentalTime
  * A test project is a Gradle project providing tests listed by a Gradle task `listTests`.
  *
  * The test project is created from files in the `build/projectTemplates` directory, specifically the
- * subdirectories `common` and [projectName].
+ * subdirectories `common` and [projectName]. `{{version:NAME}` placeholders in template files are populated with
+ * a corresponding `NAME` entry from [versions], if present, otherwise with the main project's version catalog entry.
+ *
  * The test project autoconfigures itself for the available test tasks, preparing a clean build with
  * a fresh set of JS and Wasm package lock files (if JS and/or Wasm tests are available).
  */
-internal open class TestProject(projectTestSuite: TestSuite, projectName: String) : TestSuiteScope {
+internal open class TestProject(
+    projectTestSuite: TestSuite,
+    projectName: String,
+    val versions: Map<String, String> = emptyMap()
+) : TestSuiteScope {
 
     override val testSuiteInScope: TestSuite = projectTestSuite
 
-    @OptIn(ExperimentalPathApi::class)
     protected val projectDirectory = testFixture {
-        val commonTemplateDirectory = Path("build") / "projectTemplates" / "common"
-        val projectTemplateDirectory = Path("build") / "projectTemplates" / projectName
+        val templatesBaseDirectory = Path("projectTemplates")
+        val commonTemplateDirectory = templatesBaseDirectory / "common"
+        val projectTemplateDirectory = templatesBaseDirectory / projectName
         val projectDirectory = Path("build") / "projects" / projectName
 
-        log("Setting up $projectDirectory from $commonTemplateDirectory, $projectTemplateDirectory")
-        if (projectDirectory.exists()) projectDirectory.deleteRecursively()
-        projectDirectory.createDirectories()
-        commonTemplateDirectory.copyToRecursively(projectDirectory, followLinks = false, overwrite = false)
-        projectTemplateDirectory.copyToRecursively(projectDirectory, followLinks = false, overwrite = false)
+        projectDirectory.populate(commonTemplateDirectory, projectTemplateDirectory)
 
         projectDirectory
     }
+
+    @OptIn(ExperimentalPathApi::class)
+    private fun Path.populate(commonTemplateDirectory: Path, projectTemplateDirectory: Path) {
+        log("Populating $this from $commonTemplateDirectory, $projectTemplateDirectory")
+        if (exists()) deleteRecursively()
+        createDirectories()
+        populateFromTemplate(commonTemplateDirectory)
+        populateFromTemplate(projectTemplateDirectory)
+        val rootDirectory = BuildConfig.PROJECT_ROOT_DIRECTORY.toPath()
+        for (rootFile in (listOf("gradlew", "gradlew.bat", "gradle", "kotlin-js-store"))) {
+            (rootDirectory / rootFile).copyToRecursively(this / rootFile, followLinks = false, overwrite = false)
+        }
+    }
+
+    private fun Path.populateFromTemplate(source: Path) {
+        val target = this
+
+        source.visitFileTree {
+            onPreVisitDirectory { path, _ ->
+                (target / path.relativeTo(source)).apply {
+                    if (!exists()) createDirectory()
+                }
+                FileVisitResult.CONTINUE
+            }
+
+            onVisitFile { path, _ ->
+                val targetContent = path.readText().replace(parameterRegex) { matchResult ->
+                    val (protocol, name) = matchResult.groupValues[1].split(':')
+                    when (protocol) {
+                        "version" -> when (name) {
+                            "de.infix.testBalloon" -> BuildConfig.PROJECT_VERSION
+
+                            else -> {
+                                versions[name]
+                                    ?: projectVersions[name]
+                                    ?: throw IllegalArgumentException("Version for '$name' not found")
+                            }
+                        }
+
+                        "path" -> when (name) {
+                            "integration-test-repository" -> BuildConfig.PROJECT_INTEGRATION_TEST_REPOSITORY
+                            else -> throw IllegalArgumentException("Unknown path name '$name'")
+                        }
+
+                        else -> matchResult.value
+                    }
+                }
+                (target / path.relativeTo(source)).writeText(targetContent)
+                FileVisitResult.CONTINUE
+            }
+        }
+    }
+
+    private val parameterRegex = Regex("""\{\{(.*?)\}\}""")
+    private val projectVersions = BuildConfig.PROJECT_CATALOG_VERSIONS
 
     internal val testTaskNames = testFixture {
         val listTestsResultRegex = Regex("""##TEST\((.*?)\)##""")

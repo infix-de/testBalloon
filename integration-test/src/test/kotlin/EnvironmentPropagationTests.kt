@@ -1,13 +1,10 @@
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuiteScope
-import de.infix.testBalloon.framework.core.testScope
+import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testSuite
 import java.util.Locale
-import kotlin.time.Duration.Companion.minutes
 
-val EnvironmentPropagationTests by testSuite(
-    testConfig = TestConfig.testScope(isEnabled = true, timeout = 24.minutes)
-) {
+val EnvironmentPropagationTests by testSuite(testConfig = TestConfig.invocation(TestConfig.Invocation.Sequential)) {
     val nativeTasksThatMayFail = setOf("macosArm64Test", "iosSimulatorArm64Test", "linuxX64Test", "mingwX64Test")
     val projectTestSuite = this
     val environment = mapOf("TEST_ONE" to "test one", "CUSTOM_ONE" to "custom one", "CUSTOM_TWO" to "custom two")

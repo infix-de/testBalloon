@@ -1,19 +1,9 @@
-import buildLogic.jdkVersion
-import buildLogic.kotlinVersion
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
-import tapmoc.Severity
 
 plugins {
-    id("org.jetbrains.kotlin.multiplatform")
+    id("buildLogic.kotlin-multiplatform")
     id("com.android.kotlin.multiplatform.library")
     id("com.gradleup.tapmoc")
-}
-
-tapmoc {
-    java(jdkVersion())
-    kotlin(kotlinVersion())
-
-    checkDependencies(Severity.ERROR)
 }
 
 kotlin {

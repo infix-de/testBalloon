@@ -5,6 +5,7 @@ import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalTesting
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 
@@ -94,9 +95,10 @@ fun KotlinMultiplatformExtension.applyHierarchy(nonJvm: KotlinHierarchyBuilder.(
 
 fun KotlinMultiplatformExtension.enableAbiValidation() {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    abiValidation {
+    extensions.configure<AbiValidationMultiplatformExtension>("abiValidation") {
+        enabled.set(true)
         filters {
-            exclude {
+            excluded {
                 byNames.add(TestBalloonInternalApi::class.qualifiedName!!)
                 annotatedWith.add(TestBalloonInternalApi::class.qualifiedName!!)
                 byNames.add(TestBalloonInternalTestingApi::class.qualifiedName!!)

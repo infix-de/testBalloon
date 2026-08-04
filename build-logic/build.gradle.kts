@@ -43,9 +43,7 @@ gradlePlugin {
             "buildLogic.kotlin-jvm-base" to "BuildLogicKotlinJvmBasePlugin",
             "buildLogic.kotlin-multiplatform" to "BuildLogicKotlinMultiplatformPlugin",
             "buildLogic.android-application" to "BuildLogicAndroidApplicationPlugin",
-            "buildLogic.publishing-base" to "BuildLogicPublishingBasePlugin",
-            "buildLogic.publishing-jvm" to "BuildLogicPublishingJvmPlugin",
-            "buildLogic.publishing-multiplatform" to "BuildLogicPublishingMultiplatformPlugin"
+            "buildLogic.publishing" to "BuildLogicPublishingPlugin"
         )
 
         for ((id, implementationClass) in pluginMap) {

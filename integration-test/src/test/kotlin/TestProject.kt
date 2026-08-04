@@ -14,53 +14,65 @@ import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.div
 import kotlin.io.path.exists
+import kotlin.io.path.notExists
 import kotlin.io.path.pathString
 import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.io.path.visitFileTree
 import kotlin.io.path.writeText
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
 /**
  * A test project is a Gradle project providing tests listed by a Gradle task `listTests`.
  *
  * The test project is created from files in the `build/projectTemplates` directory, specifically the
- * subdirectories `common` and [projectName]. `{{version:NAME}` placeholders in template files are populated with
+ * subdirectories `common` and [projectBaseName]. `{{version:NAME}` placeholders in template files are populated with
  * a corresponding `NAME` entry from [versions], if present, otherwise with the main project's version catalog entry.
  *
  * The test project autoconfigures itself for the available test tasks, preparing a clean build with
  * a fresh set of JS and Wasm package lock files (if JS and/or Wasm tests are available).
  */
+@OptIn(ExperimentalPathApi::class)
 internal open class TestProject(
     projectTestSuite: TestSuite,
-    projectName: String,
+    projectBaseName: String,
+    projectVariantName: String = "",
     val versions: Map<String, String> = emptyMap()
 ) : TestSuiteScope {
 
     override val testSuiteInScope: TestSuite = projectTestSuite
 
+    val projectName = projectBaseName + projectVariantName
+    val templatesBaseDirectory = Path("projectTemplates")
+    val templateVariantDirectory = templatesBaseDirectory / projectName
+
     protected val projectDirectory = testFixture {
-        val templatesBaseDirectory = Path("projectTemplates")
-        val commonTemplateDirectory = templatesBaseDirectory / "common"
-        val projectTemplateDirectory = templatesBaseDirectory / projectName
         val projectDirectory = Path("build") / "projects" / projectName
 
-        projectDirectory.populate(commonTemplateDirectory, projectTemplateDirectory)
+        projectDirectory.populate(
+            templatesBaseDirectory / "common",
+            templatesBaseDirectory / projectBaseName,
+            templateVariantDirectory
+        )
 
         projectDirectory
     }
 
-    @OptIn(ExperimentalPathApi::class)
-    private fun Path.populate(commonTemplateDirectory: Path, projectTemplateDirectory: Path) {
-        log("Populating $this from $commonTemplateDirectory, $projectTemplateDirectory")
+    private fun Path.populate(vararg templateDirectories: Path) {
+        val templateDirectories = templateDirectories.filter { it.exists() }
+        log("Populating $this from $templateDirectories")
+
         if (exists()) deleteRecursively()
         createDirectories()
-        populateFromTemplate(commonTemplateDirectory)
-        populateFromTemplate(projectTemplateDirectory)
+
+        // Use the root project's Gradle setup as a default.
         val rootDirectory = BuildConfig.PROJECT_ROOT_DIRECTORY.toPath()
-        for (rootFile in (listOf("gradlew", "gradlew.bat", "gradle", "kotlin-js-store"))) {
+        for (rootFile in (listOf("gradlew", "gradlew.bat", "gradle"))) {
             (rootDirectory / rootFile).copyToRecursively(this / rootFile, followLinks = false, overwrite = false)
+        }
+
+        for (templateDirectory in templateDirectories) {
+            populateFromTemplate(templateDirectory)
         }
     }
 
@@ -119,7 +131,22 @@ internal open class TestProject(
                 if (testTaskNames.any { it.startsWith("js") }) add("kotlinUpgradePackageLock")
                 if (testTaskNames.any { it.startsWith("wasmJs") }) add("kotlinWasmUpgradePackageLock")
             }.toTypedArray()
-        gradleExecution("clean", *npmPackageLockTasks).checked()
+        gradleExecution("clean").checked()
+        if (npmPackageLockTasks.isNotEmpty() &&
+            !(projectDirectory() / "kotlin-js-store" / "package-lock.json").exists()
+        ) {
+            // Create Npm package lock files and copy them to the respective project template directory.
+            gradleExecution(*npmPackageLockTasks).checked()
+            templateVariantDirectory.takeIf { it.notExists() }?.createDirectory()
+            (templateVariantDirectory / "kotlin-js-store").takeIf { it.notExists() }?.createDirectory()
+            (projectDirectory() / "kotlin-js-store").copyToRecursively(
+                templateVariantDirectory / "kotlin-js-store",
+                followLinks = false,
+                overwrite = true
+            )
+        }
+
+        if (testPlatform.environment("PREPARE_PACKAGE_LOCK_FILES_ONLY") != null) return@testFixture emptyList()
 
         testTaskNames
     }
@@ -203,7 +230,7 @@ private fun log(message: String) {
         logFile.appendText("\n––– Session Starting –––\n")
     }
 
-    @OptIn(TestBalloonExperimentalApi::class, ExperimentalTime::class)
+    @OptIn(TestBalloonExperimentalApi::class)
     logFile.appendText("${Clock.System.now()} [${testPlatform.threadId()}] $message\n")
 }
 

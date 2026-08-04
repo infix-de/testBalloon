@@ -3,7 +3,7 @@ import buildLogic.enableAbiValidation
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
-    id("buildLogic.publishing-multiplatform")
+    id("buildLogic.publishing")
 }
 
 description = "Shared declarations for the TestBalloon framework"

@@ -1,3 +1,12 @@
+## 1.1.0 (unreleased)
+
+This is a unified release with a single artifact set for Kotlin versions 2.3.0 and higher. TestBalloon's Gradle and compiler plugins auto-adapt to the Kotlin compiler version in use.
+
+### Compatibility 
+
+* This release supports Kotlin versions 2.3.0 … 2.5.0-dev-1759, binary compatible with 1.0.1.
+* For Kotlin versions 2.0.0 … 2.2.x, please use the corresponding TestBalloon 1.0.1 release variants.
+
 ## 1.0.1 (June 17, 2026)
 
 _This is a maintenance release, binary-compatible with 1.0.0._

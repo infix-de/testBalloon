@@ -1,6 +1,7 @@
 package de.infix.testBalloon.compilerPlugin
 
-import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
+import de.infix.testBalloon.compilerPlugin.base.Options
+import de.infix.testBalloon.compilerPlugin.base.PLUGIN_ID
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
@@ -8,7 +9,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 
 @OptIn(ExperimentalCompilerApi::class)
 class CompilerPluginCommandLineProcessor : CommandLineProcessor {
-    override val pluginId: String = PROJECT_COMPILER_PLUGIN_ID
+    override val pluginId: String = PLUGIN_ID
 
     override val pluginOptions: Collection<AbstractCliOption> = Options.all
 

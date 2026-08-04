@@ -1,5 +1,6 @@
 import buildLogic.addTestBalloonPluginFromProject
-import org.apache.tools.ant.taskdefs.condition.Os
+import buildLogic.gradleRunCommandLine
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     id("buildLogic.kotlin-jvm")
@@ -40,14 +41,16 @@ tasks {
         outputs.upToDateWhen { false }
 
         workingDir = rootDir
-        commandLine = if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            mutableListOf("cmd", "/c", "gradlew.bat", "publishAllPublicationsToIntegrationTestRepository")
-        } else {
-            mutableListOf("./gradlew", "publishAllPublicationsToIntegrationTestRepository")
-        }
+        commandLine = gradleRunCommandLine("--warn", "publishAllPublicationsToIntegrationTestRepository")
     }
 
-    named("test") {
+    withType(Test::class) {
         inputs.files(updateIntegrationTestRepository)
+
+        testLogging {
+            showStandardStreams = true
+            showStackTraces = true
+            exceptionFormat = TestExceptionFormat.FULL
+        }
     }
 }

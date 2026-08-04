@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
-    kotlin("multiplatform") version "{{version:org.jetbrains.kotlin}}"
+    kotlin("multiplatform") version "{{version:org.jetbrains.kotlin.latest}}"
     id("com.android.kotlin.multiplatform.library") version "{{version:android.gradle.plugin}}"
     id("com.gradleup.tapmoc") version "{{version:com.gradleup.tapmoc}}"
     id("de.infix.testBalloon") version "{{version:de.infix.testBalloon}}"
@@ -11,7 +11,7 @@ plugins {
 
 tapmoc {
     java("{{version:jdk}}".toInt())
-    kotlin("{{version:org.jetbrains.kotlin}}")
+    kotlin("{{version:org.jetbrains.kotlin.latest}}")
 }
 
 kotlin {

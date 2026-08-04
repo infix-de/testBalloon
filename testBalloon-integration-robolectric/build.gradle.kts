@@ -5,7 +5,7 @@ import buildLogic.robolectricJdkVersion
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("com.android.kotlin.multiplatform.library")
-    id("buildLogic.publishing-multiplatform")
+    id("buildLogic.publishing")
 }
 
 description = "Library supporting Robolectric with the TestBalloon framework"

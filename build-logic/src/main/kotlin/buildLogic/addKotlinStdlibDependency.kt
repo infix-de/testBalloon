@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-internal fun Project.addKotlinStdlibDependency() {
+fun Project.addKotlinStdlibDependency() {
     when (val extension = extensions.getByName("kotlin")) {
         is KotlinJvmExtension -> {
             dependencies.add("api", "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion()}")

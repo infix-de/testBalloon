@@ -20,40 +20,22 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 
 ==== Prepare a release branch for a Kotlin version
 
-. For each Kotlin version, choose a branch under `releases`, like `releases/0.4.0-K2.2.0`, where `0.4.0` is the TestBalloon version and `2.2.0` is the Kotlin version.
+. For each minor version, choose a branch under `releases`, like `releases/1.1`.
 . Prepare the release branch from `main` or a previous release branch.
 . Check out the release branch.
-. Change the version in `gradle.properties`, like `version=0.4.0-K2.2.0-dev1`.
+. Change the version in `gradle.properties`, like `version=1.1.0-dev-1`.
 . Adapt versions in `gradle/libs.versions.toml`.
 . Make necessary source code changes.
-. Update package lock files:
-.. Run `./gradlew clean`
-.. Delete lock files
-*** `kotlin-js-store/package-lock.json`
-*** `kotlin-js-store/wasm/package-lock.json`
-.. Recreate lock files:
-+
-[source,bash]
-----
-./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
-----
-. Run `./gradlew updateKotlinAbi`
-. Run CI tests via the IntelliJ IDEA run configuration `ciTests`.
+. Run `./prepare-release`
 . Run `./gradlew check -x test --continue` and verify that everything compiles and runs, accepting failed tests (from examples and experiments).
-. Check in the integration test project that no newer Kotlin artifacts sneak in, using a Terminal:
-** `++(cd integration-test/build/projects/element-selection; ./gradlew dependencies) | awk '/kotlin-stdlib:/ { gsub(/.*kotlin-stdlib:/, ""); gsub(/.* -> /, ""); gsub(/ \(.\)$/, ""); print }' | sort -u++`
 . Commit changes
 . Push commits to GitHub.
 
 ==== Publish a release to MavenCentral
 
-NOTE: The last regular release should be published last, after all other releases were published. This ensures that klibs.io will pick up the correct version number as "latest".
-
 . Wait for CI validation.
-. Run `./gradlew tagReleaseSet --release=1.0.1`
-. Run `./gradlew pushReleaseSetTags --release=1.0.1`
-. Wait for previous MavenCentral publications to finish.
-. Push the final outstanding tag to GitHub via IntelliJ's "Push all tags".
+. Add a release tag like `1.1.0` via the IDE (or run `git tag 1.1.0 releases/1.1`).
+. Push the release tag via the IDE (or run `git push origin tag 1.1.0`.
 
 ==== Publish a release on GitHub
 

@@ -2,11 +2,11 @@
 
 plugins {
     id("buildLogic.kotlin-jvm-base")
-    id("buildLogic.publishing-jvm")
+    id("buildLogic.publishing")
     id("com.github.gmazzo.buildconfig")
 }
 
-description = "Compiler plugin for the TestBalloon framework"
+description = "TestBalloon compiler plugin"
 
 /** Dependencies to be embedded into the compiler plugin artifact. */
 val embedded = configurations.dependencyScope("embedded")
@@ -24,36 +24,14 @@ fun DependencyHandler.embedded(dependencyNotation: Any) = add(embedded.name, dep
 dependencies {
     // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
     embedded(projects.testBalloonFrameworkShared)
-    // TODO: Add version-specific modules here
+    embedded(projects.testBalloonCompilerPlugin.base)
+    embedded(projects.testBalloonCompilerPlugin.layer.kotlin230)
+    embedded(projects.testBalloonCompilerPlugin.layer.kotlin2320)
+    embedded(projects.testBalloonCompilerPlugin.layer.kotlin240)
 
     project.configurations.named("compileOnly").configure { extendsFrom(embedded) }
     compileOnly(libs.org.jetbrains.kotlin.stdlib)
     compileOnly(libs.org.jetbrains.kotlin.compiler.embeddable)
-
-    project.configurations.named("testImplementation").configure { extendsFrom(embedded) }
-    testImplementation(libs.org.jetbrains.kotlin.stdlib)
-    testImplementation(libs.org.jetbrains.kotlin.compiler.embeddable)
-
-    testImplementation(libs.dev.zacsweers.kctfork)
-    testImplementation(libs.org.jetbrains.kotlin.test)
-}
-
-buildConfig {
-    packageName("buildConfig")
-    useKotlinOutput { internalVisibility = true }
-
-    buildConfigField(
-        "String",
-        "PROJECT_COMPILER_PLUGIN_ID",
-        "\"${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}\""
-    )
-    buildConfigField("String", "PROJECT_VERSION", "\"${project.version}\"")
-    buildConfigField("String", "PROJECT_GROUP_ID", "\"${project.group}\"")
-    buildConfigField("String", "PROJECT_FRAMEWORK_CORE_ARTIFACT_ID", "\"${projects.testBalloonFrameworkCore.name}\"")
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }
 
 val integratedJar = tasks.register("integratedJar", Jar::class.java) {
@@ -94,5 +72,12 @@ configurations {
                 artifact(integratedJar)
             }
         }
+    }
+}
+
+tasks.named("test") {
+    dependsOn("base:test")
+    rootProject.isolated.projectDirectory.dir("testBalloon-compiler-plugin/layer").asFile.listFiles()!!.forEach {
+        dependsOn("layer:${it.name}:test")
     }
 }

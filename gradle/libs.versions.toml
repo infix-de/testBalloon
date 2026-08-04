@@ -25,7 +25,7 @@ junit-junit4 = "4.13.2"
 com-gradleup-tapmoc = "0.4.2"
 
 # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
-com-vanniktech-maven-publish = "0.36.0"
+com-vanniktech-maven-publish = "0.37.0"
 
 # https://github.com/kotest/kotest/releases
 # Do not force an update onto consumers unless necessary
@@ -39,7 +39,9 @@ org-jetbrains-dokka = "2.1.0"
 
 # https://github.com/JetBrains/kotlin/releases
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
-org-jetbrains-kotlin = "2.4.20-Beta2"
+org-jetbrains-kotlin = "2.3.0"
+# The Kotlin version used for single-version integration tests.
+org-jetbrains-kotlin-latest = "2.4.0"
 
 # https://github.com/Kotlin/kotlinx.coroutines/releases
 org-jetbrains-kotlinx-coroutines = "1.10.2"
@@ -105,6 +107,7 @@ org-jetbrains-dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.
 org-jetbrains-dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "org-jetbrains-dokka" }
 org-jetbrains-dokka-gradle-plugin = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version.ref = "org-jetbrains-dokka" }
 
+org-jetbrains-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "org-jetbrains-kotlin" }

@@ -6,6 +6,8 @@ import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.gradle.api.Project
 import org.gradle.testing.base.TestingExtension
+import org.gradle.util.internal.VersionNumber
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import kotlin.reflect.KProperty
 
 internal class TestBalloonGradleProperties(val project: Project) {
@@ -42,6 +44,25 @@ internal class TestBalloonGradleProperties(val project: Project) {
     private val testSourceSetsRegexTestsOnlyProject by stringProperty(".*")
 
     /**
+     * Name pattern for test root source sets which will receive generated entry point code.
+     *
+     * Applies to Kotlin versions < 2.3.20 only. For Kotlin versions >= 2.3.20, the compiler plugin's FIR extension
+     * generates the entry point and this property is ignored.
+     */
+    val testRootSourceSetRegex by regexProperty(
+        """^test$|^commonTest$|^androidTest|^androidInstrumentedTest|AndroidTest$|UnitTest$"""
+    )
+
+    private val notIncrementallyCompilableTestSourceSetsPattern: String by lazy {
+        val kotlinVersion = VersionNumber.parse(project.getKotlinPluginVersion())
+        when {
+            kotlinVersion >= VersionNumber.parse("2.4.0") -> """^---NONE---$"""
+            kotlinVersion >= VersionNumber.parse("2.3.20") -> """^(js|wasm)"""
+            else -> """.*"""
+        }
+    }
+
+    /**
      * Name pattern for test source sets in which the Gradle plugin will disable incremental compilation.
      * This pattern will only be used on source sets matching [testSourceSetsRegex].
      *
@@ -50,7 +71,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
      *
      * IMPLEMENTATION NOTE: Before using this value, ensure that all plugins are applied to the project.
      */
-    val notIncrementallyCompilableTestSourceSetsRegex by regexProperty("""^---NONE---$""")
+    val notIncrementallyCompilableTestSourceSetsRegex by regexProperty(notIncrementallyCompilableTestSourceSetsPattern)
 
     /**
      * Name pattern for test runtime-only configurations which will receive a JUnit Platform launcher dependency.
@@ -213,6 +234,6 @@ internal class TestBalloonGradleProperties(val project: Project) {
         testSourceSetsRegex.containsMatchIn(name) || isJvmTestSuite(name)
 
     @Suppress("UnstableApiUsage")
-    private fun isJvmTestSuite(name: String) =
+    internal fun isJvmTestSuite(name: String) =
         project.extensions.findByType(TestingExtension::class.java)?.suites?.any { name == it.name } == true
 }

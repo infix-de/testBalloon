@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+echo "--- Preparation ---"
+./gradlew --stop
+./gradlew --warn clean
+./gradlew --warn recreateKotlinPackageLockFiles
+./gradlew --warn updateLegacyAbi
+
+echo "--- Validation ---"
+./gradlew --warn checkLegacyAbi
+./gradlew --warn componentTestsAllTargets
+./gradlew --warn integrationTests
+
+echo "--- Done ---"

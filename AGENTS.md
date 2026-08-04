@@ -59,7 +59,7 @@ Always use the Gradle wrapper (`./gradlew`). Do **not** invoke `gradle` directly
 ./gradlew :testBalloon-gradle-plugin:test
 
 # Check ABI compatibility
-./gradlew checkKotlinAbi
+./gradlew checkLegacyAbi
 
 # Lint (kotlinter)
 ./gradlew lintKotlin

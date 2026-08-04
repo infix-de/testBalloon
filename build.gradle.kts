@@ -1,5 +1,4 @@
-import buildLogic.PushReleaseSetTags
-import buildLogic.TagReleaseSet
+import buildLogic.gradleRunCommandLine
 
 plugins {
     id("buildLogic.common").apply(false)
@@ -10,6 +9,7 @@ tasks {
     for ((targetSubSet, kmpTaskName) in mapOf("AllTargets" to "allTests", "JvmOnly" to "jvmTest")) {
         register("componentTests$targetSubSet") {
             group = "verification"
+            description = "Run tests for all releasable TestBalloon components."
 
             dependsOn(":testBalloon-compiler-plugin:test")
             dependsOn(":testBalloon-gradle-plugin:test")
@@ -23,17 +23,64 @@ tasks {
 
     register("integrationTests") {
         group = "verification"
+        description = "Run TestBalloon integration tests."
 
         dependsOn(":integration-test:test")
     }
 
-    register<TagReleaseSet>("tagReleaseSet") {
-        description = "Tags all the versions belonging to a release set"
-        group = "release"
+    register("cleanAll", Exec::class) {
+        group = "releasing"
+        description = "Runs 'gradlew clean' on all projects."
+        workingDir = rootDir
+        commandLine = gradleRunCommandLine("--warn", "clean")
     }
 
-    register<PushReleaseSetTags>("pushReleaseSetTags") {
-        description = "Pushes tags for all versions belonging to a release set, except for the last regular release"
-        group = "release"
+    register("deleteKotlinPackageLockFiles", Delete::class) {
+        group = "releasing"
+        description = "Deletes all Kotlin/JS 'package-lock.json' files."
+
+        delete(
+            fileTree(rootDir) {
+                include("**/kotlin-js-store/**/package-lock.json")
+            }
+        )
+    }
+
+    register("updateKotlinPackageLockFilesInProjects", Exec::class) {
+        group = "releasing"
+        description = "Updates Kotlin/JS 'package-lock.json' files in all projects."
+
+        mustRunAfter("deleteKotlinPackageLockFiles")
+
+        workingDir = rootDir
+        commandLine = gradleRunCommandLine("--warn", "kotlinUpgradePackageLock", "kotlinWasmUpgradePackageLock")
+    }
+
+    register("updateKotlinPackageLockFilesInTemplates", Exec::class) {
+        group = "releasing"
+        description = "Updates all Kotlin/JS 'package-lock.json' files in all templates."
+
+        mustRunAfter("deleteKotlinPackageLockFiles")
+        mustRunAfter("updateKotlinPackageLockFilesInProjects")
+
+        workingDir = rootDir
+        environment("PREPARE_PACKAGE_LOCK_FILES_ONLY", "true")
+        commandLine = gradleRunCommandLine(":integration-test:test")
+    }
+
+    register("updateKotlinPackageLockFiles") {
+        group = "releasing"
+        description = "Updates all Kotlin/JS 'package-lock.json' files."
+
+        dependsOn("updateKotlinPackageLockFilesInProjects")
+        dependsOn("updateKotlinPackageLockFilesInTemplates")
+    }
+
+    register("recreateKotlinPackageLockFiles") {
+        group = "releasing"
+        description = "Recreates fresh Kotlin/JS 'package-lock.json' files."
+
+        dependsOn("deleteKotlinPackageLockFiles")
+        dependsOn("updateKotlinPackageLockFiles")
     }
 }

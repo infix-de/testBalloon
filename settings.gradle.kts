@@ -13,6 +13,12 @@ include(":testBalloon-framework-shared")
 include(":testBalloon-framework-core")
 include(":testBalloon-gradle-plugin")
 include(":testBalloon-compiler-plugin")
+include(":testBalloon-compiler-plugin:base")
+include(":testBalloon-compiler-plugin:base-test")
+include(":testBalloon-compiler-plugin:layer:kotlin-2-3-0")
+include(":testBalloon-compiler-plugin:layer:kotlin-2-3-20")
+include(":testBalloon-compiler-plugin:layer:kotlin-2-4-0")
+include(":testBalloon-compiler-plugin:layer:kotlin-2-4-10")
 
 include(":integration-test")
 

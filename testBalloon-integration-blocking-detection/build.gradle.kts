@@ -6,7 +6,7 @@ import buildLogic.versionFromCatalog
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("com.android.kotlin.multiplatform.library")
-    id("buildLogic.publishing-multiplatform")
+    id("buildLogic.publishing")
 }
 
 description = "Library supporting blocking code detection with the TestBalloon framework"

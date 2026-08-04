@@ -3,6 +3,7 @@ import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.invocation
+import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.TestElementName
@@ -11,14 +12,17 @@ import kotlin.io.path.div
 import kotlin.io.path.moveTo
 
 val IncrementalCompilationTests by testSuite {
+    val kotlinVersions = listOf("2.5.0-dev-1759", "2.4.20-Beta2", "2.4.0", "2.3.20", "2.3.0")
+
     incrementalCompilationTestSuite(
         "incremental-compilation-kotlin-test",
+        kotlinVersions = listOf(kotlinVersions.first()),
         testConfig = TestConfig.disable() // enable to observe IC with kotlin.test
     ) {
         testSeries("incremental compilation")
     }
 
-    incrementalCompilationTestSuite("incremental-compilation-testBalloon-kmp") {
+    incrementalCompilationTestSuite("incremental-compilation-testBalloon-kmp", kotlinVersions = kotlinVersions) {
         testSeries(
             name = "full compilation",
             gradleOptions = arrayOf(
@@ -33,7 +37,7 @@ val IncrementalCompilationTests by testSuite {
         testSeries("incremental compilation")
     }
 
-    incrementalCompilationTestSuite("incremental-compilation-testBalloon-jvm") {
+    incrementalCompilationTestSuite("incremental-compilation-testBalloon-jvm", kotlinVersions = kotlinVersions) {
         testSeries(
             name = "full compilation",
             gradleOptions = arrayOf(
@@ -52,15 +56,29 @@ val IncrementalCompilationTests by testSuite {
 
 @TestRegistering
 private fun TestSuiteScope.incrementalCompilationTestSuite(
-    @TestElementName(prefix = "project: ") projectName: String,
+    @TestElementName(prefix = "project: ") projectBaseName: String,
+    kotlinVersions: List<String>,
     testConfig: TestConfig = TestConfig,
     action: IncrementalCompilationTestProject.() -> Unit
-) = testSuite("project: $projectName", testConfig.invocation(TestConfig.Invocation.Sequential)) {
-    IncrementalCompilationTestProject(this, projectName).action()
+) = testSuite("project: $projectBaseName", testConfig = testConfig.invocation(TestConfig.Invocation.Sequential)) {
+    for (kotlinVersion in kotlinVersions) {
+        testSuite("Kotlin $kotlinVersion") {
+            IncrementalCompilationTestProject(
+                this,
+                projectBaseName,
+                "-$kotlinVersion",
+                mapOf("org.jetbrains.kotlin" to kotlinVersion)
+            ).action()
+        }
+    }
 }
 
-private class IncrementalCompilationTestProject(projectTestSuite: TestSuite, projectName: String) :
-    TestProject(projectTestSuite, projectName) {
+private class IncrementalCompilationTestProject(
+    projectTestSuite: TestSuite,
+    projectBaseName: String,
+    projectVariantName: String = "",
+    versions: Map<String, String> = emptyMap()
+) : TestProject(projectTestSuite, projectBaseName, projectVariantName, versions) {
 
     /**
      * A series of tests which repeatedly executes a Gradle test task for all available targets.
@@ -117,7 +135,9 @@ private class IncrementalCompilationTestProject(projectTestSuite: TestSuite, pro
         }
 
         test("baseline") {
-            check(baselineResults().isNotEmpty()) {
+            check(
+                baselineResults().isNotEmpty() || testPlatform.environment("PREPARE_PACKAGE_LOCK_FILES_ONLY") != null
+            ) {
                 "None of the tasks ${testTaskNames()} produced a result."
             }
         }

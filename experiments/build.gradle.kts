@@ -1,22 +1,11 @@
 import buildLogic.addTestBalloonPluginFromProject
-import buildLogic.kotlinVersion
-import buildLogic.robolectricJdkVersion
-import tapmoc.Severity
 
 plugins {
-    id("org.jetbrains.kotlin.multiplatform")
+    id("buildLogic.kotlin-multiplatform")
     id("com.android.kotlin.multiplatform.library")
-    id("com.gradleup.tapmoc")
 }
 
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
-
-tapmoc {
-    java(robolectricJdkVersion())
-    kotlin(kotlinVersion())
-
-    checkDependencies(Severity.ERROR)
-}
 
 kotlin {
     jvm()

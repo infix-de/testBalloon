@@ -23,12 +23,8 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: 'Upgrade package lock files'
-        # WORKAROUND: spurious occurrences of "Lock file was changed."
-        run: ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
-
       - name: 'Check ABI compatibility'
-        run: ./gradlew checkKotlinAbi
+        run: ./gradlew checkLegacyAbi
 
       - name: 'Check code style consistency'
         run: ./gradlew lintKotlin
@@ -73,12 +69,8 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: 'Upgrade package lock files'
-        # WORKAROUND: spurious occurrences of "Lock file was changed."
-        run: ./gradlew kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
-
       - name: 'Check ABI compatibility'
-        run: ./gradlew checkKotlinAbi
+        run: ./gradlew checkLegacyAbi
 
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets

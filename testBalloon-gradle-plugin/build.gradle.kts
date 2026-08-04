@@ -3,7 +3,7 @@ import tapmoc.Severity
 
 plugins {
     id("buildLogic.kotlin-jvm")
-    id("buildLogic.publishing-jvm")
+    id("buildLogic.publishing")
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
     id("org.jetbrains.kotlin.plugin.assignment")
     id("com.github.gmazzo.buildconfig")

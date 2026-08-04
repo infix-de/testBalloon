@@ -1,7 +1,7 @@
 import buildLogic.addTestBalloonPluginFromProject
 
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    id("buildLogic.kotlin-jvm")
     java
     // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
 }

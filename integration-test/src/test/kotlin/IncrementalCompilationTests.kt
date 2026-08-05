@@ -3,7 +3,6 @@ import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.invocation
-import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.TestElementName
@@ -135,9 +134,7 @@ private class IncrementalCompilationTestProject(
         }
 
         test("baseline") {
-            check(
-                baselineResults().isNotEmpty() || testPlatform.environment("PREPARE_PACKAGE_LOCK_FILES_ONLY") != null
-            ) {
+            check(baselineResults().isNotEmpty() || packageLockFilesUpdateRequested()) {
                 "None of the tasks ${testTaskNames()} produced a result."
             }
         }

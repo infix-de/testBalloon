@@ -126,15 +126,15 @@ internal open class TestProject(
         }.toList()
 
         // Prepare the project for execution.
+        gradleExecution("clean").checked()
+
         val npmPackageLockTasks =
             buildList {
                 if (testTaskNames.any { it.startsWith("js") }) add("kotlinUpgradePackageLock")
                 if (testTaskNames.any { it.startsWith("wasmJs") }) add("kotlinWasmUpgradePackageLock")
             }.toTypedArray()
-        gradleExecution("clean").checked()
-        if (npmPackageLockTasks.isNotEmpty() &&
-            !(projectDirectory() / "kotlin-js-store" / "package-lock.json").exists()
-        ) {
+        val jsPackageLockFile = projectDirectory() / "kotlin-js-store" / "package-lock.json"
+        if (npmPackageLockTasks.isNotEmpty() && (!jsPackageLockFile.exists() || packageLockFilesUpdateRequested())) {
             // Create Npm package lock files and copy them to the respective project template directory.
             gradleExecution(*npmPackageLockTasks).checked()
             templateVariantDirectory.takeIf { it.notExists() }?.createDirectory()
@@ -146,7 +146,7 @@ internal open class TestProject(
             )
         }
 
-        if (testPlatform.environment("PREPARE_PACKAGE_LOCK_FILES_ONLY") != null) return@testFixture emptyList()
+        if (packageLockFilesUpdateRequested()) return@testFixture emptyList()
 
         testTaskNames
     }
@@ -238,3 +238,5 @@ internal fun List<String>.asIndentedText(indent: String = "\t") = joinToString(p
 
 internal fun skippingEnabled(key: String) =
     testPlatform.environment("TEST_SKIP")?.split(',')?.any { it.trim().contains(key) } == true
+
+fun packageLockFilesUpdateRequested(): Boolean = testPlatform.environment("PACKAGE_LOCK_FILES_UPDATE_REQUESTED") != null

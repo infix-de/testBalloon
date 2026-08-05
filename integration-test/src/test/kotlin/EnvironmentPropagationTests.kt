@@ -5,7 +5,6 @@ import de.infix.testBalloon.framework.core.testSuite
 import java.util.Locale
 
 val EnvironmentPropagationTests by testSuite(testConfig = TestConfig.invocation(TestConfig.Invocation.Sequential)) {
-    val nativeTasksThatMayFail = setOf("macosArm64Test", "iosSimulatorArm64Test", "linuxX64Test", "mingwX64Test")
     val projectTestSuite = this
     val environment = mapOf("TEST_ONE" to "test one", "CUSTOM_ONE" to "custom one", "CUSTOM_TWO" to "custom two")
 
@@ -24,10 +23,10 @@ val EnvironmentPropagationTests by testSuite(testConfig = TestConfig.invocation(
                 *gradleArguments,
                 environment = environment
             )
-            val taskResults = taskExecution.logMessages()
-            if (taskName in nativeTasksThatMayFail && taskExecution.stdout.contains(":$taskName SKIPPED")) {
+            if (taskExecution.nativeTaskHasFailedExpectedly(taskName)) {
                 println("$testElementPath: $taskName – SKIPPED")
             } else {
+                val taskResults = taskExecution.logMessages()
                 check(taskResults == expectedVariables) {
                     "$taskName did not propagate exactly $expectedVariables:\n" +
                         "\tactual results:\n${taskResults.asIndentedText(indent = "\t\t")}\n" +

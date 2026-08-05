@@ -28,5 +28,3 @@ dependencyResolutionManagement {
         from(files("../gradle/libs.versions.toml"))
     }
 }
-
-rootProject.name = "build-settings"

@@ -3,7 +3,6 @@ import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.invocation
-import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
 import de.infix.testBalloon.framework.shared.TestElementName
@@ -12,7 +11,7 @@ import kotlin.io.path.div
 import kotlin.io.path.moveTo
 
 val IncrementalCompilationTests by testSuite {
-    val kotlinVersions = listOf("2.5.0-dev-1759", "2.4.20-Beta2", "2.4.0", "2.3.20", "2.3.0")
+    val kotlinVersions = listOf("2.5.0-dev-1759", "2.4.20-Beta2", "2.4.0", "2.3.21", "2.3.0", "2.2.21", "2.2.0")
 
     incrementalCompilationTestSuite(
         "incremental-compilation-kotlin-test",
@@ -106,20 +105,11 @@ private class IncrementalCompilationTestProject(
 
         val baselineResults = testFixture {
             val fileCount = 2
-            val nativeTasksThatMayFail = setOf("macosArm64Test", "linuxX64Test", "mingwX64Test")
 
             testTaskNames().mapNotNull { taskName ->
                 val taskExecution = compileTaskExecution(taskName)
-                val targetName = taskName.removeSuffix("Test")
 
-                if (taskName in nativeTasksThatMayFail &&
-                    (
-                        taskExecution.stdout.contains(":$taskName SKIPPED") ||
-                            taskExecution.stderr.contains(
-                                "Could not resolve all artifacts for configuration ':$targetName"
-                            )
-                        )
-                ) {
+                if (taskExecution.nativeTaskHasFailedExpectedly(taskName)) {
                     return@mapNotNull null
                 }
 
@@ -135,9 +125,7 @@ private class IncrementalCompilationTestProject(
         }
 
         test("baseline") {
-            check(
-                baselineResults().isNotEmpty() || testPlatform.environment("PREPARE_PACKAGE_LOCK_FILES_ONLY") != null
-            ) {
+            check(baselineResults().isNotEmpty() || packageLockFilesUpdateRequested()) {
                 "None of the tasks ${testTaskNames()} produced a result."
             }
         }

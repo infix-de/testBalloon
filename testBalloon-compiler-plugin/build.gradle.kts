@@ -1,5 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
+import kotlin.io.path.div
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+
 plugins {
     id("buildLogic.kotlin-jvm-base")
     id("buildLogic.publishing")
@@ -9,29 +13,36 @@ plugins {
 description = "TestBalloon compiler plugin"
 
 /** Dependencies to be embedded into the compiler plugin artifact. */
-val embedded = configurations.dependencyScope("embedded")
+val embeddedCompileOnly = configurations.dependencyScope("embeddedCompileOnly")
+val embeddedDynamicallyLoaded = configurations.dependencyScope("embeddedRuntimeOnly")
 
 /** The consumable configuration containing the resulting embedded elements. */
 val embeddedResult = configurations.resolvable("embeddedResult") {
-    extendsFrom(embedded)
+    extendsFrom(embeddedCompileOnly)
+    extendsFrom(embeddedDynamicallyLoaded)
     exclude(module = "kotlin-stdlib")
 }
 
 /** Adds a dependency to the `embedded` configuration. */
-fun DependencyHandler.embedded(dependencyNotation: Any) = add(embedded.name, dependencyNotation)
+fun DependencyHandler.embeddedCompileOnly(dependencyNotation: Any) = add(embeddedCompileOnly.name, dependencyNotation)
+fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
+    add(embeddedDynamicallyLoaded.name, dependencyNotation)
 
 @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
 dependencies {
     // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
-    embedded(projects.testBalloonFrameworkShared)
-    embedded(projects.testBalloonCompilerPlugin.base)
-    embedded(projects.testBalloonCompilerPlugin.layer.kotlin230)
-    embedded(projects.testBalloonCompilerPlugin.layer.kotlin2320)
-    embedded(projects.testBalloonCompilerPlugin.layer.kotlin240)
+    embeddedCompileOnly(projects.testBalloonFrameworkShared)
+    embeddedCompileOnly(projects.testBalloonCompilerPlugin.compilerPluginLayerBase)
 
-    project.configurations.named("compileOnly").configure { extendsFrom(embedded) }
+    val compilerPluginLayers =
+        (projectDir.toPath() / "layer").listDirectoryEntries("compiler-plugin-layer-kotlin-*").map { it.name }
+    for (compilerPluginLayer in compilerPluginLayers) {
+        embeddedDynamicallyLoaded("de.infix.testBalloon:$compilerPluginLayer")
+    }
+
+    project.configurations.named("compileOnly").configure { extendsFrom(embeddedCompileOnly) }
     compileOnly(libs.org.jetbrains.kotlin.stdlib)
-    compileOnly(libs.org.jetbrains.kotlin.compiler.embeddable)
+    compileOnly(libs.org.jetbrains.kotlin.compiler)
 }
 
 val integratedJar = tasks.register("integratedJar", Jar::class.java) {
@@ -53,11 +64,20 @@ val integratedJar = tasks.register("integratedJar", Jar::class.java) {
     // Include the compiler plugin's embedded dependency classes, unzipping JARs.
     from(
         embeddedResult.map { embeddedResult ->
-            embeddedResult.elements.map { location ->
-                location.map { archiveOperations.zipTree(it.asFile) }
+            embeddedResult.elements.map { elements ->
+                elements.map { element ->
+                    archiveOperations.zipTree(element.asFile).matching {
+                        // Strip Kotlin metadata files to avoid compilation errors
+                        //     "Module was compiled with an incompatible version of Kotlin"
+                        // when an older compiler version encounters newer metadata in the compiler plugin JAR.
+                        exclude("META-INF/*.kotlin_module")
+                    }
+                }
             }
         }
     )
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     archiveClassifier = "integrated"
 }
@@ -76,8 +96,8 @@ configurations {
 }
 
 tasks.named("test") {
-    dependsOn("base:test")
-    rootProject.isolated.projectDirectory.dir("testBalloon-compiler-plugin/layer").asFile.listFiles()!!.forEach {
-        dependsOn("layer:${it.name}:test")
+    dependsOn("compiler-plugin-layer-base:test")
+    (projectDir.toPath() / "layer").listDirectoryEntries().forEach {
+        dependsOn(gradle.includedBuild(it.name).task(":test"))
     }
 }

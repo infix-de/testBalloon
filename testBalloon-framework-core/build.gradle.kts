@@ -40,9 +40,9 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        compilerOptions {
-            freeCompilerArgs.add("-opt-in=kotlin.js.ExperimentalWasmJsInterop")
-        }
+        // compilerOptions {
+        //     freeCompilerArgs.add("-opt-in=kotlin.js.ExperimentalWasmJsInterop")
+        // }
     }
 
     androidLibrary {

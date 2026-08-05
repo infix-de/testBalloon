@@ -1,3 +1,6 @@
+import kotlin.io.path.div
+import kotlin.io.path.listDirectoryEntries
+
 pluginManagement {
     includeBuild("build-logic")
     includeBuild("build-settings")
@@ -9,16 +12,17 @@ plugins {
 
 rootProject.name = "testBalloon"
 
+includeBuild(".") // Make the top-level build referenceable in other include builds.
+
 include(":testBalloon-framework-shared")
 include(":testBalloon-framework-core")
 include(":testBalloon-gradle-plugin")
 include(":testBalloon-compiler-plugin")
-include(":testBalloon-compiler-plugin:base")
-include(":testBalloon-compiler-plugin:base-test")
-include(":testBalloon-compiler-plugin:layer:kotlin-2-3-0")
-include(":testBalloon-compiler-plugin:layer:kotlin-2-3-20")
-include(":testBalloon-compiler-plugin:layer:kotlin-2-4-0")
-include(":testBalloon-compiler-plugin:layer:kotlin-2-4-10")
+include(":testBalloon-compiler-plugin:compiler-plugin-layer-base")
+include(":testBalloon-compiler-plugin:compiler-plugin-layer-base-test")
+for (compilerPluginLayer in (rootDir.toPath() / "testBalloon-compiler-plugin/layer").listDirectoryEntries()) {
+    includeBuild(compilerPluginLayer.toString())
+}
 
 include(":integration-test")
 

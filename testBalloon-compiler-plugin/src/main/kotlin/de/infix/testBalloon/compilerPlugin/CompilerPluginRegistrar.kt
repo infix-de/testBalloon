@@ -5,9 +5,6 @@ import de.infix.testBalloon.compilerPlugin.base.Options
 import de.infix.testBalloon.compilerPlugin.base.PLUGIN_DISPLAY_NAME
 import de.infix.testBalloon.compilerPlugin.base.PLUGIN_ID
 import de.infix.testBalloon.compilerPlugin.base.asKotlinVersion
-import de.infix.testBalloon.compilerPlugin.layer.kotlin230.CompilerAdapter_2_3_0
-import de.infix.testBalloon.compilerPlugin.layer.kotlin2320.CompilerAdapter_2_3_20
-import de.infix.testBalloon.compilerPlugin.layer.kotlin240.CompilerAdapter_2_4_0
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -20,7 +17,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 @OptIn(ExperimentalCompilerApi::class)
 class CompilerPluginRegistrar : CompilerPluginRegistrar() {
     @Suppress("unused") // pluginId is an override property required for Kotlin versions >= 2.3.0
-    override val pluginId: String = PLUGIN_ID
+    val pluginId: String = PLUGIN_ID
 
     override val supportsK2 = true
 
@@ -65,17 +62,17 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
                 ?.bufferedReader()?.use { it.readText() }?.takeUnless { it.isBlank() }?.asKotlinVersion()
                 ?: throw IllegalArgumentException("${PLUGIN_DISPLAY_NAME}: Could not determine the compiler version.")
 
-        val adapterConfiguration = CompilerAdapter.Configuration(pluginId, compilerVersion)
-
-        val adapters =
-            listOf<(CompilerAdapter.Configuration) -> CompilerAdapter>(
-                { CompilerAdapter_2_4_0(it) },
-                { CompilerAdapter_2_3_20(it) },
-                { CompilerAdapter_2_3_0(it) }
-            )
-        for (adapter in adapters) {
-            val configuredAdapter = adapter(adapterConfiguration)
-            if (configuredAdapter.adapterVersion <= compilerVersion) return configuredAdapter
+        for (adapterVersionString in listOf("2.4.0", "2.3.20", "2.3.0", "2.2.0")) {
+            if (adapterVersionString.asKotlinVersion() <= compilerVersion) {
+                val adapterConfiguration = CompilerAdapter.Configuration(pluginId, compilerVersion)
+                val packageVersion = adapterVersionString.replace(".", "")
+                val classVersion = adapterVersionString.replace(".", "_")
+                val className =
+                    "de.infix.testBalloon.compilerPlugin.layer.kotlin$packageVersion.CompilerAdapter_$classVersion"
+                return Class.forName(className)
+                    .getDeclaredConstructor(CompilerAdapter.Configuration::class.java)
+                    .newInstance(adapterConfiguration) as CompilerAdapter
+            }
         }
 
         throw NotImplementedError("${PLUGIN_DISPLAY_NAME}: Kotlin compiler version '$compilerVersion' is unsupported.")

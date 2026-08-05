@@ -64,7 +64,7 @@ tasks {
         mustRunAfter("updateKotlinPackageLockFilesInProjects")
 
         workingDir = rootDir
-        environment("PREPARE_PACKAGE_LOCK_FILES_ONLY", "true")
+        environment("PACKAGE_LOCK_FILES_UPDATE_REQUESTED", "true")
         commandLine = gradleRunCommandLine(":integration-test:test")
     }
 

@@ -21,6 +21,7 @@ import kotlin.io.path.relativeTo
 import kotlin.io.path.visitFileTree
 import kotlin.io.path.writeText
 import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * A test project is a Gradle project providing tests listed by a Gradle task `listTests`.
@@ -126,15 +127,15 @@ internal open class TestProject(
         }.toList()
 
         // Prepare the project for execution.
+        gradleExecution("clean").checked()
+
         val npmPackageLockTasks =
             buildList {
                 if (testTaskNames.any { it.startsWith("js") }) add("kotlinUpgradePackageLock")
                 if (testTaskNames.any { it.startsWith("wasmJs") }) add("kotlinWasmUpgradePackageLock")
             }.toTypedArray()
-        gradleExecution("clean").checked()
-        if (npmPackageLockTasks.isNotEmpty() &&
-            !(projectDirectory() / "kotlin-js-store" / "package-lock.json").exists()
-        ) {
+        val jsPackageLockFile = projectDirectory() / "kotlin-js-store" / "package-lock.json"
+        if (npmPackageLockTasks.isNotEmpty() && (!jsPackageLockFile.exists() || packageLockFilesUpdateRequested())) {
             // Create Npm package lock files and copy them to the respective project template directory.
             gradleExecution(*npmPackageLockTasks).checked()
             templateVariantDirectory.takeIf { it.notExists() }?.createDirectory()
@@ -146,7 +147,7 @@ internal open class TestProject(
             )
         }
 
-        if (testPlatform.environment("PREPARE_PACKAGE_LOCK_FILES_ONLY") != null) return@testFixture emptyList()
+        if (packageLockFilesUpdateRequested()) return@testFixture emptyList()
 
         testTaskNames
     }
@@ -213,6 +214,16 @@ internal open class TestProject(
         }
 
         fun checkedStdout(): String = checked().stdout
+
+        fun nativeTaskHasFailedExpectedly(taskName: String): Boolean {
+            val nativeTasksThatMayFail =
+                setOf("macosArm64Test", "linuxX64Test", "mingwX64Test", "iosSimulatorArm64Test")
+
+            return taskName in nativeTasksThatMayFail && (
+                stdout.contains(":$taskName SKIPPED") ||
+                    Regex("""Could not resolve all (artifacts|files) for configuration""").containsMatchIn(stderr)
+                )
+        }
     }
 }
 
@@ -230,7 +241,7 @@ private fun log(message: String) {
         logFile.appendText("\n––– Session Starting –––\n")
     }
 
-    @OptIn(TestBalloonExperimentalApi::class)
+    @OptIn(TestBalloonExperimentalApi::class, ExperimentalTime::class)
     logFile.appendText("${Clock.System.now()} [${testPlatform.threadId()}] $message\n")
 }
 
@@ -238,3 +249,5 @@ internal fun List<String>.asIndentedText(indent: String = "\t") = joinToString(p
 
 internal fun skippingEnabled(key: String) =
     testPlatform.environment("TEST_SKIP")?.split(',')?.any { it.trim().contains(key) } == true
+
+fun packageLockFilesUpdateRequested(): Boolean = testPlatform.environment("PACKAGE_LOCK_FILES_UPDATE_REQUESTED") != null

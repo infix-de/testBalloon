@@ -39,7 +39,7 @@ org-jetbrains-dokka = "2.1.0"
 
 # https://github.com/JetBrains/kotlin/releases
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
-org-jetbrains-kotlin = "2.3.0"
+org-jetbrains-kotlin = "2.2.0"
 # The Kotlin version used for single-version integration tests.
 org-jetbrains-kotlin-latest = "2.4.0"
 
@@ -52,7 +52,7 @@ org-jetbrains-kotlinx-kover = "0.9.8"
 # https://github.com/jeremymailen/kotlinter-gradle/releases
 org-jmailen-kotlinter = "5.4.2"
 
-# https://github.com/junit-team/junit5/releases
+# https://github.com/junit-team/junit-framework/releases
 org-junit-jupiter = "6.0.3"
 org-junit-jupiter-jdk = "17"
 org-junit-platform = "1.13.4"
@@ -86,7 +86,10 @@ com-vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech:gradle-m
 de-fayard-refreshversions-gradle-plugin = "de.fayard.refreshVersions:de.fayard.refreshVersions.gradle.plugin:0.60.6"
 
 # https://github.com/ZacSweers/kotlin-compile-testing/releases
-dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.12.1"
+# This kctfork version must be compile-compatible with the minimum Kotlin version specified via "org-jetbrains-kotlin"
+# for a minimal set of declarations used in testBalloon-compiler-plugin/compiler-plugin-layer-base-test.
+# kctfork version 0.5.1 provides declarations compatible with Kotlin 2.0.0 and above.
+dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.5.1"
 
 # https://github.com/kotest/kotest/releases
 io-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest" }
@@ -108,7 +111,6 @@ org-jetbrains-dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.
 org-jetbrains-dokka-gradle-plugin = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version.ref = "org-jetbrains-dokka" }
 
 org-jetbrains-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "org-jetbrains-kotlin" }

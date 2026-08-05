@@ -31,6 +31,10 @@ class BuildSettingsPlugin : Plugin<Settings> {
         }
 
         enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+        // Setting the root project name explicitly avoids a Gradle warning about names changing when the project
+        // is checked out into different directories. Setting it here is meant for include builds, whose directory
+        // names are stable. The top-level root project name must still be set in the top-level settings script.
+        rootProject.name = rootDir.name
     }
 
     private fun RepositoryHandler.projectRepositories() {

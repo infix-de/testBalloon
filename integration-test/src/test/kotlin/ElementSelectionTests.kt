@@ -87,8 +87,6 @@ val ElementSelectionTests by testSuite(
 
     val variants = if (secondarySkippingEnabled) secondaryVariants else primaryVariants
 
-    val nativeTasksThatMayFail = setOf("macosArm64Test", "linuxX64Test", "mingwX64Test")
-
     for (variant in variants) {
         for ((pattern, expectedTestCount) in variant.patternMatches) {
             test(
@@ -112,12 +110,12 @@ val ElementSelectionTests by testSuite(
                         continue
                     }
 
-                    val taskResults = taskExecution.logMessages()
-                    if (taskName in nativeTasksThatMayFail && taskExecution.stdout.contains(":$taskName SKIPPED")) {
+                    if (taskExecution.nativeTaskHasFailedExpectedly(taskName)) {
                         println("$testElementPath: $taskName – SKIPPED")
                         continue
                     }
 
+                    val taskResults = taskExecution.logMessages()
                     check(taskResults.size == expectedTestCount) {
                         "$taskName was expected to produce $expectedTestCount result(s)," +
                             " but produced ${taskResults.size}:\n" +

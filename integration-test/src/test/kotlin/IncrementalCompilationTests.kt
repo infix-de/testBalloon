@@ -1,7 +1,6 @@
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
-import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.AbstractTestElement
@@ -13,41 +12,38 @@ import kotlin.io.path.moveTo
 val IncrementalCompilationTests by testSuite {
     val kotlinVersions = listOf("2.5.0-dev-1759", "2.4.20-Beta2", "2.4.0", "2.3.21", "2.3.0", "2.2.21", "2.2.0")
 
-    incrementalCompilationTestSuite(
-        "incremental-compilation-kotlin-test",
-        kotlinVersions = listOf(kotlinVersions.first()),
-        testConfig = TestConfig.disable() // enable to observe IC with kotlin.test
-    ) {
-        testSeries("incremental compilation")
-    }
+    // incrementalCompilationTestSuite(
+    //     "incremental-compilation-kotlin-test",
+    //     kotlinVersions = listOf(kotlinVersions.first())
+    // ) {
+    //     testSeries("incremental compilation")
+    // }
 
     incrementalCompilationTestSuite("incremental-compilation-testBalloon-kmp", kotlinVersions = kotlinVersions) {
-        testSeries(
-            name = "full compilation",
-            gradleOptions = arrayOf(
-                "-Pkotlin.incremental=false",
-                "-Pkotlin.incremental.js=false",
-                "-Pkotlin.incremental.js.klib=false",
-                "-Pkotlin.incremental.js.ir=false"
-            ),
-            testConfig = TestConfig.disable() // enable to observe behavior with full compilation
-        )
+        // testSeries(
+        //     name = "full compilation",
+        //     gradleOptions = arrayOf(
+        //         "-Pkotlin.incremental=false",
+        //         "-Pkotlin.incremental.js=false",
+        //         "-Pkotlin.incremental.js.klib=false",
+        //         "-Pkotlin.incremental.js.ir=false"
+        //     )
+        // )
 
         testSeries("incremental compilation")
     }
 
     incrementalCompilationTestSuite("incremental-compilation-testBalloon-jvm", kotlinVersions = kotlinVersions) {
-        testSeries(
-            name = "full compilation",
-            gradleOptions = arrayOf(
-                "-Pkotlin.incremental=false",
-                "-Pkotlin.incremental.js=false",
-                "-Pkotlin.incremental.js.klib=false",
-                "-Pkotlin.incremental.js.ir=false"
-            ),
-            testSourceBaseDirectoryName = "test",
-            testConfig = TestConfig.disable() // enable to observe behavior with full compilation
-        )
+        // testSeries(
+        //     name = "full compilation",
+        //     gradleOptions = arrayOf(
+        //         "-Pkotlin.incremental=false",
+        //         "-Pkotlin.incremental.js=false",
+        //         "-Pkotlin.incremental.js.klib=false",
+        //         "-Pkotlin.incremental.js.ir=false"
+        //     ),
+        //     testSourceBaseDirectoryName = "test"
+        // )
 
         testSeries("incremental compilation", testSourceBaseDirectoryName = "test")
     }

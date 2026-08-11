@@ -56,7 +56,6 @@ internal open class TestProject(
     companion object {
         val lastProjectIndex = AtomicInteger(0)
         private val parameterRegex = Regex("""\{\{(.*?)\}\}""")
-        private val projectVersions = BuildConfig.PROJECT_CATALOG_VERSIONS
     }
 
     protected val projectDirectory = testFixture {
@@ -106,12 +105,7 @@ internal open class TestProject(
                     when (protocol) {
                         "version" -> when (name) {
                             "de.infix.testBalloon" -> BuildConfig.PROJECT_VERSION
-
-                            else -> {
-                                versions[name]
-                                    ?: projectVersions[name]
-                                    ?: throw IllegalArgumentException("Version for '$name' not found")
-                            }
+                            else -> versions[name] ?: projectCatalogVersion(name)
                         }
 
                         "path" -> when (name) {
@@ -265,4 +259,8 @@ internal fun List<String>.asIndentedText(indent: String = "\t") = joinToString(p
 internal fun skippingEnabled(key: String) =
     testPlatform.environment("TEST_SKIP")?.split(',')?.any { it.trim().contains(key) } == true
 
-fun packageLockFilesUpdateRequested(): Boolean = testPlatform.environment("PACKAGE_LOCK_FILES_UPDATE_REQUESTED") != null
+internal fun packageLockFilesUpdateRequested(): Boolean =
+    testPlatform.environment("PACKAGE_LOCK_FILES_UPDATE_REQUESTED") != null
+
+internal fun projectCatalogVersion(name: String) =
+    BuildConfig.PROJECT_CATALOG_VERSIONS[name] ?: throw IllegalArgumentException("Version for '$name' not found")

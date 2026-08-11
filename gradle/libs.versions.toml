@@ -6,6 +6,8 @@
 # https://developer.android.com/studio/releases#android_gradle_plugin_and_android_studio_compatibility
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
 android-gradle-plugin = "8.13.2"
+# The latest AGP version used for integration tests.
+android-gradle-plugin-latest = "9.2.0"
 
 # https://developer.android.com/build#android_sdk_settings
 android-compileSdk = "36"
@@ -40,7 +42,7 @@ org-jetbrains-dokka = "2.1.0"
 # https://github.com/JetBrains/kotlin/releases
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
 org-jetbrains-kotlin = "2.2.0"
-# The Kotlin version used for single-version integration tests.
+# The latest Kotlin version used for integration tests.
 org-jetbrains-kotlin-latest = "2.4.0"
 
 # https://github.com/Kotlin/kotlinx.coroutines/releases

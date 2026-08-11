@@ -3,20 +3,27 @@
 
 package de.infix.testBalloon.gradlePlugin.shared
 
+import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.HasAndroidTest
+import com.android.build.api.variant.HasUnitTest
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.internal.VersionNumber
@@ -45,8 +52,7 @@ internal fun Project.configureWithTestBalloon(
     pluginDisplayName: String,
     junitPlatformLauncher: String
 ) {
-    val testBalloonExtension =
-        extensions.create(Constants.GRADLE_EXTENSION_NAME, TestBalloonGradleExtension::class.java)
+    testBalloonExtension = extensions.create(Constants.GRADLE_EXTENSION_NAME, TestBalloonGradleExtension::class.java)
 
     addEntryPointSourceFileIfNecessary(testBalloonProperties)
     configureTestTasks(testBalloonProperties, testBalloonExtension)
@@ -61,11 +67,7 @@ internal fun Project.configureWithTestBalloon(
                 provider {
                     // Lazily configuring the dependency ensures that the extension is guaranteed to be present
                     // and the build script (including extension settings) has been completely evaluated.
-                    if (testBalloonExtension.debugLevel > DebugLevel.NONE) {
-                        project.logger.warn(
-                            "$pluginDisplayName: [DEBUG] adding JUnit Platform launcher to $this."
-                        )
-                    }
+                    debugLog("Adding JUnit Platform launcher to $this.")
                     project.dependencies.create(junitPlatformLauncher)
                 }
             )
@@ -80,19 +82,13 @@ internal fun Project.configureWithTestBalloon(
         "plugin:${Constants.COMPILER_PLUGIN_NAME}:disablingReason='$sourceSetName' is not a test source set"
     )
 
-    fun debugLog(message: String) {
-        if (testBalloonExtension.debugLevel > DebugLevel.NONE) {
-            project.logger.warn("Plugin ${Constants.COMPILER_PLUGIN_NAME}: [DEBUG] $message")
-        }
-    }
-
     fun KotlinCompilation<*>.configureForTestBalloon() {
         val sourceSetName = defaultSourceSet.name
         compileTaskProvider.configure {
             if (testBalloonProperties.isTestSourceSet(sourceSetName)) {
                 if (notIncrementallyCompilableTestSourceSetsRegex.containsMatchIn(sourceSetName)) {
                     if (this is AbstractKotlinCompile<*>) {
-                        debugLog("disabling incremental compilation for $project, task '$name'.")
+                        debugLog("Disabling incremental compilation for $project, task '$name'.")
                         incremental = false
                         if (this is Kotlin2JsCompile) {
                             @Suppress("INVISIBLE_REFERENCE")
@@ -123,26 +119,18 @@ internal fun Project.configureWithTestBalloon(
     }
 }
 
-/**
- * Adds TestBalloon's entry point source file to all test root source sets (such as "commonTest").
- *
- * Applies to Kotlin versions < 2.3.20 only. For Kotlin versions >= 2.3.20, the compiler plugin's FIR extension
- * generates the entry point and this function does nothing.
- */
-private fun Project.addEntryPointSourceFileIfNecessary(testBalloonProperties: TestBalloonGradleProperties) {
-    extensions.configure<KotlinProjectExtension>("kotlin") {
-        val kotlinVersion = VersionNumber.parse(project.getKotlinPluginVersion())
-        if (kotlinVersion >= VersionNumber.parse("2.3.20")) return@configure
+abstract class GenerateTestBalloonEntryPointTask : DefaultTask() {
+    @get:OutputDirectory
+    abstract val generatedOutputDirectory: DirectoryProperty
 
-        val generateTestBalloonEntryPointTask = tasks.register("generateTestBalloonEntryPoint") {
-            val generatedCommonTestDir = layout.buildDirectory.dir("generated/testBalloon/src/commonTest")
-            outputs.dir(generatedCommonTestDir)
-            doLast {
-                val directory = Path("${generatedCommonTestDir.get()}/kotlin")
-                check(directory.exists() || directory.toFile().mkdirs()) { "Could not create directory '$directory'" }
-                val jvmEntryPointClassSimpleName = Constants.JVM_ENTRY_POINT_CLASS_NAME.substringAfterLast('.')
-                (directory / "$jvmEntryPointClassSimpleName.kt").writeText(
-                    """
+    @TaskAction
+    fun generate() {
+        val directory = generatedOutputDirectory.get().asFile
+        if (directory.exists()) directory.deleteRecursively()
+        check(directory.mkdirs()) { "Could not create directory '$directory'" }
+        val jvmEntryPointClassSimpleName = Constants.JVM_ENTRY_POINT_CLASS_NAME.substringAfterLast('.')
+        (directory.toPath() / "$jvmEntryPointClassSimpleName.kt").writeText(
+            """
                     package ${Constants.ENTRY_POINT_PACKAGE_NAME}
 
                     // This file was generated by the TestBalloon Gradle plugin.
@@ -158,10 +146,48 @@ private fun Project.addEntryPointSourceFileIfNecessary(testBalloonProperties: Te
                     
                     private val testFrameworkNativeEntryPoint: Unit = Unit
 
-                    """.trimIndent()
-                )
+            """.trimIndent()
+        )
+    }
+}
+
+/**
+ * Adds TestBalloon's entry point source file to all test root source sets (such as "commonTest").
+ */
+private fun Project.addEntryPointSourceFileIfNecessary(testBalloonProperties: TestBalloonGradleProperties) {
+    val generateTestBalloonEntryPointTask = tasks.register(
+        "generateTestBalloonEntryPoint",
+        GenerateTestBalloonEntryPointTask::class.java
+    ) {
+        generatedOutputDirectory.set(layout.buildDirectory.dir("generated/testBalloon/src"))
+    }
+
+    val kotlinVersion by lazy { VersionNumber.parse(project.getKotlinPluginVersion()) }
+    fun gradleGeneratedEntryPointRequired() = kotlinVersion < VersionNumber.parse("2.3.20")
+
+    // AGP may effectively disable source directories added via Gradle's `srcDir`. We use the variant API in order to
+    // avoid this. See https://github.com/infix-de/testBalloon/issues/84.
+    extensions.findByType(AndroidComponentsExtension::class.java)?.apply {
+        if (!gradleGeneratedEntryPointRequired()) return@apply
+
+        onVariants { variant ->
+            for ((componentName, sources) in mapOf(
+                "unitTest" to (variant as? HasUnitTest)?.unitTest?.sources,
+                "androidTest" to (variant as? HasAndroidTest)?.androidTest?.sources
+            )) {
+                if (sources != null) {
+                    debugLog("Adding test entry point to Android variant '${variant.name}', component '$componentName'")
+                    sources.kotlin?.addGeneratedSourceDirectory(
+                        generateTestBalloonEntryPointTask,
+                        GenerateTestBalloonEntryPointTask::generatedOutputDirectory
+                    )
+                }
             }
         }
+    }
+
+    extensions.configure<KotlinProjectExtension>("kotlin") {
+        if (!gradleGeneratedEntryPointRequired()) return@configure
 
         val testRootSourceSetRegex = testBalloonProperties.testRootSourceSetRegex
         val emptyFileCollection: FileCollection = layout.files()
@@ -169,18 +195,17 @@ private fun Project.addEntryPointSourceFileIfNecessary(testBalloonProperties: Te
         sourceSets.configureEach {
             val sourceSet = this
             kotlin.srcDir(
-                // Use a provider-backed FileCollection for maximum laziness.
-                objects.fileCollection().from(
-                    provider {
-                        if (testRootSourceSetRegex.containsMatchIn(sourceSet.name) && sourceSet.dependsOn.isEmpty() ||
-                            testBalloonProperties.isJvmTestSuite(sourceSet.name)
-                        ) {
-                            generateTestBalloonEntryPointTask
-                        } else {
-                            emptyFileCollection // null should be acceptable, but apparently isn't.
-                        }
+                provider {
+                    if (testRootSourceSetRegex.containsMatchIn(sourceSet.name) && sourceSet.dependsOn.isEmpty() ||
+                        testBalloonProperties.isJvmTestSuite(sourceSet.name)
+                    ) {
+                        debugLog("Adding test entry point to Kotlin source set '${sourceSet.name}'")
+                        generateTestBalloonEntryPointTask
+                    } else {
+                        debugLog("No test entry point required for Kotlin source set '${sourceSet.name}'")
+                        emptyFileCollection // null should be acceptable, but apparently isn't.
                     }
-                )
+                }
             )
         }
     }
@@ -658,5 +683,13 @@ private fun Project.configureDiagnosticsTask() {
             println()
             println("--- END TestBalloon diagnostics for $projectPath -----------------------------------")
         }
+    }
+}
+
+private lateinit var testBalloonExtension: TestBalloonGradleExtension
+
+private fun Project.debugLog(message: String) {
+    if (testBalloonExtension.debugLevel > DebugLevel.NONE) {
+        project.logger.warn("Plugin ${Constants.COMPILER_PLUGIN_NAME}: [DEBUG] (${project.path}) $message")
     }
 }

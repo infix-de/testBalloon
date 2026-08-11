@@ -1,4 +1,5 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.robolectricJdkVersion
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
@@ -6,6 +7,10 @@ plugins {
 }
 
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
+
+tapmoc {
+    java(robolectricJdkVersion())
+}
 
 kotlin {
     jvm()

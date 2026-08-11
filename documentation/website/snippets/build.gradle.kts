@@ -1,4 +1,5 @@
 import buildLogic.addTestBalloonPluginFromProject
+import buildLogic.junitJupiterJdkVersion
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
@@ -7,6 +8,10 @@ plugins {
 }
 
 addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
+
+tapmoc {
+    java(junitJupiterJdkVersion())
+}
 
 kotlin {
     jvm()

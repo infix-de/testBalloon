@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd "$(dirname "$0")/.." || exit 2
+
+PACKAGE_LOCK_FILES_UPDATE_REQUESTED=true ./gradlew --warn :integration-test:test

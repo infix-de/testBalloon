@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd "$(dirname "$0")/.." || exit 2
+
+set -e
+
+./gradlew --warn checkLegacyAbi
+./gradlew --warn lintKotlin
+./gradlew --warn componentTestsAllTargets
+./gradlew --warn integrationTests

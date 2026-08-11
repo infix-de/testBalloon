@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd "$(dirname "$0")/.." || exit 2
+
+find . -type d -name kotlin-js-store -print | sort |
+while read -r js_store_directory; do
+  rm -f "$js_store_directory/package-lock.json"
+  rm -f "$js_store_directory/wasm/package-lock.json"
+done

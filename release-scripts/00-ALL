@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd "$(dirname "$0")/.." || exit 2
+
+for script in release-scripts/*; do
+  case "$script" in
+    00*) ;;
+    *) "$script"
+  esac
+done

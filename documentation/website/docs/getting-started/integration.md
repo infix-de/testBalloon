@@ -36,17 +36,17 @@ TestBalloon supports the usual [Gradle test task filtering](https://docs.gradle.
 
 1. Android device-side (instrumented) tests do not use Gradle's filtering options since the AGP provides them as _verification_ tasks, not _test_ tasks.
 
-Test selection accepts the pipe `|` character to separate test elements. This is a valid test invocation:
+Test selection uses the south-east arrow `↘` character to separate test elements. This is a valid test invocation:
 
 ```shell
-./gradlew cleanJvmTest jvmTest --tests "com.example.TestSuite|inner suite|*" --no-build-cache --info
+./gradlew cleanJvmTest jvmTest --tests "com.example.TestSuite↘inner suite↘*" --no-build-cache --info
 ```
 
-Alternatively, TestBalloon's own south-east arrow `↘` can be used, or a custom separator if the test patterns begins with one, like `;com.example.TestSuite;inner suite;*`.
+Alternatively, you can define a custom separator by starting the test pattern with a non-letter, like `;com.example.TestSuite;inner suite;*`.
 
 !!! warning
 
-    IntelliJ IDEA's run configurations can mess with test filtering via `--tests`. In this case, use the `TESTBALLOON_INCLUDE_PATTERNS` environment variable instead, like `TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite|inner suite|*`.
+    IntelliJ IDEA's run configurations can mess with test filtering via `--tests`. In this case, use the `TESTBALLOON_INCLUDE_PATTERNS` environment variable instead, like `TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite↘inner suite↘*`.
 
 To use test selection with **Android device-side (instrumented) tests**, you have these options:
 
@@ -55,13 +55,13 @@ To use test selection with **Android device-side (instrumented) tests**, you hav
 2. Pass it via Gradle's command line:
 
     ```shell
-    ./gradlew "-Pandroid.testInstrumentationRunnerArguments.TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite|inner suite|*" ...
+    ./gradlew "-Pandroid.testInstrumentationRunnerArguments.TESTBALLOON_INCLUDE_PATTERNS=com.example.TestSuite↘inner suite↘*" ...
     ```
 
 3. Use the Android Gradle DSL:
 
     ```kotlin
-    testInstrumentationRunnerArguments["TESTBALLOON_INCLUDE_PATTERNS"] = "com.example.TestSuite|inner suite|*"
+    testInstrumentationRunnerArguments["TESTBALLOON_INCLUDE_PATTERNS"] = "com.example.TestSuite↘inner suite↘*"
     ```
 
 ### JVM

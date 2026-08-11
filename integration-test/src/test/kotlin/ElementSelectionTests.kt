@@ -27,7 +27,6 @@ val ElementSelectionTests by testSuite(
     val commonPatternMatches = mapOf("com.example.SimpleSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1)
     val extraPatternMatches = mapOf(
         "com.example.SimpleSuite*test 1" to 1,
-        "com.example.SimpleSuite|test 1" to 1,
         ";com.example.SimpleSuite;test 1" to 1,
         "NoMatch" to 0,
         "com.example.SpecialNameSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1

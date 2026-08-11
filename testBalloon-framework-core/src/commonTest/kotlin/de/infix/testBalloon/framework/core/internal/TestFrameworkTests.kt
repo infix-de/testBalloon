@@ -25,7 +25,7 @@ class TestFrameworkTests {
 
     @Test
     fun elementSelectionByArguments() = verifyElementSelection(
-        ArgumentsBasedElementSelection(arrayOf("--include", "suite1|sub-suite1|*")),
+        ArgumentsBasedElementSelection(arrayOf("--include", "suite1${iSep}sub-suite1$iSep*")),
         listOf(
             Pair("«suite1${iSep}sub-suite1${iSep}test1»", true),
             Pair("«suite1${iSep}sub-suite1${iSep}test2»", false)
@@ -34,7 +34,7 @@ class TestFrameworkTests {
 
     @Test
     fun elementSelectionByEnvironment() = verifyElementSelection(
-        EnvironmentBasedElementSelection(includePatterns = "suite1|sub-suite1|*", excludePatterns = null),
+        EnvironmentBasedElementSelection(includePatterns = "suite1${iSep}sub-suite1$iSep*", excludePatterns = null),
         listOf(
             Pair("«suite1${iSep}sub-suite1${iSep}test1»", true),
             Pair("«suite1${iSep}sub-suite1${iSep}test2»", false)
@@ -66,7 +66,7 @@ class TestFrameworkTests {
 
     @Test
     fun elementSelectionWithShortIncludePrefix() = verifyElementSelection(
-        EnvironmentBasedElementSelection(includePatterns = "s*uite1|sub-suite1|*", excludePatterns = null),
+        EnvironmentBasedElementSelection(includePatterns = "s*uite1${iSep}sub-suite1$iSep*", excludePatterns = null),
         listOf(
             Pair("«suite1${iSep}sub-suite1${iSep}test1»", true),
             Pair("«suite1${iSep}sub-suite1${iSep}test2»", false)
@@ -75,7 +75,7 @@ class TestFrameworkTests {
 
     @Test
     fun elementSelectionWithExclusion() = verifyElementSelection(
-        EnvironmentBasedElementSelection(includePatterns = null, excludePatterns = "*|test1"),
+        EnvironmentBasedElementSelection(includePatterns = null, excludePatterns = "*${iSep}test1"),
         listOf(
             Pair("«suite1${iSep}test2»", false),
             Pair("«suite1${iSep}sub-suite1${iSep}test2»", false),
@@ -87,8 +87,8 @@ class TestFrameworkTests {
     @Test
     fun elementSelectionWithInclusionAndExclusion() = verifyElementSelection(
         EnvironmentBasedElementSelection(
-            includePatterns = "suite1|*",
-            excludePatterns = "*|sub-suite1|*"
+            includePatterns = "suite1$iSep*",
+            excludePatterns = "*${iSep}sub-suite1$iSep*"
         ),
         listOf(
             Pair("«suite1${iSep}test1»", true),

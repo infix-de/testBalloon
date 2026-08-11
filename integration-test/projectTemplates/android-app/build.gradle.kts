@@ -22,6 +22,8 @@ android {
     namespace = "org.example.android"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    val emulatorAvailable = System.getenv("TEST_SKIP")?.contains("Android emulator") != true
+
     defaultConfig {
         applicationId = "org.example.android"
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -34,12 +36,14 @@ android {
         @Suppress("UnstableApiUsage")
         testOptions {
             animationsDisabled = true
-            managedDevices {
-                localDevices {
-                    create("pixel2") {
-                        device = "Pixel 2"
-                        apiLevel = 30
-                        systemImageSource = "aosp"
+            if (emulatorAvailable) {
+                managedDevices {
+                    localDevices {
+                        create("pixel2") {
+                            device = "Pixel 2"
+                            apiLevel = 30
+                            systemImageSource = "aosp"
+                        }
                     }
                 }
             }

@@ -177,7 +177,10 @@ internal open class TestProject(
         withContext(Dispatchers.IO) {
             val process = ProcessBuilder(*arguments).also { processBuilder ->
                 processBuilder.environment().run {
-                    keys.filter { it.startsWith("TEST") }.forEach {
+                    // Remove all TEST* environment variables which are potentially used to configure this
+                    // test instance and not intended for the template test instances.
+                    // But keep TEST_SKIP, which is used to configure the overall integration test setup.
+                    keys.filter { it.startsWith("TEST") && it != "TEST_SKIP" }.forEach {
                         remove(it)
                     }
                     for ((key, value) in environment) {

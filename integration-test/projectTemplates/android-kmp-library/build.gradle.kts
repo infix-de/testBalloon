@@ -13,22 +13,27 @@ tapmoc {
 kotlin {
     jvm()
 
+    val emulatorAvailable = System.getenv("TEST_SKIP")?.contains("Android emulator") != true
+
     androidLibrary {
         namespace = "org.example.android.multiplatform.library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
         withHostTestBuilder {}
-        withDeviceTestBuilder {
-            sourceSetTreeName = "test"
-        }.configure {
-            managedDevices {
-                localDevices {
-                    @Suppress("UnstableApiUsage")
-                    create("pixel2") {
-                        device = "Pixel 2"
-                        apiLevel = 30
-                        systemImageSource = "aosp"
+
+        if (emulatorAvailable) {
+            withDeviceTestBuilder {
+                sourceSetTreeName = "test"
+            }.configure {
+                managedDevices {
+                    localDevices {
+                        @Suppress("UnstableApiUsage")
+                        create("pixel2") {
+                            device = "Pixel 2"
+                            apiLevel = 30
+                            systemImageSource = "aosp"
+                        }
                     }
                 }
             }
@@ -48,10 +53,13 @@ kotlin {
                 implementation("junit:junit:{{version:junit.junit4}}")
             }
         }
-        named("androidDeviceTest") {
-            dependencies {
-                implementation("de.infix.testBalloon:testBalloon-framework-core:{{version:de.infix.testBalloon}}")
-                implementation("androidx.test:runner:{{version:androidx.test}}")
+
+        if (emulatorAvailable) {
+            named("androidDeviceTest") {
+                dependencies {
+                    implementation("de.infix.testBalloon:testBalloon-framework-core:{{version:de.infix.testBalloon}}")
+                    implementation("androidx.test:runner:{{version:androidx.test}}")
+                }
             }
         }
     }

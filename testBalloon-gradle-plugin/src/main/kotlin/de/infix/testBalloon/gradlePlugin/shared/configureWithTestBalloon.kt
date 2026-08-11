@@ -22,6 +22,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.AbstractTestTask
@@ -119,6 +120,7 @@ internal fun Project.configureWithTestBalloon(
     }
 }
 
+@CacheableTask
 abstract class GenerateTestBalloonEntryPointTask : DefaultTask() {
     @get:OutputDirectory
     abstract val generatedOutputDirectory: DirectoryProperty

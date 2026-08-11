@@ -8,7 +8,7 @@
 
     !!! info
 
-        TestBalloon releases come as a set, with matching variants for specific Kotlin versions. Please look up the `$testBalloonVersion` matching your Kotlin version in the [CHANGELOG](https://github.com/infix-de/testBalloon/blob/main/CHANGELOG.md).
+        To choose a `$testBalloonVersion`, please check the compatibility sections in the [CHANGELOG](https://github.com/infix-de/testBalloon/blob/main/CHANGELOG.md).
 
 2. Add a dependency for the TestBalloon framework core library:
 

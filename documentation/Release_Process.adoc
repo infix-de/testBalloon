@@ -20,10 +20,10 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 
 ==== Prepare a release branch for a Kotlin version
 
-. For each minor version, choose a branch under `releases`, like `releases/1.1`.
+. For each minor version, choose a branch under `releases`, like `releases/1.1` (omit the patch version in the branch name).
 . Prepare the release branch from `main` or a previous release branch.
 . Check out the release branch.
-. Change the version in `gradle.properties`, like `version=1.1.0-dev-1`.
+. Change the version in `gradle.properties`, like `version=1.1.0`.
 . Adapt versions in `gradle/libs.versions.toml`.
 . Make necessary source code changes.
 . Run `./release-scripts/00-ALL`

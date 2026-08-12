@@ -1,15 +1,15 @@
-## 1.1.0-RC (August 11, 2026)
+## 1.1.0-RC (August 12, 2026)
 
-This is a unified release with a single artifact set for Kotlin versions 2.2.0 and higher. TestBalloon's Gradle and compiler plugins auto-adapt to the Kotlin compiler version in use.
+_This is a unified release with a single artifact set for Kotlin versions 2.2.0 and higher. TestBalloon's Gradle and compiler plugins auto-adapt to the Kotlin compiler version in use._
 
-**There is only one version: 1.1.0-RC.** The old versioning scheme (using "1.0.1-K2.4.0" and the like) is history.
+**For this release, there is only one version: 1.1.0-RC.** The old versioning scheme (using "1.0.1-K2.4.0" and the like) is history.
 
-### Compatibility 
+### Compatibility
 
 * This release has been tested with Kotlin versions 2.2.0 … 2.5.0-dev-1759. It is binary compatible with 1.0.1.
 * For Kotlin versions 2.0.0 … 2.1.x, please use the corresponding TestBalloon 1.0.1 release variants.
 
-### Breaking
+### Changed Behavior
 
 * Test selection patterns no longer accept a pipe `|` character to separate path elements, as this prevented selecting an element with a pipe character inside its path. To use the pipe character as a separator, make it a custom separator:
     * Instead of `--tests "com.example.TestSuite|inner suite|*"`
@@ -19,6 +19,9 @@ This is a unified release with a single artifact set for Kotlin versions 2.2.0 a
 
 * Gradle plugin: Android-only unit tests no longer fail with "MissingFrameworkSymbol: Could not find class JvmEntryPoint" (#84)
 * Robolectric integration: Compose UI tests no longer fail with "UnsupportedOperationException: main looper can only be controlled from main thread." (#82)
+
+### Other Changes
+* JUnit Platform: report IncompleteExecutionException as aborted by @tKe in https://github.com/infix-de/testBalloon/pull/94
 
 ## 1.0.1 (June 17, 2026)
 

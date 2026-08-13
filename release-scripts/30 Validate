@@ -6,5 +6,5 @@ set -e
 
 ./gradlew --warn checkLegacyAbi
 ./gradlew --warn lintKotlin
-./gradlew --warn componentTestsAllTargets
-./gradlew --warn integrationTests
+./gradlew componentTestsAllTargets
+./gradlew integrationTests

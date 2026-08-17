@@ -14,7 +14,7 @@ description = "Gradle plugin for the TestBalloon framework"
 
 dependencies {
     implementation(libs.org.jetbrains.kotlin.gradle.plugin)
-    implementation(libs.com.android.gradle.plugin)
+    compileOnly(libs.com.android.gradle.plugin)
     implementation(projects.testBalloonFrameworkShared)
 }
 

@@ -168,7 +168,11 @@ private fun Project.addEntryPointSourceFileIfNecessary(testBalloonProperties: Te
 
     // AGP may effectively disable source directories added via Gradle's `srcDir`. We use the variant API in order to
     // avoid this. See https://github.com/infix-de/testBalloon/issues/84.
-    extensions.findByType(AndroidComponentsExtension::class.java)?.apply {
+    try {
+        extensions.findByType(AndroidComponentsExtension::class.java)
+    } catch (_: NoClassDefFoundError) {
+        null // The Android Gradle plugin providing the AndroidComponentsExtension is not on the classpath.
+    }?.apply {
         if (!gradleGeneratedEntryPointRequired()) return@apply
 
         onVariants { variant ->

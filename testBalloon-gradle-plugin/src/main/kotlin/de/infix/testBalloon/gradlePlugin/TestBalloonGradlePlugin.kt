@@ -30,7 +30,6 @@ class TestBalloonGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
         configureWithTestBalloon(
             testBalloonProperties = testBalloonProperties,
-            pluginDisplayName = PLUGIN_DISPLAY_NAME,
             junitPlatformLauncher = PROJECT_JUNIT_PLATFORM_LAUNCHER
         )
     }

@@ -1,8 +1,9 @@
 #!/bin/bash
 
-cd "$(dirname "$0")/.." || exit 2
-
+trap 'status=$?; echo -e "\n*** $(basename "$0") completed with status $status ***\n"' EXIT
 set -e
+
+cd "$(dirname "$0")/.." || exit 2
 
 for script in release-scripts/*; do
   case "$script" in

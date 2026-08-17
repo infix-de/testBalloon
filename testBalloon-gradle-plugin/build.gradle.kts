@@ -3,11 +3,11 @@ import tapmoc.Severity
 
 plugins {
     id("buildLogic.kotlin-jvm")
-    id("buildLogic.publishing")
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
     id("org.jetbrains.kotlin.plugin.assignment")
-    id("com.github.gmazzo.buildconfig")
     id("java-gradle-plugin")
+    id("buildLogic.publishing")
+    id("com.github.gmazzo.buildconfig")
 }
 
 description = "Gradle plugin for the TestBalloon framework"

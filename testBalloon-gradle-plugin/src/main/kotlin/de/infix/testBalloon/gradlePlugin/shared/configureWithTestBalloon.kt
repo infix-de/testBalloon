@@ -50,7 +50,6 @@ import kotlin.io.path.writeText
  */
 internal fun Project.configureWithTestBalloon(
     testBalloonProperties: TestBalloonGradleProperties,
-    pluginDisplayName: String,
     junitPlatformLauncher: String
 ) {
     testBalloonExtension = extensions.create(Constants.GRADLE_EXTENSION_NAME, TestBalloonGradleExtension::class.java)

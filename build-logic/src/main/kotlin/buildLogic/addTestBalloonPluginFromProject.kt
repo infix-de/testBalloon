@@ -33,7 +33,6 @@ fun Project.addTestBalloonPluginFromProject(compilerPluginDependency: Dependency
 
     configureWithTestBalloon(
         testBalloonProperties = testBalloonProperties,
-        pluginDisplayName = "Plugin ${Constants.COMPILER_PLUGIN_NAME}",
         junitPlatformLauncher = libraryFromCatalog("org.junit.platform.launcher")
     )
 

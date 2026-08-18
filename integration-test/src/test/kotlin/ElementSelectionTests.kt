@@ -16,7 +16,11 @@ val ElementSelectionTests by testSuite(
         .testScope(isEnabled = true, timeout = 24.minutes)
 ) {
     val projectName = "element-selection"
-    val project = TestProject(this, projectName)
+    val project = TestProject(
+        projectTestSuite = this,
+        projectBaseName = projectName,
+        baseTemplates = listOf("base-google")
+    )
 
     class TestVariant(
         val type: VariantType,

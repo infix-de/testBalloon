@@ -42,6 +42,7 @@ internal open class TestProject(
     projectTestSuite: TestSuite,
     projectBaseName: String,
     projectVariantName: String = "",
+    val baseTemplates: List<String> = listOf("base"),
     val versions: Map<String, String> = emptyMap()
 ) : TestSuiteScope {
 
@@ -62,7 +63,7 @@ internal open class TestProject(
         val projectDirectory = Path("build") / "projects" / projectName
 
         projectDirectory.populate(
-            templatesBaseDirectory / "common",
+            *baseTemplates.map { templatesBaseDirectory / it }.toTypedArray(),
             templatesBaseDirectory / projectBaseName,
             templateVariantDirectory
         )

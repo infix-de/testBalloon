@@ -44,6 +44,7 @@ private fun TestSuite.test(projectBaseName: String, kotlinVersion: String?, agpV
             projectTestSuite = this,
             projectBaseName = projectBaseName,
             projectVariantName = if (kotlinVersion == null) "-A$agpVersion" else "-A$agpVersion-K$kotlinVersion",
+            baseTemplates = listOf("base-google"),
             versions = mapOf("org.jetbrains.kotlin" to (kotlinVersion ?: ""), "android.gradle.plugin" to agpVersion)
         )
 

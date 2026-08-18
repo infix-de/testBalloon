@@ -3,6 +3,7 @@ import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testSuite
 import java.util.Locale
+import kotlin.collections.listOf
 
 val EnvironmentPropagationTests by testSuite(testConfig = TestConfig.invocation(TestConfig.Invocation.Sequential)) {
     val projectTestSuite = this
@@ -14,7 +15,11 @@ val EnvironmentPropagationTests by testSuite(testConfig = TestConfig.invocation(
         vararg gradleArguments: String,
         expectedVariables: List<String>
     ) = test(listOfNotNull(projectName, variantName).joinToString()) {
-        val project = TestProject(projectTestSuite, "environment-propagation-$projectName")
+        val project = TestProject(
+            projectTestSuite = projectTestSuite,
+            projectBaseName = "environment-propagation-$projectName",
+            baseTemplates = listOf(if (projectName == "unrestricted") "base-google" else "base")
+        )
 
         for (taskName in project.testTaskNames()) {
             val taskExecution = project.gradleExecution(

@@ -73,7 +73,12 @@ private class IncrementalCompilationTestProject(
     projectBaseName: String,
     projectVariantName: String = "",
     versions: Map<String, String> = emptyMap()
-) : TestProject(projectTestSuite, projectBaseName, projectVariantName, versions) {
+) : TestProject(
+    projectTestSuite = projectTestSuite,
+    projectBaseName = projectBaseName,
+    projectVariantName = projectVariantName,
+    versions = versions
+) {
 
     /**
      * A series of tests which repeatedly executes a Gradle test task for all available targets.

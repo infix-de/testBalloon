@@ -8,6 +8,6 @@ cd "$(dirname "$0")/.." || exit 2
 for script in release-scripts/*; do
   case "$script" in
     release-scripts/00*) ;;
-    *) "$script"
+    *) REPEAT_PACKAGE_LOCK_FILES_UPDATE=yes "$script"
   esac
 done

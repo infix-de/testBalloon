@@ -1,6 +1,13 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockFileMismatchReport
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
+import kotlin.apply
 
 plugins {
     kotlin("multiplatform") version "{{version:org.jetbrains.kotlin}}"
@@ -62,5 +69,25 @@ tasks {
     withType<KotlinNativeTest>().configureEach {
         if (includeTestsMatchingPattern != null) filter.includeTestsMatching(includeTestsMatchingPattern)
         testLogging { showStandardStreams = true }
+    }
+}
+
+// WORKAROUND https://youtrack.jetbrains.com/issue/KT-79811/KJS-kotlinUpgradePackageLock-task-is-unreliable
+fun BaseNpmExtension.configurePackageLockReports() {
+    if (System.getenv("CI") != null) {
+        packageLockMismatchReport.set(LockFileMismatchReport.NONE)
+        packageLockAutoReplace.set(true)
+    }
+}
+
+plugins.withType(NodeJsRootPlugin::class.java) {
+    extensions.findByType(NpmExtension::class.java)?.apply {
+        configurePackageLockReports()
+    }
+}
+
+plugins.withType(WasmNodeJsRootPlugin::class.java) {
+    extensions.findByType(WasmNpmExtension::class.java)?.apply {
+        configurePackageLockReports()
     }
 }

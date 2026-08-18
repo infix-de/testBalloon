@@ -6,3 +6,8 @@ set -e
 cd "$(dirname "$0")/.." || exit 2
 
 PACKAGE_LOCK_FILES_UPDATE_REQUESTED=true ./gradlew --warn :integration-test:test
+
+# WORKAROUND KT-79811: Repeat the update for stabilization.
+if [ "${REPEAT_PACKAGE_LOCK_FILES_UPDATE:-no}" == "yes" ]; then
+  PACKAGE_LOCK_FILES_UPDATE_REQUESTED=true ./gradlew --warn :integration-test:test
+fi

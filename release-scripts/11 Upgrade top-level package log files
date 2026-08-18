@@ -6,3 +6,7 @@ set -e
 cd "$(dirname "$0")/.." || exit 2
 
 ./gradlew --warn kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
+
+if [ "${REPEAT_PACKAGE_LOCK_FILES_UPDATE:-no}" == "yes" ]; then
+  ./gradlew --warn kotlinUpgradePackageLock kotlinWasmUpgradePackageLock
+fi

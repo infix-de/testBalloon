@@ -41,7 +41,7 @@ Each TestBallon version should produce releases for the most recent stable Kotli
 
 . Wait for the final MavenCentral publication to finish.
 . https://github.com/infix-de/testBalloon/tags[Choose its tag]
-. Select _ Create release from tag_
+. Select _Create release from tag_
 . Choose the corresponding _Previous tag_.
 . Select _Generate release notes_.
 . Adapt release notes, extracting them from the xref:../CHANGELOG.md[CHANGELOG].

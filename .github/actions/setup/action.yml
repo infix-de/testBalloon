@@ -66,3 +66,11 @@ runs:
         build-scan-terms-of-use-agree: 'yes'
         cache-disabled: ${{ inputs.gradle-cache-disabled }}
         cache-encryption-key: ${{ inputs.gradle-cache-encryption-key }}
+        cache-read-only: |-
+          ${{
+            !(
+              github.ref == 'refs/heads/main' ||
+              startsWith(github.ref, 'refs/heads/releases/') ||
+              startsWith(github.ref, 'refs/heads/ci-experiments/resource-tests/')
+            )
+          }}

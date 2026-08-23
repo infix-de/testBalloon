@@ -21,8 +21,6 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayerVersion: String
         apply("org.jmailen.kotlinter")
     }
 
-    group = project.property("local.PROJECT_GROUP_ID")!!
-
     extensions.configure<tapmoc.TapmocExtension>("tapmoc") {
         java(jdkVersion())
         kotlin(kotlinVersion)

@@ -39,10 +39,7 @@ internal fun TestElement.registerWithKotlinJsTestFramework() {
                     }
                 }
             } else {
-                kotlinJsTestFramework.suite(
-                    reportingNameForJsAndTeamCity,
-                    ignored = !testElementIsEnabled
-                ) {
+                kotlinJsTestFramework.suite(reportingNameForJsAndTeamCity, ignored = !testElementIsEnabled) {
                     testElementChildren.forEach {
                         it.registerWithKotlinJsTestFramework()
                     }

@@ -1,16 +1,15 @@
-import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.enableAbiValidation
 import buildLogic.robolectricJdkVersion
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("com.android.kotlin.multiplatform.library")
+    id("de.infix.testBalloon")
+    id("buildLogic.dokka")
     id("buildLogic.publishing")
 }
 
 description = "Library supporting Robolectric with the TestBalloon framework"
-
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 tapmoc {
     java(robolectricJdkVersion())

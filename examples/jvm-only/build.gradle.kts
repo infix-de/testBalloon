@@ -1,12 +1,7 @@
-import buildLogic.addTestBalloonPluginFromProject
-
 plugins {
     id("buildLogic.kotlin-jvm")
-    // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
+    id("de.infix.testBalloon")
 }
-
-// The following invocation supplements the TestBalloon plugin declaration inside this project:
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 dependencies {
     // required for TestBalloon outside this project:

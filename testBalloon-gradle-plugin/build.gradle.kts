@@ -1,13 +1,14 @@
 import buildLogic.libraryFromCatalog
+import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import tapmoc.Severity
 
 plugins {
     id("buildLogic.kotlin-jvm")
-    id("org.jetbrains.kotlin.plugin.sam.with.receiver")
-    id("org.jetbrains.kotlin.plugin.assignment")
+    alias(libs.plugins.org.jetbrains.kotlin.plugin.sam.with.receiver)
+    alias(libs.plugins.org.jetbrains.kotlin.plugin.assignment)
     id("java-gradle-plugin")
     id("buildLogic.publishing")
-    id("com.github.gmazzo.buildconfig")
+    alias(libs.plugins.com.github.gmazzo.buildconfig)
 }
 
 description = "Gradle plugin for the TestBalloon framework"
@@ -15,7 +16,7 @@ description = "Gradle plugin for the TestBalloon framework"
 dependencies {
     implementation(libs.org.jetbrains.kotlin.gradle.plugin)
     compileOnly(libs.com.android.gradle.plugin)
-    implementation(projects.testBalloonFrameworkShared)
+    implementation("$group:testBalloon-framework-shared:$version")
 }
 
 samWithReceiver {
@@ -40,9 +41,8 @@ buildConfig {
         "PROJECT_COMPILER_PLUGIN_ID",
         "\"${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}\""
     )
-    buildConfigField("String", "PROJECT_VERSION", "\"${project.version}\"")
-    buildConfigField("String", "PROJECT_GROUP_ID", "\"${project.group}\"")
-    buildConfigField("String", "PROJECT_COMPILER_PLUGIN_ARTIFACT_ID", "\"${projects.testBalloonCompilerPlugin.name}\"")
+    buildConfigField("String", "PROJECT_VERSION", "\"$version\"")
+    buildConfigField("String", "PROJECT_GROUP_ID", "\"$group\"")
     buildConfigField(
         "String",
         "PROJECT_JUNIT_PLATFORM_LAUNCHER",
@@ -52,11 +52,13 @@ buildConfig {
 
 gradlePlugin {
     plugins {
-        create("testBalloonGradlePlugin") {
+        register("${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}") {
             id = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}"
             displayName = "TestBalloon compiler plugin for multiplatform test discovery"
             description = displayName
-            implementationClass = "${project.group}.gradlePlugin.TestBalloonGradlePlugin"
+            implementationClass = "$group.gradlePlugin.TestBalloonGradlePlugin"
         }
     }
 }
+
+propagateLifecycleTasksToIncludedBuilds()

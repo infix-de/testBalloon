@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    id("buildLogic.kotlin-jvm")
 }
 
 dependencies {

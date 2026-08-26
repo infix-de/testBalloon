@@ -1,3 +1,4 @@
+import buildLogic.rootBuild
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import com.vanniktech.maven.publish.SourcesJar
@@ -14,7 +15,6 @@ class BuildLogicPublishingPlugin : Plugin<Project> {
         with(pluginManager) {
             apply("signing")
             apply("com.vanniktech.maven.publish.base")
-            apply("buildLogic.dokka")
         }
 
         extensions.configure<MavenPublishBaseExtension>("mavenPublishing") {
@@ -72,7 +72,7 @@ class BuildLogicPublishingPlugin : Plugin<Project> {
 
                 maven {
                     name = "integrationTest"
-                    url = uri(rootProject.layout.buildDirectory.dir("integration-test-repository"))
+                    url = uri(gradle.rootBuild().rootProject.layout.buildDirectory.dir("integration-test-repository"))
                 }
             }
         }

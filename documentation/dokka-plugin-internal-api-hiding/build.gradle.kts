@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm")
+    id("buildLogic.kotlin-jvm")
 }
 
 dependencies {
     implementation(libs.org.jetbrains.dokka.core)
     implementation(libs.org.jetbrains.dokka.base)
-    implementation(project(":testBalloon-framework-shared"))
+    implementation("$group:testBalloon-framework-shared:$version")
 }

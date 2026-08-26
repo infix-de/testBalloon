@@ -1,5 +1,3 @@
-import buildLogic.gradleRunCommandLine
-
 plugins {
     id("buildLogic.common").apply(false)
     id("buildLogic.dokka")
@@ -11,8 +9,8 @@ tasks {
             group = "verification"
             description = "Run tests for all releasable TestBalloon components."
 
-            dependsOn(":testBalloon-compiler-plugin:test")
-            dependsOn(":testBalloon-gradle-plugin:test")
+            dependsOn(gradle.includedBuild("testBalloon-compiler-plugin").task(":test"))
+            dependsOn(gradle.includedBuild("testBalloon-gradle-plugin").task(":test"))
             dependsOn(":testBalloon-framework-core:$kmpTaskName")
 
             dependsOn(":testBalloon-integration-kotest-assertions:$kmpTaskName")

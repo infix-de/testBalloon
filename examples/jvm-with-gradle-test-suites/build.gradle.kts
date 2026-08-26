@@ -1,13 +1,8 @@
-import buildLogic.addTestBalloonPluginFromProject
-
 plugins {
     id("buildLogic.kotlin-jvm")
+    id("de.infix.testBalloon")
     java
-    // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
 }
-
-// The following invocation supplements the TestBalloon plugin declaration inside this project:
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 @Suppress("UnstableApiUsage")
 testing {

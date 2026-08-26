@@ -1,14 +1,10 @@
-import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.allTargets
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
-    // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
+    id("de.infix.testBalloon")
     id("org.jetbrains.kotlin.plugin.atomicfu")
 }
-
-// The following invocation supplements the TestBalloon plugin declaration inside this project:
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 kotlin {
     allTargets()

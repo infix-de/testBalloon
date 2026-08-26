@@ -54,27 +54,3 @@ gradlePlugin {
         }
     }
 }
-
-val copySharedTestBalloonSources by tasks.registering(Copy::class) {
-    into(layout.buildDirectory.dir("generated/sharedTestBalloon/src/main"))
-    from(
-        layout.projectDirectory.dir(
-            "../testBalloon-framework-shared/src/commonMain/kotlin/de/infix/testBalloon/framework/shared/internal"
-        )
-    ) {
-        include("Communications.kt", "Constants.kt", "InternalAnnotations.kt")
-    }
-    from(
-        layout.projectDirectory.dir(
-            "../testBalloon-gradle-plugin/src/main/kotlin/de/infix/testBalloon/gradlePlugin/shared"
-        )
-    )
-}
-
-kotlin {
-    sourceSets {
-        main {
-            kotlin.srcDir(copySharedTestBalloonSources)
-        }
-    }
-}

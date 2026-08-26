@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import kotlin.io.path.div
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -7,7 +8,7 @@ import kotlin.io.path.name
 plugins {
     id("buildLogic.kotlin-jvm-base")
     id("buildLogic.publishing")
-    id("com.github.gmazzo.buildconfig")
+    alias(libs.plugins.com.github.gmazzo.buildconfig)
 }
 
 description = "TestBalloon compiler plugin"
@@ -31,11 +32,10 @@ fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
 @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
 dependencies {
     // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
-    embeddedCompileOnly(projects.testBalloonFrameworkShared)
-    embeddedCompileOnly(projects.testBalloonCompilerPlugin.compilerPluginLayerBase)
+    embeddedCompileOnly("$group:testBalloon-framework-shared:$version")
+    embeddedCompileOnly(projects.testBalloonCompilerPlugin.base)
 
-    val compilerPluginLayers =
-        (projectDir.toPath() / "layer").listDirectoryEntries("compiler-plugin-layer-kotlin-*").map { it.name }
+    val compilerPluginLayers = (projectDir.toPath() / "layer").listDirectoryEntries("kotlin-*").map { it.name }
     for (compilerPluginLayer in compilerPluginLayers) {
         embeddedDynamicallyLoaded("de.infix.testBalloon:$compilerPluginLayer")
     }
@@ -96,8 +96,10 @@ configurations {
 }
 
 tasks.named("test") {
-    dependsOn("compiler-plugin-layer-base:test")
+    dependsOn("base:test")
     (projectDir.toPath() / "layer").listDirectoryEntries().forEach {
         dependsOn(gradle.includedBuild(it.name).task(":test"))
     }
 }
+
+propagateLifecycleTasksToIncludedBuilds()

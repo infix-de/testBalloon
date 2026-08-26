@@ -1,13 +1,11 @@
-import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.gradleRunCommandLine
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     id("buildLogic.kotlin-jvm")
+    id("de.infix.testBalloon")
     id("com.github.gmazzo.buildconfig")
 }
-
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 dependencies {
     testImplementation(projects.testBalloonFrameworkCore)
@@ -21,7 +19,7 @@ buildConfig {
     packageName("buildConfig")
     useKotlinOutput { internalVisibility = true }
 
-    buildConfigField("PROJECT_VERSION", provider { "${project.version}" })
+    buildConfigField("PROJECT_VERSION", provider { "$version" })
     buildConfigField("PROJECT_INTEGRATION_TEST_REPOSITORY", integrationTestRepositoryDir.map { "$it" })
     buildConfigField("PROJECT_ROOT_DIRECTORY", projectRootDirectory.asFile)
     buildConfigField(

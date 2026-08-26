@@ -1,12 +1,10 @@
-import buildLogic.addTestBalloonPluginFromProject
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("com.android.kotlin.multiplatform.library")
+    id("de.infix.testBalloon")
 }
-
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 kotlin {
     jvm()

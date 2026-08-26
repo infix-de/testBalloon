@@ -1,4 +1,3 @@
-import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.junitJupiterJdkVersion
 import buildLogic.kotlinVersion
 import buildLogic.robolectricJdkVersion
@@ -7,12 +6,9 @@ import tapmoc.Severity
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
+    id("de.infix.testBalloon")
     id("com.gradleup.tapmoc")
-    // id("de.infix.testBalloon") version "$testBalloonVersion"  // required for TestBalloon outside this project
 }
-
-// The following invocation supplements the TestBalloon plugin declaration inside this project:
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 tapmoc {
     java(junitJupiterJdkVersion().coerceAtLeast(robolectricJdkVersion()))

@@ -1,18 +1,16 @@
-@file:OptIn(TestBalloonInternalApi::class)
-
 import buildLogic.allTargets
 import buildLogic.enableAbiValidation
+import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import buildLogic.versionFromCatalog
-import de.infix.testBalloon.framework.shared.internal.Constants
-import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("com.android.kotlin.multiplatform.library")
-    id("buildLogic.publishing")
     id("org.jetbrains.kotlin.plugin.atomicfu")
+    id("buildLogic.dokka")
+    id("buildLogic.publishing")
 }
 
 description = "Core library for the TestBalloon framework"
@@ -22,9 +20,9 @@ kotlin {
 
     compilerOptions {
         freeCompilerArgs.addAll(
-            "-opt-in=${Constants.SHARED_INTERNAL_PACKAGE_NAME}.TestBalloonInternalApi",
-            "-opt-in=${Constants.SHARED_INTERNAL_PACKAGE_NAME}.TestBalloonInternalTestingApi",
-            "-opt-in=${Constants.CORE_PACKAGE_NAME}.TestBalloonExperimentalApi"
+            "-opt-in=de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi",
+            "-opt-in=de.infix.testBalloon.framework.shared.internal.TestBalloonInternalTestingApi",
+            "-opt-in=de.infix.testBalloon.framework.core.TestBalloonExperimentalApi"
         )
     }
 
@@ -46,7 +44,7 @@ kotlin {
     }
 
     androidLibrary {
-        namespace = Constants.CORE_PACKAGE_NAME
+        namespace = "de.infix.testBalloon.framework.core"
         compileSdk = versionFromCatalog("android-compileSdk").toInt()
 
         withHostTestBuilder {}.configure {}
@@ -55,7 +53,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(projects.testBalloonFrameworkShared)
+                api("$group:testBalloon-framework-shared:$version")
                 api(libs.org.jetbrains.kotlinx.coroutines.core)
                 api(libs.org.jetbrains.kotlinx.coroutines.test)
                 implementation(libs.org.jetbrains.kotlinx.kotlinx.datetime)
@@ -95,7 +93,7 @@ dokkaEnableNavigationNodeHiding()
 tasks.withType<Test>().configureEach {
     // https://docs.gradle.org/current/userguide/java_testing.html
     useJUnitPlatform {
-        excludeEngines(Constants.JUNIT_PLATFORM_ENGINE_ID) // Do not use TestBalloon in this project
+        excludeEngines("de.infix.testBalloon") // Do not use TestBalloon in this project
     }
 }
 
@@ -109,3 +107,23 @@ tasks.withType<KotlinNativeTest>().configureEach {
         }
     }
 }
+
+afterEvaluate {
+    val publishableIncludeBuilds =
+        listOf("testBalloon-compiler-plugin", "testBalloon-framework-shared", "testBalloon-gradle-plugin")
+
+    for (taskName in listOf(
+        "publishAllPublicationsToIntegrationTestRepository",
+        "publishAllPublicationsToLocalRepository",
+        "publishAllPublicationsToMavenCentralRepository",
+        "publishAndReleaseToMavenCentral",
+        "publishToMavenCentral",
+        "publishToMavenLocal"
+    )) {
+        tasks.named(taskName) {
+            dependsOn(publishableIncludeBuilds.map { gradle.includedBuild(it).task(":$taskName") })
+        }
+    }
+}
+
+propagateLifecycleTasksToIncludedBuilds()

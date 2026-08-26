@@ -1,4 +1,3 @@
-import buildLogic.addTestBalloonPluginFromProject
 import buildLogic.allTargets
 import buildLogic.enableAbiValidation
 import buildLogic.versionFromCatalog
@@ -6,12 +5,12 @@ import buildLogic.versionFromCatalog
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("com.android.kotlin.multiplatform.library")
+    id("de.infix.testBalloon")
+    id("buildLogic.dokka")
     id("buildLogic.publishing")
 }
 
 description = "Library supporting blocking code detection with the TestBalloon framework"
-
-addTestBalloonPluginFromProject(projects.testBalloonCompilerPlugin)
 
 kotlin {
     enableAbiValidation()

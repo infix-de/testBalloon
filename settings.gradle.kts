@@ -1,9 +1,7 @@
-import kotlin.io.path.div
-import kotlin.io.path.listDirectoryEntries
-
 pluginManagement {
     includeBuild("build-logic")
     includeBuild("build-settings")
+    includeBuild("testBalloon-gradle-plugin")
 }
 
 plugins {
@@ -12,24 +10,18 @@ plugins {
 
 rootProject.name = "testBalloon"
 
-includeBuild(".") // Make the top-level build referenceable in other include builds.
-
-include(":testBalloon-framework-shared")
+includeBuild("testBalloon-framework-shared")
 include(":testBalloon-framework-core")
-include(":testBalloon-gradle-plugin")
-include(":testBalloon-compiler-plugin")
-include(":testBalloon-compiler-plugin:compiler-plugin-layer-base")
-include(":testBalloon-compiler-plugin:compiler-plugin-layer-base-test")
-for (compilerPluginLayer in (rootDir.toPath() / "testBalloon-compiler-plugin/layer").listDirectoryEntries()) {
-    includeBuild(compilerPluginLayer.toString())
-}
+
+includeBuild("testBalloon-compiler-plugin")
 
 include(":integration-test")
 
 include(":documentation:website")
 include(":documentation:website:snippets")
-include(":documentation:dokka-plugin-internal-api-hiding")
-include(":documentation:dokka-plugin-navigation-node-hiding")
+
+includeBuild("documentation/dokka-plugin-internal-api-hiding")
+includeBuild("documentation/dokka-plugin-navigation-node-hiding")
 
 include(":testBalloon-integration-kotest-assertions")
 include(":testBalloon-integration-blocking-detection")

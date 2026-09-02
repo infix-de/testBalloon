@@ -1,39 +1,41 @@
-package buildLogic
+package compilerPluginLayer.buildLogic
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
+import tapmoc.Severity
+import tapmoc.TapmocExtension
 
 /**
  * Configures the project for a compiler plugin layer compiled with [kotlinVersion].
  *
- * [baseLayerVersion] specifies the Kotlin version of the base layer dependency (optional).
+ * [baseLayer] specifies the project name of the base layer dependency (optional).
  *
  * [kctforkVersion] specifies the version of
  * [ZacSweers/kotlin-compile-testing](https://github.com/ZacSweers/kotlin-compile-testing/releases)
  * to be used for testing.
  */
-fun Project.configurePluginLayer(kotlinVersion: String, baseLayerVersion: String? = null, kctforkVersion: String) {
+fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = null, kctforkVersion: String) {
     description = "TestBalloon compiler plugin compatibility layer ($kotlinVersion)"
 
-    group = project.property("local.PROJECT_GROUP_ID")!!
+    val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
+    group = "$rootGroup.compilerPlugin"
 
     with(pluginManager) {
         apply("org.jmailen.kotlinter")
     }
 
-    extensions.configure<tapmoc.TapmocExtension>("tapmoc") {
+    extensions.configure<TapmocExtension>("tapmoc") {
         java(jdkVersion())
         kotlin(kotlinVersion)
-        checkDependencies(tapmoc.Severity.ERROR)
+        checkDependencies(Severity.ERROR)
     }
 
     with(dependencies) {
-        val layerName = baseLayerVersion?.let { "kotlin-${it.replace(".", "-")}" } ?: "base"
-        add("api", "de.infix.testBalloon:$layerName")
+        baseLayer?.let { add("api", "$group:$it") }
 
         add("compileOnly", "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion")
 
-        add("testImplementation", "de.infix.testBalloon:base-test")
+        add("testImplementation", "$rootGroup:base-test")
         add("testImplementation", "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion")
         add("testImplementation", "dev.zacsweers.kctfork:core:$kctforkVersion")
         add("testImplementation", "org.jetbrains.kotlin:kotlin-test:$kotlinVersion")

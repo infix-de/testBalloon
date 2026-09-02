@@ -1,4 +1,4 @@
-package de.infix.testBalloon.compilerPlugin.base
+package de.infix.testBalloon.framework.shared.internal
 
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.comparables.shouldNotBeEqualComparingTo
@@ -39,6 +39,7 @@ class KotlinVersionTest {
         )
     }
 
+    @OptIn(TestBalloonInternalApi::class)
     private fun verifyOrder(spec: String) {
         spec.split(" < ").map { it.asKotlinVersion() }.zipWithNext().forEach { (left, right) ->
             left shouldBeLessThan right

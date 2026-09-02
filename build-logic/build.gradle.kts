@@ -37,18 +37,18 @@ assignment {
 gradlePlugin {
     plugins {
         val pluginMap = mapOf(
-            "buildLogic.common" to "BuildLogicCommonPlugin",
-            "buildLogic.dokka" to "BuildLogicDokkaPlugin",
-            "buildLogic.kotlin-jvm" to "BuildLogicKotlinJvmPlugin",
-            "buildLogic.kotlin-jvm-base" to "BuildLogicKotlinJvmBasePlugin",
-            "buildLogic.kotlin-multiplatform" to "BuildLogicKotlinMultiplatformPlugin",
-            "buildLogic.android-application" to "BuildLogicAndroidApplicationPlugin",
-            "buildLogic.publishing" to "BuildLogicPublishingPlugin"
+            "common" to "BuildLogicCommonPlugin",
+            "dokka" to "BuildLogicDokkaPlugin",
+            "kotlin-jvm" to "BuildLogicKotlinJvmPlugin",
+            "kotlin-jvm-base" to "BuildLogicKotlinJvmBasePlugin",
+            "kotlin-multiplatform" to "BuildLogicKotlinMultiplatformPlugin",
+            "android-application" to "BuildLogicAndroidApplicationPlugin",
+            "publishing" to "BuildLogicPublishingPlugin"
         )
 
         for ((id, implementationClass) in pluginMap) {
-            register(id) {
-                this.id = id
+            register("buildLogic.$id") {
+                this.id = "buildLogic.$id"
                 this.implementationClass = implementationClass
             }
         }

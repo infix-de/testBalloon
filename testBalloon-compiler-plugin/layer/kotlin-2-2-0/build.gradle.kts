@@ -1,4 +1,4 @@
-import buildLogic.configurePluginLayer
+import compilerPluginLayer.buildLogic.configurePluginLayer
 
 plugins {
     id("compilerPluginLayer.buildLogic.common")
@@ -6,4 +6,4 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "2.2.0"
 }
 
-configurePluginLayer(kotlinVersion = "2.2.0", kctforkVersion = "0.10.1")
+configurePluginLayer(kotlinVersion = "2.2.0", baseLayer = "base", kctforkVersion = "0.10.1")

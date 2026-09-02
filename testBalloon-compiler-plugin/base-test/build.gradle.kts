@@ -8,7 +8,7 @@ description = "TestBalloon compiler plugin compatibility layer (base) test suppo
 
 dependencies {
     api(projects.testBalloonCompilerPlugin)
-    compileOnly(projects.testBalloonCompilerPlugin.base)
+    compileOnly("$group.compilerPlugin:base")
     // https://github.com/ZacSweers/kotlin-compile-testing/releases
     compileOnly(libs.dev.zacsweers.kctfork)
     compileOnly(libs.org.jetbrains.kotlin.test)

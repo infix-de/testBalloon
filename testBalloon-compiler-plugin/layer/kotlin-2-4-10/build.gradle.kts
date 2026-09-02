@@ -1,4 +1,4 @@
-import buildLogic.configurePluginLayer
+import compilerPluginLayer.buildLogic.configurePluginLayer
 
 plugins {
     id("compilerPluginLayer.buildLogic.common")

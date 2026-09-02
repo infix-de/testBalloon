@@ -31,18 +31,25 @@ fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
 
 @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
 dependencies {
+    embeddedCompileOnly("$group.compilerPlugin:base")
     // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
     embeddedCompileOnly("$group:testBalloon-framework-shared:$version")
-    embeddedCompileOnly(projects.testBalloonCompilerPlugin.base)
 
-    val compilerPluginLayers = (projectDir.toPath() / "layer").listDirectoryEntries("kotlin-*").map { it.name }
-    for (compilerPluginLayer in compilerPluginLayers) {
-        embeddedDynamicallyLoaded("de.infix.testBalloon:$compilerPluginLayer")
+    val kotlinVersionLayers = (projectDir.toPath() / "layer").listDirectoryEntries("kotlin-*").map { it.name }
+    for (kotlinVersionLayer in kotlinVersionLayers) {
+        embeddedDynamicallyLoaded("$group.compilerPlugin:$kotlinVersionLayer")
     }
 
     project.configurations.named("compileOnly").configure { extendsFrom(embeddedCompileOnly) }
     compileOnly(libs.org.jetbrains.kotlin.stdlib)
     compileOnly(libs.org.jetbrains.kotlin.compiler)
+}
+
+buildConfig {
+    packageName("buildConfig")
+    useKotlinOutput { internalVisibility = true }
+
+    buildConfigField("String", "PROJECT_GROUP_ID", "\"$group\"")
 }
 
 val integratedJar = tasks.register("integratedJar", Jar::class.java) {
@@ -96,7 +103,6 @@ configurations {
 }
 
 tasks.named("test") {
-    dependsOn("base:test")
     (projectDir.toPath() / "layer").listDirectoryEntries().forEach {
         dependsOn(gradle.includedBuild(it.name).task(":test"))
     }

@@ -26,12 +26,12 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        val pluginMap = mapOf("compilerPluginLayer.buildLogic.common" to "BuildLogicCommonPlugin")
+        val pluginMap = mapOf("common" to "BuildLogicCommonPlugin")
 
         for ((id, implementationClass) in pluginMap) {
-            register(id) {
-                this.id = id
-                this.implementationClass = implementationClass
+            register("compilerPluginLayer.buildLogic.$id") {
+                this.id = "compilerPluginLayer.buildLogic.$id"
+                this.implementationClass = "compilerPluginLayer.buildLogic.$implementationClass"
             }
         }
     }

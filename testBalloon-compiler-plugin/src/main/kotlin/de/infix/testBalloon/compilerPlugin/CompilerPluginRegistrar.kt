@@ -1,11 +1,13 @@
 package de.infix.testBalloon.compilerPlugin
 
+import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import de.infix.testBalloon.compilerPlugin.base.CompilerAdapter
 import de.infix.testBalloon.compilerPlugin.base.Options
 import de.infix.testBalloon.compilerPlugin.base.PLUGIN_DISPLAY_NAME
 import de.infix.testBalloon.compilerPlugin.base.PLUGIN_ID
-import de.infix.testBalloon.compilerPlugin.base.asKotlinVersion
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
+import de.infix.testBalloon.framework.shared.internal.asKotlinVersion
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -14,7 +16,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
-@OptIn(ExperimentalCompilerApi::class)
+@OptIn(ExperimentalCompilerApi::class, TestBalloonInternalApi::class)
 class CompilerPluginRegistrar : CompilerPluginRegistrar() {
     @Suppress("unused") // pluginId is an override property required for Kotlin versions >= 2.3.0
     val pluginId: String = PLUGIN_ID
@@ -40,7 +42,7 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
                 if (debugLevel > DebugLevel.NONE) {
                     reportMessage(
                         CompilerMessageSeverity.STRONG_WARNING,
-                        "${PLUGIN_DISPLAY_NAME}: [DEBUG] using compiler adapter $adapterVersion" +
+                        "$PLUGIN_DISPLAY_NAME: [DEBUG] using compiler adapter ${this.configuration.adapterVersion}" +
                             " for Kotlin compiler ${this.configuration.compilerVersion}"
                     )
                 }
@@ -50,7 +52,7 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
             if (debugLevel > DebugLevel.NONE) {
                 reportMessage(
                     CompilerMessageSeverity.STRONG_WARNING,
-                    "${PLUGIN_DISPLAY_NAME}: [DEBUG] compiler plugin is disabled ($disablingReason)."
+                    "$PLUGIN_DISPLAY_NAME: [DEBUG] compiler plugin is disabled ($disablingReason)."
                 )
             }
         }
@@ -60,21 +62,22 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
         val compilerVersion =
             FirExtensionRegistrar::class.java.classLoader?.getResourceAsStream("META-INF/compiler.version")
                 ?.bufferedReader()?.use { it.readText() }?.takeUnless { it.isBlank() }?.asKotlinVersion()
-                ?: throw IllegalArgumentException("${PLUGIN_DISPLAY_NAME}: Could not determine the compiler version.")
+                ?: throw IllegalArgumentException("$PLUGIN_DISPLAY_NAME: Could not determine the compiler version.")
 
         for (adapterVersionString in listOf("2.4.0", "2.3.20", "2.3.0", "2.2.0")) {
-            if (adapterVersionString.asKotlinVersion() <= compilerVersion) {
-                val adapterConfiguration = CompilerAdapter.Configuration(pluginId, compilerVersion)
+            val adapterVersion = adapterVersionString.asKotlinVersion()
+            if (adapterVersion <= compilerVersion) {
+                val adapterConfiguration = CompilerAdapter.Configuration(pluginId, compilerVersion, adapterVersion)
                 val packageVersion = adapterVersionString.replace(".", "")
                 val classVersion = adapterVersionString.replace(".", "_")
                 val className =
-                    "de.infix.testBalloon.compilerPlugin.layer.kotlin$packageVersion.CompilerAdapter_$classVersion"
+                    "${PROJECT_GROUP_ID}.compilerPlugin.layer.kotlin$packageVersion.CompilerAdapter_$classVersion"
                 return Class.forName(className)
                     .getDeclaredConstructor(CompilerAdapter.Configuration::class.java)
                     .newInstance(adapterConfiguration) as CompilerAdapter
             }
         }
 
-        throw NotImplementedError("${PLUGIN_DISPLAY_NAME}: Kotlin compiler version '$compilerVersion' is unsupported.")
+        throw NotImplementedError("$PLUGIN_DISPLAY_NAME: Kotlin compiler version '$compilerVersion' is unsupported.")
     }
 }

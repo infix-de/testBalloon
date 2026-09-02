@@ -11,6 +11,7 @@ tasks {
 
             dependsOn(gradle.includedBuild("testBalloon-compiler-plugin").task(":test"))
             dependsOn(gradle.includedBuild("testBalloon-gradle-plugin").task(":test"))
+            dependsOn(gradle.includedBuild("testBalloon-framework-shared").task(":$kmpTaskName"))
             dependsOn(":testBalloon-framework-core:$kmpTaskName")
 
             dependsOn(":testBalloon-integration-kotest-assertions:$kmpTaskName")

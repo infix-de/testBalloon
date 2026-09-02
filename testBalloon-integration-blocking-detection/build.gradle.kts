@@ -18,7 +18,7 @@ kotlin {
     allTargets()
 
     androidLibrary {
-        namespace = "de.infix.testBalloon.integration.blockingDetection"
+        namespace = "$group.integration.blockingDetection"
         compileSdk = versionFromCatalog("android-compileSdk").toInt()
     }
 

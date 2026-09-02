@@ -5,4 +5,4 @@ set -e
 
 cd "$(dirname "$0")/.." || exit 2
 
-./gradlew --warn clean
+./gradlew --warn clean --no-configuration-cache --no-build-cache

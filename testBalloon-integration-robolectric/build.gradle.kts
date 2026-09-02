@@ -19,7 +19,7 @@ kotlin {
     enableAbiValidation()
 
     androidLibrary {
-        namespace = "de.infix.testBalloon.integration.robolectric"
+        namespace = "$group.integration.robolectric"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 

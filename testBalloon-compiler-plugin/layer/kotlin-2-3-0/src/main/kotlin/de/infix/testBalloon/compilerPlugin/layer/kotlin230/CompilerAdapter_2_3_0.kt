@@ -4,8 +4,6 @@ package de.infix.testBalloon.compilerPlugin.layer.kotlin230
 
 import de.infix.testBalloon.compilerPlugin.base.CompilerAdapter
 import de.infix.testBalloon.compilerPlugin.base.IrGenerationExtensionBase
-import de.infix.testBalloon.compilerPlugin.base.KotlinVersion
-import de.infix.testBalloon.compilerPlugin.base.asKotlinVersion
 import de.infix.testBalloon.compilerPlugin.layer.kotlin220.DeclarationFinderAdapter_2_2_0
 import de.infix.testBalloon.compilerPlugin.layer.kotlin220.ModuleTransformer_2_2_0
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -24,7 +22,6 @@ import java.io.File
 
 @Suppress("unused")
 class CompilerAdapter_2_3_0(configuration: Configuration) : CompilerAdapter(configuration) {
-    override val adapterVersion: KotlinVersion = "2.3.0".asKotlinVersion()
 
     @OptIn(ExperimentalCompilerApi::class)
     override fun ExtensionStorage.registerExtensions(compilerConfiguration: CompilerConfiguration) {

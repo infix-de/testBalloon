@@ -1,3 +1,5 @@
+package compilerPluginLayer.buildLogic
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jmailen.gradle.kotlinter.KotlinterExtension
@@ -12,7 +14,7 @@ class BuildLogicCommonPlugin : Plugin<Project> {
             apply("org.jmailen.kotlinter")
         }
 
-        group = project.property("local.PROJECT_GROUP_ID")!!
+        group = "${project.property("local.PROJECT_GROUP_ID")}.compilerPlugin"
 
         extensions.configure<KotlinterExtension>("kotlinter") {
             ignoreLintFailures = false

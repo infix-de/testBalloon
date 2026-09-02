@@ -1,4 +1,4 @@
-package de.infix.testBalloon.compilerPlugin.base
+package de.infix.testBalloon.framework.shared.internal
 
 /**
  * A restrictive interpretation of a Kotlin version, assuming that dev versions are always newer than EAP versions.
@@ -7,10 +7,15 @@ package de.infix.testBalloon.compilerPlugin.base
  * leading to a precedence of 2.4.20-dev123 < 2.4.20-Beta1 < 2.4.20-dev255. We ignore this, implying that we can
  * only support dev versions which match the highest available compiler plugin adapter version.
  */
-class KotlinVersion(val major: Int, val minor: Int, val patch: Int, val extension: String?) :
-    Comparable<KotlinVersion> {
+@TestBalloonInternalApi
+public class KotlinVersion(
+    private val major: Int,
+    private val minor: Int,
+    private val patch: Int,
+    private val extension: String?
+) : Comparable<KotlinVersion> {
 
-    enum class Maturity(private val lowercaseRegexText: String?) {
+    private enum class Maturity(lowercaseRegexText: String?) {
         // EAP versions
         ALPHA("""alpha\d*"""),
         BETA("""beta\d*"""),
@@ -25,7 +30,7 @@ class KotlinVersion(val major: Int, val minor: Int, val patch: Int, val extensio
         val lowercaseRegex by lazy { lowercaseRegexText?.let { Regex(it) } }
     }
 
-    val maturity: Int = run {
+    private val maturity: Int = run {
         val lowercaseClassifier = extension?.lowercase() ?: return@run Maturity.STABLE.ordinal
         for (maturity in Maturity.entries) {
             if (maturity.lowercaseRegex?.matches(lowercaseClassifier) == true) return@run maturity.ordinal
@@ -35,7 +40,7 @@ class KotlinVersion(val major: Int, val minor: Int, val patch: Int, val extensio
         )
     }
 
-    val buildNumber = extension?.dropWhile { !it.isDigit() }?.takeWhile { it.isDigit() }?.toIntOrNull() ?: 0
+    private val buildNumber = extension?.dropWhile { !it.isDigit() }?.takeWhile { it.isDigit() }?.toIntOrNull() ?: 0
 
     override fun compareTo(other: KotlinVersion): Int {
         (major - other.major).let { if (it != 0) return it }
@@ -49,7 +54,8 @@ class KotlinVersion(val major: Int, val minor: Int, val patch: Int, val extensio
     override fun toString(): String = "$major.$minor.$patch${extension?.let { "-$it" } ?: ""}"
 }
 
-fun String.asKotlinVersion(): KotlinVersion {
+@TestBalloonInternalApi
+public fun String.asKotlinVersion(): KotlinVersion {
     val segments = split("-", limit = 2)
     val components = segments.getOrNull(0)?.split('.')
     val classifier = segments.getOrNull(1)

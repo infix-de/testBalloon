@@ -16,7 +16,6 @@ dependencyResolutionManagement {
     }
 }
 
-include(":base")
 include(":base-test")
 
 for (layer in (rootDir.toPath() / "layer").listDirectoryEntries()) {

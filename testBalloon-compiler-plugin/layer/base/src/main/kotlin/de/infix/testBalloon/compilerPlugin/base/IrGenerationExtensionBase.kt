@@ -564,7 +564,7 @@ abstract class ModuleTransformer(val configuration: Configuration) :
                         }
                     }
 
-                    !jUnit4Found -> "JUnit 4 is not on the classpath."
+                    !jUnit4Found -> "JUnit 4 is not on the classpath, defaulting to JUnit Platform integration."
 
                     else -> "JUnit 4 is on the classpath, but the TestBalloon JUnit 4 runner is not."
                 }

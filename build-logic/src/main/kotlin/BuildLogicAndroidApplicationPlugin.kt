@@ -14,6 +14,6 @@ class BuildLogicAndroidApplicationPlugin : Plugin<Project> {
             }
         }
 
-        group = project.property("local.PROJECT_GROUP_ID")!!
+        group = "${project.property("local.PROJECT_GROUP_ID")}"
     }
 }

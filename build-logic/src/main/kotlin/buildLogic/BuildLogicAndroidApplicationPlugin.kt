@@ -1,4 +1,5 @@
-import buildLogic.versionFromCatalog
+package buildLogic
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.util.internal.VersionNumber

@@ -17,7 +17,6 @@ dependencyResolutionManagement {
     }
 }
 
-includeBuild("layer/build-logic-g")
 includeBuild("layer/base")
 
 for (layer in (rootDir.toPath() / "layer").listDirectoryEntries().filter { it.name.startsWith("kotlin-") }) {

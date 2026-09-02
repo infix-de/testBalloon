@@ -49,7 +49,7 @@ gradlePlugin {
         for ((id, implementationClass) in pluginMap) {
             register("buildLogic.$id") {
                 this.id = "buildLogic.$id"
-                this.implementationClass = implementationClass
+                this.implementationClass = "buildLogic.$implementationClass"
             }
         }
     }

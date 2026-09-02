@@ -8,9 +8,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 fun Project.versionFromCatalog(alias: String): String =
     versionCatalogs.named("libs").findVersion(alias).get().displayName
 
-fun Project.libraryFromCatalog(alias: String): String =
-    versionCatalogs.named("libs").findLibrary(alias).get().get().toString()
-
 private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogsExtension::class.java)
 
 fun Project.jdkVersion() = versionFromCatalog("jdk").toInt()
@@ -34,9 +31,14 @@ fun Project.addKotlinStdlibDependency() {
 
 fun Project.propagateLifecycleTasksToIncludedBuilds() {
     afterEvaluate {
+        val excludingRegex = Regex("""(^build-)|(-build-)""")
         for (taskName in listOf("clean", "lintKotlin")) {
             tasks.named(taskName) {
-                dependsOn(gradle.includedBuilds.filter { !it.name.startsWith("build-") }.map { it.task(":$taskName") })
+                dependsOn(
+                    gradle.includedBuilds
+                        .filter { !excludingRegex.containsMatchIn(it.name) }
+                        .map { it.task(":$taskName") }
+                )
             }
         }
     }

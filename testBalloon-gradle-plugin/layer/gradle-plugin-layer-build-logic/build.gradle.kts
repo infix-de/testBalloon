@@ -31,9 +31,9 @@ gradlePlugin {
         val pluginMap = mapOf("common" to "BuildLogicCommonPlugin")
 
         for ((id, implementationClass) in pluginMap) {
-            register("gradlePluginLayer.buildLogic.$id") {
-                this.id = "gradlePluginLayer.buildLogic.$id"
-                this.implementationClass = "gradlePluginLayer.buildLogic.$implementationClass"
+            register("gradlePlugin.layer.buildLogic.$id") {
+                this.id = "gradlePlugin.layer.buildLogic.$id"
+                this.implementationClass = "gradlePlugin.layer.buildLogic.$implementationClass"
             }
         }
     }

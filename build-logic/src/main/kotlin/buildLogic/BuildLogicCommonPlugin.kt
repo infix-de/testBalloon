@@ -1,10 +1,12 @@
-package gradlePluginLayer.buildLogic
+package buildLogic
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jmailen.gradle.kotlinter.KotlinterExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
+import tapmoc.Severity
+import tapmoc.TapmocExtension
 
 @Suppress("unused")
 class BuildLogicCommonPlugin : Plugin<Project> {
@@ -14,7 +16,13 @@ class BuildLogicCommonPlugin : Plugin<Project> {
             apply("org.jmailen.kotlinter")
         }
 
-        group = "${project.property("local.PROJECT_GROUP_ID")}.gradlePlugin"
+        group = "${project.property("local.PROJECT_GROUP_ID")}"
+
+        extensions.configure<TapmocExtension>("tapmoc") {
+            java(jdkVersion())
+            kotlin(kotlinVersion())
+            checkDependencies(Severity.ERROR)
+        }
 
         extensions.configure<KotlinterExtension>("kotlinter") {
             ignoreLintFailures = false

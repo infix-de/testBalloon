@@ -1,4 +1,4 @@
-package compilerPluginLayer.buildLogic
+package compilerPlugin.layer.buildLogic
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

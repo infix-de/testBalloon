@@ -1,5 +1,5 @@
 plugins {
-    // These plugins compile code in build-logic. Their versions can differ from those
+    // These plugins compile code in compiler-plugin-layer-build-logic. Their versions can differ from those
     // used to compile the project's Kotlin code elsewhere.
     kotlin("jvm") version "2.2.0"
     kotlin("plugin.sam.with.receiver") version "2.2.0"
@@ -29,9 +29,9 @@ gradlePlugin {
         val pluginMap = mapOf("common" to "BuildLogicCommonPlugin")
 
         for ((id, implementationClass) in pluginMap) {
-            register("compilerPluginLayer.buildLogic.$id") {
-                this.id = "compilerPluginLayer.buildLogic.$id"
-                this.implementationClass = "compilerPluginLayer.buildLogic.$implementationClass"
+            register("compilerPlugin.layer.buildLogic.$id") {
+                this.id = "compilerPlugin.layer.buildLogic.$id"
+                this.implementationClass = "compilerPlugin.layer.buildLogic.$implementationClass"
             }
         }
     }

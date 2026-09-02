@@ -1,5 +1,5 @@
-import buildLogic.jdkVersion
-import buildLogic.kotlinVersion
+package gradlePlugin.layer.buildLogic
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jmailen.gradle.kotlinter.KotlinterExtension
@@ -14,13 +14,7 @@ class BuildLogicCommonPlugin : Plugin<Project> {
             apply("org.jmailen.kotlinter")
         }
 
-        group = "${project.property("local.PROJECT_GROUP_ID")}"
-
-        extensions.configure<tapmoc.TapmocExtension>("tapmoc") {
-            java(jdkVersion())
-            kotlin(kotlinVersion())
-            checkDependencies(tapmoc.Severity.ERROR)
-        }
+        group = "${project.property("local.PROJECT_GROUP_ID")}.gradlePlugin"
 
         extensions.configure<KotlinterExtension>("kotlinter") {
             ignoreLintFailures = false

@@ -1,4 +1,4 @@
-package compilerPluginLayer.buildLogic
+package compilerPlugin.layer.buildLogic
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension

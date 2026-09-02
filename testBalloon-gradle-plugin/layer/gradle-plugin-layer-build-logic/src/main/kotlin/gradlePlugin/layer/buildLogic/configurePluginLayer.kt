@@ -1,4 +1,4 @@
-package gradlePluginLayer.buildLogic
+package gradlePlugin.layer.buildLogic
 
 import org.gradle.api.HasImplicitReceiver
 import org.gradle.api.Project

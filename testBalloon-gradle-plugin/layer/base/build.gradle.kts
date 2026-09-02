@@ -1,12 +1,11 @@
-import gradlePluginLayer.buildLogic.configurePluginLayer
-import gradlePluginLayer.buildLogic.libraryFromCatalog
+import gradlePlugin.layer.buildLogic.configurePluginLayer
+import gradlePlugin.layer.buildLogic.libraryFromCatalog
 
 plugins {
-    id("gradlePluginLayer.buildLogic.common")
+    id("gradlePlugin.layer.buildLogic.common")
     // noinspection NewerVersionAvailable
     id("org.jetbrains.kotlin.jvm") version "2.2.0"
     id("java-gradle-plugin")
-    // id("buildLogic.publishing")
     alias(libs.plugins.com.github.gmazzo.buildconfig)
 }
 

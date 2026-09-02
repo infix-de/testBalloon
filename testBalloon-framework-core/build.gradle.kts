@@ -1,4 +1,5 @@
 import buildLogic.allTargets
+import buildLogic.dokkaEnableNavigationNodeHiding
 import buildLogic.enableAbiValidation
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import buildLogic.versionFromCatalog

@@ -103,7 +103,7 @@ configurations {
 }
 
 tasks.named("test") {
-    (projectDir.toPath() / "layer").listDirectoryEntries().forEach {
+    (projectDir.toPath() / "layer").listDirectoryEntries().filter { it.name.startsWith("kotlin-") }.forEach {
         dependsOn(gradle.includedBuild(it.name).task(":test"))
     }
 }

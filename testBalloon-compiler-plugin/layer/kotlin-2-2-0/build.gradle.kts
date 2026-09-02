@@ -1,7 +1,7 @@
-import compilerPluginLayer.buildLogic.configurePluginLayer
+import compilerPlugin.layer.buildLogic.configurePluginLayer
 
 plugins {
-    id("compilerPluginLayer.buildLogic.common")
+    id("compilerPlugin.layer.buildLogic.common")
     // noinspection NewerVersionAvailable
     id("org.jetbrains.kotlin.jvm") version "2.2.0"
 }

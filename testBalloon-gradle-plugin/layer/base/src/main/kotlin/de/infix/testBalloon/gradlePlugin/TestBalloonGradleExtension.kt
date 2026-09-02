@@ -37,6 +37,16 @@ open class TestBalloonGradleExtension {
      */
     var junit4AutoIntegrationEnabled: Boolean? = null
 
+    /**
+     * `browserAutoIntegrationEnabled` controls JS and Wasm auto-integration for browser targets.
+     *
+     * This property controls whether TestBalloon automatically enables itself for tests on JS and Wasm browser
+     * targets.
+     *
+     * If set, it overrides the Gradle property with the same name.
+     */
+    var browserAutoIntegrationEnabled: Boolean? = null
+
     /** The debug level controlling reporting by the Gradle and compiler plugin. */
     var debugLevel: DebugLevel = DebugLevel.NONE
 }

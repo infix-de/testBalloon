@@ -1,5 +1,6 @@
 import kotlin.io.path.div
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 
 pluginManagement {
     includeBuild("../build-settings")
@@ -16,6 +17,9 @@ dependencyResolutionManagement {
     }
 }
 
-for (layer in (rootDir.toPath() / "layer").listDirectoryEntries()) {
-//     includeBuild(layer.toString())
+includeBuild("layer/build-logic-g")
+includeBuild("layer/base")
+
+for (layer in (rootDir.toPath() / "layer").listDirectoryEntries().filter { it.name.startsWith("kotlin-") }) {
+    includeBuild(layer.toString())
 }

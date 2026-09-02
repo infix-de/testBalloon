@@ -1,16 +1,13 @@
-@file:OptIn(TestBalloonInternalApi::class)
-
 package de.infix.testBalloon.gradlePlugin
 
 import de.infix.testBalloon.framework.shared.internal.Constants
-import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.gradle.api.Project
 import org.gradle.testing.base.TestingExtension
 import org.gradle.util.internal.VersionNumber
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import kotlin.reflect.KProperty
 
-internal class TestBalloonGradleProperties(val project: Project) {
+class TestBalloonGradleProperties(private val project: Project) {
 
     /**
      * Name pattern for source sets in which the compiler plugin will look up test suites and a test session.
@@ -143,6 +140,14 @@ internal class TestBalloonGradleProperties(val project: Project) {
     val junit4AutoIntegrationEnabled by booleanProperty("true")
 
     /**
+     * Setting to enable or disable JS and Wasm auto-integration for browser targets. `true` (default) or `false`.
+     *
+     * This property controls whether TestBalloon automatically enables itself for tests on JS and Wasm browser
+     * targets.
+     */
+    val browserAutoIntegrationEnabled by booleanProperty("true")
+
+    /**
      * Setting to restrict JVM test runs to TestBalloon, excluding other test frameworks. `true` or `false` (default).
      */
     val jvmTestBalloonTestsOnly by booleanProperty("false")
@@ -159,7 +164,7 @@ internal class TestBalloonGradleProperties(val project: Project) {
      * TestBalloon runs under IntelliJ IDEA.
      *
      * The mode `files` supplies test element names instead of full paths, supporting proper XML and HTML report
-     * files, avoiding duplicate path elements leading to `file name too long' errors.
+     * files, avoiding duplicate path elements leading to "file name too long" errors.
      *
      * `auto` detects whether tests run under IntelliJ IDEA and chooses the mode accordingly.
      */
@@ -234,6 +239,6 @@ internal class TestBalloonGradleProperties(val project: Project) {
         testSourceSetsRegex.containsMatchIn(name) || isJvmTestSuite(name)
 
     @Suppress("UnstableApiUsage")
-    internal fun isJvmTestSuite(name: String) =
+    fun isJvmTestSuite(name: String) =
         project.extensions.findByType(TestingExtension::class.java)?.suites?.any { name == it.name } == true
 }

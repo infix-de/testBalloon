@@ -8,7 +8,7 @@ import de.infix.testBalloon.framework.core.testSuite
 import kotlin.time.Duration.Companion.minutes
 
 private val latestAgpVersion = projectCatalogVersion("android.gradle.plugin.latest")
-private val latestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin.latest")
+private val latestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin.latest.release")
 private val earliestAgpVersion = projectCatalogVersion("android.gradle.plugin")
 private val earliestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin")
 

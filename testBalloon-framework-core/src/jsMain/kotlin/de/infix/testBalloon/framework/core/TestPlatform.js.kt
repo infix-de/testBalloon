@@ -26,6 +26,8 @@ private fun jsEnvironment(variableName: String): String? = js(
     } else if (typeof window !== "undefined" && typeof window.__karma__ !== "undefined" &&
                    typeof window.__karma__.config.env !== "undefined") {
         return window.__karma__.config.env[variableName];
+    } else if (typeof window !== "undefined" && typeof window.testBalloonEnvironment !== "undefined") {
+        return window.testBalloonEnvironment[variableName];
     }
     return undefined;
     """

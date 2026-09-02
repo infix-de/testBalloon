@@ -21,3 +21,13 @@ internal actual fun handleFrameworkLevelError(throwable: Throwable) {
     //   the error message).
     throw throwable
 }
+
+internal actual fun testsFinishedMarker(): String? = js(
+    """
+    if (typeof window !== "undefined" && typeof window.kotlinTestConfig !== "undefined") {
+        return window.kotlinTestConfig.testsFinishedMarker
+    } else {
+        return undefined;
+    }
+    """
+)?.toString()

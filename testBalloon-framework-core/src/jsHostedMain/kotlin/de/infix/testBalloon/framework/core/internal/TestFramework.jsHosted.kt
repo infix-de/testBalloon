@@ -24,7 +24,12 @@ internal actual suspend fun setUpAndExecuteTests(suites: Array<AbstractTestSuite
                 TestSession.global.registerWithKotlinJsTestFramework()
             } else {
                 TestSession.global.execute(TeamCityTestExecutionReport())
+                testsFinishedMarker()?.let {
+                    println("\n$it\n")
+                }
             }
         }
     }
 }
+
+internal expect fun testsFinishedMarker(): String?

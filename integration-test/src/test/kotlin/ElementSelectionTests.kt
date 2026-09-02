@@ -1,10 +1,13 @@
 @file:OptIn(TestBalloonInternalApi::class)
 
 import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.invocation
+import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
+import de.infix.testBalloon.framework.shared.TestRegistering
 import de.infix.testBalloon.framework.shared.internal.Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import java.util.Locale
@@ -15,12 +18,27 @@ val ElementSelectionTests by testSuite(
         .invocation(TestConfig.Invocation.Sequential)
         .testScope(isEnabled = true, timeout = 24.minutes)
 ) {
-    val projectName = "element-selection"
-    val project = TestProject(
-        projectTestSuite = this,
-        projectBaseName = projectName,
-        baseTemplates = listOf("base-google")
+    projectTestSuite("element-selection", listOf("base-google"), withExtraPatterns = true)
+    projectTestSuite(
+        "element-selection-new-browser-dsl",
+        listOf("base"),
+        withExtraPatterns = false,
+        testConfig = TestConfig.enableIfSet("TEST_ENABLE_NEW_BROWSER_DSL")
     )
+}
+
+private fun TestConfig.enableIfSet(environmentVariableName: String) =
+    if (testPlatform.environment(environmentVariableName) != null) this else disable()
+
+@TestRegistering
+private fun TestSuite.projectTestSuite(
+    projectName: String,
+    baseTemplates: List<String>,
+    withExtraPatterns: Boolean,
+    testConfig: TestConfig = TestConfig
+) = testSuite(projectName, testConfig = testConfig) {
+    val project =
+        TestProject(projectTestSuite = this, projectBaseName = projectName, baseTemplates = baseTemplates)
 
     class TestVariant(
         val type: VariantType,
@@ -29,12 +47,16 @@ val ElementSelectionTests by testSuite(
     )
 
     val commonPatternMatches = mapOf("com.example.SimpleSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1)
-    val extraPatternMatches = mapOf(
-        "com.example.SimpleSuite*test 1" to 1,
-        ";com.example.SimpleSuite;test 1" to 1,
-        "NoMatch" to 0,
-        "com.example.SpecialNameSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1
-    )
+    val extraPatternMatches = if (withExtraPatterns) {
+        mapOf(
+            "com.example.SimpleSuite*test 1" to 1,
+            ";com.example.SimpleSuite;test 1" to 1,
+            "NoMatch" to 0,
+            "com.example.SpecialNameSuite${INTERNAL_PATH_ELEMENT_SEPARATOR}test 1" to 1
+        )
+    } else {
+        emptyMap()
+    }
 
     val primaryVariants = listOf(
         TestVariant(

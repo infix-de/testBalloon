@@ -36,3 +36,13 @@ private fun printStderr(message: String) {
 private fun exitProcess(status: Int) {
     js("process.exit(status)")
 }
+
+internal actual fun testsFinishedMarker(): String? =
+    if (testsFinishedMarkerExists()) existingTestsFinishedMarker() else null
+
+private fun testsFinishedMarkerExists(): Boolean = js(
+    "typeof window !== 'undefined' && typeof window.kotlinTestConfig !== 'undefined' &&" +
+        " window.kotlinTestConfig.testsFinishedMarker !== 'undefined'"
+)
+
+private fun existingTestsFinishedMarker(): String = js("window.kotlinTestConfig.testsFinishedMarker")

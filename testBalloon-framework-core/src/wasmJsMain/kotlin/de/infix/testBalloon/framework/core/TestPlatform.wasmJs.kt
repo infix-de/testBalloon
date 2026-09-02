@@ -19,8 +19,14 @@ private fun runtimeIsNodeJs(): Boolean =
 
 private fun wasmJsEnvironment(variableName: String): String? = if (wasmProcessEnvExists()) {
     if (wasmProcessEnvEntryExists(variableName)) wasmProcessEnvEntry(variableName) else null
+} else if (wasmKarmaEnvExists()) {
+    if (wasmKarmaEnvEntryExists(variableName)) wasmKarmaEnvEntry(variableName) else null
 } else {
-    if (wasmKarmaEnvExists() && wasmKarmaEnvEntryExists(variableName)) wasmKarmaEnvEntry(variableName) else null
+    if (wasmTestBalloonEnvironmentExists() && wasmTestBalloonEnvironmentEntryExists(variableName)) {
+        wasmTestBalloonEnvironmentEntry(variableName)
+    } else {
+        null
+    }
 }
 
 private fun wasmProcessEnvExists(): Boolean = js("typeof process !== 'undefined' && typeof process.env !== 'undefined'")
@@ -43,3 +49,14 @@ private fun wasmKarmaEnvEntryExists(variableName: String): Boolean =
 
 @Suppress("unused")
 private fun wasmKarmaEnvEntry(variableName: String): String = js("window.__karma__.config.env[variableName]")
+
+private fun wasmTestBalloonEnvironmentExists(): Boolean =
+    js("typeof window !== 'undefined' && typeof window.testBalloonEnvironment !== 'undefined'")
+
+@Suppress("unused")
+private fun wasmTestBalloonEnvironmentEntryExists(variableName: String): Boolean =
+    js("typeof window.testBalloonEnvironment[variableName] !== 'undefined'")
+
+@Suppress("unused")
+private fun wasmTestBalloonEnvironmentEntry(variableName: String): String =
+    js("window.testBalloonEnvironment[variableName]")

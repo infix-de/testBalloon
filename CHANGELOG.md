@@ -1,8 +1,8 @@
-## 1.1.0-RC (August 12, 2026)
+## 1.1.0 (September 3, 2026)
 
 _This is a unified release with a single artifact set for Kotlin versions 2.2.0 and higher. TestBalloon's Gradle and compiler plugins auto-adapt to the Kotlin compiler version in use._
 
-**For this release, there is only one version: 1.1.0-RC.** The old versioning scheme (using "1.0.1-K2.4.0" and the like) is history.
+**For this release, there is only one version: 1.1.0.** The old versioning scheme (using "1.0.1-K2.4.0" and the like) is history.
 
 ### Compatibility
 
@@ -21,6 +21,7 @@ _This is a unified release with a single artifact set for Kotlin versions 2.2.0 
 * Robolectric integration: Compose UI tests no longer fail with "UnsupportedOperationException: main looper can only be controlled from main thread." (#82)
 
 ### Other Changes
+
 * JUnit Platform: report IncompleteExecutionException as aborted by @tKe in https://github.com/infix-de/testBalloon/pull/94
 
 ## 1.0.1 (June 17, 2026)

@@ -15,8 +15,12 @@ android-targetSdk = "36"
 # https://developer.android.com/jetpack/androidx/versions/all-channel
 androidx-test = "1.7.0"
 
-# Target JDK version for Kotlin and Java compilations
-jdk = "11"
+# Target JDK version for the base project.
+base-jdk = "8"
+
+# Target JDK version for Gradle plugins.
+# https://docs.gradle.org/current/userguide/compatibility.html
+gradle-jdk = "17"
 
 # https://github.com/junit-team/junit4/releases
 junit-junit4 = "4.13.2"

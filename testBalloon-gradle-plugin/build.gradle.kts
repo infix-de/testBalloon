@@ -1,6 +1,8 @@
+import buildLogic.gradleJdkVersion
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import org.jetbrains.kotlin.assignment.plugin.gradle.AssignmentExtension
 import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
+import tapmoc.TapmocExtension
 import kotlin.io.path.div
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -44,6 +46,10 @@ dependencies {
     project.configurations.named("compileOnly").configure { extendsFrom(embeddedCompileOnly) }
     compileOnly(libs.org.jetbrains.kotlin.stdlib)
     compileOnly(libs.org.jetbrains.kotlin.gradle.plugin)
+}
+
+extensions.configure<TapmocExtension>("tapmoc") {
+    java(gradleJdkVersion())
 }
 
 gradlePlugin {

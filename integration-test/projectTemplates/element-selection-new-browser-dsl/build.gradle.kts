@@ -10,7 +10,7 @@ plugins {
 }
 
 tapmoc {
-    java("{{version:jdk}}".toInt())
+    java("{{version:base.jdk}}".toInt())
     kotlin("{{version:org.jetbrains.kotlin.latest.prerelease}}")
 }
 

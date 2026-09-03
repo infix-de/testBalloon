@@ -8,4 +8,4 @@ fun Project.versionFromCatalog(alias: String): String =
 
 private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogsExtension::class.java)
 
-fun Project.jdkVersion() = versionFromCatalog("jdk").toInt()
+fun Project.baseJdkVersion() = versionFromCatalog("base.jdk").toInt()

@@ -208,10 +208,8 @@ open class CompilerPluginBaseTests(addExternalEntryPointSourceFile: Boolean = fa
                 compilerPluginRegistrars = listOf(CompilerPluginRegistrar())
                 inheritClassPath = classPathInheritanceEnabled
                 commandLineProcessors = listOf(CompilerPluginCommandLineProcessor())
-                pluginOptions = listOfNotNull(
-                    if (debugLevel != null) option("debugLevel", debugLevel) else null
-                )
-                messageOutputStream = OutputStream.nullOutputStream()
+                pluginOptions = listOfNotNull(if (debugLevel != null) option("debugLevel", debugLevel) else null)
+                messageOutputStream = nullOutputStreamJdk8()
                 optIn = listOf()
             }.compile().run {
                 println("--- Compilation ---")
@@ -251,5 +249,13 @@ open class CompilerPluginBaseTests(addExternalEntryPointSourceFile: Boolean = fa
 
         // Return a string with normalized line separators.
         return stdoutCapturingStream.toString().lines().joinToString("\n")
+    }
+}
+
+/**
+ * Returns an output stream that drops all output, emulating the JDK 11 function `OutputStream.nullOutputStream()`.
+ */
+private fun nullOutputStreamJdk8() = object : OutputStream() {
+    override fun write(b: Int) {
     }
 }

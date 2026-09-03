@@ -12,7 +12,7 @@ plugins {
 }
 
 tapmoc {
-    java("{{version:jdk}}".toInt())
+    java("{{version:base.jdk}}".toInt())
     "{{version:org.jetbrains.kotlin}}".takeIf { it.isNotEmpty() }?.let {
         kotlin(it)
     }

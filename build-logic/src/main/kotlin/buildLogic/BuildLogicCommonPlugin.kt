@@ -19,7 +19,7 @@ class BuildLogicCommonPlugin : Plugin<Project> {
         group = "${project.property("local.PROJECT_GROUP_ID")}"
 
         extensions.configure<TapmocExtension>("tapmoc") {
-            java(jdkVersion())
+            java(baseJdkVersion())
             kotlin(kotlinVersion())
             checkDependencies(Severity.ERROR)
         }

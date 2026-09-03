@@ -6,6 +6,7 @@ import de.infix.testBalloon.framework.core.testPlatform
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import java.io.InputStream
 import java.nio.file.FileVisitResult
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
@@ -190,8 +191,8 @@ internal open class TestProject(
                 }
             }.start()
 
-            val stdout = async { process.inputStream.readAllBytes().toString(Charsets.UTF_8).trim() }
-            val stderr = async { process.errorStream.readAllBytes().toString(Charsets.UTF_8).trim() }
+            val stdout = async { process.inputStream.readAllBytesJdk8().toString(Charsets.UTF_8).trim() }
+            val stderr = async { process.errorStream.readAllBytesJdk8().toString(Charsets.UTF_8).trim() }
             val exitCode = async { process.waitFor() }
 
             return@withContext Execution(arguments.toList(), exitCode.await(), stdout.await(), stderr.await()).run {
@@ -268,3 +269,20 @@ internal fun packageLockFilesUpdateRequested(): Boolean =
 
 internal fun projectCatalogVersion(name: String) =
     BuildConfig.PROJECT_CATALOG_VERSIONS[name] ?: throw IllegalArgumentException("Version for '$name' not found")
+
+/**
+ * Returns an input stream's entire content, emulating the JDK 9 function `InputStream.readAllBytes()`.
+ */
+private fun InputStream.readAllBytesJdk8(): ByteArray {
+    var result = ByteArray(0)
+    val chunkSize = 8 * 1024
+    val chunk = ByteArray(chunkSize)
+
+    while (true) {
+        val readCount = read(chunk)
+        if (readCount == -1) return result
+        val previousResultSize = result.size
+        result = result.copyOf(newSize = previousResultSize + readCount)
+        chunk.copyInto(destination = result, destinationOffset = previousResultSize, endIndex = readCount)
+    }
+}

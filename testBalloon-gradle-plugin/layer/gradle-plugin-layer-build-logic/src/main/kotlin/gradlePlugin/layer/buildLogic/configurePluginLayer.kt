@@ -31,7 +31,7 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
     }
 
     extensions.configure<TapmocExtension>("tapmoc") {
-        java(jdkVersion())
+        java(gradleJdkVersion())
         kotlin(kotlinVersion)
         checkDependencies(Severity.ERROR)
     }

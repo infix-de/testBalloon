@@ -17,7 +17,7 @@ kotlin {
 
     allTargets()
 
-    androidLibrary {
+    android {
         namespace = "$group.integration.blockingDetection"
         compileSdk = versionFromCatalog("android-compileSdk").toInt()
     }

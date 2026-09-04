@@ -36,7 +36,7 @@ buildConfig {
 }
 
 tasks {
-    val updateIntegrationTestRepository by registering(Exec::class) {
+    val updateIntegrationTestRepository = register<Exec>("updateIntegrationTestRepository") {
         group = "verification"
         description = "Updates the project's artifacts in the integration test repository."
 

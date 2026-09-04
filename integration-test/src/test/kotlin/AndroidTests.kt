@@ -8,8 +8,9 @@ import de.infix.testBalloon.framework.core.testSuite
 import kotlin.time.Duration.Companion.minutes
 
 private val latestAgpVersion = projectCatalogVersion("android.gradle.plugin.latest")
+private val earliestAgpVersion = projectCatalogVersion("android.gradle.plugin.earliest")
+
 private val latestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin.latest.release")
-private val earliestAgpVersion = projectCatalogVersion("android.gradle.plugin")
 private val earliestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin")
 
 val AndroidTests by testSuite(
@@ -19,33 +20,65 @@ val AndroidTests by testSuite(
         .invocation(TestConfig.Invocation.Sequential)
         .testScope(isEnabled = true, timeout = 24.minutes)
 ) {
-    testSuite("Android App") {
-        for ((agpVersion, kotlinVersion) in listOf(
-            latestAgpVersion to null,
-            latestAgpVersion to earliestKotlinVersion,
-            earliestAgpVersion to latestKotlinVersion,
-            earliestAgpVersion to earliestKotlinVersion
-        )) {
-            test("android-app", kotlinVersion, agpVersion)
-        }
+    class Configuration(val agpVersion: String, val appKotlinVersions: List<String?>, val gradleVersion: String?) {
+        val gradleVersionName = "Gradle ${gradleVersion ?: "default"}"
+        val gradleBaseTemplate = listOfNotNull(gradleVersion?.let { "base-gradle-$it" })
     }
 
-    testSuite("KMP with Android Library") {
-        for (agpVersion in listOf(latestAgpVersion, earliestAgpVersion)) {
-            for (kotlinVersion in listOf(latestKotlinVersion, earliestKotlinVersion)) {
-                test("android-kmp-library", kotlinVersion, agpVersion)
+    val configurations = listOf<Configuration>(
+        Configuration(
+            agpVersion = latestAgpVersion,
+            appKotlinVersions = listOf(null, earliestKotlinVersion),
+            gradleVersion = null
+        ),
+        Configuration(
+            agpVersion = earliestAgpVersion,
+            appKotlinVersions = listOf(latestKotlinVersion, earliestKotlinVersion),
+            gradleVersion = "9.5.1"
+        )
+    )
+
+    for (configuration in configurations) {
+        with(configuration) {
+            testSuite("With $gradleVersionName") {
+                testSuite("Android App") {
+                    for (kotlinVersion in appKotlinVersions) {
+                        test(
+                            projectBaseName = "android-app",
+                            kotlinVersion = kotlinVersion,
+                            agpVersion = agpVersion,
+                            baseTemplates = gradleBaseTemplate
+                        )
+                    }
+                }
+
+                testSuite("KMP with Android Library") {
+                    for (kotlinVersion in listOf(latestKotlinVersion, earliestKotlinVersion)) {
+                        test(
+                            projectBaseName = "android-kmp-library",
+                            kotlinVersion = kotlinVersion,
+                            agpVersion = agpVersion,
+                            baseTemplates = gradleBaseTemplate
+                        )
+                    }
+                }
             }
         }
     }
 }
 
-private fun TestSuite.test(projectBaseName: String, kotlinVersion: String?, agpVersion: String) {
+private fun TestSuite.test(
+    projectBaseName: String,
+    kotlinVersion: String?,
+    agpVersion: String,
+    baseTemplates: List<String> = emptyList()
+) {
     val project =
         TestProject(
             projectTestSuite = this,
             projectBaseName = projectBaseName,
             projectVariantName = if (kotlinVersion == null) "-A$agpVersion" else "-A$agpVersion-K$kotlinVersion",
-            baseTemplates = listOf("base-google"),
+            baseTemplates = listOf("base-google") + baseTemplates,
             versions = mapOf("org.jetbrains.kotlin" to (kotlinVersion ?: ""), "android.gradle.plugin" to agpVersion)
         )
 

@@ -24,25 +24,7 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
     val kotlinVersionId = "kotlin${kotlinVersion.replace(Regex("[.-]"), "")}"
     val classVersionId = kotlinVersion.replace(Regex("[.-]"), "_")
 
-    with(pluginManager) {
-        apply("org.jmailen.kotlinter")
-        apply("org.jetbrains.kotlin.plugin.sam.with.receiver")
-        apply("org.jetbrains.kotlin.plugin.assignment")
-    }
-
-    extensions.configure<TapmocExtension>("tapmoc") {
-        java(gradleJdkVersion())
-        kotlin(kotlinVersion)
-        checkDependencies(Severity.ERROR)
-    }
-
-    extensions.configure<KotlinJvmExtension>("kotlin") {
-        compilerOptions {
-            freeCompilerArgs.addAll(
-                "-opt-in=de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi"
-            )
-        }
-    }
+    configureGradlePlugin(kotlinVersion)
 
     extensions.configure<GradlePluginDevelopmentExtension>("gradlePlugin") {
         plugins {
@@ -55,14 +37,6 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
         }
     }
 
-    extensions.configure<SamWithReceiverExtension>("samWithReceiver") {
-        annotation(HasImplicitReceiver::class.qualifiedName!!)
-    }
-
-    extensions.configure<AssignmentExtension>("assignment") {
-        annotation(SupportsKotlinAssignmentOverloading::class.qualifiedName!!)
-    }
-
     with(dependencies) {
         baseLayer?.let { add("api", "$group:$it") }
 
@@ -72,5 +46,39 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
 
     tasks.withType(Test::class.java).configureEach {
         useJUnitPlatform()
+    }
+}
+
+/**
+ * Configures the project for a Gradle plugin based on [kotlinVersion].
+ */
+fun Project.configureGradlePlugin(kotlinVersion: String) {
+    with(pluginManager) {
+        apply("org.jmailen.kotlinter")
+        apply("org.jetbrains.kotlin.plugin.sam.with.receiver")
+        apply("org.jetbrains.kotlin.plugin.assignment")
+    }
+
+    extensions.configure<TapmocExtension>("tapmoc") {
+        java(gradleJdkVersion())
+        kotlin(kotlinVersion)
+        checkKotlinStdlibs(Severity.ERROR)
+        checkDependencies(Severity.ERROR)
+    }
+
+    extensions.configure<KotlinJvmExtension>("kotlin") {
+        compilerOptions {
+            freeCompilerArgs.addAll(
+                "-opt-in=de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi"
+            )
+        }
+    }
+
+    extensions.configure<SamWithReceiverExtension>("samWithReceiver") {
+        annotation(HasImplicitReceiver::class.qualifiedName!!)
+    }
+
+    extensions.configure<AssignmentExtension>("assignment") {
+        annotation(SupportsKotlinAssignmentOverloading::class.qualifiedName!!)
     }
 }

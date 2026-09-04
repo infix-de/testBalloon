@@ -7,7 +7,7 @@ plugins {
 @Suppress("UnstableApiUsage")
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
+        val test = named<JvmTestSuite>("test") {
             dependencies {
                 // required for TestBalloon outside this project:
                 //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")

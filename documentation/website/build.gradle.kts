@@ -91,7 +91,7 @@ dokka {
 }
 
 tasks {
-    val dokkaFixPublication by registering {
+    val dokkaFixPublication = register("dokkaFixPublication") {
         // WORKAROUND: Cross-module HTML links break with package names containing an uppercase character
         //     https://github.com/Kotlin/dokka/issues/4314
         // Fix the new API reference, creating symbolic cross-module directory links from "broken name" to
@@ -130,13 +130,13 @@ tasks {
         }
     }
 
-    val dokkaGeneratePublicationHtml by existing {
+    val dokkaGeneratePublicationHtml = named("dokkaGeneratePublicationHtml") {
         finalizedBy(dokkaFixPublication)
     }
 
     val pythonVirtualenvDirectory = layout.projectDirectory.dir(".cache/venv").asFile.absolutePath
 
-    val installMkdocs by registering {
+    val installMkdocs = register("installMkdocs") {
         val projectDir = projectDir
 
         outputs.dir(pythonVirtualenvDirectory)
@@ -160,7 +160,7 @@ tasks {
         }
     }
 
-    val generateDocumentationVariables by registering {
+    val generateDocumentationVariables = register("generateDocumentationVariables") {
         inputs.property("newApiVersion", newApiVersion)
 
         val generatedVariablesDirectory = layout.buildDirectory.dir("generated/documentationVariables")

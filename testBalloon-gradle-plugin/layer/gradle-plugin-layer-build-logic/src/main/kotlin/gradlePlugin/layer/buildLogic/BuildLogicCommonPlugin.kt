@@ -14,8 +14,6 @@ class BuildLogicCommonPlugin : Plugin<Project> {
             apply("org.jmailen.kotlinter")
         }
 
-        group = "${project.property("local.PROJECT_GROUP_ID")}.gradlePlugin"
-
         extensions.configure<KotlinterExtension>("kotlinter") {
             ignoreLintFailures = false
             reporters = arrayOf("checkstyle", "plain")

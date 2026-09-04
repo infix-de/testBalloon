@@ -15,12 +15,14 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
+import kotlin.io.path.copyTo
 import kotlin.io.path.copyToRecursively
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.div
 import kotlin.io.path.exists
+import kotlin.io.path.name
 import kotlin.io.path.notExists
 import kotlin.io.path.pathString
 import kotlin.io.path.readText
@@ -92,35 +94,40 @@ internal open class TestProject(
         }
     }
 
-    private fun Path.populateFromTemplate(source: Path) {
+    private fun Path.populateFromTemplate(sourceDirectory: Path) {
         val target = this
 
-        source.visitFileTree {
+        sourceDirectory.visitFileTree {
             onPreVisitDirectory { path, _ ->
-                (target / path.relativeTo(source)).apply {
+                (target / path.relativeTo(sourceDirectory)).apply {
                     if (!exists()) createDirectory()
                 }
                 FileVisitResult.CONTINUE
             }
 
-            onVisitFile { path, _ ->
-                val targetContent = path.readText().replace(parameterRegex) { matchResult ->
-                    val (protocol, name) = matchResult.groupValues[1].split(':')
-                    when (protocol) {
-                        "version" -> when (name) {
-                            "de.infix.testBalloon" -> BuildConfig.PROJECT_VERSION
-                            else -> versions[name] ?: projectCatalogVersion(name)
-                        }
+            onVisitFile { sourceFilePath, _ ->
+                val targetFilePath = target / sourceFilePath.relativeTo(sourceDirectory)
+                if (sourceFilePath.name.endsWith(".kts")) {
+                    val targetContent = sourceFilePath.readText().replace(parameterRegex) { matchResult ->
+                        val (protocol, name) = matchResult.groupValues[1].split(':')
+                        when (protocol) {
+                            "version" -> when (name) {
+                                "de.infix.testBalloon" -> BuildConfig.PROJECT_VERSION
+                                else -> versions[name] ?: projectCatalogVersion(name)
+                            }
 
-                        "path" -> when (name) {
-                            "integration-test-repository" -> BuildConfig.PROJECT_INTEGRATION_TEST_REPOSITORY
-                            else -> throw IllegalArgumentException("Unknown path name '$name'")
-                        }
+                            "path" -> when (name) {
+                                "integration-test-repository" -> BuildConfig.PROJECT_INTEGRATION_TEST_REPOSITORY
+                                else -> throw IllegalArgumentException("Unknown path name '$name'")
+                            }
 
-                        else -> matchResult.value
+                            else -> matchResult.value
+                        }
                     }
+                    targetFilePath.writeText(targetContent)
+                } else {
+                    sourceFilePath.copyTo(targetFilePath, overwrite = true)
                 }
-                (target / path.relativeTo(source)).writeText(targetContent)
                 FileVisitResult.CONTINUE
             }
         }

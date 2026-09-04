@@ -1,7 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
-
 plugins {
     kotlin("jvm") version "{{version:org.jetbrains.kotlin}}"
     id("com.gradleup.tapmoc") version "{{version:com.gradleup.tapmoc}}"

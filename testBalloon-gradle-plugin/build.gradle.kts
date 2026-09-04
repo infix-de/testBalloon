@@ -1,14 +1,13 @@
-import buildLogic.gradleJdkVersion
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
-import org.jetbrains.kotlin.assignment.plugin.gradle.AssignmentExtension
-import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
-import tapmoc.TapmocExtension
+import gradlePlugin.layer.buildLogic.configureGradlePlugin
 import kotlin.io.path.div
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 
 plugins {
-    id("buildLogic.kotlin-jvm")
+    id("gradlePlugin.layer.buildLogic.common")
+    // noinspection NewerVersionAvailable
+    id("org.jetbrains.kotlin.jvm") version "2.4.10"
     id("java-gradle-plugin")
     alias(libs.plugins.org.jetbrains.kotlin.plugin.sam.with.receiver)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.assignment)
@@ -17,6 +16,9 @@ plugins {
 }
 
 description = "Gradle plugin for the TestBalloon framework"
+group = "${project.property("local.PROJECT_GROUP_ID")}"
+
+configureGradlePlugin("2.2.0")
 
 /** Dependencies to be embedded into the Gradle plugin artifact. */
 val embeddedCompileOnly = configurations.dependencyScope("embeddedCompileOnly")
@@ -48,10 +50,6 @@ dependencies {
     compileOnly(libs.org.jetbrains.kotlin.gradle.plugin)
 }
 
-extensions.configure<TapmocExtension>("tapmoc") {
-    java(gradleJdkVersion())
-}
-
 gradlePlugin {
     plugins {
         register("${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}") {
@@ -61,14 +59,6 @@ gradlePlugin {
             implementationClass = "$group.gradlePlugin.TestBalloonGradlePlugin"
         }
     }
-}
-
-extensions.configure<SamWithReceiverExtension>("samWithReceiver") {
-    annotation(HasImplicitReceiver::class.qualifiedName!!)
-}
-
-extensions.configure<AssignmentExtension>("assignment") {
-    annotation(SupportsKotlinAssignmentOverloading::class.qualifiedName!!)
 }
 
 buildConfig {

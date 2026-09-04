@@ -20,7 +20,7 @@ tapmoc {
 kotlin {
     jvm()
 
-    androidLibrary {
+    android {
         namespace = "org.example.android.multiplatform.library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()

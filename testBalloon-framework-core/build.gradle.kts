@@ -3,6 +3,7 @@ import buildLogic.dokkaEnableNavigationNodeHiding
 import buildLogic.enableAbiValidation
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import buildLogic.versionFromCatalog
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
@@ -19,6 +20,7 @@ description = "Core library for the TestBalloon framework"
 kotlin {
     enableAbiValidation()
 
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
         freeCompilerArgs.addAll(
             "-opt-in=de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi",
@@ -44,7 +46,7 @@ kotlin {
         // }
     }
 
-    androidLibrary {
+    android {
         namespace = "de.infix.testBalloon.framework.core"
         compileSdk = versionFromCatalog("android-compileSdk").toInt()
 

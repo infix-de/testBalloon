@@ -5,6 +5,7 @@ import kotlin.io.path.name
 pluginManagement {
     includeBuild("../build-settings")
     includeBuild("../build-logic")
+    includeBuild("layer/gradle-plugin-layer-build-logic")
 }
 
 plugins {

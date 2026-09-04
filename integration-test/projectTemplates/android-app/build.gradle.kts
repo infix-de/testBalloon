@@ -1,5 +1,3 @@
-import org.gradle.util.internal.VersionNumber
-
 plugins {
     id("com.android.application") version "{{version:android.gradle.plugin}}"
     "{{version:org.jetbrains.kotlin}}".takeIf { it.isNotEmpty() }?.let {

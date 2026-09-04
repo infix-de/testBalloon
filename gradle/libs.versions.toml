@@ -3,8 +3,9 @@
 # https://developer.android.com/build/releases/gradle-plugin
 # https://developer.android.com/studio/releases#android_gradle_plugin_and_android_studio_compatibility
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
-android-gradle-plugin = "8.13.2"
-# The latest AGP version used for integration tests.
+android-gradle-plugin = "9.1.0"
+# The earliest and latest AGP versions used for integration tests.
+android-gradle-plugin-earliest = "8.13.2"
 android-gradle-plugin-latest = "9.2.0"
 
 # https://developer.android.com/build#android_sdk_settings

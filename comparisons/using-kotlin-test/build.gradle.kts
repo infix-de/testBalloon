@@ -13,7 +13,7 @@ kotlin {
         nodejs()
     }
 
-    extensions.configure<KotlinMultiplatformAndroidLibraryExtension>("androidLibrary") {
+    extensions.configure<KotlinMultiplatformAndroidLibraryExtension>("android") {
         namespace = "org.example.android.multiplatform.library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()

@@ -18,7 +18,7 @@ tapmoc {
 kotlin {
     enableAbiValidation()
 
-    androidLibrary {
+    android {
         namespace = "$group.integration.robolectric"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()

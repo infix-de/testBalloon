@@ -43,7 +43,7 @@ kotlin {
 
     fun androidSdkAvailable() = providers.environmentVariable("ANDROID_HOME").isPresent
 
-    androidLibrary {
+    android {
         namespace = "org.example.android.multiplatform.library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()

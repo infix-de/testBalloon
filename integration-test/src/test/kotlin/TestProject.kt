@@ -1,7 +1,9 @@
 import buildConfig.BuildConfig
 import de.infix.testBalloon.framework.core.TestBalloonExperimentalApi
+import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
+import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.testPlatform
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -132,7 +134,7 @@ internal open class TestProject(
         }.toList()
 
         // Prepare the project for execution.
-        gradleExecution("clean").checked()
+        if (!packageLockFilesUpdateRequested()) gradleExecution("clean").checked()
 
         val npmPackageLockTasks =
             buildList {
@@ -160,18 +162,26 @@ internal open class TestProject(
     internal suspend fun gradleExecution(
         vararg arguments: String,
         environment: Map<String, String> = emptyMap()
-    ): Execution = execution(
-        (projectDirectory() / (if (runsOnWindows) "gradlew.bat" else "gradlew")).pathString,
-        // Force a new Gradle daemon per project, using 'projectIndex' to individualize 'jvmargs'.
+    ): Execution {
         // `MaxMetaspaceSize` is intentionally unlimited, as the Gradle daemon is expected to be short-lived.
-        "-Dorg.gradle.jvmargs=-Xmx${1 * 1024 * 1024 + projectIndex}k",
-        // Make the project's Gradle daemon stop 15 s after completion in order to free OS memory.
-        "-Dorg.gradle.daemon.idletimeout=15000",
-        "-p",
-        projectDirectory().pathString,
-        *arguments,
-        environment = environment
-    )
+        val jvmArgs = if (testPlatform.environment("CI") != null) {
+            // On CI: Force a new Gradle daemon per project, using 'projectIndex' to individualize 'jvmargs'.
+            "-Xmx${1 * 1024 * 1024 + projectIndex}k"
+        } else {
+            "-Xmx3g"
+        }
+
+        return execution(
+            (projectDirectory() / (if (runsOnWindows) "gradlew.bat" else "gradlew")).pathString,
+            "-Dorg.gradle.jvmargs=$jvmArgs",
+            // Make the project's Gradle daemon stop 15 s after completion in order to free OS memory.
+            "-Dorg.gradle.daemon.idletimeout=15000",
+            "-p",
+            projectDirectory().pathString,
+            *arguments,
+            environment = environment
+        )
+    }
 
     private val runsOnWindows = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
 
@@ -266,6 +276,9 @@ internal fun skippingEnabled(key: String) =
 
 internal fun packageLockFilesUpdateRequested(): Boolean =
     testPlatform.environment("PACKAGE_LOCK_FILES_UPDATE_REQUESTED") != null
+
+internal fun TestConfig.disableIfPackageLockFilesUpdateRequested() =
+    if (packageLockFilesUpdateRequested()) disable() else this
 
 internal fun projectCatalogVersion(name: String) =
     BuildConfig.PROJECT_CATALOG_VERSIONS[name] ?: throw IllegalArgumentException("Version for '$name' not found")

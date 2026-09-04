@@ -1,3 +1,4 @@
+import buildConfig.BuildConfig.KOTLIN_ALL_TEST_RELEASES
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.TestSuiteScope
@@ -10,7 +11,7 @@ import kotlin.io.path.div
 import kotlin.io.path.moveTo
 
 val IncrementalCompilationTests by testSuite {
-    val kotlinVersions = listOf("2.5.0-dev-1759", "2.4.20-Beta2", "2.4.0", "2.3.21", "2.3.0", "2.2.21", "2.2.0")
+    val kotlinVersions = KOTLIN_ALL_TEST_RELEASES
 
     // incrementalCompilationTestSuite(
     //     "incremental-compilation-kotlin-test",
@@ -33,7 +34,11 @@ val IncrementalCompilationTests by testSuite {
         testSeries("incremental compilation")
     }
 
-    incrementalCompilationTestSuite("incremental-compilation-testBalloon-jvm", kotlinVersions = kotlinVersions) {
+    incrementalCompilationTestSuite(
+        "incremental-compilation-testBalloon-jvm",
+        kotlinVersions = kotlinVersions,
+        testConfig = TestConfig.disableIfPackageLockFilesUpdateRequested()
+    ) {
         // testSeries(
         //     name = "full compilation",
         //     gradleOptions = arrayOf(
@@ -98,6 +103,13 @@ private class IncrementalCompilationTestProject(
         testSourceBaseDirectoryName: String = "commonTest",
         testConfig: TestConfig = TestConfig
     ) = testSuite(name, testConfig = testConfig) {
+        if (packageLockFilesUpdateRequested()) {
+            test("update package lock files") {
+                testTaskNames()
+            }
+            return@testSuite
+        }
+
         suspend fun compileTaskExecution(taskName: String) = gradleExecution(taskName, *gradleOptions)
 
         val testSourcesBaseDirectory = testFixture { projectDirectory() / "src" / testSourceBaseDirectoryName }
@@ -126,7 +138,7 @@ private class IncrementalCompilationTestProject(
         }
 
         test("baseline") {
-            check(baselineResults().isNotEmpty() || packageLockFilesUpdateRequested()) {
+            check(baselineResults().isNotEmpty()) {
                 "None of the tasks ${testTaskNames()} produced a result."
             }
         }

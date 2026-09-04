@@ -12,6 +12,8 @@
         <list>
           <option value="kotlinUpgradePackageLock" />
           <option value="kotlinWasmUpgradePackageLock" />
+          <option value=":testBalloon-framework-shared:kotlinUpgradePackageLock" />
+          <option value=":testBalloon-framework-shared:kotlinWasmUpgradePackageLock" />
         </list>
       </option>
       <option name="vmOptions" />

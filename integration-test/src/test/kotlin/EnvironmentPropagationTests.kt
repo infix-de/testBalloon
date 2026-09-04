@@ -13,8 +13,9 @@ val EnvironmentPropagationTests by testSuite(testConfig = TestConfig.invocation(
         projectName: String,
         variantName: String? = null,
         vararg gradleArguments: String,
-        expectedVariables: List<String>
-    ) = test(listOfNotNull(projectName, variantName).joinToString()) {
+        expectedVariables: List<String>,
+        testConfig: TestConfig = TestConfig
+    ) = test(listOfNotNull(projectName, variantName).joinToString(), testConfig = testConfig) {
         val project = TestProject(
             projectTestSuite = projectTestSuite,
             projectBaseName = "environment-propagation-$projectName",
@@ -42,20 +43,26 @@ val EnvironmentPropagationTests by testSuite(testConfig = TestConfig.invocation(
         }
     }
 
-    projectTest("unrestricted", expectedVariables = listOf("TEST_ONE", "CUSTOM_ONE", "CUSTOM_TWO"))
+    projectTest(
+        "unrestricted",
+        expectedVariables = listOf("TEST_ONE", "CUSTOM_ONE", "CUSTOM_TWO")
+    )
 
     projectTest(
         "browser-and-ios-without-extension",
         "no custom variables declared safe",
         expectedVariables = listOf("TEST_ONE") // matched by default pattern
     )
+
     projectTest(
         "browser-and-ios-without-extension",
         "CUSTOM_ONE declared safe by property",
         "-PtestBalloon.browserSafeEnvironmentPattern=CUSTOM_ONE",
         "-PtestBalloon.simulatorSafeEnvironmentPattern=CUSTOM_ONE",
-        expectedVariables = listOf("CUSTOM_ONE") // matched by property
+        expectedVariables = listOf("CUSTOM_ONE"), // matched by property
+        testConfig = TestConfig.disableIfPackageLockFilesUpdateRequested()
     )
+
     projectTest(
         "browser-and-ios-with-extension",
         "CUSTOM_TWO declared safe by extension",

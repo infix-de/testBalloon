@@ -1,3 +1,15 @@
+## 1.2.0-Beta1-SNAPSHOT (unreleased)
+
+### Compatibility
+
+* This release has been tested with Kotlin versions 2.2.0 … 2.5.0-dev-6460. It is binary compatible with 1.1.0.
+
+### Changes
+
+* The Gradle plugin has been restructured to support multiple versions of the Kotlin Gradle plugin.
+* Preliminary experimental support has been added for the new test DSL and Playwright-based browser tests in Kotlin 2.4.20-RC and above.
+* The minimum supported JDK version has been lowered from 11 to 8.
+
 ## 1.1.0 (September 3, 2026)
 
 _This is a unified release with a single artifact set for Kotlin versions 2.2.0 and higher. TestBalloon's Gradle and compiler plugins auto-adapt to the Kotlin compiler version in use._

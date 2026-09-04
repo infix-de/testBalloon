@@ -23,12 +23,16 @@ val ElementSelectionTests by testSuite(
         "element-selection-new-browser-dsl",
         listOf("base"),
         withExtraPatterns = false,
-        testConfig = TestConfig.enableIfSet("TEST_ENABLE_NEW_BROWSER_DSL")
+        testConfig = TestConfig.enableIfSetOrPackageLogFilesUpdateRequested("TEST_ENABLE_NEW_BROWSER_DSL")
     )
 }
 
-private fun TestConfig.enableIfSet(environmentVariableName: String) =
-    if (testPlatform.environment(environmentVariableName) != null) this else disable()
+private fun TestConfig.enableIfSetOrPackageLogFilesUpdateRequested(environmentVariableName: String) =
+    if (testPlatform.environment(environmentVariableName) != null || packageLockFilesUpdateRequested()) {
+        this
+    } else {
+        disable()
+    }
 
 @TestRegistering
 private fun TestSuite.projectTestSuite(
@@ -39,6 +43,13 @@ private fun TestSuite.projectTestSuite(
 ) = testSuite(projectName, testConfig = testConfig) {
     val project =
         TestProject(projectTestSuite = this, projectBaseName = projectName, baseTemplates = baseTemplates)
+
+    if (packageLockFilesUpdateRequested()) {
+        test("update package lock files") {
+            project.testTaskNames()
+        }
+        return@testSuite
+    }
 
     class TestVariant(
         val type: VariantType,

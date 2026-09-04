@@ -1,4 +1,5 @@
 import buildLogic.gradleRunCommandLine
+import buildLogic.versionFromCatalog
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
@@ -27,6 +28,10 @@ buildConfig {
         with(project.the<VersionCatalogsExtension>().named("libs")) {
             versionAliases.associateWith { findVersion(it).get().displayName }
         }
+    )
+    buildConfigField(
+        "KOTLIN_ALL_TEST_RELEASES",
+        project.versionFromCatalog("org-jetbrains-kotlin-all-test-releases").split(';')
     )
 }
 

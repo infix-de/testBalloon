@@ -1,13 +1,11 @@
 #!/bin/bash
 
-trap 'status=$?; echo -e "\n*** $(basename "$0") completed with status $status ***\n"' EXIT
-set -e
-
-cd "$(dirname "$0")/.." || exit 2
+. "$(dirname "$0")/.setup"
 
 PACKAGE_LOCK_FILES_UPDATE_REQUESTED=true ./gradlew --warn :integration-test:test
 
 # WORKAROUND KT-79811: Repeat the update for stabilization.
 if [ "${REPEAT_PACKAGE_LOCK_FILES_UPDATE:-no}" == "yes" ]; then
+  log "repeating"
   PACKAGE_LOCK_FILES_UPDATE_REQUESTED=true ./gradlew --warn :integration-test:test
 fi

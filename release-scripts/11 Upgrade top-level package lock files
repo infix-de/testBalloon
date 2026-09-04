@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. "$(dirname "$0")/.setup"
+
+./gradlew --warn kotlinUpgradePackageLock kotlinWasmUpgradePackageLock :testBalloon-framework-shared:kotlinUpgradePackageLock :testBalloon-framework-shared:kotlinWasmUpgradePackageLock
+
+if [ "${REPEAT_PACKAGE_LOCK_FILES_UPDATE:-no}" == "yes" ]; then
+  log "repeating"
+  ./gradlew --warn kotlinUpgradePackageLock kotlinWasmUpgradePackageLock :testBalloon-framework-shared:kotlinUpgradePackageLock :testBalloon-framework-shared:kotlinWasmUpgradePackageLock
+fi

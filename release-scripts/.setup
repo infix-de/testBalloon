@@ -1,0 +1,14 @@
+#!/bin/bash
+
+ME="$(basename "$0")"
+
+log() {
+    echo -e "\n*** $(date +%X) – $ME: $* ***\n"
+}
+
+trap 'status=$?; log "completed with status $status"' EXIT
+set -e
+
+cd "$(dirname "$0")/.." || exit 2
+
+log "starting"

@@ -15,6 +15,7 @@ private val earliestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin"
 val AndroidTests by testSuite(
     testConfig = TestConfig
         .disableIfAndroidSdkIsUnavailable()
+        .disableIfPackageLockFilesUpdateRequested()
         .invocation(TestConfig.Invocation.Sequential)
         .testScope(isEnabled = true, timeout = 24.minutes)
 ) {

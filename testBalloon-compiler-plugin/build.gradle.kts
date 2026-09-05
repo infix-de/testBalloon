@@ -32,7 +32,6 @@ fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
 @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
 dependencies {
     embeddedCompileOnly("$group.compilerPlugin:base")
-    // WORKAROUND https://youtrack.jetbrains.com/issue/KT-53477 – KGP misses transitive compiler plugin dependencies
     embeddedCompileOnly("$group:testBalloon-framework-shared:$version")
 
     val kotlinVersionLayers = (projectDir.toPath() / "layer").listDirectoryEntries("kotlin-*").map { it.name }

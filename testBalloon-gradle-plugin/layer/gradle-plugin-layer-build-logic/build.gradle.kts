@@ -1,5 +1,5 @@
 plugins {
-    // These plugins compile code in build-logic. Their versions can differ from those
+    // These plugins compile code in gradle-plugin-layer-build-logic. Their versions can differ from those
     // used to compile the project's Kotlin code elsewhere.
     kotlin("jvm") version "2.4.10"
     kotlin("plugin.sam.with.receiver") version "2.4.10"

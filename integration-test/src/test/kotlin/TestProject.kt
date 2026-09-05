@@ -180,6 +180,7 @@ internal open class TestProject(
 
         return execution(
             (projectDirectory() / (if (runsOnWindows) "gradlew.bat" else "gradlew")).pathString,
+            "--stacktrace",
             "-Dorg.gradle.jvmargs=$jvmArgs",
             // Make the project's Gradle daemon stop 15 s after completion in order to free OS memory.
             "-Dorg.gradle.daemon.idletimeout=15000",

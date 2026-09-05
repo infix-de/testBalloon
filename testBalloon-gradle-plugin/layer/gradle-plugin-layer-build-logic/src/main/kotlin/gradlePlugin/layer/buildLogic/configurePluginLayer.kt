@@ -41,7 +41,6 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
         baseLayer?.let { add("api", "$group:$it") }
 
         add("compileOnly", "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        add("compileOnly", libraryFromCatalog("com.android.gradle.plugin"))
     }
 
     tasks.withType(Test::class.java).configureEach {

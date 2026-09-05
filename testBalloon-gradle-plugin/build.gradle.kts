@@ -37,7 +37,6 @@ fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
     add(embeddedDynamicallyLoaded.name, dependencyNotation)
 
 dependencies {
-    embeddedCompileOnly("$group.gradlePlugin:base")
     embeddedCompileOnly("$group:testBalloon-framework-shared:$version")
 
     val kotlinVersionLayers = (projectDir.toPath() / "layer").listDirectoryEntries("kotlin-*").map { it.name }

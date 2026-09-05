@@ -3,9 +3,11 @@
 # https://developer.android.com/build/releases/gradle-plugin
 # https://developer.android.com/studio/releases#android_gradle_plugin_and_android_studio_compatibility
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
+# The base plugin version used for tests and examples.
 android-gradle-plugin = "9.1.0"
-# The earliest and latest AGP versions used for integration tests.
+# The earliest AGP version used for the TestBalloon Gradle plugin build and integration tests.
 android-gradle-plugin-earliest = "8.13.2"
+# The latest AGP version used for integration tests.
 android-gradle-plugin-latest = "9.2.0"
 
 # https://developer.android.com/build#android_sdk_settings
@@ -80,7 +82,11 @@ androidx-test-core = { group = "androidx.test", name = "core", version.ref = "an
 
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-test" }
 
+#noinspection SimilarGradleDependency
 com-android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
+
+#noinspection SimilarGradleDependency
+com-android-gradle-plugin-earliest = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin-earliest" }
 
 # https://github.com/BenWoodworth/Parameterize/releases
 com-benwoodworth-parameterize = "com.benwoodworth.parameterize:parameterize-core:0.4.1"

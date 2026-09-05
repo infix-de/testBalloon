@@ -18,8 +18,6 @@ dependencyResolutionManagement {
     }
 }
 
-includeBuild("layer/base")
-
 for (layer in (rootDir.toPath() / "layer").listDirectoryEntries().filter { it.name.startsWith("kotlin-") }) {
     includeBuild(layer.toString())
 }

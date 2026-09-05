@@ -39,8 +39,11 @@ jobs:
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets
 
+      - name: 'Stop Gradle daemons (freeing RAM)'
+        run: ./gradlew --stop
+
       - name: 'Run integration tests'
-        run: ./gradlew integrationTests
+        run: ./gradlew -Dorg.gradle.jvmargs="-Xmx512m -XX:MaxMetaspaceSize=384m" integrationTests
 
       - name: 'Upload build reports'
         if: failure()
@@ -82,15 +85,18 @@ jobs:
       - name: 'Run component tests'
         run: ./gradlew componentTestsAllTargets
 
+      - name: 'Stop Gradle daemons (freeing RAM)'
+        run: ./gradlew --stop
+
       - name: 'Run integration tests'
         if: runner.os != 'Windows'
-        run: ./gradlew integrationTests
+        run: ./gradlew -Dorg.gradle.jvmargs="-Xmx512m -XX:MaxMetaspaceSize=384m" integrationTests
         env:
           TEST_SKIP: 'secondary, Android emulator'
 
       - name: 'Run integration tests, skip non-ASCII patterns'
         if: runner.os == 'Windows'
-        run: ./gradlew integrationTests
+        run: ./gradlew -Dorg.gradle.jvmargs="-Xmx512m -XX:MaxMetaspaceSize=384m" integrationTests
         env:
           TEST_SKIP: 'secondary, Android emulator, non-ASCII patterns'
 

@@ -9,6 +9,10 @@ log "starting componentTestsAllTargets"
 
 ./gradlew componentTestsAllTargets
 
+log "stopping Gradle daemons"
+
+./gradlew --stop
+
 log "starting integrationTests"
 
-./gradlew integrationTests
+./gradlew -Dorg.gradle.jvmargs="-Xmx512m -XX:MaxMetaspaceSize=384m" integrationTests

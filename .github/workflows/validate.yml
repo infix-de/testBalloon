@@ -5,6 +5,10 @@ permissions:
 on:
   workflow_call
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   validate-primary:
     name: 'On primary'

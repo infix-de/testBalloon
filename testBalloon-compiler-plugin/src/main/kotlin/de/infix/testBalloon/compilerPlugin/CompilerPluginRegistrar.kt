@@ -1,10 +1,10 @@
 package de.infix.testBalloon.compilerPlugin
 
-import buildConfig.BuildConfig.PROJECT_GROUP_ID
 import de.infix.testBalloon.compilerPlugin.base.CompilerAdapter
 import de.infix.testBalloon.compilerPlugin.base.Options
 import de.infix.testBalloon.compilerPlugin.base.PLUGIN_DISPLAY_NAME
 import de.infix.testBalloon.compilerPlugin.base.PLUGIN_ID
+import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_GROUP_ID
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.asKotlinVersion

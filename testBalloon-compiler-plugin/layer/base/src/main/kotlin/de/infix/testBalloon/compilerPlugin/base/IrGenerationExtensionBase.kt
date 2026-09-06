@@ -2,9 +2,9 @@
 
 package de.infix.testBalloon.compilerPlugin.base
 
-import buildConfig.BuildConfig.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID
-import buildConfig.BuildConfig.PROJECT_GROUP_ID
-import buildConfig.BuildConfig.PROJECT_VERSION
+import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID
+import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_GROUP_ID
+import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.AbstractTestSession
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.TestRegistering

@@ -45,7 +45,7 @@ dependencies {
 }
 
 buildConfig {
-    packageName("buildConfig")
+    packageName("$group.compilerPlugin.buildConfig")
     useKotlinOutput { internalVisibility = true }
 
     buildConfigField("String", "PROJECT_GROUP_ID", "\"$group\"")

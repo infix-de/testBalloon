@@ -14,7 +14,7 @@ dependencies {
 }
 
 buildConfig {
-    packageName("buildConfig")
+    packageName("$group.buildConfig")
     useKotlinOutput { internalVisibility = true }
 
     buildConfigField("String", "PROJECT_VERSION", "\"$version\"")

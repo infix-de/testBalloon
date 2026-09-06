@@ -1,4 +1,4 @@
-package de.infix.testBalloon.gradlePlugin
+package de.infix.testBalloon.gradlePlugin.internal
 
 import de.infix.testBalloon.framework.shared.internal.Constants
 import org.gradle.api.Project

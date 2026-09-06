@@ -1,13 +1,13 @@
-package de.infix.testBalloon.gradlePlugin
+package de.infix.testBalloon.gradlePlugin.internal
 
-import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
-import buildConfig.BuildConfig.PROJECT_GROUP_ID
-import buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
-import buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
-import de.infix.testBalloon.framework.shared.internal.ReportingMode
+import de.infix.testBalloon.gradlePlugin.TestBalloonGradleExtension
+import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
+import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_GROUP_ID
+import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
+import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_VERSION
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.artifacts.component.ComponentIdentifier
@@ -22,6 +22,7 @@ import org.gradle.util.internal.VersionNumber
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
@@ -125,19 +126,23 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
             }
         }
 
-        extensions.findByType(KotlinProjectExtension::class.java)?.apply {
-            when (this) {
-                is KotlinMultiplatformExtension ->
-                    targets.configureEach {
-                        compilations.configureEach {
+        plugins.configureEach {
+            if (this !is KotlinBasePlugin) return@configureEach
+
+            extensions.configure<KotlinProjectExtension>("kotlin") {
+                when (this) {
+                    is KotlinMultiplatformExtension ->
+                        targets.configureEach {
+                            compilations.configureEach {
+                                configureForTestBalloon()
+                            }
+                        }
+
+                    is KotlinSingleTargetExtension<*> ->
+                        target.compilations.configureEach {
                             configureForTestBalloon()
                         }
-                    }
-
-                is KotlinSingleTargetExtension<*> ->
-                    target.compilations.configureEach {
-                        configureForTestBalloon()
-                    }
+                }
             }
         }
     }
@@ -340,7 +345,6 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
     @Suppress("NewApi")
     private fun Project.configureDiagnosticsTask() {
         val taskName = "testBalloonDiagnostics"
-        val kotlinExtension by lazy { extensions.findByType(KotlinProjectExtension::class.java) }
 
         tasks.register(taskName) {
             group = "help"
@@ -391,12 +395,13 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
             }
 
             val catalogsExtension = safeProvider {
-                project.extensions.getByType(VersionCatalogsExtension::class.java)
+                project.extensions.findByType(VersionCatalogsExtension::class.java)
             }
             val versionCatalogNames = catalogsExtension.map { it.catalogNames.toList() }
             val relevantPlugins = safeProvider {
-                val catalogsExtension = catalogsExtension.get()
-                val versionCatalogs = catalogsExtension.catalogNames.map { catalogsExtension.named(it) }
+                val catalogsExtension = catalogsExtension.orNull
+                val versionCatalogs =
+                    catalogsExtension?.catalogNames?.map { catalogsExtension.named(it) } ?: emptyList()
                 val catalogPluginVersions = versionCatalogs.flatMap { catalog ->
                     catalog.pluginAliases.map {
                         val (artifactId, version) = catalog.findPlugin(it).get().get().toString().split(':', limit = 2)
@@ -422,7 +427,7 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
 
             doLast {
                 println()
-                println("Gradle plugins (excerpt, versions from catalog(s) ${versionCatalogNames.get()}):")
+                println("Gradle plugins (excerpt, versions from catalog(s) ${versionCatalogNames.orNull ?: "(none)"}):")
                 println(relevantPlugins.get().joinToString(separator = "\n  ", prefix = "  "))
             }
 
@@ -498,7 +503,7 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
             }
 
             val testSourceSetsDiagram = safeProvider {
-                kotlinExtension?.let { kotlin ->
+                project.extensions.findByType(KotlinProjectExtension::class.java)?.let { kotlin ->
                     val sourceSets = kotlin.sourceSets
 
                     buildString {
@@ -540,78 +545,7 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
             if (!identificationLogged.getAndSet(true)) {
                 debugLog("using ${this@TestBalloonGradlePluginBase::class.qualifiedName}")
             }
-            logger.warn("$displayName: [DEBUG] (${project.path}) $message")
+            logger.warn("$DISPLAY_NAME: [DEBUG] (${project.path}) $message")
         }
-    }
-}
-
-val Project.reportingMode: ReportingMode
-    get() {
-        // Gradle 9.3.0 introduces hierarchical test results reporting.
-        // See https://docs.gradle.org/9.3.0/release-notes.html#test-reporting-improvements
-        val gradleSupportsNesting = VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.version(9, 3)
-        val gradleFilesMode = if (gradleSupportsNesting) {
-            ReportingMode.GradleFilesWithNesting
-        } else {
-            ReportingMode.GradleFilesWithoutNesting
-        }
-        val gradleIntellijIdeaMode = if (gradleSupportsNesting) {
-            ReportingMode.GradleIntellijIdeaWithNesting
-        } else {
-            ReportingMode.GradleIntellijIdeaWithoutNesting
-        }
-
-        return when (TestBalloonGradlePluginBase.testBalloonProperties.reportingMode) {
-            "intellij-legacy" -> if (providers.systemProperty("idea.active").isPresent) {
-                ReportingMode.GradleIntellijIdeaLegacy
-            } else {
-                gradleFilesMode
-            }
-
-            "intellij" -> gradleIntellijIdeaMode
-
-            "files" -> gradleFilesMode
-
-            else -> if (providers.systemProperty("idea.active").isPresent) {
-                gradleIntellijIdeaMode
-            } else {
-                gradleFilesMode
-            }
-        }
-    }
-
-val Project.reportingPathLimit: String?
-    get() =
-        providers.environmentVariable(EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name).orNull?.ifEmpty {
-            null
-        }
-            ?: TestBalloonGradlePluginBase.testBalloonProperties.reportingPathLimit?.toString()
-
-/**
- * Returns `TESTBALLOON_*` environment variable settings as a map of `name` to `value`.
- */
-fun Project.testBalloonEnvironment(
-    secondaryIncludePatterns: List<String>,
-    secondaryExcludePatterns: List<String>
-): Map<String, String> = buildMap {
-    fun prioritizedPatterns(primary: EnvironmentVariable, secondary: Iterable<String>): String =
-        System.getenv(primary.name)?.ifEmpty { null }
-            ?: secondary.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
-
-    this[EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name] =
-        prioritizedPatterns(
-            EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
-            secondary = secondaryIncludePatterns
-        )
-
-    this[EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name] =
-        prioritizedPatterns(
-            EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
-            secondary = secondaryExcludePatterns
-        )
-
-    this[EnvironmentVariable.TESTBALLOON_REPORTING.name] = reportingMode.name
-    reportingPathLimit?.let {
-        this[EnvironmentVariable.TESTBALLOON_REPORTING_PATH_LIMIT.name] = it
     }
 }

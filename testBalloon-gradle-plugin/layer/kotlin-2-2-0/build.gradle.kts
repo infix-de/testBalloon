@@ -21,7 +21,7 @@ dependencies {
 }
 
 buildConfig {
-    packageName("buildConfig")
+    packageName("$group.internal.buildConfig")
     useKotlinOutput { internalVisibility = true }
 
     buildConfigField(

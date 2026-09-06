@@ -15,7 +15,7 @@ plugins {
     alias(libs.plugins.com.github.gmazzo.buildconfig)
 }
 
-description = "Gradle plugin for the TestBalloon framework"
+description = "TestBalloon Gradle plugin"
 group = "${project.property("local.PROJECT_GROUP_ID")}"
 
 configureGradlePlugin("2.2.0")
@@ -61,7 +61,7 @@ gradlePlugin {
 }
 
 buildConfig {
-    packageName("buildConfig")
+    packageName("$group.gradlePlugin.internal.buildConfig")
     useKotlinOutput { internalVisibility = true }
 
     buildConfigField(

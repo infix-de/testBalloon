@@ -1,9 +1,9 @@
-package de.infix.testBalloon.gradlePlugin.layer.kotlin2420RC
+package de.infix.testBalloon.gradlePlugin.internal.layer.kotlin2420RC
 
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.gradlePlugin.TestBalloonGradleExtension
-import de.infix.testBalloon.gradlePlugin.layer.kotlin2320.TestBalloonGradlePlugin_2_3_20
-import de.infix.testBalloon.gradlePlugin.testBalloonEnvironment
+import de.infix.testBalloon.gradlePlugin.internal.layer.kotlin2320.TestBalloonGradlePlugin_2_3_20
+import de.infix.testBalloon.gradlePlugin.internal.testBalloonEnvironment
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider

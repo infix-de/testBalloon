@@ -1,4 +1,4 @@
-import de.infix.testBalloon.gradlePlugin.layer.kotlin2420RC.withTestBalloon
+import de.infix.testBalloon.gradlePlugin.internal.layer.kotlin2420RC.withTestBalloon
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest

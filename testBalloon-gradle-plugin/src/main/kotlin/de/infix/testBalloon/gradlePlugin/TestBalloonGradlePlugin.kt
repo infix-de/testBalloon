@@ -1,9 +1,9 @@
 package de.infix.testBalloon.gradlePlugin
 
-import buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
-import buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.asKotlinVersion
+import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
+import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_VERSION
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion

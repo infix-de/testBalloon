@@ -1,11 +1,11 @@
-package de.infix.testBalloon.gradlePlugin.layer.kotlin220
+package de.infix.testBalloon.gradlePlugin.internal.layer.kotlin220
 
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.HasAndroidTest
 import com.android.build.api.variant.HasUnitTest
 import de.infix.testBalloon.framework.shared.internal.Constants
-import de.infix.testBalloon.gradlePlugin.TestBalloonGradlePluginBase
-import de.infix.testBalloon.gradlePlugin.testBalloonEnvironment
+import de.infix.testBalloon.gradlePlugin.internal.TestBalloonGradlePluginBase
+import de.infix.testBalloon.gradlePlugin.internal.testBalloonEnvironment
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
@@ -17,6 +17,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import java.nio.file.DirectoryNotEmptyException
 import kotlin.io.path.Path
@@ -35,33 +36,39 @@ open class TestBalloonGradlePlugin_2_2_0 : TestBalloonGradlePluginBase() {
             generatedOutputDirectory.set(layout.buildDirectory.dir("generated/testBalloon/src"))
         }
 
-        // Special handling for Android Gradle Plugin source sets cannot reside in this class, as AGP is a
-        // compile-only dependency, which may make Gradle's class decoration fail with
+        // Android Gradle Plugin configuration must happen outside this class. Why?
+        // - AGP is a compile-only dependency.
+        // - In build scripts which do not load AGP, Gradle's class decoration was observed to fail
+        //   in some environments (GH CI ubuntu, but not Ubuntu locally) with:
         //     "Could not generate a decorated class for type TestBalloonGradlePlugin_2_2_0"
-        // in build scripts which do not load AGP.
         wireEntryPointTaskToAndroidSourceSetsIfPresent(generateTestBalloonEntryPointTask) { message ->
             debugLog(message)
         }
 
-        extensions.configure<KotlinProjectExtension>("kotlin") {
-            val testRootSourceSetRegex = testBalloonProperties.testRootSourceSetRegex
-            val emptyFileCollection: FileCollection = layout.files()
+        plugins.configureEach {
+            if (this !is KotlinBasePlugin) return@configureEach
 
-            sourceSets.configureEach {
-                val sourceSet = this
-                kotlin.srcDir(
-                    provider {
-                        if (testRootSourceSetRegex.containsMatchIn(sourceSet.name) && sourceSet.dependsOn.isEmpty() ||
-                            testBalloonProperties.isJvmTestSuite(sourceSet.name)
-                        ) {
-                            debugLog("Adding test entry point to Kotlin source set '${sourceSet.name}'")
-                            generateTestBalloonEntryPointTask
-                        } else {
-                            debugLog("No test entry point required for Kotlin source set '${sourceSet.name}'")
-                            emptyFileCollection // null should be acceptable, but apparently isn't.
+            extensions.configure<KotlinProjectExtension>("kotlin") {
+                val testRootSourceSetRegex = testBalloonProperties.testRootSourceSetRegex
+                val emptyFileCollection: FileCollection = layout.files()
+
+                sourceSets.configureEach {
+                    val sourceSet = this
+                    kotlin.srcDir(
+                        provider {
+                            if (testRootSourceSetRegex.containsMatchIn(sourceSet.name) &&
+                                sourceSet.dependsOn.isEmpty() ||
+                                testBalloonProperties.isJvmTestSuite(sourceSet.name)
+                            ) {
+                                debugLog("Adding test entry point to Kotlin source set '${sourceSet.name}'")
+                                generateTestBalloonEntryPointTask
+                            } else {
+                                debugLog("No test entry point required for Kotlin source set '${sourceSet.name}'")
+                                emptyFileCollection // null should be acceptable, but apparently isn't.
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
@@ -175,24 +182,22 @@ private fun Project.wireEntryPointTaskToAndroidSourceSetsIfPresent(
     // AGP may effectively disable source directories added via Gradle's `srcDir`.
     // We use the variant API in order to avoid this. See https://github.com/infix-de/testBalloon/issues/84.
 
-    try {
-        extensions.findByType(AndroidComponentsExtension::class.java)
-    } catch (_: NoClassDefFoundError) {
-        null // The Android Gradle plugin providing the AndroidComponentsExtension is not on the classpath.
-    }?.apply {
-        onVariants { variant ->
-            for ((componentName, sources) in mapOf(
-                "unitTest" to (variant as? HasUnitTest)?.unitTest?.sources,
-                "androidTest" to (variant as? HasAndroidTest)?.androidTest?.sources
-            )) {
-                if (sources != null) {
-                    debugLog(
-                        "Adding test entry point to Android variant '${variant.name}', component '$componentName'"
-                    )
-                    sources.kotlin?.addGeneratedSourceDirectory(
-                        generateTestBalloonEntryPointTask,
-                        GenerateTestBalloonEntryPointTask::generatedOutputDirectory
-                    )
+    pluginManager.withPlugin("com.android.base") {
+        extensions.configure(AndroidComponentsExtension::class.java) {
+            onVariants { variant ->
+                for ((componentName, sources) in mapOf(
+                    "unitTest" to (variant as? HasUnitTest)?.unitTest?.sources,
+                    "androidTest" to (variant as? HasAndroidTest)?.androidTest?.sources
+                )) {
+                    if (sources != null) {
+                        debugLog(
+                            "Adding test entry point to Android variant '${variant.name}', component '$componentName'"
+                        )
+                        sources.kotlin?.addGeneratedSourceDirectory(
+                            generateTestBalloonEntryPointTask,
+                            GenerateTestBalloonEntryPointTask::generatedOutputDirectory
+                        )
+                    }
                 }
             }
         }

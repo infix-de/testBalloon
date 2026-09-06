@@ -33,7 +33,7 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
                 id = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}.gradlePlugin.$kotlinVersionId"
                 displayName = "TestBalloon compiler plugin (for Kotlin $kotlinVersion and above)"
                 description = displayName
-                implementationClass = "$group.layer.$kotlinVersionId.TestBalloonGradlePlugin_$classVersionId"
+                implementationClass = "$group.internal.layer.$kotlinVersionId.TestBalloonGradlePlugin_$classVersionId"
             }
         }
     }

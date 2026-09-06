@@ -1,6 +1,6 @@
-package de.infix.testBalloon.gradlePlugin.layer.kotlin2320
+package de.infix.testBalloon.gradlePlugin.internal.layer.kotlin2320
 
-import de.infix.testBalloon.gradlePlugin.layer.kotlin220.TestBalloonGradlePlugin_2_2_0
+import de.infix.testBalloon.gradlePlugin.internal.layer.kotlin220.TestBalloonGradlePlugin_2_2_0
 import org.gradle.api.Project
 
 @Suppress("unused", "ClassName")

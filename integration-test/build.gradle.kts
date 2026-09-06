@@ -45,6 +45,12 @@ tasks {
 
         workingDir = rootDir
         commandLine = gradleRunCommandLine("--warn", "publishAllPublicationsToIntegrationTestRepository")
+
+        val integrationTestRepositoryDir = integrationTestRepositoryDir.get().asFile
+
+        doFirst {
+            integrationTestRepositoryDir.deleteRecursively()
+        }
     }
 
     withType(Test::class) {

@@ -28,6 +28,7 @@ val AndroidTests by testSuite(
     val configurations = listOf<Configuration>(
         Configuration(
             agpVersion = latestAgpVersion,
+            // AGP 9 cannot handle Kotlin versions above its default version.
             appKotlinVersions = listOf(null, earliestKotlinVersion),
             gradleVersion = null
         ),

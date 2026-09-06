@@ -15,11 +15,8 @@ dependencyResolutionManagement {
 }
 
 fun RepositoryHandler.projectRepositories() {
-    mavenCentral()
     maven(uri("""{{path:integration-test-repository}}"""))
-    System.getProperty("user.home")?.let { home ->
-        maven(url = uri("$home/.m2/local-repository"))
-    }
+    mavenCentral()
     // maven(url = uri("https://redirector.kotlinlang.org/maven/dev"))
     // maven(url = uri("https://packages.jetbrains.team/maven/p/kt/dev/org/jetbrains/kotlin/kotlin-compiler/"))
     // Note: The 'dev' repo is unstable, releases are deleted after (two?) weeks.

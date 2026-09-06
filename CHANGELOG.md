@@ -1,14 +1,14 @@
-## 1.2.0-Beta1-SNAPSHOT (unreleased)
+## 1.2.0-Beta1 (September 6, 2026)
 
 ### Compatibility
 
-* This release has been tested with Kotlin versions 2.2.0 … 2.5.0-dev-6460. It is binary compatible with 1.1.0.
+* This release has been tested with Kotlin versions 2.2.0 … 2.5.0-dev-6460. Its ABI is binary-compatible with 1.1.0.
 
 ### Changes
 
-* The Gradle plugin has been restructured to support multiple versions of the Kotlin Gradle plugin.
-* Preliminary experimental support has been added for the new test DSL and Playwright-based browser tests in Kotlin 2.4.20-RC and above.
-* The minimum supported JDK version has been lowered from 11 to 8.
+* The Gradle plugin now supports multiple versions of the Kotlin Gradle plugin.
+* There is preliminary experimental support for the new JS test DSL and Playwright-based browser tests in Kotlin 2.4.20-RC and above.
+* The minimum supported JDK is now 8 instead of 11.
 
 ## 1.1.0 (September 3, 2026)
 

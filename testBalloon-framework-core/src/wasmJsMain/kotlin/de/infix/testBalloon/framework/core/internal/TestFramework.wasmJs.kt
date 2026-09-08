@@ -1,5 +1,6 @@
 package de.infix.testBalloon.framework.core.internal
 
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import kotlinx.coroutines.await
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -46,3 +47,13 @@ private fun testsFinishedMarkerExists(): Boolean = js(
 )
 
 private fun existingTestsFinishedMarker(): String = js("window.kotlinTestConfig.testsFinishedMarker")
+
+/**
+ * Experimental API for Wasm/JS on browser targets via Playwright.
+ */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
+@TestBalloonInternalApi
+public suspend fun runTestBalloonViaPlaywright() {
+    setUpAndExecuteTests(emptyArray())
+}

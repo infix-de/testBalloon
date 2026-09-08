@@ -22,7 +22,7 @@ class TestBalloonGradlePlugin : Plugin<Project> {
         val kotlinGradlePluginVersion = getKotlinPluginVersion().asKotlinVersion()
         val dotOrDash = Regex("[.-]")
 
-        for (kotlinVersionString in listOf("2.4.20-RC", "2.3.20", "2.2.0")) {
+        for (kotlinVersionString in listOf("2.4.20", "2.3.20", "2.2.0")) {
             val adapterVersion = kotlinVersionString.asKotlinVersion()
             if (adapterVersion <= kotlinGradlePluginVersion) {
                 return "$PROJECT_COMPILER_PLUGIN_ID.gradlePlugin.kotlin${kotlinVersionString.replace(dotOrDash, "")}"

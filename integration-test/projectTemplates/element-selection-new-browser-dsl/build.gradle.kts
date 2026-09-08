@@ -1,7 +1,9 @@
-import de.infix.testBalloon.gradlePlugin.internal.layer.kotlin2420RC.withTestBalloon
+import de.infix.testBalloon.gradlePlugin.internal.layer.kotlin2420.withTestBalloon
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import kotlin.time.Duration.Companion.seconds
 
 plugins {
     kotlin("multiplatform") version "{{version:org.jetbrains.kotlin.latest.prerelease}}"
@@ -19,8 +21,19 @@ kotlin {
         browser {
             @OptIn(ExperimentalJsTestDsl::class)
             test {
-                withTestBalloon(project)
-                headless = true
+                withTestBalloon(this@js)
+                timeout = 3.seconds
+                firefox()
+            }
+        }
+    }
+
+    wasmJs {
+        browser {
+            @OptIn(ExperimentalJsTestDsl::class)
+            test {
+                withTestBalloon(this@wasmJs)
+                timeout = 3.seconds
                 firefox()
             }
         }

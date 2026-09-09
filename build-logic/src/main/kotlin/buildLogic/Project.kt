@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 fun Project.versionFromCatalog(alias: String): String =
+    @Suppress("NewApi")
     versionCatalogs.named("libs").findVersion(alias).get().displayName
 
 private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogsExtension::class.java)
@@ -45,3 +46,9 @@ fun Project.propagateLifecycleTasksToIncludedBuilds() {
         }
     }
 }
+
+fun Project.integrationTestRepository() =
+    gradle.rootBuild().rootProject.layout.buildDirectory.dir("integration-test-repository")
+
+fun Project.aggregationStagingRepository() =
+    gradle.rootBuild().rootProject.layout.buildDirectory.dir("aggregation-staging-repository")

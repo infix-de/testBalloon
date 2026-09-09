@@ -21,7 +21,7 @@ class BuildLogicAggregationPublishingPlugin : Plugin<Project> {
             throw IllegalArgumentException("Please apply this plugin only to the root project")
         }
 
-        val stagingRepository = project.layout.buildDirectory.dir("aggregate-staging-repository")
+        val stagingRepository = aggregationStagingRepository()
 
         val populateAggregationStagingRepository =
             tasks.register("populateAggregationStagingRepository", Exec::class.java) {

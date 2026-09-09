@@ -1,0 +1,27 @@
+name: 'CI: Publish a release'
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: 'Publish a release'
+    if: github.event.repository.fork == false
+    runs-on: macOS-latest
+
+    steps:
+      - name: 'Check out the project'
+        # https://github.com/actions/checkout/releases
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: ./.github/actions/setup
+        with:
+          gradle-cache-disabled: true
+
+      - name: 'Publish to MavenCentral Snapshots'
+        run: ./gradlew :nmcpPublishAggregationToCentralPortalSnapshots
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}

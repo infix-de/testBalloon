@@ -1,4 +1,4 @@
-name: 'CI: Publish a release'
+name: 'CI: Publish a snapshot'
 permissions:
   contents: read
 
@@ -7,7 +7,7 @@ on:
 
 jobs:
   publish:
-    name: 'Publish a release'
+    name: 'Publish a snapshot'
     if: github.event.repository.fork == false
     runs-on: macOS-latest
 

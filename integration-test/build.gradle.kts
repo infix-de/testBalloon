@@ -1,4 +1,5 @@
 import buildLogic.gradleRunCommandLine
+import buildLogic.integrationTestRepository
 import buildLogic.versionFromCatalog
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
@@ -13,7 +14,7 @@ dependencies {
     testImplementation(libs.org.jetbrains.kotlin.test) // for assertions only
 }
 
-val integrationTestRepositoryDir = rootProject.layout.buildDirectory.dir("integration-test-repository")
+val integrationTestRepositoryDir = integrationTestRepository()
 val projectRootDirectory = rootProject.layout.projectDirectory
 
 buildConfig {

@@ -71,13 +71,12 @@ class BuildLogicPublishingPlugin : Plugin<Project> {
 
                 maven {
                     name = "integrationTest"
-                    url = uri(gradle.rootBuild().rootProject.layout.buildDirectory.dir("integration-test-repository"))
+                    url = uri(integrationTestRepository())
                 }
 
                 maven {
                     name = "aggregationStaging"
-                    url =
-                        uri(gradle.rootBuild().rootProject.layout.buildDirectory.dir("aggregate-staging-repository"))
+                    url = uri(aggregationStagingRepository())
                 }
             }
         }

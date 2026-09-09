@@ -77,7 +77,7 @@ class BuildLogicPublishingPlugin : Plugin<Project> {
                 maven {
                     name = "aggregationStaging"
                     url =
-                        uri(gradle.rootBuild().rootProject.layout.buildDirectory.dir("aggregation-staging-repository"))
+                        uri(gradle.rootBuild().rootProject.layout.buildDirectory.dir("aggregate-staging-repository"))
                 }
             }
         }

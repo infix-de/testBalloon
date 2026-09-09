@@ -14,6 +14,8 @@ dependencies {
     // Cf. https://discuss.gradle.org/t/why-duplicate-plugins-in-top-level-build-scripts/49087
     implementation(libs.com.android.gradle.plugin)
     implementation(libs.com.github.gmazzo.buildconfig.gradle.plugin)
+    implementation(libs.com.gradleup.nmcp.aggregation.gradle.plugin)
+    implementation(libs.com.gradleup.nmcp.gradle.plugin)
     implementation(libs.com.gradleup.tapmoc.gradle.plugin)
     implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
     implementation(libs.org.jetbrains.dokka.gradle.plugin)
@@ -43,7 +45,8 @@ gradlePlugin {
             "kotlin-jvm-base" to "BuildLogicKotlinJvmBasePlugin",
             "kotlin-multiplatform" to "BuildLogicKotlinMultiplatformPlugin",
             "android-application" to "BuildLogicAndroidApplicationPlugin",
-            "publishing" to "BuildLogicPublishingPlugin"
+            "publishing" to "BuildLogicPublishingPlugin",
+            "aggregation-publishing" to "BuildLogicAggregationPublishingPlugin"
         )
 
         for ((id, implementationClass) in pluginMap) {

@@ -39,8 +39,10 @@ class BuildLogicAggregationPublishingPlugin : Plugin<Project> {
             }
 
         extensions.getByType(NmcpExtension::class.java).apply {
-            extraFiles(populateAggregationStagingRepository.map { it.outputs })
+            extraFiles(populateAggregationStagingRepository.map { it.outputs.files.singleFile })
         }
+
+        dependencies.add("nmcpAggregation", dependencies.project(":"))
 
         extensions.getByType(NmcpAggregationExtension::class.java).apply {
             centralPortal {

@@ -116,11 +116,9 @@ afterEvaluate {
         listOf("testBalloon-compiler-plugin", "testBalloon-framework-shared", "testBalloon-gradle-plugin")
 
     for (taskName in listOf(
+        "publishAllPublicationsToAggregationStagingRepository",
         "publishAllPublicationsToIntegrationTestRepository",
         "publishAllPublicationsToLocalRepository",
-        "publishAllPublicationsToMavenCentralRepository",
-        "publishAndReleaseToMavenCentral",
-        "publishToMavenCentral",
         "publishToMavenLocal"
     )) {
         tasks.named(taskName) {

@@ -22,8 +22,6 @@ class BuildLogicPublishingPlugin : Plugin<Project> {
             @Suppress("UnstableApiUsage")
             configureBasedOnAppliedPlugins(JavadocJar.Empty(), SourcesJar.Sources())
 
-            publishToMavenCentral()
-
             signAllPublications()
 
             pom {
@@ -74,6 +72,12 @@ class BuildLogicPublishingPlugin : Plugin<Project> {
                 maven {
                     name = "integrationTest"
                     url = uri(gradle.rootBuild().rootProject.layout.buildDirectory.dir("integration-test-repository"))
+                }
+
+                maven {
+                    name = "aggregationStaging"
+                    url =
+                        uri(gradle.rootBuild().rootProject.layout.buildDirectory.dir("aggregation-staging-repository"))
                 }
             }
         }

@@ -1,6 +1,7 @@
 plugins {
     id("buildLogic.common").apply(false)
     id("buildLogic.dokka")
+    id("buildLogic.aggregation-publishing")
 }
 
 tasks {

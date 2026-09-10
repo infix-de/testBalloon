@@ -4,45 +4,27 @@ import nmcp.NmcpAggregationExtension
 import nmcp.NmcpExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.Exec
 import java.time.temporal.ChronoUnit
 
 @Suppress("unused")
 class BuildLogicAggregationPublishingPlugin : Plugin<Project> {
     @Suppress("NewApi")
     override fun apply(target: Project): Unit = with(target) {
+        if (project != rootProject) {
+            throw IllegalArgumentException("Please apply this plugin only to the root project instead of $project")
+        }
+
         with(pluginManager) {
-            apply("maven-publish")
             apply("com.gradleup.nmcp")
             apply("com.gradleup.nmcp.aggregation")
+            apply("maven-publish") // satisfy nmcp check
         }
-
-        if (projectDir != rootDir) {
-            throw IllegalArgumentException("Please apply this plugin only to the root project")
-        }
-
-        val stagingRepository = aggregationStagingRepository()
-
-        val populateAggregationStagingRepository =
-            tasks.register("populateAggregationStagingRepository", Exec::class.java) {
-                group = "publishing"
-                description = "Populate the aggregation staging directory with publishable artifacts."
-
-                outputs.dir(stagingRepository)
-                outputs.upToDateWhen { false }
-
-                commandLine = gradleRunCommandLine("--warn", "publishAllPublicationsToAggregationStagingRepository")
-
-                doFirst {
-                    stagingRepository.get().asFile.deleteRecursively()
-                }
-            }
 
         extensions.getByType(NmcpExtension::class.java).apply {
-            extraFiles(populateAggregationStagingRepository.map { it.outputs.files.singleFile })
+            extraFiles(project.files(aggregationStagingRepository()).singleFile)
         }
 
-        dependencies.add("nmcpAggregation", dependencies.project(":"))
+        dependencies.add("nmcpAggregation", dependencies.project(":")) // satisfy nmcp requirement
 
         extensions.getByType(NmcpAggregationExtension::class.java).apply {
             centralPortal {

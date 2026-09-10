@@ -4,6 +4,7 @@ import buildLogic.enableAbiValidation
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("buildLogic.publishing")
+    id("buildLogic.dokka")
 }
 
 description = "Shared declarations for the TestBalloon framework"

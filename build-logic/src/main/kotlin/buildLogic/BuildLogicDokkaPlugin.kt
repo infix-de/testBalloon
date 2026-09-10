@@ -2,6 +2,7 @@ package buildLogic
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.jetbrains.dokka.gradle.DokkaExtension
 
 @Suppress("unused")
@@ -26,9 +27,13 @@ class BuildLogicDokkaPlugin : Plugin<Project> {
             }
         }
 
-        dependencies.add("dokkaPlugin", "$group:dokka-plugin-internal-api-hiding:$version")
+        val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
+
+        dependencies.add("dokkaPlugin", "$rootGroup.documentation:dokka-plugin-internal-api-hiding:$version")
     }
 }
 
-fun Project.dokkaEnableNavigationNodeHiding() =
-    dependencies.add("dokkaPlugin", "$group:dokka-plugin-navigation-node-hiding:$version")
+fun Project.dokkaEnableNavigationNodeHiding(): Dependency? {
+    val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
+    return dependencies.add("dokkaPlugin", "$rootGroup.documentation:dokka-plugin-navigation-node-hiding:$version")
+}

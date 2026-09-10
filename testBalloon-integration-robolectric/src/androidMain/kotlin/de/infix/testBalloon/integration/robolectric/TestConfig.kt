@@ -48,7 +48,7 @@ public class RobolectricSettings internal constructor(
     public var fontScale: Float? = null,
 
     /**
-     * The [Application] class to use in the test, this takes precedence over any
+     * The `Application` class to use in the test, this takes precedence over any
      * application specified in the AndroidManifest.xml.
      */
     public var application: KClass<out Application>? = null,

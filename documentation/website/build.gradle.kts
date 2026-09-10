@@ -24,8 +24,10 @@ plugins {
     id("buildLogic.dokka")
 }
 
+val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
+
 dependencies {
-    dokka(project(":testBalloon-framework-shared"))
+    dokka("$rootGroup:testBalloon-framework-shared:$version")
     dokka(project(":testBalloon-framework-core"))
     dokka(project(":testBalloon-integration-kotest-assertions"))
     dokka(project(":testBalloon-integration-blocking-detection"))

@@ -1,8 +1,5 @@
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import gradlePlugin.layer.buildLogic.configureGradlePlugin
-import kotlin.io.path.div
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.name
 
 plugins {
     id("gradlePlugin.layer.buildLogic.common")
@@ -39,9 +36,8 @@ fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
 dependencies {
     embeddedCompileOnly("$group:testBalloon-framework-shared")
 
-    val kotlinVersionLayers = (projectDir.toPath() / "layer").listDirectoryEntries("kotlin-*").map { it.name }
-    for (kotlinVersionLayer in kotlinVersionLayers) {
-        embeddedDynamicallyLoaded("$group.gradlePlugin:$kotlinVersionLayer")
+    gradle.includedBuilds.filter { it.name.startsWith("kotlin-") }.forEach {
+        embeddedDynamicallyLoaded("$group.gradlePlugin:${it.name}")
     }
 
     project.configurations.named("compileOnly").configure { extendsFrom(embeddedCompileOnly) }

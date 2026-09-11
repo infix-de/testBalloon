@@ -1,9 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
-import kotlin.io.path.div
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.name
 
 plugins {
     id("buildLogic.kotlin-jvm-base")
@@ -34,9 +31,8 @@ dependencies {
     embeddedCompileOnly("$group.compilerPlugin:base")
     embeddedCompileOnly("$group:testBalloon-framework-shared")
 
-    val kotlinVersionLayers = (projectDir.toPath() / "layer").listDirectoryEntries("kotlin-*").map { it.name }
-    for (kotlinVersionLayer in kotlinVersionLayers) {
-        embeddedDynamicallyLoaded("$group.compilerPlugin:$kotlinVersionLayer")
+    gradle.includedBuilds.filter { it.name.startsWith("kotlin-") }.forEach {
+        embeddedDynamicallyLoaded("$group.compilerPlugin:${it.name}")
     }
 
     project.configurations.named("compileOnly").configure { extendsFrom(embeddedCompileOnly) }
@@ -102,7 +98,7 @@ configurations {
 }
 
 tasks.named("test") {
-    (projectDir.toPath() / "layer").listDirectoryEntries().filter { it.name.startsWith("kotlin-") }.forEach {
+    gradle.includedBuilds.filter { it.name.startsWith("kotlin-") }.forEach {
         dependsOn(gradle.includedBuild(it.name).task(":test"))
     }
 }

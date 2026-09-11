@@ -27,7 +27,7 @@ plugins {
 val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
 
 dependencies {
-    dokka("$rootGroup:testBalloon-framework-shared:$version")
+    dokka("$rootGroup:testBalloon-framework-shared")
     dokka(project(":testBalloon-framework-core"))
     dokka(project(":testBalloon-integration-kotest-assertions"))
     dokka(project(":testBalloon-integration-blocking-detection"))

@@ -32,7 +32,7 @@ fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
 @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
 dependencies {
     embeddedCompileOnly("$group.compilerPlugin:base")
-    embeddedCompileOnly("$group:testBalloon-framework-shared:$version")
+    embeddedCompileOnly("$group:testBalloon-framework-shared")
 
     val kotlinVersionLayers = (projectDir.toPath() / "layer").listDirectoryEntries("kotlin-*").map { it.name }
     for (kotlinVersionLayer in kotlinVersionLayers) {

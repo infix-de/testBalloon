@@ -9,7 +9,7 @@ val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
 group = "$rootGroup.compilerPlugin"
 
 dependencies {
-    api("$rootGroup:testBalloon-framework-shared:$version")
+    api("$rootGroup:testBalloon-framework-shared")
     compileOnly(libs.org.jetbrains.kotlin.compiler)
 }
 

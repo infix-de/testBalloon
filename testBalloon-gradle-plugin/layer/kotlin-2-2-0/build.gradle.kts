@@ -16,7 +16,7 @@ description = "TestBalloon Gradle plugin compatibility layer (base)"
 val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
 
 dependencies {
-    api("$rootGroup:testBalloon-framework-shared:$version")
+    api("$rootGroup:testBalloon-framework-shared")
     compileOnly(libs.com.android.gradle.plugin.earliest)
 }
 

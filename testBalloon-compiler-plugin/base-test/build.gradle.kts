@@ -13,7 +13,7 @@ dependencies {
     compileOnly(libs.dev.zacsweers.kctfork)
     compileOnly(libs.org.jetbrains.kotlin.test)
 
-    implementation("$group:testBalloon-framework-shared:$version")
+    implementation("$group:testBalloon-framework-shared")
 
     compileOnly(libs.org.jetbrains.kotlin.stdlib)
     compileOnly(libs.org.jetbrains.kotlin.compiler)

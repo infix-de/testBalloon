@@ -16,7 +16,7 @@ class BuildLogicCommonPlugin : Plugin<Project> {
             apply("org.jmailen.kotlinter")
         }
 
-        group = "${project.property("local.PROJECT_GROUP_ID")}"
+        group = rootGroup
 
         extensions.configure<TapmocExtension>("tapmoc") {
             java(baseJdkVersion())

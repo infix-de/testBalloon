@@ -1,7 +1,7 @@
 package de.infix.testBalloon.compilerPlugin
 
-import de.infix.testBalloon.compilerPlugin.base.Options
-import de.infix.testBalloon.compilerPlugin.base.PLUGIN_ID
+import de.infix.testBalloon.compilerPlugin.layer.base.Options
+import de.infix.testBalloon.compilerPlugin.layer.base.PLUGIN_ID
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi

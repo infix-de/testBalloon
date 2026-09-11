@@ -1,8 +1,8 @@
 @file:OptIn(TestBalloonInternalApi::class)
 
-package de.infix.testBalloon.compilerPlugin.base
+package de.infix.testBalloon.compilerPlugin.layer.base
 
-import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
+import de.infix.testBalloon.compilerPlugin.layer.buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.name.CallableId

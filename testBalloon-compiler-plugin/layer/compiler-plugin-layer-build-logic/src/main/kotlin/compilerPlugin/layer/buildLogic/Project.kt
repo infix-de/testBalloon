@@ -18,8 +18,7 @@ import tapmoc.TapmocExtension
 fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = null, kctforkVersion: String) {
     description = "TestBalloon compiler plugin compatibility layer ($kotlinVersion)"
 
-    val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
-    group = "$rootGroup.compilerPlugin"
+    group = "$rootGroup.compilerPlugin.layer"
 
     with(pluginManager) {
         apply("org.jmailen.kotlinter")
@@ -53,3 +52,5 @@ fun Project.versionFromCatalog(alias: String): String =
 private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogsExtension::class.java)
 
 fun Project.baseJdkVersion() = versionFromCatalog("base.jdk").toInt()
+
+val Project.rootGroup: String get() = "${project.property("local.PROJECT_ROOT_GROUP")}"

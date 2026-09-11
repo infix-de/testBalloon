@@ -1,10 +1,10 @@
 @file:OptIn(TestBalloonInternalApi::class)
 
-package de.infix.testBalloon.compilerPlugin.base
+package de.infix.testBalloon.compilerPlugin.layer.base
 
-import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID
-import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_GROUP_ID
-import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_VERSION
+import de.infix.testBalloon.compilerPlugin.layer.buildConfig.BuildConfig.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID
+import de.infix.testBalloon.compilerPlugin.layer.buildConfig.BuildConfig.PROJECT_ROOT_GROUP
+import de.infix.testBalloon.compilerPlugin.layer.buildConfig.BuildConfig.PROJECT_VERSION
 import de.infix.testBalloon.framework.shared.AbstractTestSession
 import de.infix.testBalloon.framework.shared.AbstractTestSuite
 import de.infix.testBalloon.framework.shared.TestRegistering
@@ -843,7 +843,7 @@ private interface Reporting {
 private class MissingFrameworkSymbol(typeAndName: String) :
     Error(
         "Could not find $typeAndName.\n" +
-            "\tPlease add the dependency '$PROJECT_GROUP_ID:$PROJECT_FRAMEWORK_CORE_ARTIFACT_ID:$PROJECT_VERSION'."
+            "\tPlease add the dependency '$PROJECT_ROOT_GROUP:$PROJECT_FRAMEWORK_CORE_ARTIFACT_ID:$PROJECT_VERSION'."
     )
 
 private fun IrClass.fqName(): String = "${packageFqName.asQualificationPrefix()}$name"

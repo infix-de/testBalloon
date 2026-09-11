@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
+import buildLogic.rootGroup
 
 plugins {
     id("buildLogic.kotlin-jvm-base")
@@ -28,11 +29,11 @@ fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
 
 @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
 dependencies {
-    embeddedCompileOnly("$group.compilerPlugin:base")
-    embeddedCompileOnly("$group:testBalloon-framework-shared")
+    embeddedCompileOnly("$rootGroup.compilerPlugin.layer:base")
+    embeddedCompileOnly("$rootGroup:testBalloon-framework-shared")
 
     gradle.includedBuilds.filter { it.name.startsWith("kotlin-") }.forEach {
-        embeddedDynamicallyLoaded("$group.compilerPlugin:${it.name}")
+        embeddedDynamicallyLoaded("$rootGroup.compilerPlugin.layer:${it.name}")
     }
 
     project.configurations.named("compileOnly").configure { extendsFrom(embeddedCompileOnly) }
@@ -44,7 +45,7 @@ buildConfig {
     packageName("$group.compilerPlugin.buildConfig")
     useKotlinOutput { internalVisibility = true }
 
-    buildConfigField("String", "PROJECT_GROUP_ID", "\"$group\"")
+    buildConfigField("String", "PROJECT_ROOT_GROUP", "\"$rootGroup\"")
 }
 
 val integratedJar = tasks.register("integratedJar", Jar::class.java) {

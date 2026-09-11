@@ -15,6 +15,6 @@ class BuildLogicAndroidApplicationPlugin : Plugin<Project> {
             apply("buildLogic.common")
         }
 
-        group = "${project.property("local.PROJECT_GROUP_ID")}"
+        group = rootGroup
     }
 }

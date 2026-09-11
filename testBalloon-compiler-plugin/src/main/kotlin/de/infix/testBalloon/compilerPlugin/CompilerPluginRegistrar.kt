@@ -1,10 +1,10 @@
 package de.infix.testBalloon.compilerPlugin
 
-import de.infix.testBalloon.compilerPlugin.base.CompilerAdapter
-import de.infix.testBalloon.compilerPlugin.base.Options
-import de.infix.testBalloon.compilerPlugin.base.PLUGIN_DISPLAY_NAME
-import de.infix.testBalloon.compilerPlugin.base.PLUGIN_ID
-import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_GROUP_ID
+import de.infix.testBalloon.compilerPlugin.buildConfig.BuildConfig.PROJECT_ROOT_GROUP
+import de.infix.testBalloon.compilerPlugin.layer.base.CompilerAdapter
+import de.infix.testBalloon.compilerPlugin.layer.base.Options
+import de.infix.testBalloon.compilerPlugin.layer.base.PLUGIN_DISPLAY_NAME
+import de.infix.testBalloon.compilerPlugin.layer.base.PLUGIN_ID
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.asKotlinVersion
@@ -71,7 +71,7 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
                 val packageVersion = adapterVersionString.replace(".", "")
                 val classVersion = adapterVersionString.replace(".", "_")
                 val className =
-                    "${PROJECT_GROUP_ID}.compilerPlugin.layer.kotlin$packageVersion.CompilerAdapter_$classVersion"
+                    "${PROJECT_ROOT_GROUP}.compilerPlugin.layer.kotlin$packageVersion.CompilerAdapter_$classVersion"
                 return Class.forName(className)
                     .getDeclaredConstructor(CompilerAdapter.Configuration::class.java)
                     .newInstance(adapterConfiguration) as CompilerAdapter

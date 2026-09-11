@@ -24,7 +24,7 @@ gradlePlugin {
     plugins {
         register("buildSettings") {
             id = "buildSettings"
-            implementationClass = "BuildSettingsPlugin"
+            implementationClass = "buildSettings.BuildSettingsPlugin"
         }
     }
 }

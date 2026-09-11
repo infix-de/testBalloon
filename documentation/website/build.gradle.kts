@@ -1,3 +1,4 @@
+import buildLogic.rootGroup
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
@@ -23,8 +24,6 @@ plugins {
     kotlin("jvm") apply false
     id("buildLogic.dokka")
 }
-
-val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
 
 dependencies {
     dokka("$rootGroup:testBalloon-framework-shared")

@@ -2,8 +2,8 @@
 
 package de.infix.testBalloon.compilerPlugin.layer.kotlin230
 
-import de.infix.testBalloon.compilerPlugin.base.CompilerAdapter
-import de.infix.testBalloon.compilerPlugin.base.IrGenerationExtensionBase
+import de.infix.testBalloon.compilerPlugin.layer.base.CompilerAdapter
+import de.infix.testBalloon.compilerPlugin.layer.base.IrGenerationExtensionBase
 import de.infix.testBalloon.compilerPlugin.layer.kotlin220.DeclarationFinderAdapter_2_2_0
 import de.infix.testBalloon.compilerPlugin.layer.kotlin220.ModuleTransformer_2_2_0
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension

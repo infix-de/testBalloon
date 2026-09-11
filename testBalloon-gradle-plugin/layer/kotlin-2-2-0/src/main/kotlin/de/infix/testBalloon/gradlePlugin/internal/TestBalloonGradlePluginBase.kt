@@ -5,8 +5,9 @@ import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
 import de.infix.testBalloon.gradlePlugin.TestBalloonGradleExtension
 import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
-import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_GROUP_ID
+import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_GRADLE_PLUGIN_ID
 import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_JUNIT_PLATFORM_LAUNCHER
+import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_ROOT_GROUP
 import de.infix.testBalloon.gradlePlugin.internal.buildConfig.BuildConfig.PROJECT_VERSION
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
@@ -39,11 +40,11 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
     private val identificationLogged = AtomicBoolean(false)
 
     companion object {
-        private const val DISPLAY_NAME = "Plugin $PROJECT_COMPILER_PLUGIN_ID"
+        private const val DISPLAY_NAME = "Plugin $PROJECT_GRADLE_PLUGIN_ID"
 
         val testBalloonProperties: TestBalloonGradleProperties
             get() = _testBalloonProperties
-                ?: throw IllegalStateException("The plugin '$PROJECT_COMPILER_PLUGIN_ID' must be applied")
+                ?: throw IllegalStateException("The plugin '$PROJECT_GRADLE_PLUGIN_ID' must be applied")
 
         private var _testBalloonProperties: TestBalloonGradleProperties? = null
     }
@@ -92,7 +93,7 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
     override fun getCompilerPluginId(): String = PROJECT_COMPILER_PLUGIN_ID
 
     override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
-        groupId = PROJECT_GROUP_ID,
+        groupId = PROJECT_ROOT_GROUP,
         artifactId = "testBalloon-compiler-plugin",
         version = PROJECT_VERSION
     )

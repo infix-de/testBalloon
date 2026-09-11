@@ -27,13 +27,9 @@ class BuildLogicDokkaPlugin : Plugin<Project> {
             }
         }
 
-        val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
-
         dependencies.add("dokkaPlugin", "$rootGroup.documentation:dokka-plugin-internal-api-hiding")
     }
 }
 
-fun Project.dokkaEnableNavigationNodeHiding(): Dependency? {
-    val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
-    return dependencies.add("dokkaPlugin", "$rootGroup.documentation:dokka-plugin-navigation-node-hiding")
-}
+fun Project.dokkaEnableNavigationNodeHiding(): Dependency? =
+    dependencies.add("dokkaPlugin", "$rootGroup.documentation:dokka-plugin-navigation-node-hiding")

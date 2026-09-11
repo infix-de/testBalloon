@@ -2,6 +2,7 @@ import buildLogic.allTargets
 import buildLogic.dokkaEnableNavigationNodeHiding
 import buildLogic.enableAbiValidation
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
+import buildLogic.rootGroup
 import buildLogic.versionFromCatalog
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -56,7 +57,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api("$group:testBalloon-framework-shared:$version")
+                api("$rootGroup:testBalloon-framework-shared:$version")
                 api(libs.org.jetbrains.kotlinx.coroutines.core)
                 api(libs.org.jetbrains.kotlinx.coroutines.test)
                 implementation(libs.org.jetbrains.kotlinx.kotlinx.datetime)

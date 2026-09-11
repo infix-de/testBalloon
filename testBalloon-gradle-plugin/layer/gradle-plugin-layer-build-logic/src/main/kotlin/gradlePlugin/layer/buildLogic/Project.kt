@@ -1,3 +1,5 @@
+@file:Suppress("NewApi")
+
 package gradlePlugin.layer.buildLogic
 
 import org.gradle.api.HasImplicitReceiver
@@ -20,7 +22,7 @@ import tapmoc.TapmocExtension
 fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = null) {
     description = "TestBalloon Gradle plugin compatibility layer ($kotlinVersion)"
 
-    group = "${project.property("local.PROJECT_GROUP_ID")}.gradlePlugin"
+    group = "$rootGroup.gradlePlugin"
 
     val kotlinVersionId = "kotlin${kotlinVersion.replace(Regex("[.-]"), "")}"
     val classVersionId = kotlinVersion.replace(Regex("[.-]"), "_")
@@ -29,11 +31,13 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
 
     extensions.configure<GradlePluginDevelopmentExtension>("gradlePlugin") {
         plugins {
-            register("${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}.gradlePlugin.$kotlinVersionId") {
-                id = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}.gradlePlugin.$kotlinVersionId"
-                displayName = "TestBalloon compiler plugin (for Kotlin $kotlinVersion and above)"
+            val pluginId = "$gradlePluginId.internal.layer.$kotlinVersionId"
+            val packageName = "de.infix.testBalloon.gradlePlugin.internal.layer.$kotlinVersionId"
+            register(pluginId) {
+                id = pluginId
+                displayName = "TestBalloon Gradle plugin (for Kotlin $kotlinVersion and above)"
                 description = displayName
-                implementationClass = "$group.internal.layer.$kotlinVersionId.TestBalloonGradlePlugin_$classVersionId"
+                implementationClass = "$packageName.TestBalloonGradlePlugin_$classVersionId"
             }
         }
     }
@@ -92,3 +96,7 @@ fun Project.libraryFromCatalog(alias: String): String =
 private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogsExtension::class.java)
 
 fun Project.gradleJdkVersion() = versionFromCatalog("gradle.jdk").toInt()
+
+val Project.rootGroup: String get() = "${project.property("local.PROJECT_ROOT_GROUP")}"
+
+val Project.gradlePluginId: String get() = "${project.property("local.PROJECT_GRADLE_PLUGIN_ID")}"

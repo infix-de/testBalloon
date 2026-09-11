@@ -1,5 +1,7 @@
 import gradlePlugin.layer.buildLogic.configurePluginLayer
+import gradlePlugin.layer.buildLogic.gradlePluginId
 import gradlePlugin.layer.buildLogic.libraryFromCatalog
+import gradlePlugin.layer.buildLogic.rootGroup
 
 plugins {
     id("gradlePlugin.layer.buildLogic.common")
@@ -12,8 +14,6 @@ plugins {
 configurePluginLayer(kotlinVersion = "2.2.0")
 
 description = "TestBalloon Gradle plugin compatibility layer (base)"
-
-val rootGroup = "${project.property("local.PROJECT_GROUP_ID")}"
 
 dependencies {
     api("$rootGroup:testBalloon-framework-shared")
@@ -29,8 +29,9 @@ buildConfig {
         "PROJECT_COMPILER_PLUGIN_ID",
         "\"${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}\""
     )
+    buildConfigField("String", "PROJECT_GRADLE_PLUGIN_ID", "\"$gradlePluginId\"")
     buildConfigField("String", "PROJECT_VERSION", "\"$version\"")
-    buildConfigField("String", "PROJECT_GROUP_ID", "\"$rootGroup\"")
+    buildConfigField("String", "PROJECT_ROOT_GROUP", "\"$rootGroup\"")
     buildConfigField(
         "String",
         "PROJECT_JUNIT_PLATFORM_LAUNCHER",

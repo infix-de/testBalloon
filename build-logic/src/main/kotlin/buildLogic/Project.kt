@@ -2,6 +2,7 @@ package buildLogic
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
@@ -12,7 +13,6 @@ fun Project.versionFromCatalog(alias: String): String =
 private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogsExtension::class.java)
 
 fun Project.baseJdkVersion() = versionFromCatalog("base.jdk").toInt()
-fun Project.gradleJdkVersion() = versionFromCatalog("gradle.jdk").toInt()
 fun Project.kotlinVersion() = versionFromCatalog("org.jetbrains.kotlin")
 fun Project.robolectricJdkVersion() = baseJdkVersion().coerceAtLeast(versionFromCatalog("org-robolectric-jdk").toInt())
 fun Project.junitJupiterJdkVersion() =
@@ -48,7 +48,11 @@ fun Project.propagateLifecycleTasksToIncludedBuilds() {
 }
 
 fun Project.integrationTestRepository() =
-    gradle.rootBuild().rootProject.layout.buildDirectory.dir("integration-test-repository")
+    gradle.rootBuild.rootProject.layout.buildDirectory.dir("integration-test-repository")
 
 fun Project.aggregationStagingRepository() =
-    gradle.rootBuild().rootProject.layout.buildDirectory.dir("aggregation-staging-repository")
+    gradle.rootBuild.rootProject.layout.buildDirectory.dir("aggregation-staging-repository")
+
+private val Gradle.rootBuild: Gradle get() = parent.let { it?.rootBuild ?: this }
+
+val Project.rootGroup: String get() = "${project.property("local.PROJECT_ROOT_GROUP")}"

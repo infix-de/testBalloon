@@ -6,7 +6,7 @@ import com.tschuchort.compiletesting.PluginOption
 import com.tschuchort.compiletesting.SourceFile
 import de.infix.testBalloon.compilerPlugin.CompilerPluginCommandLineProcessor
 import de.infix.testBalloon.compilerPlugin.CompilerPluginRegistrar
-import de.infix.testBalloon.compilerPlugin.base.PLUGIN_ID
+import de.infix.testBalloon.compilerPlugin.layer.base.PLUGIN_ID
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi

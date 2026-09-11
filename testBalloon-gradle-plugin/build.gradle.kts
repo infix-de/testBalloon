@@ -1,5 +1,7 @@
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
+import buildLogic.rootGroup
 import gradlePlugin.layer.buildLogic.configureGradlePlugin
+import gradlePlugin.layer.buildLogic.gradlePluginId
 
 plugins {
     id("gradlePlugin.layer.buildLogic.common")
@@ -13,7 +15,7 @@ plugins {
 }
 
 description = "TestBalloon Gradle plugin"
-group = "${project.property("local.PROJECT_GROUP_ID")}"
+group = rootGroup
 
 configureGradlePlugin("2.2.0")
 
@@ -34,7 +36,7 @@ fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
     add(embeddedDynamicallyLoaded.name, dependencyNotation)
 
 dependencies {
-    embeddedCompileOnly("$group:testBalloon-framework-shared")
+    embeddedCompileOnly("$rootGroup:testBalloon-framework-shared")
 
     gradle.includedBuilds.filter { it.name.startsWith("kotlin-") }.forEach {
         embeddedDynamicallyLoaded("$group.gradlePlugin:${it.name}")
@@ -47,11 +49,12 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        register("${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}") {
-            id = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}"
+        val pluginId = rootGroup
+        register(pluginId) {
+            id = pluginId
             displayName = "TestBalloon Gradle plugin for multiplatform test discovery"
             description = displayName
-            implementationClass = "$group.gradlePlugin.TestBalloonGradlePlugin"
+            implementationClass = "$rootGroup.gradlePlugin.TestBalloonGradlePlugin"
         }
     }
 }
@@ -60,11 +63,7 @@ buildConfig {
     packageName("$group.gradlePlugin.internal.buildConfig")
     useKotlinOutput { internalVisibility = true }
 
-    buildConfigField(
-        "String",
-        "PROJECT_COMPILER_PLUGIN_ID",
-        "\"${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}\""
-    )
+    buildConfigField("String", "PROJECT_GRADLE_PLUGIN_ID", "\"$gradlePluginId\"")
     buildConfigField("String", "PROJECT_VERSION", "\"$version\"")
 }
 

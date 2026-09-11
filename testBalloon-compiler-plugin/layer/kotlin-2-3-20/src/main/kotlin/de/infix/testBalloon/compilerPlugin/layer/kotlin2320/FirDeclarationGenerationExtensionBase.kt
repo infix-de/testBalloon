@@ -2,9 +2,9 @@
 
 package de.infix.testBalloon.compilerPlugin.layer.kotlin2320
 
-import de.infix.testBalloon.compilerPlugin.base.entryPointPackageFqName
-import de.infix.testBalloon.compilerPlugin.base.mainFunctionId
-import de.infix.testBalloon.compilerPlugin.base.nativeEntryPointPropertyId
+import de.infix.testBalloon.compilerPlugin.layer.base.entryPointPackageFqName
+import de.infix.testBalloon.compilerPlugin.layer.base.mainFunctionId
+import de.infix.testBalloon.compilerPlugin.layer.base.nativeEntryPointPropertyId
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import org.jetbrains.kotlin.GeneratedDeclarationKey

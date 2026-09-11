@@ -1,4 +1,4 @@
-package de.infix.testBalloon.compilerPlugin.base
+package de.infix.testBalloon.compilerPlugin.layer.base
 
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption

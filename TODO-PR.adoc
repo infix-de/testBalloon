@@ -1,0 +1,321 @@
+= Promo
+
+== Release announcements
+
+=== Slack
+
+:testballoon: TestBalloon reaches flight level 1.0.0 :tada:
+
+After its initial publication at KotlinConf 2025 and 50 public releases, TestBalloon 1.0.0 is now stable. Built for today's Kotlin landscape from the ground up, TestBalloon's small-surface, DSL-based API and the power of Kotlin keep testing concise and easy as projects grow, and as tests scale up (more complex interactions) or out (across targets). All Kotlin targets have first-class support, including IDE integration, with all Kotlin versions covered from 2.0.0 up to the latest 2.4.0-RC.
+
+:heart: Thank you! :pray:
+
+A ton of thanks go out to everyone who filed issues, contributed feedback, tested early releases, and helped shape TestBalloon into what it is today. Here's to writing great tests and focus on what matters!
+
+And if you're at KotlinConf, join @JesusMcCloud and me on Friday at 15:15 in the large Auditorium 1. Let's enjoy Kotlin testing with ease and fun!
+
+https://infix-de.github.io/testBalloon/1.0.0/blog/2026/05/14/testballoon-reaches-flight-level-100/
+Channel: #testballoon (edited)
+
+=== Bluesky
+
+🎈 TestBalloon reaches flight level 1.0.0 🎉
+
+The Kotlin test framework built from the ground up for today's ecosystem is now stable, with a powerful and concise DSL-based API, robustness at scale and first-class support for all platforms.
+
+https://infix-de.github.io/testBalloon/1.0.0/blog/
+
+More at KotlinConf!
+
+=== Unused
+
+TestBalloon 🎈 has finally ascended to flight level 1.0.0! 🎉
+
+After 50+ releases and overwhelmingly positive feedback from early users, TestBalloon's runtime API is now stable. Migration from 0.8.4 is minimal, and will probably be free if you haven't used `displayName` or created custom top-level suites.
+
+Now is the time to start using the Kotlin test framework that's easiest to use – from simple cases to your most demanding testing needs.
+
+If you're at KotlinConf, join Bernd and me on Friday at 15:15 in the large Auditorium 1. Let's enjoy Kotlin testing with ease and fun!
+
+----
+## 🎈 TestBalloon 1.0.0
+
+_Kotlin testing made easy, everywhere._
+
+We are thrilled to announce **TestBalloon 1.0.0** — the first stable release of TestBalloon, a Kotlin Multiplatform test framework designed to make testing a joy across JVM, Android, JS, Wasm, and Apple targets.
+
+This milestone marks the culmination of everything learned building TestBalloon from the ground up: a clean, intuitive API; deep IDE integration; battle-tested robustness at scale; and first-class support for the full breadth of the Kotlin ecosystem.
+
+### What is TestBalloon?
+
+TestBalloon is a Kotlin Multiplatform testing framework that lets you write expressive, structured tests once and run them everywhere Kotlin runs — without compromise. It integrates seamlessly with IntelliJ IDEA, Gradle, Android Studio, and your existing toolchain.
+
+### Highlights of the 1.0.0 release
+
+* **Stable, production-ready API** — the API surface has been carefully refined and is now stable with binary ABI guarantees.
+* **Kotlin Multiplatform** — full support for JVM, Android (instrumented & host-side), JS, Wasm/JS, Wasm/WASI, and Apple simulator targets.
+* **Fixtures at every level** — test-level and suite-level fixtures, delivered as context receivers or parameters, giving each test a clean, fresh state.
+* **Robolectric integration** — fast, reliable, and configurable Android testing without a device.
+* **Deep IntelliJ IDEA integration** — run, debug, and jump to source directly from the test results tree; gutter icons show live test status.
+* **Gradle JVM Test Suite Plugin support** — works with multi-suite Gradle projects out of the box.
+* **Conditional tag-based test selection** — control test runs across all targets via environment variables.
+* **Proven at scale** — validated against real-world test sets of several hundred thousand to nearly 2 million tests.
+* **Extensive documentation** — guides, how-tos, migration instructions, and a blog at https://infix-de.github.io/testBalloon/.
+
+### TestBalloon 1.0.0 release variants
+
+| TestBalloon version | Supported Kotlin versions |
+|---------------------|---------------------------|
+| 1.0.0-K…            | …                         |
+
+_Update the table above with the actual Kotlin variant entries before publishing._
+
+### Upgrading from 0.8.x
+
+No breaking changes from 0.8.4. Simply update your version to `1.0.0-K<your-kotlin-version>`.
+
+For users upgrading from earlier versions, see the [upgrading guide](https://infix-de.github.io/testBalloon/how-to/upgrading/).
+
+### Thank you 🙏
+
+Thank you to everyone who filed issues, contributed feedback, tested early releases, and helped shape TestBalloon into what it is today. Here's to writing great tests!
+
+**Full Changelog**: https://github.com/infix-de/testBalloon/compare/0.8.4-K2.3.20...1.0.0-K…
+----
+
+== Snippets
+
+* Kotlin testing made easy, everywhere.
+* TestBalloon lifts your testing to Kotlin altitude.
+* Easiest to scale up and out.
+* Your control starts at the top.
+* Don’t just write your tests in Kotlin. Control your tests with Kotlin!
+* Create tests flexibly, in plain Kotlin.
+* Uncompromising integration.
+* Concise and flexible, instead of verbose and rigid.
+* Concise and flexible DSL: Focus on your test case, not boilerplate.
+* A function invocation creates tests: Simplify parameterized and data-driven testing.
+* Scope-friendly API: No more `lateinit`, natural coroutine scoping.
+* Seamless integration on all platforms: Use familiar tooling and tasks, rely on what works.
+* TestBalloon is so easy to customize, that it's actually yours.
+* You write tests in Kotlin? Why not let Kotlin create tests?
+
+=== Blog
+
+* Why don't we use Kotlin to create our tests? (Because integration is hard. We don't want to get stuck in a rabbit hole of missing integration for our platforms.)
+* Have you ever wondered why parallelism fails to speed up your tests? (shallow concurrency on upper levels only, long-running tests block others, deep concurrency is a game-changer)
+
+== Thoughts
+
+=== TestBalloon explained in one paragraph
+
+The `testSuite` function creates a test suite. The `test` function creates a test. Suites can nest. At the top level, they are properties. You use these two functions and plain Kotlin to create any combination of  tests or suites, dynamically, with parameters, nesting, loops, whatever you need.
+
+=== Brain
+
+This is a brain. It can do amazing things like crypto or compiler stuff. But it doesn't want to write tests. Because writing tests can be tedious and boring and our brains don't like that.
+
+So what can we do? Make tests easier to write. More convenient, more fun.
+
+And I should note: Not just one kind of tests. Not just the low-hanging fruits of micro unit tests. The goal is to make all tests easy and fun to write, so that more high-value tests get written and overall quality improves.
+
+And that's exactly what TestBalloon is trying to achieve.
+
+[source,kotlin]
+----
+val NamingTests by testSuite {
+    val components = listOf("Sensor", "Network", "Actor")
+    val invalidNames = listOf("", "-", "a", "a space", "123")
+
+    for (component in components) {
+        testSuite("Refuse to create component '$component'") {
+            for (name in invalidNames) {
+                test("with name '$name'") {
+                    assertEquals(Response.Failure, createComponent(component, name))
+                }
+            }
+        }
+    }
+}
+
+enum class Response { Success, Failure }
+private fun createComponent(component: String, name: String) = Response.Failure
+----
+
+== Older
+
+== Snippets
+
+If you think about testing, you may wonder why Kotlin has never really freed itself from Java's limitations.
+
+* TestBalloon is the most advanced Kotlin test framework with seamless integration on all platforms.
++
+--
+TestBalloon is the **latest generation Kotlin test framework**, built from the ground up with a Kotlin-first approach. Standing on the shoulders of giants, TestBalloon combines all features of a modern test framework with the best developer experience.
+
+TestBallon is Kotlin-first, with a concise and flexible DSL-based API plus uncompromising integration.
+
+What makes TestBalloon stand out is its concise and flexible API, plus its uncompromising integration:
+* It lets you use plain Kotlin to create the entire test structure.
+* It integrates seamlessly on all platforms with advanced IDE support.
+* And TestBalloon is so easy to customize, that it's actually yours.
+
+--
+
+* The only fully featured Kotlin test framework with seamless integration.
+
+* The fully featured Kotlin test framework with seamless integration on all platforms.
+
+* Kotlin testing made easy
+* The all-purpose Kotlin test framework that's easy to use.
+
+* Tired of test frameworks that don't feel native in Kotlin?
+
+* Create tests from a list of input/output data?
+* Create tests dynamically?
+* Use coroutines without boilerplate?
+* Structure tests in a hierarchy?
+
+=== How does it compare?
+
+Can your test framework...
+
+* ... create parameterized tests in plain Kotlin? TestBalloon can.
+* ... provide a simple, consistent API? TestBalloon can.
+* ... integrate fully and just work with all Kotlin target platforms? TestBalloon can.
+* ... run 1.7 million real-world tests in 86 seconds on a Laptop? TestBalloon can.
+* ... run JS tests with deep concurrency? TestBalloon can.
+
+== Quotes
+
+[quote,Thomas Künneth,'GDE Android. Developer. Mentor. Speaker. | https://www.linkedin.com/feed/update/urn:li:activity:7436377965598474240/?dashCommentUrn=urn%3Ali%3Afsd_comment%3A%287436403353145835520%2Curn%3Ali%3Aactivity%3A7436377965598474240%29&dashReplyUrn=urn%3Ali%3Afsd_comment%3A%287436415153396457472%2Curn%3Ali%3Aactivity%3A7436377965598474240%29[on LinkedIn, March 2026]']
+I just ❤️ TestBalloon. Anyone who hasn't given it a spin should definitely do so. This is exactly how modern testing should look like 👍
+
+[quote,Simon Vergauwen,'Developer Advocate @ JetBrains Talking about Kotlin, Ktor, server-side. OSS Developer, maintainer of Arrow Libraries. | https://www.linkedin.com/feed/update/urn:li:activity:7437750524432662528/?dashCommentUrn=urn%3Ali%3Afsd_comment%3A%287437786728930627584%2Curn%3Ali%3Aactivity%3A7437750524432662528%29[on LinkedIn, March 2026]']
+--
+I’ve been having a ton of fun designing my own domain specific testing DSL on top of TestBalloon.
+
+Both in applications and libraries it works wonderful!
+--
+
+[quote,Simon Vergauwen,'Developer Advocate @ JetBrains Talking about Kotlin, Ktor, server-side. OSS Developer, maintainer of Arrow Libraries. | https://www.reddit.com/r/Kotlin/comments/1pjs3bd/comment/ntgf4g6/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button[on reddit, Dec 11, 2025]']
+I have tried TestBalloon, and I am rewriting the test suite in my side project to a custom DSL using `@TestRegistering`. It's absolutely amazing, I love it!
+
+[quote,'Filipp Zhinkin – Kotlin Libraries Team Lead @ JetBrains | https://www.reddit.com/r/Kotlin/comments/1pjs3bd/comment/nth1ms2/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button[on reddit, Dec 11, 2025]']
+I've tried it, it's a nice library. Kudos to authors!
+
+[quote,'utzcoz, Robolectric maintainer | https://github.com/robolectric/robolectric/issues/10797#issuecomment-3626740839[on GitHub, Dec 8, 2025]']
+TestBalloon's work is excellent.
+
+[quote,Thomas Künneth,'GDE Android. Developer. Mentor. Speaker. | at DevFest Hamburg 2025, Nov 14, 2025']
+I didn't know Kotlin testing could be that easy.
+
+=== Announcements
+
+==== 0.8.3
+
+===== Slack
+
+https://github.com/infix-de/testBalloon/releases/tag/0.8.3-K2.3.0[TestBalloon 0.8.3] is around, the latest release of your next-generation Kotlin test framework. This time, it comes with a *Robolectric* integration for fast, reliable and configurable *Android* testing.
+
+Integrating class reloading with a DSL-based framework? https://infix-de.github.io/testBalloon/latest/blog/2026/02/24/robolectric-meets-testballoon/[A little blog post] explains how that went.
+
+Feedback is welcome, here in a thread or in #testballoon.
+
+===== LinkedIn
+
+Android testing at scale is either fast or easy, never both, right?
+
+There are modern DSL-based Kotlin test frameworks, but these cannot use Robolectric for fast, reliable and configurable Android tests on the JVM. Or can they?
+
+GenAI said it would be impossible:
+
+« This integration is not feasible with the current TestBalloon architecture without significant changes to the compiler plugin or framework core. »
+
+Yet here it is: Robolectric meets TestBalloon
+
+Robolectric brings fast, reliable and configurable Android tests to the JVM. It lets us operate close to the real device without waiting for dexing, packaging, installing and emulator start-up.
+
+TestBalloon adds easily parameterized tests, nested test suites, test fixtures, and a Robolectric environment that can be fully configured in plain Kotlin, using a DSL, avoiding the restrictions of annotations.
+
+Read more about how that looks like, and find out why this could be a game-changer for Android testing: https://infix-de.github.io/testBalloon/latest/blog/2026/02/24/robolectric-meets-testballoon/
+
+===== BlueSky
+
+Android testing at scale is either fast or easy, never both, right?
+
+Integrating a modern DSL-based Kotlin test framework with class-based Robolectric was considered impossible by genAI and others. Yet here it is: Robolectric meets 🎈 TestBalloon
+
+https://infix-de.github.io/testBalloon/latest/blog/
+
+==== 0.8.0
+
+TestBalloon 0.8.0 is out, the test framework with a Kotlin-first approach. Conciseness and flexibility meets JUnit*-like testing powers on all platforms: Scope-friendly, anti-boilerplate DSL, create tests with plain function calls (freely parameterizable), nesting fixtures, easily customized. Yours?
+
+Say goodbye to lateinit, welcome natural coroutine scoping. Seamless integration on all platforms: Use familiar tooling and tasks. Last not least:
+
+===== Older
+
+TestBalloon 0.8.0 is out, supporting all Kotlin releases from 2.0.0 to 2.3.20-Beta1.
+
+TestBalloon is the **latest generation Kotlin test framework**, built from the ground up with a Kotlin-first approach. TestBalloon combines Kotlin's conciseness and flexibility with JUnit*-like testing powers on all platforms:
+
+* Concise and flexible DSL: https://infix-de.github.io/testBalloon/latest/how-to/migrating-from-junit/#extensions[Focus on your test case, eliminate boilerplate].
+* Function invocations create tests: Simplify https://infix-de.github.io/testBalloon/latest/how-to/effective-testing/#write-once-test-many[parameterized and data-driven testing].
+* https://infix-de.github.io/testBalloon/latest/how-to/effective-testing/#supply-fresh-state-to-multiple-tests[Dynamic test fixtures], more flexible than JUnit* classes, nesting, and fully multiplatform.
+* Scope-friendly API: No more `lateinit`, https://infix-de.github.io/testBalloon/latest/getting-started/coroutines/[natural coroutine scoping].
+* https://infix-de.github.io/testBalloon/latest/getting-started/integration/[Seamless integration on all platforms]: Use familiar tooling and tasks.
+
+Last not least: TestBalloon is https://infix-de.github.io/testBalloon/latest/how-to/effective-testing/#handling-flaky-tests[so easy to customize], that it's actually yours.
+
+== User Feedback
+
+=== https://kotlinlang.slack.com/archives/C0B8M7BUY/p1755724100709479[kotlinlang Slack #android, 2025-08-22]
+
+> So you'd love to have a DSL-powered framework with a clean and stable API if that is well integrated into the ecosystem.
+
+> Trevor Jones
+Aug 22nd at 16:33 yeah some examples of doing some androidTest UI testing where you use existing JUnit4 style rules would be helpful.
+Things like permission granting, compose rule, custom rules to handle DI. etc...
+
+> Andrey Mischenko [MOD]
+Aug 22nd at 16:35 I think a part of the problem with adoption is how the whole  java/kotlun community and ecosystem, especially android part of it, used to JUnit 4 style tests and knows no alternative and may not understand that tests not always extremely boring and boiler plate
+So teaching devs is a big part of the problem, JUnit was a thing for so long, second generation of coders essentially doesn't know anything else (edited)
+
+> David Göransson
+Aug 25th at 15:09
+Generally I feel the setup with JUnit tests are pretty clunky, one of the major problems we've run into testing on android is flakiness, in e.g E2E tests. It can be system suddenly prompting a dialog update dialog, the API for waiting for a screen to settle has been iffy so maybe a click happens a bit too quickly before the screen is running, etc. To avoid flakiness we've started running our tests nightly about 100 times, so support around this I think can be helpful..
+To combat the flakiness we have multiple annotation/test rules/extensions
+Capturing screenshot on test failed.
+Capture screen recording of the entire test.
+Annotations that reads arguments from the instrumentation registry if to run a test or not. E.g:
+If we have access to some local network asset or not
+To run a test if the build is of a certain flavour (e.g Google Play build).
+So I think good support around adding tools like these on different levels (individual tests, group of tests, all tests) could be very beneficial as well.
+
+> Be lean and focused exactly why many square libs are popular, and their competitive libs died, they wanted to please everyone instead of being good on specific thing
+
+> David Göransson
+Aug 25th at 16:18
+I think the key here I'm getting is extensibility, being able to apply configuration to a test or set of tests, e.g I want all UI tests to take a screenshot if they fail or record their entire run. (The screenshot part should not be part of the test framework, but maybe would be nice if it is a third party plugin/module I can setup?). I also think it can be good if there is an opinionated way of doing this, so not everyone comes up with their own solution.
+Regarding the flakiness:
+I'm not really sure. Problem with instrumented tests on android is that you may never fully get rid of the flakiness. There may always be a pop-up that the system pushes that will be breaking your logic. I don't think eventually would fully help, and logically the test should fail because it didn't get what it expected. Running it again would launch the app, putting it on top and then test would run fine. :shrug:
+Something like eventually is what you end up doing, waiting for a object to a appear, hope to find it to then click it:
+https://github.com/mullvad/mullvadvpn-app/blob/5621df99a0f357262fef6fe886b2fbf956f[…]llvad/mullvadvpn/test/common/extension/UiAutomatorExtensions.kt
+Any resistance again flakiness would have to be done on a higher level, e.g run the test 10 times, expect at least 80% success, or do a retry if a test failed to make sure it wasn't flaky. In the end, I sort of agree with Andrey, flakiness shouldn't be solved by the testing framework, it should be solved at it's core. However, reality is what reality is, ui testing on android device will really never be non-flaky. (edited)
+
+== Sustainability
+
+=== Flyway model
+
+* Provide "Pro" edition at $950
+** 100 database schemas
+** e-mail support in English
+* "Enterprise" edition at $2950
+** unlimited database schemas
+** e-mail support in English, French, Dutch, German, ...
+** support for old DB versions
+** support for old JVM versions
+** enterprise features
+
+* Insurance policy against forks: Remove tests from OSS

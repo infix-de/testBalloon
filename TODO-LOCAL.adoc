@@ -1,0 +1,96 @@
+== TODO (LOCAL)
+
+=== First
+
+==== Check/Fix
+
+* Use https://github.com/catchpoint/workflow-telemetry-action?
+
+* This:
++
+[source]
+----
+:testBalloon-compiler-plugin:compileKotlin e: file:///home/oliver/Repositories/open-source/infix/testBalloon/testBalloon-compiler-plugin/src/main/kotlin/de/infix/testBalloon/compilerPlugin/CompilerPluginRegistrar.kt:43:41 Direct access to the message collector is discouraged. Consider using `CompilerConfiguration.report`.
+----
+
+=== Next
+
+==== Various
+
+* [ ] Reporting/JS: Top-level suites in multi-browser runs are indistinguishable. Check whether to include the target platform in TeamCity reporting.
+** For flattened name: For every suite, for hierarchy-aware reporting: For top-level suites only.
+** On JS: Add the specific runtime (browser/Node name+version).
+** kotlin.test: Runtime info appears per test: [js, browser, ChromeHeadless147.0.0.0, Linux0.0.0]
+** Verify with IDE "Jump to source" on all targets.
+** Verify with Gradle file reporting.
+* [ ] Document?
+** Android Device IDE: Top-level suites are reported by property FQN even when a top-level name is present.
+* [ ] Open up Path components?
+* [ ] Integration tests:
+** [ ] Add Android host and device tests
+** [ ] Add tests with AGP 8 and 9
+** [ ] Add tests with test-only projects (`com.android.test` and `jvm-test-suite`)
+
+==== Consider Integrations
+
+* Ktor?
+* SpringBoot?
+* DI?
+* Mocking?
+
+==== Gradle
+
+* Use the https://docs.gradle.org/current/userguide/tooling_api.html#tooling_api[Gradle Tooling API] for integration tests?
+
+==== Logging
+
+* Provide a test-local logging API.
+
+==== Documentation
+
+* How to:
+** Add: Capture a screenshot on failure
+
+* FAQ/Troubleshooting
+** Gradle properties
+** Gradle extension
+
+* Dokka
+** [ ] Check Dokka Beta
+** [ ] Fix `dokka-plugin-navigation-node-hiding`, which https://github.com/Kotlin/dokka/issues/4381#issuecomment-3636135634[potentially hides too much].
+** [ ] KDocs: Use https://kotlinlang.org/docs/kotlin-doc.html#sample-identifier[@sample] along with https://kotlinlang.org/docs/dokka-gradle-configuration-options.html#fvgbt5_129[samples directory configuration]
+** [ ] Possibly use https://kotlinlang.org/docs/dokka-gradle-configuration-options.html#external-documentation-links-configuration[externalDocumentationLinks] for kotlinx.coroutines
+
+==== Other
+
+* [ ] Check if custom Reports can be replaced by traversals
+
+=== Post 1.0
+
+==== IDE Plugin
+
+* Re-run failed tests (https://youtrack.jetbrains.com/issue/IDEA-387612/Intellij-assumes-PsiMethods-for-tests-when-using-re-run[IDEA-387612]).
+
+==== Unbundling
+
+* Consider extracting the compiler/Gradle plugin combination into a separate project with its own versioning.
+* Consider extracting existing integrations into separate projects with their own versioning.
+* Consider creating additional integrations for common use cases.
+
+==== Metadata
+
+* Add https://github.com/kotest/kotest/issues/5103[test metadata] (at registration time and execution time)
+** Metadata use cases:
+*** Issue, Links, Feature, Severity, Story, Owner, Description
+*** File attachments: Screen snapshot, data
+*** https://allurereport.org/[Allure Report] metadata: Title, Description, Owner, Tag, Severity, Label, Allure ID (Allure TestOps), Link
+*** Quarantine (flaky, incubating, other reasons)
+*** https://developer.android.com/reference/androidx/test/filters/package-summary[Android-specific filtering]
+*** Test-local logging?
+** Gradle 9.4.0 support: https://docs.gradle.org/current/release-notes.html#additional-test-data-capture["Additional test data capture"]
+
+==== Other
+
+* [ ] Shorten stack traces in XML reports?
+* [ ] Provide expected/actual for comparisons?
+* [ ] Consider using Parameterize in TestBalloon tests

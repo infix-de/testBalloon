@@ -15,14 +15,11 @@ import tapmoc.TapmocExtension
  * [ZacSweers/kotlin-compile-testing](https://github.com/ZacSweers/kotlin-compile-testing/releases)
  * to be used for testing.
  */
-fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = null, kctforkVersion: String) {
-    description = "TestBalloon compiler plugin compatibility layer ($kotlinVersion)"
+fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = null, kctforkVersion: String? = null) {
+    val layerName = if (baseLayer == null) "base" else kotlinVersion
+    description = "TestBalloon compiler plugin compatibility layer ($layerName)"
 
     group = "$rootGroup.compilerPlugin.layer"
-
-    with(pluginManager) {
-        apply("org.jmailen.kotlinter")
-    }
 
     extensions.configure<TapmocExtension>("tapmoc") {
         java(baseJdkVersion())
@@ -35,10 +32,12 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
 
         add("compileOnly", "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion")
 
-        add("testImplementation", "$rootGroup:base-test")
-        add("testImplementation", "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion")
-        add("testImplementation", "dev.zacsweers.kctfork:core:$kctforkVersion")
-        add("testImplementation", "org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
+        if (kctforkVersion != null) {
+            add("testImplementation", "$rootGroup:base-test")
+            add("testImplementation", "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion")
+            add("testImplementation", "dev.zacsweers.kctfork:core:$kctforkVersion")
+            add("testImplementation", "org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
+        }
     }
 
     tasks.withType(Test::class.java).configureEach {
@@ -47,6 +46,7 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
 }
 
 fun Project.versionFromCatalog(alias: String): String =
+    @Suppress("NewApi")
     versionCatalogs.named("libs").findVersion(alias).get().displayName
 
 private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogsExtension::class.java)

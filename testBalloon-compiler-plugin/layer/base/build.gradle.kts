@@ -1,17 +1,17 @@
-import buildLogic.rootGroup
+import compilerPlugin.layer.buildLogic.configurePluginLayer
+import compilerPlugin.layer.buildLogic.rootGroup
 
 plugins {
-    id("buildLogic.kotlin-jvm-base")
+    id("compilerPlugin.layer.buildLogic.common")
+    // noinspection NewerVersionAvailable
+    id("org.jetbrains.kotlin.jvm") version "2.2.0"
     alias(libs.plugins.com.github.gmazzo.buildconfig)
 }
 
-description = "TestBalloon compiler plugin compatibility layer (base)"
-
-group = "$rootGroup.compilerPlugin.layer"
+configurePluginLayer(kotlinVersion = "2.2.0")
 
 dependencies {
     api("$rootGroup:testBalloon-framework-shared")
-    compileOnly(libs.org.jetbrains.kotlin.compiler)
 }
 
 buildConfig {

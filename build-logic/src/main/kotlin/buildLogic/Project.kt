@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package buildLogic
 
 import org.gradle.api.Project
@@ -48,10 +50,10 @@ fun Project.propagateLifecycleTasksToIncludedBuilds() {
 }
 
 fun Project.integrationTestRepository() =
-    gradle.rootBuild.rootProject.layout.buildDirectory.dir("integration-test-repository")
+    provider { gradle.rootBuild.rootProject.isolated.projectDirectory.dir("build/integration-test-repository") }
 
 fun Project.aggregationStagingRepository() =
-    gradle.rootBuild.rootProject.layout.buildDirectory.dir("aggregation-staging-repository")
+    provider { gradle.rootBuild.rootProject.isolated.projectDirectory.dir("build/aggregation-staging-repository") }
 
 private val Gradle.rootBuild: Gradle get() = parent.let { it?.rootBuild ?: this }
 

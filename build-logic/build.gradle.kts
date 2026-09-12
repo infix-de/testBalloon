@@ -46,7 +46,7 @@ gradlePlugin {
             "kotlin-multiplatform" to "BuildLogicKotlinMultiplatformPlugin",
             "android-application" to "BuildLogicAndroidApplicationPlugin",
             "publishing" to "BuildLogicPublishingPlugin",
-            "aggregation-publishing" to "BuildLogicAggregationPublishingPlugin"
+            "root-project" to "BuildLogicRootProjectPlugin"
         )
 
         for ((id, implementationClass) in pluginMap) {

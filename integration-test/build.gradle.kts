@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import buildLogic.gradleRunCommandLine
 import buildLogic.integrationTestRepository
 import buildLogic.versionFromCatalog
@@ -15,7 +17,7 @@ dependencies {
 }
 
 val integrationTestRepositoryDir = integrationTestRepository()
-val projectRootDirectory = rootProject.layout.projectDirectory
+val projectRootDirectory = isolated.rootProject.projectDirectory
 
 buildConfig {
     packageName("buildConfig")

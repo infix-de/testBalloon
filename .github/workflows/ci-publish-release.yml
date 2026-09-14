@@ -22,10 +22,13 @@ jobs:
         with:
           gradle-cache-disabled: true
 
-      - name: 'Publish to MavenCentral'
-        run: |
-          ./gradlew publishAllPublicationsToAggregationStagingRepository -Pversion="$PUBLICATION_VERSION" &&
-          ./gradlew :nmcpPublishAggregationToCentralPortal -Pversion="$PUBLICATION_VERSION"
+      - name: 'Populate the staging repository'
+        run: ./gradlew publishAllPublicationsToAggregationStagingRepository -Pversion="$PUBLICATION_VERSION"
+        env:
+          PUBLICATION_VERSION: ${{ github.ref_name }}
+
+      - name: 'Publish to Maven Central Snapshots'
+        run: ./gradlew :nmcpPublishAggregationToCentralPortal -Pversion="$PUBLICATION_VERSION"
         env:
           PUBLICATION_VERSION: ${{ github.ref_name }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}

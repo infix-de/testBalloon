@@ -20,10 +20,18 @@ jobs:
         with:
           gradle-cache-disabled: true
 
-      - name: 'Publish to MavenCentral Snapshots'
-        run: |
-          ./gradlew publishAllPublicationsToAggregationStagingRepository &&
-          ./gradlew :nmcpPublishAggregationToCentralPortalSnapshots
+      - name: 'Populate the staging repository'
+        run: ./gradlew publishAllPublicationsToAggregationStagingRepository
+
+      - name: 'Publish to Maven Central Snapshots'
+        run: ./gradlew :nmcpPublishAggregationToCentralPortalSnapshots
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+
+      - name: 'Obtain the snapshot version'
+        run: |
+          version="$(awk -F '=' '$1 == "version" { print $2 }' gradle.properties)"
+          repo="https://central.sonatype.com/repository/maven-snapshots"
+          wget -q -O - "$repo/de/infix/testBalloon/testBalloon-framework-core/$version/maven-metadata.xml" |
+          awk -F '[<>]' '$2 == "value" { print("Snapshot version: " $3); exit }'

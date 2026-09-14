@@ -34,4 +34,4 @@ jobs:
           version="$(awk -F '=' '$1 == "version" { print $2 }' gradle.properties)"
           repo="https://central.sonatype.com/repository/maven-snapshots"
           wget -q -O - "$repo/de/infix/testBalloon/testBalloon-framework-core/$version/maven-metadata.xml" |
-          awk -F '[<>]' '$2 == "value" { print("Snapshot version: " $3); exit }'
+          awk -F '[<>]' '$2 == "value" { print("### Snapshot version: " $3); exit }' >> "$GITHUB_STEP_SUMMARY"

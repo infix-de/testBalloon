@@ -74,7 +74,7 @@ org-junit-jupiter-jdk = "17"
 org-junit-platform = "1.13.4"
 
 # https://github.com/robolectric/robolectric/releases
-org-robolectric = "4.16.1"
+org-robolectric = "4.17"
 org-robolectric-jdk = "17"
 
 [libraries]

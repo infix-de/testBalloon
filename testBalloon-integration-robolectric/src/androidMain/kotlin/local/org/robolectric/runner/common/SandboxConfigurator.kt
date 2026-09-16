@@ -9,6 +9,7 @@ import org.robolectric.internal.bytecode.ClassHandlerBuilder
 import org.robolectric.internal.bytecode.InstrumentationConfiguration
 import org.robolectric.internal.bytecode.Interceptors
 import org.robolectric.internal.bytecode.ShadowProviders
+import org.robolectric.pluginapi.MethodHandleDecorator
 import org.robolectric.pluginapi.Sdk
 
 /**
@@ -86,7 +87,12 @@ internal class SandboxConfigurator(
         // Create class handler with SDK-specific shadow matching
         val shadowMatcher = AndroidSdkShadowMatcher(sdk.apiLevel)
         val interceptors = Interceptors(AndroidInterceptors.all())
-        val classHandler = classHandlerBuilder.build(shadowMap, shadowMatcher, interceptors)
+        val classHandler = classHandlerBuilder.build(
+            shadowMap,
+            shadowMatcher,
+            interceptors,
+            emptyList<MethodHandleDecorator>()
+        )
 
         // Configure sandbox with class handler
         sandbox.configure(classHandler, interceptors)

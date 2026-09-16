@@ -1,3 +1,9 @@
+## (unreleased)
+
+### Changes
+
+* integration-robolectric: Migrate to Robolectric 4.17 (from 4.16.1)
+
 ## 1.2.0-Beta1 (September 6, 2026)
 
 ### Compatibility

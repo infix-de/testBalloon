@@ -12,3 +12,6 @@ set -e
 cd "$(dirname "$0")/.." || exit 2
 
 log "starting"
+
+REPORT_DIR="build/release-script-reports"
+mkdir -p "$REPORT_DIR"

@@ -147,6 +147,7 @@ internal open class TestProject(
             buildList {
                 if (testTaskNames.any { it.startsWith("js") }) add("kotlinUpgradePackageLock")
                 if (testTaskNames.any { it.startsWith("wasmJs") }) add("kotlinWasmUpgradePackageLock")
+                if (this.isNotEmpty()) add("--continue")
             }.toTypedArray()
         val jsPackageLockFile = projectDirectory() / "kotlin-js-store" / "package-lock.json"
         if (npmPackageLockTasks.isNotEmpty() && (!jsPackageLockFile.exists() || packageLockFilesUpdateRequested())) {

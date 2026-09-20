@@ -2,10 +2,16 @@
 
 . "$(dirname "$0")/.setup"
 
-PACKAGE_LOCK_FILES_UPDATE_REQUESTED=true ./gradlew --warn :integration-test:test
+function upgradePackageLockFiles() {
+  PACKAGE_LOCK_FILES_UPDATE_REQUESTED=true ./gradlew --warn :integration-test:test
+}
 
-# WORKAROUND KT-79811: Repeat the update for stabilization.
+upgradePackageLockFiles || {
+  log "second try"
+  upgradePackageLockFiles
+}
+
 if [ "${REPEAT_PACKAGE_LOCK_FILES_UPDATE:-no}" == "yes" ]; then
   log "repeating"
-  PACKAGE_LOCK_FILES_UPDATE_REQUESTED=true ./gradlew --warn :integration-test:test
+  upgradePackageLockFiles
 fi

@@ -10,6 +10,10 @@ plugins {
 
 description = "Library supporting Kotest Assertions with the TestBalloon framework"
 
+tapmoc {
+    java(9) // required for JUnit Platform
+}
+
 kotlin {
     enableAbiValidation()
 

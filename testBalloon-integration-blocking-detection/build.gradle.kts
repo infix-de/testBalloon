@@ -12,6 +12,10 @@ plugins {
 
 description = "Library supporting blocking code detection with the TestBalloon framework"
 
+tapmoc {
+    java(9) // required for JUnit Platform
+}
+
 kotlin {
     enableAbiValidation()
 

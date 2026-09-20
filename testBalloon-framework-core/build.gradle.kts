@@ -4,9 +4,11 @@ import buildLogic.enableAbiValidation
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import buildLogic.rootGroup
 import buildLogic.versionFromCatalog
+import org.gradle.kotlin.dsl.tapmoc
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import tapmoc.Severity
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
@@ -17,6 +19,13 @@ plugins {
 }
 
 description = "Core library for the TestBalloon framework"
+
+tapmoc {
+    // Expected:
+    // - androidx.test 1.7.0 targets Java 11
+    // - JUnit Platform and 1.13.4 targets Java 9
+    checkJavaClassFiles(Severity.WARNING)
+}
 
 kotlin {
     enableAbiValidation()

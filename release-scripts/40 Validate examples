@@ -2,4 +2,36 @@
 
 . "$(dirname "$0")/.setup"
 
-./gradlew check -x test --continue
+LOG="$REPORT_DIR/$ME.log"
+
+# '--no-configuration-cache' avoids a build failing with "Task ':jar' was never scheduled for execution."
+./gradlew check -x test --continue --no-build-cache --no-configuration-cache > "$LOG" 2>&1 && {
+  echo "Expect failing tests, but the task succeeded. See '$LOG'."
+  exit 2
+}
+
+expected_task_failure_count=6
+
+grep --quiet --fixed-strings "FAILURE: Build completed with $expected_task_failure_count failures." "$LOG" || {
+  echo "Expect $expected_task_failure_count task failures in '$LOG', but got:"
+  grep "^FAILURE: " "$LOG"
+  exit 2
+}
+
+ACTUAL_POSTAMBLE="$REPORT_DIR/$ME-postamble.log"
+
+awk '
+  BEGIN { in_postamble = 0 }
+  /^FAILURE: Build completed with/ { in_postamble = 1 }
+  /^BUILD FAILED in / { exit }
+  in_postamble == 1 { print }
+' < "$LOG" > "$ACTUAL_POSTAMBLE"
+
+failed_test_task_count="$(grep --count '^> There were failing tests.' "$ACTUAL_POSTAMBLE" || true)"
+
+if (( failed_test_task_count != expected_task_failure_count )); then
+  echo "Expected $expected_task_failure_count tasks with failing tests in '$LOG', but got $failed_test_task_count."
+  exit 2
+fi
+
+echo "Validation detected $expected_task_failure_count failed test tasks, as expected."

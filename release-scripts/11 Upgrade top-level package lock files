@@ -2,9 +2,16 @@
 
 . "$(dirname "$0")/.setup"
 
-./gradlew --warn kotlinUpgradePackageLock kotlinWasmUpgradePackageLock :testBalloon-framework-shared:kotlinUpgradePackageLock :testBalloon-framework-shared:kotlinWasmUpgradePackageLock
+function upgradePackageLockFiles() {
+  ./gradlew --warn --continue kotlinUpgradePackageLock kotlinWasmUpgradePackageLock :testBalloon-framework-shared:kotlinUpgradePackageLock :testBalloon-framework-shared:kotlinWasmUpgradePackageLock
+}
+
+upgradePackageLockFiles || {
+  log "second try"
+  upgradePackageLockFiles
+}
 
 if [ "${REPEAT_PACKAGE_LOCK_FILES_UPDATE:-no}" == "yes" ]; then
   log "repeating"
-  ./gradlew --warn kotlinUpgradePackageLock kotlinWasmUpgradePackageLock :testBalloon-framework-shared:kotlinUpgradePackageLock :testBalloon-framework-shared:kotlinWasmUpgradePackageLock
+  upgradePackageLockFiles
 fi

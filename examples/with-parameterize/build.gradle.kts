@@ -1,12 +1,10 @@
-import buildLogic.allTargets
-
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("de.infix.testBalloon")
 }
 
 kotlin {
-    allTargets()
+    jvm()
 
     sourceSets {
         commonTest {

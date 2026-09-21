@@ -15,8 +15,11 @@ android-compileSdk = "36"
 android-minSdk = "26"
 android-targetSdk = "36"
 
-# https://developer.android.com/jetpack/androidx/versions/all-channel
+# https://developer.android.com/jetpack/androidx/releases/test
+# https://maven.google.com/web/index.html#androidx.test:core
 androidx-test = "1.7.0"
+# The androidx.test version used to build testBalloon-framework-core for compatibility with 'base-jdk'.
+androidx-test-earliest = "1.6.1"
 
 # Target JDK version for the base project.
 base-jdk = "8"
@@ -83,6 +86,7 @@ org-robolectric-jdk = "17"
 androidx-compose-bom = "androidx.compose:compose-bom:2025.12.00"
 
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test" }
+androidx-test-core-earliest = { group = "androidx.test", name = "core", version.ref = "androidx-test-earliest" }
 
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-test" }
 

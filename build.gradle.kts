@@ -21,6 +21,20 @@ tasks {
         }
     }
 
+    register("componentChecks") {
+        group = "verification"
+        description = "Run check tasks for all releasable TestBalloon components."
+
+        dependsOn(gradle.includedBuild("testBalloon-compiler-plugin").task(":check"))
+        dependsOn(gradle.includedBuild("testBalloon-gradle-plugin").task(":check"))
+        dependsOn(gradle.includedBuild("testBalloon-framework-shared").task(":check"))
+        dependsOn(":testBalloon-framework-core:check")
+
+        dependsOn(":testBalloon-integration-kotest-assertions:check")
+        dependsOn(":testBalloon-integration-blocking-detection:check")
+        dependsOn(":testBalloon-integration-robolectric:check")
+    }
+
     register("integrationTests") {
         group = "verification"
         description = "Run TestBalloon integration tests."

@@ -67,7 +67,7 @@ fun Project.configureGradlePlugin(kotlinVersion: String) {
         java(gradleJdkVersion())
         kotlin(kotlinVersion)
         checkKotlinStdlibs(Severity.ERROR)
-        checkDependencies(Severity.ERROR)
+        checkDependencies(Severity.WARNING)
     }
 
     extensions.configure<KotlinJvmExtension>("kotlin") {

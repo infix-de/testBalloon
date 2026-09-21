@@ -37,7 +37,7 @@ fun Project.addKotlinStdlibDependency() {
 fun Project.propagateLifecycleTasksToIncludedBuilds() {
     afterEvaluate {
         val excludingRegex = Regex("""(^build-)|(-build-)""")
-        for (taskName in listOf("clean", "lintKotlin")) {
+        for (taskName in listOf("clean", "lintKotlin", "check")) {
             tasks.named(taskName) {
                 dependsOn(
                     gradle.includedBuilds

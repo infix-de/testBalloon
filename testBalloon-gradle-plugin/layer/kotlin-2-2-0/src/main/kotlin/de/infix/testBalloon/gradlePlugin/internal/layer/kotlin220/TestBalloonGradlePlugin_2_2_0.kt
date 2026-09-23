@@ -3,6 +3,8 @@ package de.infix.testBalloon.gradlePlugin.internal.layer.kotlin220
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.HasAndroidTest
 import com.android.build.api.variant.HasUnitTest
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.gradlePlugin.internal.TestBalloonGradlePluginBase
 import de.infix.testBalloon.gradlePlugin.internal.testBalloonEnvironment
@@ -199,6 +201,16 @@ private fun Project.wireEntryPointTaskToAndroidSourceSetsIfPresent(
                         )
                     }
                 }
+            }
+        }
+
+        // AGP < 9 only: Make the "pre-build anchor task" depend on the entry point task.
+        // This avoids implicit dependency errors for Android lint tasks, which process the generated code,
+        // apparently without declaring it as a task input.
+        extensions.findByType(AppExtension::class.java)?.apply {
+            applicationVariants.all {
+                debugLog("Adding test entry point task as preBuildProvider dependency for Android variant '$name'")
+                preBuildProvider.dependsOn(generateTestBalloonEntryPointTask)
             }
         }
     }

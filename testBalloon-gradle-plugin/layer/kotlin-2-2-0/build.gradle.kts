@@ -2,6 +2,7 @@ import gradlePlugin.layer.buildLogic.configurePluginLayer
 import gradlePlugin.layer.buildLogic.gradlePluginId
 import gradlePlugin.layer.buildLogic.libraryFromCatalog
 import gradlePlugin.layer.buildLogic.rootGroup
+import tapmoc.Severity
 
 plugins {
     id("gradlePlugin.layer.buildLogic.common")
@@ -14,6 +15,10 @@ plugins {
 configurePluginLayer(kotlinVersion = "2.2.0")
 
 description = "TestBalloon Gradle plugin compatibility layer (base)"
+
+tapmoc {
+    checkKotlinMetadata(Severity.IGNORE) // False positive: Metadata is compatible with Kotlin 2.2.0
+}
 
 dependencies {
     api("$rootGroup:testBalloon-framework-shared")

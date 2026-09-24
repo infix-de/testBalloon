@@ -17,7 +17,7 @@ configurePluginLayer(kotlinVersion = "2.2.0")
 description = "TestBalloon Gradle plugin compatibility layer (base)"
 
 tapmoc {
-    checkKotlinMetadata(Severity.IGNORE) // False positive: Metadata is compatible with Kotlin 2.2.0
+    checkKotlinMetadata(Severity.WARNING) // False positive: Metadata is compatible with Kotlin 2.2.0
 }
 
 dependencies {

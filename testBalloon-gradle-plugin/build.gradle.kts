@@ -21,7 +21,7 @@ group = rootGroup
 configureGradlePlugin("2.2.0")
 
 tapmoc {
-    checkKotlinMetadata(Severity.IGNORE) // False positive: Metadata is compatible with Kotlin 2.2.0
+    checkKotlinMetadata(Severity.WARNING) // False positive: Metadata is compatible with Kotlin 2.2.0
 }
 
 /** Dependencies to be embedded into the Gradle plugin artifact. */

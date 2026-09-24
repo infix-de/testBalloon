@@ -10,6 +10,7 @@ plugins {
 dependencies {
     implementation(libs.de.fayard.refreshversions.gradle.plugin)
     implementation(libs.org.gradle.toolchains.foojay.resolver)
+    implementation(gradleApi())
 }
 
 samWithReceiver {

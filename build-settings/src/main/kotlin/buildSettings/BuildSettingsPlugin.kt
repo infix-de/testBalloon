@@ -58,6 +58,7 @@ class BuildSettingsPlugin : Plugin<Settings> {
         // The stable Kotlin pre-release repo is: https://packages.jetbrains.team/maven/p/kt/bootstrap
         maven(url = uri("https://packages.jetbrains.team/maven/p/kt/bootstrap"))
         gradlePluginPortal()
+        maven(url = uri("https://repo.gradle.org/gradle/libs-releases/"))
     }
 
     private fun RepositoryHandler.maven(url: URI) {

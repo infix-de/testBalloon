@@ -22,6 +22,11 @@ dependencies {
     // Cf. https://discuss.gradle.org/t/why-duplicate-plugins-in-top-level-build-scripts/49087
     implementation(libs.com.gradleup.tapmoc.gradle.plugin)
     implementation(libs.org.jmailen.kotlinter.gradle.plugin)
+    compileOnly("org.gradle.experimental:gradle-public-api:8.14") {
+        capabilities {
+            requireCapability("org.gradle.experimental:gradle-public-api-internal")
+        }
+    }
 }
 
 gradlePlugin {

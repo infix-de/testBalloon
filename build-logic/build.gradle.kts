@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.org.jetbrains.kotlin.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.sam.with.receiver.gradle.plugin)
     implementation(libs.org.jmailen.kotlinter.gradle.plugin)
+    implementation(gradleApi())
 }
 
 samWithReceiver {

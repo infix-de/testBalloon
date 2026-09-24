@@ -24,6 +24,11 @@ dependencies {
     implementation(libs.org.jmailen.kotlinter.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.sam.with.receiver.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.assignment.gradle.plugin)
+    compileOnly("org.gradle.experimental:gradle-public-api:8.14") {
+        capabilities {
+            requireCapability("org.gradle.experimental:gradle-public-api-internal")
+        }
+    }
 }
 
 gradlePlugin {
@@ -38,3 +43,4 @@ gradlePlugin {
         }
     }
 }
+

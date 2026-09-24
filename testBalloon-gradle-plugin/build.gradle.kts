@@ -50,6 +50,11 @@ dependencies {
     project.configurations.named("compileOnly").configure { extendsFrom(embeddedCompileOnly) }
     compileOnly(libs.org.jetbrains.kotlin.stdlib)
     compileOnly(libs.org.jetbrains.kotlin.gradle.plugin)
+    compileOnly("org.gradle.experimental:gradle-public-api:8.14") {
+        capabilities {
+            requireCapability("org.gradle.experimental:gradle-public-api-internal")
+        }
+    }
 }
 
 gradlePlugin {

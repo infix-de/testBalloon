@@ -23,6 +23,11 @@ tapmoc {
 dependencies {
     api("$rootGroup:testBalloon-framework-shared")
     compileOnly(libs.com.android.gradle.plugin.earliest)
+    compileOnly("org.gradle.experimental:gradle-public-api:8.14") {
+        capabilities {
+            requireCapability("org.gradle.experimental:gradle-public-api-internal")
+        }
+    }
 }
 
 buildConfig {

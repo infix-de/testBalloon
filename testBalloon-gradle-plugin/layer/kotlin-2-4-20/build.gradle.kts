@@ -8,11 +8,3 @@ plugins {
 }
 
 configurePluginLayer(kotlinVersion = "2.4.20", baseLayer = "kotlin-2-3-20")
-
-dependencies {
-    compileOnly("org.gradle.experimental:gradle-public-api:8.14") {
-        capabilities {
-            requireCapability("org.gradle.experimental:gradle-public-api-internal")
-        }
-    }
-}

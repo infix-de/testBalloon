@@ -5,9 +5,9 @@
 ./gradlew --warn checkLegacyAbi
 ./gradlew --warn lintKotlin
 
-log "starting componentTestsAllTargets"
+log "starting componentChecks"
 
-./gradlew componentTestsAllTargets
+./gradlew componentChecks --no-configuration-cache --continue
 
 log "stopping Gradle daemons"
 

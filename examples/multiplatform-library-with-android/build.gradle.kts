@@ -14,6 +14,7 @@ tapmoc {
     java(junitJupiterJdkVersion().coerceAtLeast(robolectricJdkVersion()))
     kotlin(kotlinVersion())
 
+    checkKotlinStdlibs(Severity.ERROR)
     checkDependencies(Severity.ERROR)
 }
 

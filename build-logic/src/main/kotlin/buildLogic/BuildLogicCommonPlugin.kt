@@ -21,6 +21,7 @@ class BuildLogicCommonPlugin : Plugin<Project> {
         extensions.configure<TapmocExtension>("tapmoc") {
             java(baseJdkVersion())
             kotlin(kotlinVersion())
+            checkKotlinStdlibs(Severity.ERROR)
             checkDependencies(Severity.ERROR)
         }
 

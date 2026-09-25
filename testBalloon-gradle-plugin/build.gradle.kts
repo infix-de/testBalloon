@@ -2,7 +2,6 @@ import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import buildLogic.rootGroup
 import gradlePlugin.layer.buildLogic.configureGradlePlugin
 import gradlePlugin.layer.buildLogic.gradlePluginId
-import tapmoc.Severity
 
 plugins {
     id("gradlePlugin.layer.buildLogic.common")
@@ -19,10 +18,6 @@ description = "TestBalloon Gradle plugin"
 group = rootGroup
 
 configureGradlePlugin("2.2.0")
-
-tapmoc {
-    checkKotlinMetadata(Severity.WARNING) // False positive: Metadata is compatible with Kotlin 2.2.0
-}
 
 /** Dependencies to be embedded into the Gradle plugin artifact. */
 val embeddedCompileOnly = configurations.dependencyScope("embeddedCompileOnly")
@@ -50,11 +45,6 @@ dependencies {
     project.configurations.named("compileOnly").configure { extendsFrom(embeddedCompileOnly) }
     compileOnly(libs.org.jetbrains.kotlin.stdlib)
     compileOnly(libs.org.jetbrains.kotlin.gradle.plugin)
-    compileOnly("org.gradle.experimental:gradle-public-api:8.14") {
-        capabilities {
-            requireCapability("org.gradle.experimental:gradle-public-api-internal")
-        }
-    }
 }
 
 gradlePlugin {

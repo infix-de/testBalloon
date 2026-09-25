@@ -5,6 +5,7 @@ package gradlePlugin.layer.buildLogic
 import org.gradle.api.HasImplicitReceiver
 import org.gradle.api.Project
 import org.gradle.api.SupportsKotlinAssignmentOverloading
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.tasks.testing.Test
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
@@ -66,8 +67,7 @@ fun Project.configureGradlePlugin(kotlinVersion: String) {
     extensions.configure<TapmocExtension>("tapmoc") {
         java(gradleJdkVersion())
         kotlin(kotlinVersion)
-        checkKotlinStdlibs(Severity.ERROR)
-        checkDependencies(Severity.WARNING)
+        checkDependencies(Severity.ERROR)
     }
 
     extensions.configure<KotlinJvmExtension>("kotlin") {
@@ -85,6 +85,15 @@ fun Project.configureGradlePlugin(kotlinVersion: String) {
     extensions.configure<AssignmentExtension>("assignment") {
         annotation(SupportsKotlinAssignmentOverloading::class.qualifiedName!!)
     }
+
+    dependencies.add(
+        "compileOnly",
+        (dependencies.create(libraryFromCatalog("org.gradle.experimental.gradle.public.api")) as ModuleDependency)
+            .capabilities {
+                // Cf. https://github.com/gradle/gradle/issues/29483#issuecomment-2791668178
+                requireCapability("org.gradle.experimental:gradle-public-api-internal")
+            }
+    )
 }
 
 fun Project.versionFromCatalog(alias: String): String =

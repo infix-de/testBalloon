@@ -24,9 +24,16 @@ androidx-test-earliest = "1.6.1"
 # Target JDK version for the base project.
 base-jdk = "8"
 
-# Target JDK version for Gradle plugins.
+# Target JDK version for Gradle plugins created by this composite build.
 # https://docs.gradle.org/current/userguide/compatibility.html
 gradle-jdk = "17"
+
+# Target Gradle API version for Gradle plugins created by this composite build.
+# See:
+# - https://github.com/GradleUp/tapmoc/issues/69
+# - https://github.com/gradle/gradle/issues/29483#issuecomment-2791668178
+# - https://repo.gradle.org/ui/native/libs-releases/org/gradle/experimental/gradle-public-api/
+gradle-public-api = "8.14"
 
 # https://github.com/junit-team/junit4/releases
 junit-junit4 = "4.13.2"
@@ -128,6 +135,8 @@ io-projectreactor-tools-blockhound = "io.projectreactor.tools:blockhound:1.0.14.
 
 # https://github.com/junit-team/junit4
 junit-junit4 = { module = "junit:junit", version.ref = "junit-junit4" }
+
+org-gradle-experimental-gradle-public-api = { module = "org.gradle.experimental:gradle-public-api", version.ref = "gradle-public-api" }
 
 # https://github.com/gradle/foojay-toolchains/blob/main/CHANGELOG.md
 org-gradle-toolchains-foojay-resolver = "org.gradle.toolchains:foojay-resolver:1.0.0"

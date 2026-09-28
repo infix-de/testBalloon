@@ -11,13 +11,13 @@ plugins {
 description = "Library supporting Kotest Assertions with the TestBalloon framework"
 
 tapmoc {
-    java(9) // required for JUnit Platform
+    java(11) // required for Kotest >= 6.0
 }
 
 kotlin {
     enableAbiValidation()
 
-    allTargets(includeWasmWasi = false)
+    allTargets()
 
     sourceSets {
         commonMain {

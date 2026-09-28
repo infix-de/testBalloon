@@ -10,6 +10,8 @@ import kotlin.time.Duration.Companion.minutes
 private val latestAgpVersion = projectCatalogVersion("android.gradle.plugin.latest")
 private val earliestAgpVersion = projectCatalogVersion("android.gradle.plugin.earliest")
 
+private val latestAgpKotlinVersion = projectCatalogVersion("android.gradle.plugin.latest.kotlin")
+
 private val latestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin.latest.release")
 private val earliestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin")
 
@@ -29,7 +31,7 @@ val AndroidTests by testSuite(
         Configuration(
             agpVersion = latestAgpVersion,
             // AGP 9 cannot handle Kotlin versions above its default version.
-            appKotlinVersions = listOf(null, earliestKotlinVersion),
+            appKotlinVersions = listOf(latestAgpKotlinVersion),
             gradleVersion = null
         ),
         Configuration(

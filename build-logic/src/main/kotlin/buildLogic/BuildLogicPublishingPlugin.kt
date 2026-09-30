@@ -6,6 +6,8 @@ import com.vanniktech.maven.publish.SourcesJar
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
@@ -18,6 +20,41 @@ class BuildLogicPublishingPlugin : Plugin<Project> {
             apply("com.vanniktech.maven.publish.base")
         }
 
+        fun MavenPom.configurePom() {
+            name.set(project.name)
+            description.set(
+                provider {
+                    checkNotNull(project.description) {
+                        "Project description must be set for project '${project.path}'"
+                    }
+                }
+            )
+
+            url.set("https://github.com/infix-de/testBalloon/")
+
+            licenses {
+                license {
+                    name.set("The Apache License, Version 2.0")
+                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                    distribution.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+            }
+
+            developers {
+                developer {
+                    id.set("infix-de")
+                    name.set("infix Software")
+                    url.set("https://github.com/infix-de")
+                }
+            }
+
+            scm {
+                url.set("https://github.com/infix-de/testBalloon/")
+                connection.set("scm:git:git://github.com/infix-de/testBalloon.git")
+                developerConnection.set("scm:git:ssh://git@github.com/infix-de/testBalloon.git")
+            }
+        }
+
         extensions.configure<MavenPublishBaseExtension>("mavenPublishing") {
             @Suppress("UnstableApiUsage")
             configureBasedOnAppliedPlugins(JavadocJar.Empty(), SourcesJar.Sources())
@@ -25,42 +62,20 @@ class BuildLogicPublishingPlugin : Plugin<Project> {
             signAllPublications()
 
             pom {
-                name.set(project.name)
-                description.set(
-                    provider {
-                        checkNotNull(project.description) {
-                            "Project description must be set for project '${project.path}'"
-                        }
-                    }
-                )
-
-                url.set("https://github.com/infix-de/testBalloon/")
-
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                        distribution.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("infix-de")
-                        name.set("infix Software")
-                        url.set("https://github.com/infix-de")
-                    }
-                }
-
-                scm {
-                    url.set("https://github.com/infix-de/testBalloon/")
-                    connection.set("scm:git:git://github.com/infix-de/testBalloon.git")
-                    developerConnection.set("scm:git:ssh://git@github.com/infix-de/testBalloon.git")
-                }
+                configurePom()
             }
         }
 
         extensions.configure<PublishingExtension>("publishing") {
+            publications {
+                configureEach {
+                    this as MavenPublication
+                    pom {
+                        configurePom()
+                    }
+                }
+            }
+
             repositories {
                 System.getProperty("user.home")?.let { home ->
                     maven {
@@ -82,7 +97,7 @@ class BuildLogicPublishingPlugin : Plugin<Project> {
         }
 
         extensions.configure<SigningExtension>("signing") {
-            isRequired = false // not necessary for local publishing
+            isRequired = providers.systemProperty("local.signing.required").orNull?.toBooleanStrictOrNull() ?: false
         }
 
         // WORKAROUND https://github.com/gradle/gradle/issues/26091

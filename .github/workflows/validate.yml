@@ -41,7 +41,7 @@ jobs:
         run: ./gradlew lintKotlin
 
       - name: 'Run component tests'
-        run: ./gradlew componentTestsAllTargets
+        run: ./gradlew componentChecks --no-configuration-cache
 
       - name: 'Stop Gradle daemons (freeing RAM)'
         run: ./gradlew --stop
@@ -87,7 +87,7 @@ jobs:
         run: ./gradlew checkLegacyAbi
 
       - name: 'Run component tests'
-        run: ./gradlew componentTestsAllTargets
+        run: ./gradlew componentChecks --no-configuration-cache
 
       - name: 'Stop Gradle daemons (freeing RAM)'
         run: ./gradlew --stop

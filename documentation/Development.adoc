@@ -106,7 +106,7 @@ Alternatively, you can publish locally to `$HOME/.m2/local-repository` by
 TestBallon has a three-stage test process, built into the IDE run configuration `ciTests`:
 
 1. `gradlew checkLegacyAbi`
-2. `gradlew componentTestsAllTargets`
+^2. `gradlew componentChecks --no-configuration-cache`
 3. `gradlew integrationTests`
 
 ==== Debugging the Compiler Plugin

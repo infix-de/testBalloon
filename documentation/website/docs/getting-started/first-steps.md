@@ -41,7 +41,6 @@
         ```kotlin
         named("androidHostTest") { // (1)!
             dependencies {
-                implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
                 implementation("junit:junit:$junit4Version")
             }
         }
@@ -54,7 +53,6 @@
         ```kotlin
         named("androidDeviceTest") { // (1)!
             dependencies {
-                implementation("de.infix.testBalloon:testBalloon-framework-core:$testBalloonVersion")
                 implementation("androidx.test:runner:$androidxRunnerVersion")
             }
         }

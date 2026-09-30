@@ -68,7 +68,6 @@ kotlin {
         if (androidSdkAvailable()) {
             named("androidHostTest") {
                 dependencies {
-                    implementation("de.infix.testBalloon:testBalloon-framework-core:{{version:de.infix.testBalloon}}")
                     implementation("junit:junit:{{version:junit.junit4}}")
                 }
             }

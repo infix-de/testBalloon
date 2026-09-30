@@ -55,7 +55,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(projects.testBalloonFrameworkCore)
-                implementation(libs.org.jetbrains.kotlin.test) // for assertions only
+                implementation(libs.org.jetbrains.kotlin.test)
                 implementation(libs.com.benwoodworth.parameterize)
 
                 implementation(composeBom)
@@ -74,14 +74,7 @@ kotlin {
 
         named("androidHostTest") {
             dependencies {
-                // required for host-side tests with TestBalloon outside this project:
-                //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
-                // instead of this project-internal dependency:
-                implementation(projects.testBalloonFrameworkCore)
                 implementation(libs.junit.junit4)
-                // required for host-side tests with TestBalloon outside this project:
-                //     implementation("de.infix.testBalloon:testBalloon-integration-robolectric:${testBalloonVersion}")
-                // instead of this project-internal dependency:
                 implementation(projects.testBalloonIntegrationRobolectric)
                 implementation(libs.androidx.test.core)
 
@@ -92,10 +85,6 @@ kotlin {
 
         named("androidDeviceTest") {
             dependencies {
-                // required for device-side tests with TestBalloon outside this project:
-                //     implementation("de.infix.testBalloon:testBalloon-framework-core:${testBalloonVersion}")
-                // instead of this project-internal dependency:
-                implementation(projects.testBalloonFrameworkCore)
                 implementation(libs.androidx.test.runner)
 
                 implementation(composeBom)

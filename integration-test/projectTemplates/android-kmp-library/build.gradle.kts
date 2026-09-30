@@ -49,7 +49,6 @@ kotlin {
 
         named("androidHostTest") {
             dependencies {
-                implementation("de.infix.testBalloon:testBalloon-framework-core:{{version:de.infix.testBalloon}}")
                 implementation("junit:junit:{{version:junit.junit4}}")
             }
         }
@@ -57,7 +56,6 @@ kotlin {
         if (emulatorAvailable) {
             named("androidDeviceTest") {
                 dependencies {
-                    implementation("de.infix.testBalloon:testBalloon-framework-core:{{version:de.infix.testBalloon}}")
                     implementation("androidx.test:runner:{{version:androidx.test}}")
                 }
             }

@@ -1,17 +1,18 @@
-## (unreleased)
+## 1.2.0-RC (September 30, 2026)
 
 ### Compatibility
 
 * This release has been tested with Kotlin versions 2.2.21 … 2.5.0-Beta1. Its ABI is binary-compatible with TestBalloon 1.1.0.
+* JS and Wasm targets require Kotlin >= 2.2.21 (KT-80868).
 
 ### Changes (since 1.1.0)
 
-* The TestBalloon Gradle plugin now supports multiple versions of the Kotlin Gradle plugin.
-* There is preliminary experimental support for the new JS test DSL and Playwright-based browser tests in Kotlin 2.4.20 and above.
-* The minimum supported JDK is now 8 instead of 11.
-* Libraries are now built with Kotlin 2.2.21 instead of 2.2.0. JS and Wasm targets require Kotlin >= 2.2.21 due to Kotlin stdlib changes.
+* Libraries are now built with Kotlin 2.2.21 instead of 2.2.0. JS and Wasm targets require Kotlin >= 2.2.21 due to Kotlin stdlib changes (KT-80868).
 * integration-robolectric: Now requires Robolectric >= 4.17 (from 4.16.1)
 * integration-kotest-assertions: Now requires Kotest >= 6.1.4 (from 5.9.1) and includes the Wasm/WASI target.
+* The minimum supported JDK is now 8 instead of 11.
+* The TestBalloon Gradle plugin now supports multiple versions of the Kotlin Gradle plugin.
+* There is preliminary experimental support for the new JS test DSL and Playwright-based browser tests in Kotlin 2.4.20 and above.
 
 ## 1.2.0-Beta1 (September 6, 2026)
 

@@ -5,7 +5,8 @@
 LOG="$REPORT_DIR/$ME.log"
 
 # '--no-configuration-cache' avoids a build failing with "Task ':jar' was never scheduled for execution."
-./gradlew check -x test --continue --no-build-cache --no-configuration-cache > "$LOG" 2>&1 && {
+# '-Dorg.gradle.parallel=false' prevents the Kotlin compiler daemon from hanging/OOM during Wasm/WASI compilations.
+./gradlew check -x test --continue --no-build-cache --no-configuration-cache -Dorg.gradle.parallel=false > "$LOG" 2>&1 && {
   echo "Expect failing tests, but the task succeeded. See '$LOG'."
   exit 2
 }

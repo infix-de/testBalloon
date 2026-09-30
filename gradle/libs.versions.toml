@@ -55,6 +55,7 @@ com-vanniktech-maven-publish = "0.37.0"
 # https://github.com/kotest/kotest/releases
 # Do not force an update onto consumers unless necessary
 io-kotest = "6.1.4"
+io-kotest-jdk = "11"
 
 # https://github.com/ktorio/ktor/releases
 io-ktor = "3.3.3"

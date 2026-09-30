@@ -1,12 +1,17 @@
 import buildLogic.allTargets
+import buildLogic.kotestJdkVersion
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("de.infix.testBalloon")
 }
 
+tapmoc {
+    java(kotestJdkVersion())
+}
+
 kotlin {
-    allTargets(includeWasmWasi = false)
+    allTargets()
 
     sourceSets {
         commonTest {

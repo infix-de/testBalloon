@@ -17,6 +17,7 @@ private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogs
 fun Project.baseJdkVersion() = versionFromCatalog("base.jdk").toInt()
 fun Project.kotlinVersion() = versionFromCatalog("org.jetbrains.kotlin")
 fun Project.robolectricJdkVersion() = baseJdkVersion().coerceAtLeast(versionFromCatalog("org-robolectric-jdk").toInt())
+fun Project.kotestJdkVersion() = baseJdkVersion().coerceAtLeast(versionFromCatalog("io-kotest-jdk").toInt())
 fun Project.junitJupiterJdkVersion() =
     baseJdkVersion().coerceAtLeast(versionFromCatalog("org-junit-jupiter-jdk").toInt())
 

@@ -53,23 +53,19 @@ fun KotlinMultiplatformExtension.nativeTargets() {
     tvosX64()
 }
 
-fun KotlinMultiplatformExtension.allTargets(includeWasmWasi: Boolean = true) {
+fun KotlinMultiplatformExtension.allTargets() {
     jvm()
     jsTargets()
     nativeTargets()
 
-    if (includeWasmWasi) {
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmWasi {
-            nodejs()
-        }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        nodejs()
     }
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     applyHierarchy {
-        if (includeWasmWasi) {
-            withWasmWasi()
-        }
+        withWasmWasi()
     }
 }
 

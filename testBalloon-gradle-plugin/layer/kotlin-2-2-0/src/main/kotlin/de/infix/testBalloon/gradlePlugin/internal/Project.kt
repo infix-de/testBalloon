@@ -53,24 +53,26 @@ val Project.reportingPathLimit: String?
  * Returns `TESTBALLOON_*` environment variable settings as a map of `name` to `value`.
  */
 fun Project.testBalloonEnvironment(
-    secondaryIncludePatterns: List<String>,
-    secondaryExcludePatterns: List<String>
+    secondaryIncludePatterns: List<String>? = null,
+    secondaryExcludePatterns: List<String>? = null
 ): Map<String, String> = buildMap {
-    fun prioritizedPatterns(primary: EnvironmentVariable, secondary: Iterable<String>): String =
+    fun prioritizedPatterns(primary: EnvironmentVariable, secondary: List<String>?): String? =
         System.getenv(primary.name)?.ifEmpty { null }
-            ?: secondary.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
+            ?: secondary?.ifEmpty { null }?.joinToString("${Constants.INTERNAL_PATH_PATTERN_SEPARATOR}")
 
-    this[EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name] =
-        prioritizedPatterns(
-            EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
-            secondary = secondaryIncludePatterns
-        )
+    prioritizedPatterns(
+        EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS,
+        secondary = secondaryIncludePatterns
+    )?.let {
+        this[EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.name] = it
+    }
 
-    this[EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name] =
-        prioritizedPatterns(
-            EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
-            secondary = secondaryExcludePatterns
-        )
+    prioritizedPatterns(
+        EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS,
+        secondary = secondaryExcludePatterns
+    )?.let {
+        this[EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.name] = it
+    }
 
     this[EnvironmentVariable.TESTBALLOON_REPORTING.name] = reportingMode.name
     reportingPathLimit?.let {

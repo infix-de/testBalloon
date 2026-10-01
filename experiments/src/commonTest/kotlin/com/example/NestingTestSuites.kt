@@ -16,18 +16,3 @@ val NestingCommon by testSuite {
         }
     }
 }
-
-val NestingCommon2 by testSuite("nesting common 2") {
-    test("top 1") {
-    }
-
-    testSuite("middle") {
-        test("middle 1") {
-        }
-
-        testSuite("lower") {
-            test("lower 1") {
-            }
-        }
-    }
-}

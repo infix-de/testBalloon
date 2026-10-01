@@ -38,4 +38,4 @@ include(":examples:multiplatform-library-with-android")
 include(":comparisons:using-kotlin-test")
 include(":comparisons:using-testBalloon")
 
-include(":experiments")
+includeBuild("experiments")

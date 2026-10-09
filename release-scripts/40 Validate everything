@@ -11,7 +11,7 @@ LOG="$REPORT_DIR/$ME.log"
   exit 2
 }
 
-expected_task_failure_count=6
+expected_task_failure_count=5
 
 grep --quiet --fixed-strings "FAILURE: Build completed with $expected_task_failure_count failures." "$LOG" || {
   echo "Expect $expected_task_failure_count task failures in '$LOG', but got:"

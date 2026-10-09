@@ -52,6 +52,9 @@ com-gradleup-tapmoc = "0.4.2"
 # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
 com-vanniktech-maven-publish = "0.37.0"
 
+# https://github.com/takahirom/roborazzi/releases
+io-github-takahirom-roborazzi = "1.76.0"
+
 # https://github.com/kotest/kotest/releases
 # Do not force an update onto consumers unless necessary
 io-kotest = "6.1.4"
@@ -127,6 +130,8 @@ de-fayard-refreshversions-gradle-plugin = "de.fayard.refreshVersions:de.fayard.r
 # kctfork version 0.5.1 provides declarations compatible with Kotlin 2.0.0 and above.
 dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.5.1"
 
+io-github-takahirom-roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "io-github-takahirom-roborazzi" }
+
 # https://github.com/kotest/kotest/releases
 io-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "io-kotest" }
 
@@ -197,6 +202,8 @@ com-gradleup-nmcp = { id = "com.gradleup.nmcp", version.ref = "com-gradleup-nmcp
 com-gradleup-tapmoc = { id = "com.gradleup.tapmoc", version.ref = "com-gradleup-tapmoc" }
 
 com-vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "com-vanniktech-maven-publish" }
+
+io-github-takahirom-roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "io-github-takahirom-roborazzi" }
 
 org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "org-jetbrains-dokka" }
 

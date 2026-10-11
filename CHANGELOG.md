@@ -1,11 +1,11 @@
-## 1.2.0-RC (September 30, 2026)
+## 1.2.0 (unreleased)
 
 ### Compatibility
 
 * This release has been tested with Kotlin versions 2.2.21 … 2.5.0-Beta1. Its ABI is binary-compatible with TestBalloon 1.1.0.
 * JS and Wasm targets require Kotlin >= 2.2.21 (KT-80868).
 
-### Changes (since 1.1.0)
+### Changes
 
 * Libraries are now built with Kotlin 2.2.21 instead of 2.2.0. JS and Wasm targets require Kotlin >= 2.2.21 due to Kotlin stdlib changes (KT-80868).
 * integration-robolectric: Now requires Robolectric >= 4.17 (from 4.16.1)
@@ -13,18 +13,7 @@
 * The minimum supported JDK is now 8 instead of 11.
 * The TestBalloon Gradle plugin now supports multiple versions of the Kotlin Gradle plugin.
 * There is preliminary experimental support for the new JS test DSL and Playwright-based browser tests in Kotlin 2.4.20 and above.
-
-## 1.2.0-Beta1 (September 6, 2026)
-
-### Compatibility
-
-* This release has been tested with Kotlin versions 2.2.0 … 2.5.0-dev-6460. Its ABI is binary-compatible with 1.1.0.
-
-### Changes
-
-* The Gradle plugin now supports multiple versions of the Kotlin Gradle plugin.
-* There is preliminary experimental support for the new JS test DSL and Playwright-based browser tests in Kotlin 2.4.20-RC and above.
-* The minimum supported JDK is now 8 instead of 11.
+* Memory resources for `testConfig`, parameters, and lambdas are now released early during test setup and execution, avoiding memory starvation with resource-intensive test configurations (such as `TestConfig.robolectric`), a high number of tests, and Gradle test tasks configured with their default maxHeapSize of 512 MB.
 
 ## 1.1.0 (September 3, 2026)
 

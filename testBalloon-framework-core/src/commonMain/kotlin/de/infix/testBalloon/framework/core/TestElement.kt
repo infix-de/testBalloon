@@ -17,10 +17,14 @@ public sealed class TestElement(
     parent: TestSuite?,
     name: String,
     qualifiedPropertyName: String? = null,
-    internal var testConfig: TestConfig
+    testConfig: TestConfig
 ) : AbstractTestElement {
 
     internal val testElementParent: TestSuite? = parent
+
+    internal var testConfig: TestConfig = testConfig
+        private set
+        get() = field.aliveOnly()
 
     internal val isSessionOrCompartment: Boolean = parent == null || this is TestCompartment
 
@@ -241,7 +245,19 @@ public sealed class TestElement(
             return element.testElementName.safeAsSuiteDisplayName()
         }
 
-    override val testElementIsEnabled: Boolean get() = parameters.isEnabled
+    override val testElementIsEnabled: Boolean by lazy {
+        // We make the enabled state available after an element's death. Why? A `SequencingExecutionReport`
+        // may examine the enabled state long after an element's execution.
+        parameters.isEnabled
+    }
+
+    /** Indicates whether the element is alive and its properties are no still valid. */
+    private var isAlive: Boolean = true
+
+    private fun <Result> Result.aliveOnly(): Result {
+        require(isAlive) { "An alive-only property was queried for the dead element $testElementPath" }
+        return this
+    }
 
     /** Indicates whether the element included by the session's [Selection]? */
     internal var isIncluded: Boolean = true
@@ -250,7 +266,7 @@ public sealed class TestElement(
     private var _parameters: Parameters? = null
 
     internal var parameters: Parameters
-        get() = _parameters ?: Parameters.default
+        get() = _parameters.aliveOnly() ?: Parameters.default
         set(value) {
             require(_parameters == null) { "$this: parameters may be set only once" }
             _parameters = value
@@ -329,10 +345,15 @@ public sealed class TestElement(
         }
     }
 
-    /** The most recent event observed by a `SequencingExecutionReport`. */
+    /** The most recent event observed by a
+     * [de.infix.testBalloon.framework.core.internal.integration.SequencingExecutionReport].
+     */
     internal var recentEvent: Event? = null
 
-    /** The state of this element's event forwarding by a `SequencingExecutionReport`. */
+    /**
+     * The state of this element's event forwarding by a
+     * [de.infix.testBalloon.framework.core.internal.integration.SequencingExecutionReport].
+     */
     internal var forwardingState: ForwardingState = ForwardingState.NotForwarded
 
     internal enum class ForwardingState { NotForwarded, StartForwarded, FinishForwarded }
@@ -372,8 +393,21 @@ public sealed class TestElement(
      * Executes the test element, adding [Event]s to the [report].
      *
      * For proper reporting, this method is also invoked for disabled elements.
+     * A derivative must call [finalizeExecution] at the end of its implementation.
      */
     internal abstract suspend fun execute(report: TestExecutionReport)
+
+    /**
+     * Finalizes the execution of this test element, releasing resources.
+     */
+    internal fun finalizeExecution() {
+        isAlive = false
+
+        // The read accessors for the following parameters must be guarded by an `aliveOnly()` extension function
+        // invocation.
+        _parameters = null
+        testConfig = TestConfig
+    }
 
     /**
      * Executes the [setupAction], reporting its [Event]s to the [report].

@@ -85,12 +85,13 @@ public fun testSuite(
     content: TestSuite.() -> Unit
 ): Lazy<TestSuite> {
     require(qualifiedPropertyName.isNotEmpty()) {
-        "The top-level test suite (name=«$name») was not initialized" +
+        "The top-level test suite (name=«${name ?: qualifiedPropertyName}») was not initialized" +
             " with a non-empty 'qualifiedPropertyName' by the compiler plugin (or internal test code)."
     }
 
     require(suitesInRegistrationScope.isEmpty()) {
-        "«$name» cannot register as a top-level suite inside ${suitesInRegistrationScope.firstOrNull()}."
+        "«${name ?: qualifiedPropertyName}» cannot register as a top-level suite" +
+            " inside ${suitesInRegistrationScope.firstOrNull()}."
     }
 
     return lazy {
@@ -114,7 +115,7 @@ public open class TestSuite internal constructor(
     name: String,
     qualifiedPropertyName: String? = null,
     testConfig: TestConfig = TestConfig,
-    private val content: TestSuite.() -> Unit = {}
+    private var content: TestSuite.() -> Unit = emptyContent
 ) : TestElement(parent, name = name, qualifiedPropertyName = qualifiedPropertyName, testConfig = testConfig),
     AbstractTestSuite,
     TestSuiteScope {
@@ -247,6 +248,10 @@ public open class TestSuite internal constructor(
             isIncluded = testElementChildren.any { it.isIncluded }
             // Propagate enabled status bottom up: A suite without enabled children disables itself.
             enabledChildExists = isIncluded && testElementChildren.any { it.isIncluded && it.testElementIsEnabled }
+
+            // The suite's content lambda is no longer needed after it has been invoked for setup.
+            // Dropping it here makes objects captured by the lambda eligible for garbage collection.
+            content = emptyContent
         }
     }
 
@@ -287,11 +292,15 @@ public open class TestSuite internal constructor(
                 }
             }
         }
+
+        finalizeExecution()
     }
 
     internal companion object {
         /** The maximum length which a unique appendix is guaranteed not to exceed. */
         internal val UNIQUE_APPENDIX_LENGTH_LIMIT = appendix(999_999).length
+
+        private val emptyContent: (TestSuite.() -> Unit) = {}
 
         /** Returns an appendix for [number]. */
         private fun appendix(number: Int) = " 〈$number〉"

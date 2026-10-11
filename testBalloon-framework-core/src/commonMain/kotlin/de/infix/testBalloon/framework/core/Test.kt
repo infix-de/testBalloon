@@ -25,7 +25,7 @@ public class Test internal constructor(
     parent: TestSuite,
     name: String,
     testConfig: TestConfig,
-    private val action: suspend ExecutionScope.() -> Unit
+    private var action: suspend ExecutionScope.() -> Unit
 ) : TestElement(parent, name = name, testConfig = testConfig),
     AbstractTest {
 
@@ -59,35 +59,38 @@ public class Test internal constructor(
     }
 
     override suspend fun execute(report: TestExecutionReport) {
-        if (!isIncluded) return
+        if (isIncluded) {
+            executeReporting(report) {
+                if (testElementIsEnabled) {
+                    @Suppress("DEPRECATION")
+                    testConfig.executeWrapped(this) {
+                        val blockingEnvelope =
+                            TestEnvelopeContext.current()?.envelopeValue() as? TestFixture.BlockingEnvelope
+                        val testScopeContext = TestScopeContext.current()
 
-        executeReporting(report) {
-            if (testElementIsEnabled) {
-                @Suppress("DEPRECATION")
-                testConfig.executeWrapped(this) {
-                    val blockingEnvelope =
-                        TestEnvelopeContext.current()?.envelopeValue() as? TestFixture.BlockingEnvelope
-                    val testScopeContext = TestScopeContext.current()
-
-                    if (blockingEnvelope != null) {
-                        val inheritableContext = inheritableContext()
-                        blockingEnvelope.execute(test = this@Test) {
-                            runTest(inheritableContext, timeout = testScopeContext?.timeout ?: 60.seconds) {
-                                ExecutionScope(this@Test, this).action()
+                        if (blockingEnvelope != null) {
+                            val inheritableContext = inheritableContext()
+                            blockingEnvelope.execute(test = this@Test) {
+                                runTest(inheritableContext, timeout = testScopeContext?.timeout ?: 60.seconds) {
+                                    ExecutionScope(this@Test, this).action()
+                                }
                             }
-                        }
-                    } else {
-                        if (testScopeContext != null) {
-                            executeInTestScope(testScopeContext)
                         } else {
-                            coroutineScope {
-                                ExecutionScope(this@Test, this).action()
+                            if (testScopeContext != null) {
+                                executeInTestScope(testScopeContext)
+                            } else {
+                                coroutineScope {
+                                    ExecutionScope(this@Test, this).action()
+                                }
                             }
                         }
                     }
                 }
             }
         }
+
+        action = emptyAction
+        finalizeExecution()
     }
 
     /**
@@ -112,5 +115,9 @@ public class Test internal constructor(
         } else {
             it.minusKey(CoroutineDispatcher)
         }
+    }
+
+    private companion object {
+        val emptyAction: suspend ExecutionScope.() -> Unit = {}
     }
 }

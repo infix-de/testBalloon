@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.TestResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -35,7 +36,7 @@ class TestCompartmentTests {
     }
 
     @Test
-    fun twoCompartments() = FrameworkTestUtilities.withTestFramework {
+    fun twoCompartments() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             val compartment = testElementParent as? TestCompartment
             test("test1") {
@@ -108,47 +109,10 @@ class TestCompartmentTests {
     }
 
     @Test
-    fun concurrency() = FrameworkTestUtilities.withTestFramework {
+    fun concurrency(): TestResult = FrameworkTestUtilities.runTestOutsideTestScope {
         if (!testInfrastructureSupportsConcurrency) {
             println(">>> Skipping – test infrastructure on ${testPlatform.displayName} does not support concurrency")
-            return@withTestFramework
-        }
-
-        val suiteCount = 8
-        val testCount = 8
-
-        val concurrentThreadIds = ConcurrentSet<ULong>()
-
-        val suite1 by testSuite(qualifiedPropertyName = "topSuite1", compartment = { TestCompartment.Concurrent }) {
-            val outerSuiteThreadId = testPlatform.threadId()
-
-            for (suiteNumber in 1..suiteCount) {
-                testSuite("subSuite$suiteNumber") {
-                    assertEquals(outerSuiteThreadId, testPlatform.threadId())
-
-                    for (testNumber in 1..testCount) {
-                        test("test$testNumber") {
-                            concurrentThreadIds.add(testPlatform.threadId())
-                            delay(10.milliseconds)
-                        }
-                    }
-                }
-            }
-        }
-
-        val sequentialThreadIds = ConcurrentSet<ULong>()
-
-        val suite2 by testSuite(qualifiedPropertyName = "topSuite2") {
-            for (suiteNumber in 1..suiteCount) {
-                testSuite("subSuite$suiteNumber") {
-                    for (testNumber in 1..testCount) {
-                        test("test$testNumber") {
-                            sequentialThreadIds.add(testPlatform.threadId())
-                            delay(10.milliseconds)
-                        }
-                    }
-                }
-            }
+            return@runTestOutsideTestScope
         }
 
         class MissedParallelismExpectation(actualThreadCount: Int) :
@@ -159,58 +123,96 @@ class TestCompartmentTests {
         // This test has been flaky on GitHub macOS and Windows runners. Tests occasionally run on one thread only,
         // on systems where multiple cores are present. We try repeatedly before giving up.
         for (attempt in 1..10) {
-            concurrentThreadIds.clear()
-            sequentialThreadIds.clear()
+            FrameworkTestUtilities.withTestFramework {
+                val suiteCount = 8
+                val testCount = 8
 
-            try {
-                FrameworkTestUtilities.withTestReport(
-                    suite1,
-                    suite2,
-                    invokeSetup = missedParallelismExpectation == null
-                ) {
-                    with(finishedTestEvents()) {
-                        assertTrue(isNotEmpty())
-                        assertAllSucceeded()
+                val concurrentThreadIds = ConcurrentSet<ULong>()
 
-                        val concurrentThreadCount = concurrentThreadIds.elements().size
-                        if (testPlatform.parallelism > 1) {
-                            if (concurrentThreadCount <= 1) {
-                                throw MissedParallelismExpectation(concurrentThreadCount)
+                val suite1 by testSuite(qualifiedPropertyName = "topSuite1", compartment = {
+                    TestCompartment.Concurrent
+                }) {
+                    val outerSuiteThreadId = testPlatform.threadId()
+
+                    for (suiteNumber in 1..suiteCount) {
+                        testSuite("subSuite$suiteNumber") {
+                            assertEquals(outerSuiteThreadId, testPlatform.threadId())
+
+                            for (testNumber in 1..testCount) {
+                                test("test$testNumber") {
+                                    concurrentThreadIds.add(testPlatform.threadId())
+                                    delay(10.milliseconds)
+                                }
                             }
-                        } else {
-                            assertEquals(
-                                1,
-                                concurrentThreadCount,
-                                "Expected concurrent execution on 1 thread, actually: $concurrentThreadCount threads"
-                            )
                         }
-
-                        val sequentialThreadCount = sequentialThreadIds.elements().size
-                        assertEquals(
-                            1,
-                            sequentialThreadCount,
-                            "Expected sequential execution on 1 thread, actually: $sequentialThreadCount threads"
-                        )
-
-                        // Tests in each compartment must be processed consecutively.
-                        assertElementPathsContainInOrder(
-                            map {
-                                it.element.testElementPath.internalId
-                            }.filter { it.startsWith("topSuite1$iSep") }
-                        )
-                        assertElementPathsContainInOrder(
-                            map {
-                                it.element.testElementPath.internalId
-                            }.filter { it.startsWith("topSuite2$iSep") }
-                        )
                     }
                 }
-                break
-            } catch (exception: MissedParallelismExpectation) {
-                missedParallelismExpectation = exception
-                delay(1.seconds)
-                println(">>> Repeating concurrency test after $attempt failed attempt(s)")
+
+                val sequentialThreadIds = ConcurrentSet<ULong>()
+
+                val suite2 by testSuite(qualifiedPropertyName = "topSuite2") {
+                    for (suiteNumber in 1..suiteCount) {
+                        testSuite("subSuite$suiteNumber") {
+                            for (testNumber in 1..testCount) {
+                                test("test$testNumber") {
+                                    sequentialThreadIds.add(testPlatform.threadId())
+                                    delay(10.milliseconds)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                try {
+                    FrameworkTestUtilities.withTestReport(suite1, suite2) {
+                        with(finishedTestEvents()) {
+                            assertTrue(isNotEmpty())
+                            assertAllSucceeded()
+
+                            val concurrentThreadCount = concurrentThreadIds.elements().size
+                            if (testPlatform.parallelism > 1) {
+                                if (concurrentThreadCount <= 1) {
+                                    throw MissedParallelismExpectation(concurrentThreadCount)
+                                }
+                            } else {
+                                assertEquals(
+                                    1,
+                                    concurrentThreadCount,
+                                    "Expected concurrent execution on 1 thread," +
+                                        " actually: $concurrentThreadCount threads"
+                                )
+                            }
+
+                            val sequentialThreadCount = sequentialThreadIds.elements().size
+                            assertEquals(
+                                1,
+                                sequentialThreadCount,
+                                "Expected sequential execution on 1 thread, actually: $sequentialThreadCount threads"
+                            )
+
+                            // Tests in each compartment must be processed consecutively.
+                            assertElementPathsContainInOrder(
+                                map {
+                                    it.element.testElementPath.internalId
+                                }.filter { it.startsWith("topSuite1$iSep") }
+                            )
+                            assertElementPathsContainInOrder(
+                                map {
+                                    it.element.testElementPath.internalId
+                                }.filter { it.startsWith("topSuite2$iSep") }
+                            )
+                        }
+                    }
+                    missedParallelismExpectation = null
+                } catch (exception: MissedParallelismExpectation) {
+                    missedParallelismExpectation = exception
+                    delay(1.seconds)
+                    println(
+                        ">>> Repeating concurrency test on ${testPlatform.displayName} after $attempt failed attempt(s)"
+                    )
+                }
             }
+            if (missedParallelismExpectation == null) break
         }
 
         if (missedParallelismExpectation != null) {
@@ -218,13 +220,13 @@ class TestCompartmentTests {
             if (testPlatform.environment("CI") != null) {
                 println(">>> [CI] ignoring $missedParallelismExpectation")
             } else {
-                fail(missedParallelismExpectation.message)
+                fail(missedParallelismExpectation?.message)
             }
         }
     }
 
     @Test
-    fun ui() = FrameworkTestUtilities.withTestFramework {
+    fun ui() = FrameworkTestUtilities.runTestWithTestFramework {
         val uiThreadIds = ConcurrentSet<ULong>()
 
         val suite by testSuite(qualifiedPropertyName = "topSuite", compartment = {
@@ -264,7 +266,6 @@ class TestCompartmentTests {
 private class ConcurrentSet<Element> : SynchronizedObject() {
     private val elements = mutableSetOf<Element>()
 
-    fun clear() = synchronized(this) { elements.clear() }
     fun add(element: Element) = synchronized(this) { elements.add(element) }
     fun elements() = synchronized(this) { elements.toSet() }
 }

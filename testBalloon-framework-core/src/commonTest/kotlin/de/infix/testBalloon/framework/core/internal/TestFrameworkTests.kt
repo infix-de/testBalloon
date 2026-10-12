@@ -11,7 +11,6 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 
-@Suppress("SpellCheckingInspection")
 class TestFrameworkTests {
     private val iSep = Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
 
@@ -101,7 +100,7 @@ class TestFrameworkTests {
     private fun verifyElementSelection(
         selection: TestElement.Selection,
         expectedResult: List<Pair<String, Boolean>>
-    ): TestResult = FrameworkTestUtilities.withTestFramework {
+    ): TestResult = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             test("test1") {}
             test("test2", testConfig = TestConfig.disable()) {}

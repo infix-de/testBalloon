@@ -161,7 +161,7 @@ class TeamCityTestExecutionReportTests {
         """.trimIndent()
 
     private fun basicOutputTest(reportingMode: ReportingMode, expectedElements: String): TestResult =
-        FrameworkTestUtilities.withTestFramework(TestSession(reportingMode = reportingMode)) {
+        FrameworkTestUtilities.runTestWithTestFramework(TestSession(reportingMode = reportingMode)) {
             val suite by testSuite(qualifiedPropertyName = "c.e.topSuite") {
                 test("test1") {}
 
@@ -189,74 +189,75 @@ class TeamCityTestExecutionReportTests {
         }
 
     @Test
-    fun concurrentOutput() =
-        FrameworkTestUtilities.withTestFramework(TestSession(reportingMode = ReportingMode.GradleFilesWithNesting)) {
-            val suite by testSuite(qualifiedPropertyName = "concurrent") {
-                test("test1") {}
-                test("test2") {}
+    fun concurrentOutput() = FrameworkTestUtilities.runTestWithTestFramework(
+        TestSession(reportingMode = ReportingMode.GradleFilesWithNesting)
+    ) {
+        val suite by testSuite(qualifiedPropertyName = "concurrent") {
+            test("test1") {}
+            test("test2") {}
 
-                testSuite("suite-1") {
-                    test("suite-1-test1") {}
-                    test("suite-1-test2") {}
-                }
-
-                testSuite("suite-2") {
-                    test("suite-2-test1") {}
-                    test("suite-2-test2") {}
-                }
+            testSuite("suite-1") {
+                test("suite-1-test1") {}
+                test("suite-1-test2") {}
             }
 
-            suite // Make suite register with the TestSession.
-            TestSession.global.setUp(TestElement.AllInSelection, ThrowingTestSetupReport())
+            testSuite("suite-2") {
+                test("suite-2-test1") {}
+                test("suite-2-test2") {}
+            }
+        }
 
-            val output = FrameworkTestUtilities.ConcurrentList<String>()
-            val report = TeamCityTestExecutionReport { output.add(it) }
+        suite // Make suite register with the TestSession.
+        TestSession.global.setUp(TestElement.AllInSelection, ThrowingTestSetupReport())
 
-            val sessionStartingEvent = TestElement.Event.Starting(TestSession.global).also { report.add(it) }
-            val compartmentStartingEvent =
-                TestElement.Event.Starting(TestSession.global.defaultCompartment).also { report.add(it) }
+        val output = FrameworkTestUtilities.ConcurrentList<String>()
+        val report = TeamCityTestExecutionReport { output.add(it) }
 
-            val startingEvents = mutableMapOf<TestElement, TestElement.Event.Starting>()
-            listOf(
-                "/S",
-                "suite-1/S",
-                "suite-2/S", // concurrent start, delayed reporting
-                "suite-2|suite-2-test2", // reported in hierarchy order (2)
-                "suite-2|suite-2-test1", // reported in hierarchy order (1)
-                "suite-1|suite-1-test2", // reported in start order (1)
-                "suite-2/F", // finished before suite-1, children reported in hierarchy order, not start order
-                "suite-1|suite-1-test1", // reported in start order (2)
-                "suite-1/F",
-                "test2",
-                "test1",
-                "/F"
-            ).forEach { elementPathPlusOptionalSuffix ->
-                val elementPath = elementPathPlusOptionalSuffix.substringBeforeLast("/")
-                val suffix = elementPathPlusOptionalSuffix.substringAfterLast("/", "")
-                val elements = if (elementPath.isEmpty()) listOf() else elementPath.split("|")
-                val element = elements.fold<String, TestElement>(suite) { element, childName ->
-                    (element as TestSuite).testElementChildren.first { it.testElementName == childName }
-                }
-                when (suffix) {
-                    "S" -> report.add(TestElement.Event.Starting(element).also { startingEvents[element] = it })
+        val sessionStartingEvent = TestElement.Event.Starting(TestSession.global).also { report.add(it) }
+        val compartmentStartingEvent =
+            TestElement.Event.Starting(TestSession.global.defaultCompartment).also { report.add(it) }
 
-                    "F" -> report.add(TestElement.Event.Finished(element, startingEvents[element]!!))
+        val startingEvents = mutableMapOf<TestElement, TestElement.Event.Starting>()
+        listOf(
+            "/S",
+            "suite-1/S",
+            "suite-2/S", // concurrent start, delayed reporting
+            "suite-2|suite-2-test2", // reported in hierarchy order (2)
+            "suite-2|suite-2-test1", // reported in hierarchy order (1)
+            "suite-1|suite-1-test2", // reported in start order (1)
+            "suite-2/F", // finished before suite-1, children reported in hierarchy order, not start order
+            "suite-1|suite-1-test1", // reported in start order (2)
+            "suite-1/F",
+            "test2",
+            "test1",
+            "/F"
+        ).forEach { elementPathPlusOptionalSuffix ->
+            val elementPath = elementPathPlusOptionalSuffix.substringBeforeLast("/")
+            val suffix = elementPathPlusOptionalSuffix.substringAfterLast("/", "")
+            val elements = if (elementPath.isEmpty()) listOf() else elementPath.split("|")
+            val element = elements.fold<String, TestElement>(suite) { element, childName ->
+                (element as TestSuite).testElementChildren.first { it.testElementName == childName }
+            }
+            when (suffix) {
+                "S" -> report.add(TestElement.Event.Starting(element).also { startingEvents[element] = it })
 
-                    else -> {
-                        val startingEvent = TestElement.Event.Starting(element)
-                        report.add(startingEvent)
-                        report.add(TestElement.Event.Finished(element, startingEvent))
-                    }
+                "F" -> report.add(TestElement.Event.Finished(element, startingEvents[element]!!))
+
+                else -> {
+                    val startingEvent = TestElement.Event.Starting(element)
+                    report.add(startingEvent)
+                    report.add(TestElement.Event.Finished(element, startingEvent))
                 }
             }
+        }
 
-            report.add(TestElement.Event.Finished(compartmentStartingEvent.element, compartmentStartingEvent))
-            report.add(TestElement.Event.Finished(sessionStartingEvent.element, sessionStartingEvent))
+        report.add(TestElement.Event.Finished(compartmentStartingEvent.element, compartmentStartingEvent))
+        report.add(TestElement.Event.Finished(sessionStartingEvent.element, sessionStartingEvent))
 
-            val actualElements = output.comparableElements().joinToString("\n")
-            val expectedElements =
-                @Suppress("LongLine")
-                """
+        val actualElements = output.comparableElements().joinToString("\n")
+        val expectedElements =
+            @Suppress("LongLine")
+            """
                     ##teamcity[flowStarted flowId='concurrent']
                     ##teamcity[testSuiteStarted name='concurrent' timestamp='...' flowId='concurrent']
                     ##teamcity[flowStarted flowId='concurrent${iESep}suite-1' parent='concurrent']
@@ -293,9 +294,9 @@ class TeamCityTestExecutionReportTests {
                     ##teamcity[flowFinished flowId='concurrent${iESep}test1']
                     ##teamcity[testSuiteFinished name='concurrent' timestamp='...' flowId='concurrent']
                     ##teamcity[flowFinished flowId='concurrent']
-                """.trimIndent()
-            assertEquals(expectedElements, actualElements)
-        }
+            """.trimIndent()
+        assertEquals(expectedElements, actualElements)
+    }
 
     private fun FrameworkTestUtilities.ConcurrentList<String>.comparableElements() = elements()
         .map { it.replace(timestampRegex, "timestamp='...'").replace(detailsRegex, "details='AssertionError'") }

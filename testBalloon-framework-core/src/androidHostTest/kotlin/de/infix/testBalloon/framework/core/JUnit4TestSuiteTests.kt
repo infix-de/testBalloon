@@ -14,7 +14,7 @@ import kotlin.test.assertNull
 class JUnit4TestSuiteTests {
     @Test
     fun fixtureWithTestRule() = try {
-        FrameworkTestUtilities.withTestFramework {
+        FrameworkTestUtilities.runTestWithTestFramework {
             val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
             class TestMethodLoggingRule : TestRule {

@@ -21,7 +21,7 @@ class TestSuiteTests {
     private val iSep = Constants.INTERNAL_PATH_ELEMENT_SEPARATOR
 
     @Test
-    fun sequentialExecution() = FrameworkTestUtilities.withTestFramework {
+    fun sequentialExecution() = FrameworkTestUtilities.runTestWithTestFramework {
         val subSuiteCount = 3
         val testCount = 3
         val expectedTestElementPaths = FrameworkTestUtilities.ConcurrentList<String>()
@@ -51,7 +51,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun aroundAll() = FrameworkTestUtilities.withTestFramework {
+    fun aroundAll() = FrameworkTestUtilities.runTestWithTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(
@@ -87,7 +87,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun aroundAllWithoutInnerInvocation() = FrameworkTestUtilities.withTestFramework {
+    fun aroundAllWithoutInnerInvocation() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1", testConfig = TestConfig.aroundAll {}) {
             test("test1") {}
         }
@@ -102,7 +102,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun aroundAllWithoutInnerInvocationPermitted() = FrameworkTestUtilities.withTestFramework {
+    fun aroundAllWithoutInnerInvocationPermitted() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(
             qualifiedPropertyName = "suite1",
             testConfig = TestConfig.permits(TestConfig.Permit.WrapperWithoutInnerInvocation).aroundAll {}
@@ -116,7 +116,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun lowerLevelSuiteOutOfHierarchy() = FrameworkTestUtilities.withTestFramework {
+    fun lowerLevelSuiteOutOfHierarchy() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             val suite1 = this
             testSuite("childSuite") {
@@ -133,7 +133,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun topLevelSuiteOutOfHierarchy1() = FrameworkTestUtilities.withTestFramework {
+    fun topLevelSuiteOutOfHierarchy1() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             testSuite("top-level suite inside a top-level suite", qualifiedPropertyName = "inside suite1") {
             }
@@ -147,7 +147,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun topLevelSuiteOutOfHierarchy2() = FrameworkTestUtilities.withTestFramework {
+    fun topLevelSuiteOutOfHierarchy2() = FrameworkTestUtilities.runTestWithTestFramework {
         fun myTopLevelSuite(name: String, content: TestSuite.() -> Unit) =
             testSuite(name, qualifiedPropertyName = name, content = content)
 
@@ -164,7 +164,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteWithoutChildren() = FrameworkTestUtilities.withTestFramework {
+    fun suiteWithoutChildren() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
         }
 
@@ -176,7 +176,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteWithoutChildrenPermitted() = FrameworkTestUtilities.withTestFramework {
+    fun suiteWithoutChildrenPermitted() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(
             qualifiedPropertyName = "suite1",
             testConfig = TestConfig.permits(TestConfig.Permit.SuiteWithoutChildren)
@@ -189,7 +189,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteWithEmptyQualifiedPropertyName() = FrameworkTestUtilities.withTestFramework {
+    fun suiteWithEmptyQualifiedPropertyName() = FrameworkTestUtilities.runTestWithTestFramework {
         assertFails {
             val suite1 by testSuite(qualifiedPropertyName = "") {
             }
@@ -200,7 +200,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteWithBlankName() = FrameworkTestUtilities.withTestFramework {
+    fun suiteWithBlankName() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = " ") {
         }
 
@@ -212,7 +212,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testWithEmptyName() = FrameworkTestUtilities.withTestFramework {
+    fun testWithEmptyName() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             test("") {
             }
@@ -226,7 +226,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testWithBlankName() = FrameworkTestUtilities.withTestFramework {
+    fun testWithBlankName() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             test(" ") {
             }
@@ -240,7 +240,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun aroundEach() = FrameworkTestUtilities.withTestFramework {
+    fun aroundEach() = FrameworkTestUtilities.runTestWithTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(
@@ -314,7 +314,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun failFast() = FrameworkTestUtilities.withTestFramework {
+    fun failFast() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1", testConfig = TestConfig.failFast(3)) {
             for (testId in 1..15) {
                 test("test$testId") {
@@ -338,7 +338,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixture() = FrameworkTestUtilities.withTestFramework {
+    fun suiteLevelFixture() = FrameworkTestUtilities.runTestWithTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val invocationSuite by testSuite(qualifiedPropertyName = "invocationSuite") {
@@ -418,7 +418,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testLevelFixture() = FrameworkTestUtilities.withTestFramework {
+    fun testLevelFixture() = FrameworkTestUtilities.runTestWithTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val parameterSuite by testSuite(qualifiedPropertyName = "parameterSuite") {
@@ -481,7 +481,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testLevelFixtureNested() = FrameworkTestUtilities.withTestFramework {
+    fun testLevelFixtureNested() = FrameworkTestUtilities.runTestWithTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val parameterSuite by testSuite(qualifiedPropertyName = "parameterSuite") {
@@ -565,7 +565,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun testLevelToSuiteLevelFixture() = FrameworkTestUtilities.withTestFramework {
+    fun testLevelToSuiteLevelFixture() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             val fixture1 = testFixture {
             } asParameterForEach {
@@ -574,7 +574,7 @@ class TestSuiteTests {
             }
 
             test("test2") {
-                assertEquals(fixture1(), Unit)
+                assertEquals(Unit, fixture1())
             }
         }
         FrameworkTestUtilities.withTestReport(suite1) { frameworkFailure ->
@@ -589,7 +589,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelToTestLevelFixture() = FrameworkTestUtilities.withTestFramework {
+    fun suiteLevelToTestLevelFixture() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             testFixture {
             } asParameterForAll {
@@ -612,7 +612,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureWithAroundAll() = FrameworkTestUtilities.withTestFramework {
+    fun suiteLevelFixtureWithAroundAll() = FrameworkTestUtilities.runTestWithTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(
@@ -654,7 +654,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureWithDisabledElements() = FrameworkTestUtilities.withTestFramework {
+    fun suiteLevelFixtureWithDisabledElements() = FrameworkTestUtilities.runTestWithTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
@@ -716,7 +716,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureWithFailedTest() = FrameworkTestUtilities.withTestFramework {
+    fun suiteLevelFixtureWithFailedTest() = FrameworkTestUtilities.runTestWithTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
@@ -753,7 +753,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun fixturesWithCloseResult() = FrameworkTestUtilities.withTestFramework {
+    fun fixturesWithCloseResult() = FrameworkTestUtilities.runTestWithTestFramework {
         val results = FrameworkTestUtilities.ConcurrentList<String>()
 
         fun TestSuite.testFixtureChecking() = testFixture {} closeWith { testsSucceeded ->
@@ -859,7 +859,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureActionFailure() = FrameworkTestUtilities.withTestFramework {
+    fun suiteLevelFixtureActionFailure() = FrameworkTestUtilities.runTestWithTestFramework {
         var failCount = 0
         var closeCount = 0
 
@@ -890,7 +890,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun suiteLevelFixtureWithSetupFailures() = FrameworkTestUtilities.withTestFramework {
+    fun suiteLevelFixtureWithSetupFailures() = FrameworkTestUtilities.runTestWithTestFramework {
         val trace = FrameworkTestUtilities.ConcurrentList<String>()
 
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
@@ -987,7 +987,7 @@ class TestSuiteTests {
 
             repeat(100) { index ->
                 test("test$index") {
-                    assertEquals(fixture1(), 1)
+                    assertEquals(1, fixture1())
                 }
             }
         }
@@ -1016,7 +1016,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun uniqueTestPaths() = FrameworkTestUtilities.withTestFramework {
+    fun uniqueTestPaths() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(qualifiedPropertyName = "suite1") {
             test("test1") {
             }
@@ -1037,7 +1037,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun uniqueTopLevelSuitePathsInSameCompartment() = FrameworkTestUtilities.withTestFramework {
+    fun uniqueTopLevelSuitePathsInSameCompartment() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(name = "common name", qualifiedPropertyName = "suite1") {
             test("test1") {
             }
@@ -1054,7 +1054,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun uniqueTopLevelSuitePathsInDifferentCompartments() = FrameworkTestUtilities.withTestFramework {
+    fun uniqueTopLevelSuitePathsInDifferentCompartments() = FrameworkTestUtilities.runTestWithTestFramework {
         val suite1 by testSuite(name = "common name", qualifiedPropertyName = "suite1") {
             test("test1") {
             }
@@ -1073,7 +1073,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun uniqueCompartmentNames() = FrameworkTestUtilities.withTestFramework {
+    fun uniqueCompartmentNames() = FrameworkTestUtilities.runTestWithTestFramework {
         val compartment1 = TestCompartment("common name", TestConfig)
         val compartment2 = TestCompartment("common name", TestConfig)
 
@@ -1081,7 +1081,7 @@ class TestSuiteTests {
     }
 
     @Test
-    fun additionalReports() = FrameworkTestUtilities.withTestFramework {
+    fun additionalReports() = FrameworkTestUtilities.runTestWithTestFramework {
         val eventLog = mutableListOf<String>()
 
         class AdditionalExecutionReport(val name: String) : TestExecutionReport() {

@@ -20,7 +20,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.test.TestResult
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlin.time.Duration.Companion.minutes
 
@@ -47,7 +46,7 @@ public object FrameworkTestUtilities {
         testSession: AbstractTestSession? = null,
         testConfig: TestConfig = TestConfig.Companion,
         content: TestSuite.() -> Unit
-    ): TestResult = withTestFramework(testSession) {
+    ): TestResult = runTestWithTestFramework(testSession) {
         val suite by testSuite(qualifiedPropertyName = "suite", testConfig = testConfig) {
             content()
         }
@@ -57,27 +56,46 @@ public object FrameworkTestUtilities {
         }
     }
 
+    /** Performs [action] in an initialized framework session outside a `TestScope`, but returning a [TestResult]. */
+    public fun runTestWithTestFramework(
+        testSession: AbstractTestSession? = null,
+        action: suspend () -> Unit
+    ): TestResult = runTestOutsideTestScope {
+        withTestFramework(testSession, action)
+    }
+
     /** Performs [action] in an initialized framework session. */
+    public suspend fun withTestFramework(testSession: AbstractTestSession? = null, action: suspend () -> Unit) {
+        initializeTestFramework(testSession)
+        try {
+            coroutineScope {
+                action()
+            }
+        } finally {
+            // Reset global state for another round of test framework initialization.
+            TestFramework.resetState()
+        }
+    }
+
+    /**
+     * Performs [action] outside a `TestScope`, but returning a [TestResult].
+     *
+     * Why don't we run our framework tests directly inside a TestScope?
+     * Because the framework may use TestScope to execute its own tests, and TestScopes cannot nest.
+     */
     @OptIn(DelicateCoroutinesApi::class)
-    public fun withTestFramework(testSession: AbstractTestSession? = null, action: suspend () -> Unit): TestResult {
-        // Why don't we run our framework tests directly inside a TestScope?
-        // Because the framework may use TestScope to execute its own tests, and TestScopes cannot nest.
+    public fun runTestOutsideTestScope(action: suspend () -> Unit): TestResult {
         val deferredJob = GlobalScope.async(Dispatchers.Default) {
-            initializeTestFramework(testSession)
             try {
-                coroutineScope {
-                    action()
-                }
+                action()
             } finally {
-                // Reset global state for another round of test framework initialization.
-                TestFramework.resetState()
                 if (testPlatform.type == TestPlatform.Type.WasmWasi) {
                     logInfo { "Primary coroutine on ${testPlatform.displayName} completed." }
                 }
             }
         }
 
-        return TestScope().runTest(timeout = 2.minutes) {
+        return runTest(timeout = 2.minutes) {
             if (testPlatform.type == TestPlatform.Type.WasmWasi) {
                 // WORKAROUND: `join()` and `await()` will hang on Wasm/WASI if a `Test` is running on the
                 //     test dispatcher.

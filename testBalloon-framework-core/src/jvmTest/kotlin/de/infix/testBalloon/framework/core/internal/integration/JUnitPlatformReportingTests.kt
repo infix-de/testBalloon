@@ -95,7 +95,7 @@ class JUnitPlatformReportingTests {
     )
 
     private fun descriptorTest(reportingMode: ReportingMode, expectedOutput: String): TestResult = try {
-        FrameworkTestUtilities.withTestFramework(TestSession(reportingMode = reportingMode)) {
+        FrameworkTestUtilities.runTestWithTestFramework(TestSession(reportingMode = reportingMode)) {
             val suite1 by testSuite(qualifiedPropertyName = "c.e.topSuite") {
                 test("t-test 1") {}
 

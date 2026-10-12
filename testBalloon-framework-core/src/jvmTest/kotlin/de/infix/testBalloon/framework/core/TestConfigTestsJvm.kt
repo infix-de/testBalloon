@@ -17,7 +17,7 @@ import kotlin.test.assertNotEquals
 class TestConfigTestsJvm {
     @Test
     fun singleThreadedDispatcher() {
-        FrameworkTestUtilities.withTestFramework {
+        FrameworkTestUtilities.runTestWithTestFramework {
             @OptIn(ExperimentalCoroutinesApi::class)
             withSingleThreadedDispatcher { defaultDispatcher ->
                 val testSuite by testSuite(
@@ -99,7 +99,7 @@ class TestConfigTestsJvm {
 
     @Test
     fun mainDispatcherSetMoreThanOnce() {
-        FrameworkTestUtilities.withTestFramework {
+        FrameworkTestUtilities.runTestWithTestFramework {
             val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
             @OptIn(ExperimentalCoroutinesApi::class)

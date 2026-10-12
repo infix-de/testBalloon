@@ -34,7 +34,7 @@ class TestSessionTests {
     }
 
     @Test
-    fun onlySingleInstance() = FrameworkTestUtilities.withTestFramework {
+    fun onlySingleInstance() = FrameworkTestUtilities.runTestWithTestFramework {
         // `withTestFramework` has set up a `TestSession`, creating another one should fail.
         assertFailsWith<IllegalArgumentException> {
             object : TestSession(testConfig = TestConfig.invocation(TestConfig.Invocation.Concurrent)) {}

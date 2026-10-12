@@ -18,7 +18,7 @@ class RobolectricTestSuiteTests {
     }
 
     @Test
-    fun `robolectricTestSuite calls must not nest`() = FrameworkTestUtilities.withTestFramework {
+    fun `robolectricTestSuite calls must not nest`() = FrameworkTestUtilities.runTestWithTestFramework {
         val topLevelSuite by testSuite(qualifiedPropertyName = "topLevel") {
             robolectricTestSuite<RobolectricTestSuiteTestsOuterContent>("outer robolectric suite")
         }

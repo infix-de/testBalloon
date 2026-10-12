@@ -14,7 +14,7 @@ import kotlin.test.assertNull
 
 class TestConfigTests {
     @Test
-    fun coroutineContext() = FrameworkTestUtilities.withTestFramework {
+    fun coroutineContext() = FrameworkTestUtilities.runTestWithTestFramework {
         val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
@@ -28,7 +28,7 @@ class TestConfigTests {
     }
 
     @Test
-    fun invocation() = FrameworkTestUtilities.withTestFramework {
+    fun invocation() = FrameworkTestUtilities.runTestWithTestFramework {
         val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
@@ -41,10 +41,10 @@ class TestConfigTests {
     }
 
     @Test
-    fun concurrencyAndTestScope() = FrameworkTestUtilities.withTestFramework {
+    fun concurrencyAndTestScope() = FrameworkTestUtilities.runTestWithTestFramework {
         if (!testInfrastructureSupportsConcurrency) {
             println(">>> Skipping – test infrastructure on ${testPlatform.displayName} does not support concurrency")
-            return@withTestFramework
+            return@runTestWithTestFramework
         }
 
         val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
@@ -126,7 +126,7 @@ class TestConfigTests {
     }
 
     private fun testPermits(testConfig: TestConfig, vararg expectedPermits: TestConfig.Permit) =
-        FrameworkTestUtilities.withTestFramework {
+        FrameworkTestUtilities.runTestWithTestFramework {
             val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
             testConfig.parameterize(testSuite)
@@ -197,7 +197,7 @@ class TestConfigTests {
     }
 
     private fun testKeyedParameters(testConfig: TestConfig, vararg expectedParameters: TestElement.KeyedParameter) =
-        FrameworkTestUtilities.withTestFramework {
+        FrameworkTestUtilities.runTestWithTestFramework {
             val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
             testConfig.parameterize(testSuite)
@@ -208,7 +208,7 @@ class TestConfigTests {
         }
 
     @Test
-    fun testScope() = FrameworkTestUtilities.withTestFramework {
+    fun testScope() = FrameworkTestUtilities.runTestWithTestFramework {
         val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         TestConfig.executeWrapped(testSuite) {
@@ -225,7 +225,7 @@ class TestConfigTests {
     }
 
     @Test
-    fun inheritance() = FrameworkTestUtilities.withTestFramework {
+    fun inheritance() = FrameworkTestUtilities.runTestWithTestFramework {
         val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         val coroutineNameElement = CoroutineName("TEST-CC")
@@ -240,7 +240,7 @@ class TestConfigTests {
     }
 
     @Test
-    fun chaining() = FrameworkTestUtilities.withTestFramework {
+    fun chaining() = FrameworkTestUtilities.runTestWithTestFramework {
         val testSuite by testSuite(qualifiedPropertyName = "testSuite") {}
 
         val coroutineNameElement = CoroutineName("TEST-CC")

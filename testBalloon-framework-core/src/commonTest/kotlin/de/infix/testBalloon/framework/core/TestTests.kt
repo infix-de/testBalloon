@@ -38,7 +38,7 @@ class TestTests {
         }
 
     @Test
-    fun launchesAreWaitedFor() = FrameworkTestUtilities.withTestFramework {
+    fun launchesAreWaitedFor() = FrameworkTestUtilities.runTestWithTestFramework {
         val launchCount = 10
         val completedLaunches = FrameworkTestUtilities.ConcurrentList<Int>()
 

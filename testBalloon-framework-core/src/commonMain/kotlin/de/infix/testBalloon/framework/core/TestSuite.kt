@@ -256,39 +256,38 @@ public open class TestSuite internal constructor(
     }
 
     override suspend fun execute(report: TestExecutionReport) {
-        // short-circuit excluded suites, but report at least the session
-        if (!isIncluded && this !is TestSession) return
-
-        executeReporting(report) {
-            if (testElementIsEnabled) {
-                @Suppress("DEPRECATION")
-                testConfig.chainedWith(privateConfiguration).executeWrapped(this) {
-                    val invocation = if (testElementParent == null) {
-                        // A TestSession (no parent) must always execute its compartments sequentially.
-                        TestConfig.Invocation.Sequential
-                    } else {
-                        TestConfig.Invocation.current()
-                    }
-                    coroutineScope {
-                        for (childElement in testElementChildren) {
-                            when (invocation) {
-                                TestConfig.Invocation.Sequential -> {
-                                    childElement.execute(report)
-                                }
-
-                                TestConfig.Invocation.Concurrent -> {
-                                    launch {
+        if (isIncluded || this is TestSession) { // short-circuit excluded suites, but report at least the session
+            executeReporting(report) {
+                if (testElementIsEnabled) {
+                    @Suppress("DEPRECATION")
+                    testConfig.chainedWith(privateConfiguration).executeWrapped(this) {
+                        val invocation = if (testElementParent == null) {
+                            // A TestSession (no parent) must always execute its compartments sequentially.
+                            TestConfig.Invocation.Sequential
+                        } else {
+                            TestConfig.Invocation.current()
+                        }
+                        coroutineScope {
+                            for (childElement in testElementChildren) {
+                                when (invocation) {
+                                    TestConfig.Invocation.Sequential -> {
                                         childElement.execute(report)
+                                    }
+
+                                    TestConfig.Invocation.Concurrent -> {
+                                        launch {
+                                            childElement.execute(report)
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            } else {
-                // "Execute" disabled child elements for reporting only.
-                for (childElement in testElementChildren) {
-                    childElement.execute(report)
+                } else {
+                    // "Execute" disabled child elements for reporting only.
+                    for (childElement in testElementChildren) {
+                        childElement.execute(report)
+                    }
                 }
             }
         }

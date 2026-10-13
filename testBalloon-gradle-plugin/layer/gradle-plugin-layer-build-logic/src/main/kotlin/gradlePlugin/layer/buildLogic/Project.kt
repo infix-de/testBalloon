@@ -12,8 +12,8 @@ import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.jetbrains.kotlin.assignment.plugin.gradle.AssignmentExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
-import tapmoc.Severity
-import tapmoc.TapmocExtension
+import com.gradleup.tapmoc.Severity
+import com.gradleup.tapmoc.TapmocExtension
 
 /**
  * Configures the project for a Gradle plugin layer compatible with Kotlin Gradle Plugin [kotlinVersion].

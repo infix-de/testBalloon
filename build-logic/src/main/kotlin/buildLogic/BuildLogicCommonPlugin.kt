@@ -2,11 +2,12 @@ package buildLogic
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.jmailen.gradle.kotlinter.KotlinterExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
-import tapmoc.Severity
-import tapmoc.TapmocExtension
+import com.gradleup.tapmoc.Severity
+import com.gradleup.tapmoc.TapmocExtension
 
 @Suppress("unused")
 class BuildLogicCommonPlugin : Plugin<Project> {
@@ -18,11 +19,15 @@ class BuildLogicCommonPlugin : Plugin<Project> {
 
         group = rootGroup
 
+        val extension = BuildLogicCommonExtension(target)
+        extensions.add("buildLogicCommon", extension)
+
         extensions.configure<TapmocExtension>("tapmoc") {
             java(baseJdkVersion())
             kotlin(kotlinVersion())
-            checkKotlinStdlibs(Severity.ERROR)
-            checkDependencies(Severity.ERROR)
+            checkKotlinStdlibs(extension.kotlinStdlibSeverity.orElse(Severity.ERROR))
+            checkJavaClassFiles(extension.javaClassFilesSeverity.orElse(Severity.ERROR))
+            checkKotlinMetadata(extension.kotlinMetadataSeverity.orElse(Severity.ERROR))
         }
 
         extensions.configure<KotlinterExtension>("kotlinter") {
@@ -38,4 +43,10 @@ class BuildLogicCommonPlugin : Plugin<Project> {
             source = source.minus(fileTree("build")).asFileTree
         }
     }
+}
+
+class BuildLogicCommonExtension(project: Project) {
+    val javaClassFilesSeverity: Property<Severity> = project.objects.property(Severity::class.java)
+    val kotlinMetadataSeverity: Property<Severity> = project.objects.property(Severity::class.java)
+    val kotlinStdlibSeverity: Property<Severity> = project.objects.property(Severity::class.java)
 }

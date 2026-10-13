@@ -1,5 +1,5 @@
 import buildLogic.rootGroup
-import tapmoc.Severity
+import com.gradleup.tapmoc.Severity
 
 plugins {
     id("buildLogic.kotlin-jvm")
@@ -7,9 +7,10 @@ plugins {
 
 group = "$rootGroup.documentation"
 
-tapmoc {
-    checkDependencies(Severity.IGNORE) // Neutralize the defaults for this internal component.
-}
+// Neutralize the defaults for this internal component.
+buildLogicCommon.javaClassFilesSeverity.set(Severity.IGNORE)
+buildLogicCommon.kotlinMetadataSeverity.set(Severity.IGNORE)
+buildLogicCommon.kotlinStdlibSeverity.set(Severity.IGNORE)
 
 dependencies {
     implementation(libs.org.jetbrains.dokka.core)

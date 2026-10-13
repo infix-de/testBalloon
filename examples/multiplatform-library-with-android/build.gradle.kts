@@ -1,7 +1,7 @@
 import buildLogic.junitJupiterJdkVersion
 import buildLogic.kotlinVersion
 import buildLogic.robolectricJdkVersion
-import tapmoc.Severity
+import com.gradleup.tapmoc.Severity
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")

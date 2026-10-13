@@ -3,8 +3,8 @@ package compilerPlugin.layer.buildLogic
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.tasks.testing.Test
-import tapmoc.Severity
-import tapmoc.TapmocExtension
+import com.gradleup.tapmoc.Severity
+import com.gradleup.tapmoc.TapmocExtension
 
 /**
  * Configures the project for a compiler plugin layer compiled with [kotlinVersion].

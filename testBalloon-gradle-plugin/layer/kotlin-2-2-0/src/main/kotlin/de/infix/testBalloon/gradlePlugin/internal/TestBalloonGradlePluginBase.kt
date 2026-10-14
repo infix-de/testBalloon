@@ -263,8 +263,13 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
                     }
 
                     is KotlinJsTest -> {
+                        val playwrightIntegrationEnabled = name.substringBeforeLast("BrowserTest") in
+                            extension.jsBrowserTargetsUsingPlaywrightIntegration
+
                         if (browserTestTaskRegex.containsMatchIn(name)) {
-                            configureKarma(project = project)
+                            if (browserAutoIntegrationEnabled() && !playwrightIntegrationEnabled) {
+                                configureKarma(project = project)
+                            }
                         } else {
                             configureEnvironment(project) { name, value ->
                                 environment(name, value)
@@ -272,7 +277,7 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
                         }
 
                         // Reset Gradle test-filtering patterns in order to avoid conflicts with Mocha filtering.
-                        if (testBalloonProperties.jsTestFilteringResetEnabled == true) {
+                        if (jsTestFilteringResetEnabled() && !playwrightIntegrationEnabled) {
                             (filter as DefaultTestFilter).commandLineIncludePatterns.clear()
                             filter.includePatterns.clear()
                             filter.excludePatterns.clear()
@@ -540,6 +545,9 @@ abstract class TestBalloonGradlePluginBase : KotlinCompilerPluginSupportPlugin {
 
     protected fun browserAutoIntegrationEnabled(): Boolean =
         extension.browserAutoIntegrationEnabled ?: testBalloonProperties.browserAutoIntegrationEnabled ?: true
+
+    protected fun jsTestFilteringResetEnabled(): Boolean =
+        extension.jsTestFilteringResetEnabled ?: testBalloonProperties.jsTestFilteringResetEnabled ?: true
 
     protected fun Project.debugLog(message: String) {
         if (extension.debugLevel > DebugLevel.NONE) {

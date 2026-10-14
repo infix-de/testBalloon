@@ -17,9 +17,9 @@ public class KotlinVersion(
 
     private enum class Maturity(lowercaseRegexText: String?) {
         // EAP versions
-        ALPHA("""alpha\d*"""),
-        BETA("""beta\d*"""),
-        RC("""rc\d*"""),
+        ALPHA("""alpha[\d-]*"""),
+        BETA("""beta[\d-]*"""),
+        RC("""rc[\d-]*"""),
 
         // dev versions
         DEV("""dev-\d+"""),

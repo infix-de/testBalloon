@@ -26,7 +26,7 @@ class TestBalloonGradlePlugin_2_4_20 : TestBalloonGradlePlugin_2_3_20()
  * Enables TestBalloon for Playwright-based browser tests.
  *
  * Note: This function is provisional and will be replaced with autoconfiguration once the Kotlin Gradle plugin
- * is equipped: https://youtrack.jetbrains.com/issue/KT-89230
+ * is equipped: https://youtrack.jetbrains.com/issue/KT-90261
  */
 @OptIn(ExperimentalJsTestDsl::class)
 @Suppress("unused")
@@ -38,8 +38,8 @@ fun KotlinJsBrowserTestDsl.withTestBalloon(kotlinJsTargetDsl: KotlinJsTargetDsl)
         }
     )
 
-    return kotlinJsTargetDsl.project.extensions.configure<TestBalloonGradleExtension>(Constants.GRADLE_EXTENSION_NAME) {
-        browserAutoIntegrationEnabled = false
+    kotlinJsTargetDsl.project.extensions.configure<TestBalloonGradleExtension>(Constants.GRADLE_EXTENSION_NAME) {
+        jsBrowserTargetsUsingPlaywrightIntegration += kotlinJsTargetDsl.name
     }
 }
 
@@ -57,11 +57,7 @@ private class TestBalloonKotlinJsTestLocations(
 
     private var testHtmlFile: File? = null
 
-    // TODO: insert include/exclude patterns
-    private val testBalloonEnvironment = kotlinJsTargetDsl.project.testBalloonEnvironment(
-        secondaryIncludePatterns = emptyList(),
-        secondaryExcludePatterns = emptyList()
-    )
+    private val testBalloonEnvironment = kotlinJsTargetDsl.project.testBalloonEnvironment()
 
     @get:Input
     override val testHtmlFileName: Provider<String>

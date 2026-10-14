@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package de.infix.testBalloon.framework.core.internal
 
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
@@ -30,23 +32,40 @@ internal actual fun handleFrameworkLevelError(throwable: Throwable) {
     }
 }
 
-private fun printStderr(message: String) {
+private fun printStderr(@Suppress("unused") message: String) {
     js("process.stderr.write(message)")
 }
 
-private fun exitProcess(status: Int) {
+private fun exitProcess(@Suppress("unused") status: Int) {
     js("process.exit(status)")
 }
 
-internal actual fun testsFinishedMarker(): String? =
-    if (testsFinishedMarkerExists()) existingTestsFinishedMarker() else null
-
-private fun testsFinishedMarkerExists(): Boolean = js(
-    "typeof window !== 'undefined' && typeof window.kotlinTestConfig !== 'undefined' &&" +
-        " window.kotlinTestConfig.testsFinishedMarker !== 'undefined'"
-)
+internal actual fun testsFinishedMarker(): String? = withKotlinTestConfigOrNull {
+    existingTestsFinishedMarker()
+}
 
 private fun existingTestsFinishedMarker(): String = js("window.kotlinTestConfig.testsFinishedMarker")
+
+internal actual fun kotlinTestConfigIncludePatterns(): List<String>? = withKotlinTestConfigOrNull {
+    existingIncludePatterns().toArray().map { it.toString() }
+}
+
+private fun existingIncludePatterns(): JsArray<*> = js("""window.kotlinTestConfig.include || []""")
+
+internal actual fun kotlinTestConfigExcludePatterns(): List<String>? = withKotlinTestConfigOrNull {
+    existingExcludePatterns().toArray().map { it.toString() }
+}
+
+private fun existingExcludePatterns(): JsArray<*> = js("""window.kotlinTestConfig.exclude || []""")
+
+private fun <Result : Any> withKotlinTestConfigOrNull(value: () -> Result): Result? = if (kotlinTestConfigExists()) {
+    value()
+} else {
+    null
+}
+
+private fun kotlinTestConfigExists(): Boolean =
+    js("""typeof window !== "undefined" && typeof window.kotlinTestConfig !== "undefined"""")
 
 /**
  * Experimental API for Wasm/JS on browser targets via Playwright.

@@ -15,7 +15,9 @@ internal actual suspend fun setUpAndExecuteTests(suites: Array<AbstractTestSuite
 
     configureTestsWithExceptionHandling {
         if (argumentsBasedElementSelection == null) {
-            argumentsBasedElementSelection = processArguments()?.let { ArgumentsBasedElementSelection(it) }
+            argumentsBasedElementSelection =
+                processArguments()?.let { ArgumentsBasedElementSelection(it) }
+                    ?: testConfigBasedElementSelection()
         }
         TestSession.global.setUp(ThrowingTestSetupReport())
     }.onSuccess {
@@ -33,3 +35,17 @@ internal actual suspend fun setUpAndExecuteTests(suites: Array<AbstractTestSuite
 }
 
 internal expect fun testsFinishedMarker(): String?
+
+internal expect fun kotlinTestConfigIncludePatterns(): List<String>?
+
+internal expect fun kotlinTestConfigExcludePatterns(): List<String>?
+
+private class TestConfigBasedElementSelection(includePatterns: List<String>, excludePatterns: List<String>) :
+    ListsBasedElementSelection(includePatterns = includePatterns, excludePatterns = excludePatterns)
+
+private fun testConfigBasedElementSelection(): TestConfigBasedElementSelection? {
+    val includePatterns = kotlinTestConfigIncludePatterns() ?: return null
+    val excludePatterns = kotlinTestConfigExcludePatterns() ?: return null
+    if (includePatterns.isEmpty() && excludePatterns.isEmpty()) return null
+    return TestConfigBasedElementSelection(includePatterns, excludePatterns)
+}

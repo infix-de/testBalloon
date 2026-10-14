@@ -187,7 +187,7 @@ class TestBalloonGradleProperties(private val project: Project) {
     /**
      * Setting to enable resetting Gradle test filtering for Kotlin/JS test tasks.
      *
-     * If enabled, this prevents using TestBalloon patterns which are incompatible with Mocha.
+     * If enabled, this prevents Mocha from seeing incompatible TestBalloon patterns.
      */
     val jsTestFilteringResetEnabled by booleanProperty("true")
 

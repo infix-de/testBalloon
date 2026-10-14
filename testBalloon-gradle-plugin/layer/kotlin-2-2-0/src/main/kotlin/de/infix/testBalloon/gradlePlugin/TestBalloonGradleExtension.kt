@@ -1,6 +1,7 @@
 package de.infix.testBalloon.gradlePlugin
 
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 
 open class TestBalloonGradleExtension {
     /**
@@ -46,6 +47,21 @@ open class TestBalloonGradleExtension {
      * If set, it overrides the Gradle property with the same name.
      */
     var browserAutoIntegrationEnabled: Boolean? = null
+
+    /**
+     * `jsTestFilteringResetEnabled` controls resetting Gradle test filtering for Kotlin/JS test tasks.
+     *
+     * If enabled, this prevents Mocha from seeing incompatible TestBalloon patterns.
+     *
+     * If set, it overrides the Gradle property with the same name.
+     */
+    var jsTestFilteringResetEnabled: Boolean? = null
+
+    /**
+     * Names of JS and JS/Wasm browser targets with Playwright integration enabled.
+     */
+    @TestBalloonInternalApi
+    val jsBrowserTargetsUsingPlaywrightIntegration: MutableSet<String> = mutableSetOf()
 
     /** The debug level controlling reporting by the Gradle and compiler plugin. */
     var debugLevel: DebugLevel = DebugLevel.NONE

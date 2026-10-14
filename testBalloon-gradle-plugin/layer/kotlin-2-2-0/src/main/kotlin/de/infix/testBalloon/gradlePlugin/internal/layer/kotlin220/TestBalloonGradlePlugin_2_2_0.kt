@@ -76,8 +76,6 @@ open class TestBalloonGradlePlugin_2_2_0 : TestBalloonGradlePluginBase() {
     }
 
     override fun KotlinJsTest.configureKarma(project: Project) {
-        if (!browserAutoIntegrationEnabled()) return
-
         val directory = Path("${project.layout.projectDirectory}") / "karma.config.d"
         val parameterConfigFile = directory / "testBalloonParameters.js"
 

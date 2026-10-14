@@ -22,12 +22,21 @@ internal actual fun handleFrameworkLevelError(throwable: Throwable) {
     throw throwable
 }
 
-internal actual fun testsFinishedMarker(): String? = js(
-    """
-    if (typeof window !== "undefined" && typeof window.kotlinTestConfig !== "undefined") {
-        return window.kotlinTestConfig.testsFinishedMarker
+internal actual fun testsFinishedMarker(): String? = withKotlinTestConfigOrNull {
+    js("window.kotlinTestConfig.testsFinishedMarker")
+}
+
+internal actual fun kotlinTestConfigIncludePatterns(): List<String>? = withKotlinTestConfigOrNull {
+    (js("""window.kotlinTestConfig.include || []""") as Array<*>).map { it.toString() }
+}
+
+internal actual fun kotlinTestConfigExcludePatterns(): List<String>? = withKotlinTestConfigOrNull {
+    (js("""window.kotlinTestConfig.exclude || []""") as Array<*>).map { it.toString() }
+}
+
+private fun <Result : Any> withKotlinTestConfigOrNull(value: () -> Result): Result? =
+    if (js("""typeof window !== "undefined" && typeof window.kotlinTestConfig !== "undefined"""")) {
+        value()
     } else {
-        return undefined;
+        null
     }
-    """
-)?.toString()

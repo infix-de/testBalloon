@@ -4,11 +4,10 @@ import buildLogic.enableAbiValidation
 import buildLogic.propagateLifecycleTasksToIncludedBuilds
 import buildLogic.rootGroup
 import buildLogic.versionFromCatalog
-import org.gradle.kotlin.dsl.tapmoc
+import com.gradleup.tapmoc.Severity
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
-import com.gradleup.tapmoc.Severity
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
@@ -49,14 +48,15 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        // compilerOptions {
-        //     freeCompilerArgs.add("-opt-in=kotlin.js.ExperimentalWasmJsInterop")
-        // }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            freeCompilerArgs.add("-opt-in=kotlin.js.ExperimentalWasmJsInterop")
+        }
     }
 
     android {
         namespace = "de.infix.testBalloon.framework.core"
-        compileSdk = versionFromCatalog("android-compileSdk").toInt()
+        compileSdk = versionFromCatalog("android-compileSdkFramework").toInt()
 
         withHostTestBuilder {}.configure {}
     }

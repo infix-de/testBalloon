@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockFileMismatchReport
@@ -89,5 +90,14 @@ plugins.withType(NodeJsRootPlugin::class.java) {
 plugins.withType(WasmNodeJsRootPlugin::class.java) {
     extensions.findByType(WasmNpmExtension::class.java)?.apply {
         configurePackageLockReports()
+    }
+}
+
+// WORKAROUND: https://youtrack.jetbrains.com/issue/KT-90417
+//     KJS, Gradle: Two webpack versions after kotlinNpmInstall:
+//     "TypeError: The compilation argument must be an instance of Compilation"
+plugins.withType(NodeJsRootPlugin::class.java) {
+    extensions.configure<NodeJsRootExtension>("kotlinNodeJs") {
+        versions.webpack.version = "5.112.0"
     }
 }

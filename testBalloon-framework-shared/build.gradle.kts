@@ -1,4 +1,5 @@
 import buildLogic.allTargets
+import buildLogic.applyWebpackVersionsFix
 import buildLogic.enableAbiValidation
 
 plugins {
@@ -27,3 +28,5 @@ kotlin {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
+
+applyWebpackVersionsFix()

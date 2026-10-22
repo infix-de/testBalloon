@@ -2,7 +2,7 @@
 
 ### Compatibility
 
-* This release has been tested with Kotlin versions 2.2.21 … 2.5.0-Beta1. Its ABI is binary-compatible with TestBalloon 1.1.0.
+* This release has been tested with Kotlin versions 2.2.21 … 2.5.0-Beta2. Its ABI is binary-compatible with TestBalloon 1.1.0.
 * JS and Wasm targets require Kotlin >= 2.2.21 (KT-80868).
 
 ### Changes

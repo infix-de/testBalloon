@@ -1,48 +1,54 @@
 import de.infix.testBalloon.gradlePlugin.internal.layer.kotlin2420.withTestBalloon
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import kotlin.time.Duration.Companion.seconds
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 
 plugins {
     // https://packages.jetbrains.team/maven/p/kt/dev/org/jetbrains/kotlin/kotlin-gradle-plugin/maven-metadata.xml
-    id("org.jetbrains.kotlin.multiplatform") version "2.5.0-Beta2-71"
+    id("org.jetbrains.kotlin.multiplatform") version "2.5.0-Beta2"
     id("de.infix.testBalloon") version "1.2.0-RC2-SNAPSHOT"
     id("com.gradleup.tapmoc") version "0.5.0"
 }
 
+@OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
+val kotlinVersion: String = kotlin.compilerVersion.get()
+
 tapmoc {
-    kotlin("2.5.0-Beta2-71")
+    kotlin(kotlinVersion)
 }
 
-// TODO: Enable Playwright integration on JS/Wasm once KT-89269 is resolved.
-val disablePlaywrightOnJsWasmForKt89269 = true
+val usePlaywright = true
 
 kotlin {
     js {
         browser {
-            @OptIn(ExperimentalJsTestDsl::class)
-            test {
-                firefox()
+            if (usePlaywright) {
+                @OptIn(ExperimentalJsTestDsl::class)
+                test {
+                    firefox()
+                }
             }
         }
     }
 
     wasmJs {
         browser {
-            if (disablePlaywrightOnJsWasmForKt89269) return@browser
-
-            @OptIn(ExperimentalJsTestDsl::class)
-            test {
-                timeout = 3.seconds
-                firefox()
+            if (usePlaywright) {
+                @OptIn(ExperimentalJsTestDsl::class)
+                test {
+                    firefox()
+                }
             }
         }
+        nodejs()
     }
 
     sourceSets {
         commonTest {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib:2.5.0-Beta2-71")
+                implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
                 implementation("de.infix.testBalloon:testBalloon-framework-core:$version")
             }
         }
@@ -51,15 +57,14 @@ kotlin {
 
 // Inside the de.infix.testBalloon Gradle plugin:
 kotlin.targets.configureEach {
-    if (name == "wasmJs" && disablePlaywrightOnJsWasmForKt89269) return@configureEach
-
     val target = this
-    if (this is KotlinJsTargetDsl) {
-        // TODO: The following block should be something like: browsers.configureEach { ... }
-        browser {
-            @OptIn(ExperimentalJsTestDsl::class)
-            test {
-                withTestBalloon(target)
+    if (this is KotlinJsIrTarget) {
+        subTargets.configureEach {
+            if (this is KotlinJsBrowserDsl) {
+                if (usePlaywright) {
+                    @OptIn(ExperimentalJsTestDsl::class)
+                    test.withTestBalloon(target)
+                }
             }
         }
     }

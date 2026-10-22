@@ -90,12 +90,12 @@ private fun htmlFileContent(outputModuleName: String, useWasmJsTarget: Boolean):
         val testModule = """kotlin/$outputModuleName-test.mjs"""
         // language=HTML
         """
+            <script src="importmap-loader.js"></script>
             <script type="module" src="$testModule"></script>
             <script>
                 window.addEventListener("load", async function () {
                     try {
-                        let module = await import("./$testModule");
-                        module["runTestBalloonViaPlaywright"]();
+                        await import("./$testModule");
                     } catch (exception) {
                         console.error("Failed to load TestBalloon Wasm/JS entry point:", exception.toString());
                     }

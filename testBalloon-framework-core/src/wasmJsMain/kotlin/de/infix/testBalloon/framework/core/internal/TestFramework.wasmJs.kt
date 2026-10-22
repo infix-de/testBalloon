@@ -40,11 +40,11 @@ private fun exitProcess(@Suppress("unused") status: Int) {
     js("process.exit(status)")
 }
 
-internal actual fun testsFinishedMarker(): String? = withKotlinTestConfigOrNull {
-    existingTestsFinishedMarker()
+internal actual fun outputTestsFinishedMarkerIfApplicable() {
+    if (kotlinTestConfigExists()) outputExistingTestsFinishedMarker()
 }
 
-private fun existingTestsFinishedMarker(): String = js("window.kotlinTestConfig.testsFinishedMarker")
+private fun outputExistingTestsFinishedMarker(): Unit = js("console.log(window.kotlinTestConfig.testsFinishedMarker)")
 
 internal actual fun kotlinTestConfigIncludePatterns(): List<String>? = withKotlinTestConfigOrNull {
     existingIncludePatterns().toArray().map { it.toString() }

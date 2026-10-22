@@ -22,8 +22,10 @@ internal actual fun handleFrameworkLevelError(throwable: Throwable) {
     throw throwable
 }
 
-internal actual fun testsFinishedMarker(): String? = withKotlinTestConfigOrNull {
-    js("window.kotlinTestConfig.testsFinishedMarker")
+internal actual fun outputTestsFinishedMarkerIfApplicable() {
+    withKotlinTestConfigOrNull {
+        js("console.log(window.kotlinTestConfig.testsFinishedMarker)")
+    }
 }
 
 internal actual fun kotlinTestConfigIncludePatterns(): List<String>? = withKotlinTestConfigOrNull {

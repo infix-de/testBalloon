@@ -4,7 +4,6 @@ import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuite
 import de.infix.testBalloon.framework.core.disable
 import de.infix.testBalloon.framework.core.invocation
-import de.infix.testBalloon.framework.core.testPlatform
 import de.infix.testBalloon.framework.core.testScope
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.TestRegistering
@@ -22,17 +21,9 @@ val ElementSelectionTests by testSuite(
     projectTestSuite(
         "element-selection-new-browser-dsl",
         listOf("base"),
-        withExtraPatterns = false,
-        testConfig = TestConfig.enableIfSetOrPackageLogFilesUpdateRequested("TEST_ENABLE_NEW_BROWSER_DSL")
+        withExtraPatterns = false
     )
 }
-
-private fun TestConfig.enableIfSetOrPackageLogFilesUpdateRequested(environmentVariableName: String) =
-    if (testPlatform.environment(environmentVariableName) != null || packageLockFilesUpdateRequested()) {
-        this
-    } else {
-        disable()
-    }
 
 @TestRegistering
 private fun TestSuite.projectTestSuite(

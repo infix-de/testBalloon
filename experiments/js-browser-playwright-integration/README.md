@@ -11,10 +11,9 @@ Before using this example, run the following Gradle tasks at the `testBalloon` p
 
 Repeat after a change to the root build.
 
-### Remaining issues
+### Remaining issue as of Kotlin 2.5.0-Beta2
 
 * [KT-90261](https://youtrack.jetbrains.com/issue/KT-90261) KGP/JS/Playwright: TestBalloon cannot configure browser block
-* [KT-89269](https://youtrack.jetbrains.com/issue/KT-89269) KGP/JS/Playwright: "Failed to load Kotlin WASM JS tests entry point TypeError"
 
 ### Running tests
 
@@ -28,6 +27,6 @@ Selecting tests via Gradle CLI arguments (run from the `testBalloon` project roo
 
 Selecting tests via environment variables prioritized over CLI arguments (run from this directory):
 
-* `env TESTBALLOON_INCLUDE_PATTERNS="com.example.NestingCommon↘middle↘middle 1*" TESTBALLOON_EXCLUDE_PATTERNS="com.example.NestingCommon↘middle↘this,does not exist*" ./gradlew "cleanJsBrowserTest" "jsBrowserTest" --tests "com.example.NestingCommon↘middle↘lower*" --info`
+* `env TESTBALLOON_INCLUDE_PATTERNS="com.example.NestingCommon↘middle↘middle 1*" TESTBALLOON_EXCLUDE_PATTERNS="com.example.NestingCommon↘middle↘this,does not exist*" ./gradlew "cleanJsBrowserTest" "jsBrowserTest" --tests "com.example.NestingCommon↘middle↘lower*" --warn`
 
-* `env TESTBALLOON_INCLUDE_PATTERNS="com.example.NestingCommon↘middle↘middle 1*" TESTBALLOON_EXCLUDE_PATTERNS="com.example.NestingCommon↘middle↘this,does not exist*" ./gradlew "cleanWasmJsBrowserTest" "wasmJsBrowserTest" --tests "com.example.NestingCommon↘middle↘lower*" --info`
+* `env TESTBALLOON_INCLUDE_PATTERNS="com.example.NestingCommon↘middle↘middle 1*" TESTBALLOON_EXCLUDE_PATTERNS="com.example.NestingCommon↘middle↘this,does not exist*" ./gradlew "cleanWasmJsBrowserTest" "wasmJsBrowserTest" --tests "com.example.NestingCommon↘middle↘lower*" --warn`

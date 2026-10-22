@@ -2,7 +2,6 @@
 
 package de.infix.testBalloon.framework.core.internal
 
-import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import kotlinx.coroutines.await
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -66,13 +65,3 @@ private fun <Result : Any> withKotlinTestConfigOrNull(value: () -> Result): Resu
 
 private fun kotlinTestConfigExists(): Boolean =
     js("""typeof window !== "undefined" && typeof window.kotlinTestConfig !== "undefined"""")
-
-/**
- * Experimental API for Wasm/JS on browser targets via Playwright.
- */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
-@TestBalloonInternalApi
-public suspend fun runTestBalloonViaPlaywright() {
-    setUpAndExecuteTests(emptyArray())
-}

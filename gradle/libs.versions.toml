@@ -74,10 +74,10 @@ org-jetbrains-dokka = "2.1.0"
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
 org-jetbrains-kotlin = "2.2.21"
 # The latest Kotlin versions used for integration tests.
-org-jetbrains-kotlin-latest-release = "2.4.20"
+org-jetbrains-kotlin-latest-release = "2.4.21"
 # https://packages.jetbrains.team/maven/p/kt/bootstrap/org/jetbrains/kotlin/kotlin-compiler-embeddable/maven-metadata.xml
-org-jetbrains-kotlin-latest-prerelease = "2.5.0-Beta1"
-org-jetbrains-kotlin-all-test-releases = "2.5.0-Beta1;2.4.20;2.4.0;2.3.21;2.3.0;2.2.21"
+org-jetbrains-kotlin-latest-prerelease = "2.5.0-Beta2"
+org-jetbrains-kotlin-all-test-releases = "2.5.0-Beta2;2.4.21;2.4.0;2.3.21;2.3.0;2.2.21"
 
 # https://github.com/Kotlin/kotlinx.coroutines/releases
 org-jetbrains-kotlinx-coroutines = "1.10.2"

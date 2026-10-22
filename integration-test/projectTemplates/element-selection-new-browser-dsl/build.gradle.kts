@@ -1,6 +1,7 @@
 import de.infix.testBalloon.gradlePlugin.internal.layer.kotlin2420.withTestBalloon
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import kotlin.time.Duration.Companion.seconds
@@ -76,5 +77,14 @@ tasks {
     withType<KotlinNativeTest>().configureEach {
         if (includeTestsMatchingPattern != null) filter.includeTestsMatching(includeTestsMatchingPattern)
         testLogging { showStandardStreams = true }
+    }
+}
+
+// WORKAROUND: https://youtrack.jetbrains.com/issue/KT-90417
+//     KJS, Gradle: Two webpack versions after kotlinNpmInstall:
+//     "TypeError: The compilation argument must be an instance of Compilation"
+plugins.withType(NodeJsRootPlugin::class.java) {
+    extensions.configure<NodeJsRootExtension>("kotlinNodeJs") {
+        versions.webpack.version = "5.112.0"
     }
 }

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="98.278061mm"
+   height="16.198915mm"
+   viewBox="0 0 98.278061 16.198916"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="runtime-phases.svg"
+   inkscape:export-filename="runtime-phases.png"
+   inkscape:export-xdpi="310.14044"
+   inkscape:export-ydpi="310.14044"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="4.744619"
+     inkscape:cx="161.1299"
+     inkscape:cy="99.902648"
+     inkscape:window-width="2957"
+     inkscape:window-height="1696"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     showguides="true">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="98.278061"
+       height="16.198915"
+       id="page4"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect4"
+       is_visible="true"
+       lpeversion="1.3"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false"
+       uniform="false" />
+    <filter
+       inkscape:label="Opacity"
+       style="color-interpolation-filters:sRGB"
+       id="filter28"
+       x="0"
+       y="-0.010009094"
+       width="1"
+       height="1.0100091">
+      <feColorMatrix
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 5 -1 "
+         result="colormatrix"
+         id="feColorMatrix28" />
+      <feComposite
+         in2="colormatrix"
+         operator="arithmetic"
+         k2="0.225014"
+         result="composite"
+         id="feComposite28"
+         k1="0"
+         k3="0"
+         k4="0" />
+    </filter>
+    <filter
+       inkscape:label="Opacity"
+       style="color-interpolation-filters:sRGB"
+       id="filter40"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feColorMatrix
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 5 -1 "
+         result="colormatrix"
+         id="feColorMatrix40" />
+      <feComposite
+         in2="colormatrix"
+         operator="arithmetic"
+         k2="0.225014"
+         result="composite"
+         id="feComposite40"
+         k1="0"
+         k3="0"
+         k4="0" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-4.9073135,-0.11152985)">
+    <g
+       id="g5"
+       transform="translate(-0.00737974,0.30401829)">
+      <g
+         id="g3"
+         transform="translate(0.11152986,-1.505653)">
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.84696px;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#1b75af;stroke-width:2.56464;stroke-linecap:square"
+           x="25.292847"
+           y="10.732431"
+           id="text1"><tspan
+             sodipodi:role="line"
+             x="25.292847"
+             y="10.732431"
+             id="tspan2"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.84696px;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#1b75af;stroke-width:2.56464">Test Registration</tspan></text>
+        <rect
+           style="fill:#000000;fill-opacity:0;stroke:#1b75af;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           id="rect1"
+           width="34.853081"
+           height="8.9781532"
+           x="7.7827187"
+           y="4.9235454"
+           rx="5.4275193" />
+      </g>
+      <g
+         id="g4"
+         transform="translate(0.11152986,-1.505653)">
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.84696px;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#1baf4f;fill-opacity:1;stroke-width:2.56464;stroke-linecap:square"
+           x="82.758713"
+           y="10.724331"
+           id="text5-62"><tspan
+             sodipodi:role="line"
+             id="tspan5-1"
+             x="82.758713"
+             y="10.724331"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.84696px;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#1baf4f;fill-opacity:1;stroke-width:2.56464">Test Execution</tspan></text>
+        <rect
+           style="fill:#000000;fill-opacity:0;stroke:#1baf4f;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           id="rect1-2"
+           width="34.853081"
+           height="8.9781532"
+           x="65.248589"
+           y="4.9235454"
+           rx="5.4275193" />
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#b3b3b3;stroke-width:0.499999;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle)"
+         d="m 44.556177,9.5358026 c 5.836729,0 11.673459,0 17.510185,0"
+         id="path4"
+         inkscape:path-effect="#path-effect4"
+         inkscape:original-d="m 44.556177,9.5358026 c 5.836729,0 11.673459,0 17.510185,0"
+         transform="matrix(0.78876617,0,0,1,11.401953,-1.3383582)" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Highlight"
+     transform="translate(-0.55764931,-0.16729476)" />
+</svg>

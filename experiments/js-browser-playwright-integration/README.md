@@ -28,3 +28,9 @@ Selecting tests via environment variables prioritized over CLI arguments (run fr
 * `env TESTBALLOON_INCLUDE_PATTERNS="com.example.NestingCommon↘middle↘middle 1*" TESTBALLOON_EXCLUDE_PATTERNS="com.example.NestingCommon↘middle↘this,does not exist*" ./gradlew "cleanJsBrowserTest" "jsBrowserTest" --tests "com.example.NestingCommon↘middle↘lower*" --warn`
 
 * `env TESTBALLOON_INCLUDE_PATTERNS="com.example.NestingCommon↘middle↘middle 1*" TESTBALLOON_EXCLUDE_PATTERNS="com.example.NestingCommon↘middle↘this,does not exist*" ./gradlew "cleanWasmJsBrowserTest" "wasmJsBrowserTest" --tests "com.example.NestingCommon↘middle↘lower*" --warn`
+
+Selecting Node.js tests via Gradle CLI arguments (run from the `testBalloon` project root):
+
+* `./gradlew -p experiments/js-browser-playwright-integration "cleanJsNodeTest" "jsNodeTest" --tests "com.example.NestingCommon↘middle↘middle 1*" --tests "com.example.NestingCommon↘middle↘this,does not exist*"`
+
+* `./gradlew -p experiments/js-browser-playwright-integration "cleanWasmJsNodeTest" "wasmJsNodeTest" --tests "com.example.NestingCommon↘middle↘middle 1*" --tests "com.example.NestingCommon↘middle↘this,does not exist*"`

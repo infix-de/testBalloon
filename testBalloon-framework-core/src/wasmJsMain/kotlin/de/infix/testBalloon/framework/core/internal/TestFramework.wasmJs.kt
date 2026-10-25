@@ -19,12 +19,8 @@ internal actual suspend fun TestScope.runTestAwaitingCompletion(
 
 internal actual fun handleFrameworkLevelError(throwable: Throwable) {
     if (runsInBrowser) {
-        // TODO: Make configuration errors appear in the log with Wasm/JS.
-        //     Throwing at this point triggers "Disconnected (0 times) , because no message in 30000 ms."
-        //     without a meaningful error message.
-        //     Possibly related:
-        //     - Karma logs not always captured, leading to flaky failures in JS/WASM tests
-        //       KT-73911 https://youtrack.jetbrains.com/issue/KT-73911
+        outputTestsFinishedMarkerIfApplicable()
+        // With browser tests, there seems to be nothing we can do to signal an unsuccessful exit status.
     } else {
         printStderr(throwable.stackTraceToString())
         exitProcess(3)
@@ -39,8 +35,11 @@ private fun exitProcess(@Suppress("unused") status: Int) {
     js("process.exit(status)")
 }
 
-internal actual fun outputTestsFinishedMarkerIfApplicable() {
-    if (kotlinTestConfigExists()) outputExistingTestsFinishedMarker()
+internal actual fun outputTestsFinishedMarkerIfApplicable(): Boolean = if (kotlinTestConfigExists()) {
+    outputExistingTestsFinishedMarker()
+    true
+} else {
+    false
 }
 
 private fun outputExistingTestsFinishedMarker(): Unit = js("console.log(window.kotlinTestConfig.testsFinishedMarker)")

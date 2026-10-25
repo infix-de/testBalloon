@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 plugins {
     // https://packages.jetbrains.team/maven/p/kt/dev/org/jetbrains/kotlin/kotlin-gradle-plugin/maven-metadata.xml
     id("org.jetbrains.kotlin.multiplatform") version "2.5.0-Beta2"
-    id("de.infix.testBalloon") version "1.2.0-RC2-SNAPSHOT"
+    id("de.infix.testBalloon") version "1.2.1-SNAPSHOT"
     id("com.gradleup.tapmoc") version "0.5.0"
 }
 
@@ -31,6 +31,7 @@ kotlin {
                 }
             }
         }
+        nodejs()
     }
 
     wasmJs {

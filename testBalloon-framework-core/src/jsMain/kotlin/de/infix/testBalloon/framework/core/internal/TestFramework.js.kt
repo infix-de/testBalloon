@@ -15,18 +15,20 @@ internal actual suspend fun TestScope.runTestAwaitingCompletion(
 }
 
 internal actual fun handleFrameworkLevelError(throwable: Throwable) {
-    // We throw, because this seems to be the only way to
-    // - emit an error message when running in a browser,
-    // - emit an error message _and_ fail when running on Node.js (exiting with a non-zero status would suppress
-    //   the error message).
-    throw throwable
+    if (runsInBrowser && !outputTestsFinishedMarkerIfApplicable()) {
+        // Throwing here helps with browser tests via Karma. The error message is incomplete, but it seems
+        // to be the only way we can get one at all.
+        throw throwable
+    }
+    // With browser tests via Playwright or Node tests, there seems to be nothing we can do to signal an unsuccessful
+    // exit status: We'd either lose the original error message (throwing or calling `process.exit(3)` on Node), or
+    // not make a difference (throwing on browsers or setting `process.exitCode = 3` on Node).
 }
 
-internal actual fun outputTestsFinishedMarkerIfApplicable() {
-    withKotlinTestConfigOrNull {
-        js("console.log(window.kotlinTestConfig.testsFinishedMarker)")
-    }
-}
+internal actual fun outputTestsFinishedMarkerIfApplicable(): Boolean = withKotlinTestConfigOrNull {
+    js("console.log(window.kotlinTestConfig.testsFinishedMarker)")
+    true
+} ?: false
 
 internal actual fun kotlinTestConfigIncludePatterns(): List<String>? = withKotlinTestConfigOrNull {
     (js("""window.kotlinTestConfig.include || []""") as Array<*>).map { it.toString() }

@@ -32,7 +32,7 @@ internal actual suspend fun setUpAndExecuteTests(suites: Array<AbstractTestSuite
     }
 }
 
-internal expect fun outputTestsFinishedMarkerIfApplicable()
+internal expect fun outputTestsFinishedMarkerIfApplicable(): Boolean
 
 internal expect fun kotlinTestConfigIncludePatterns(): List<String>?
 

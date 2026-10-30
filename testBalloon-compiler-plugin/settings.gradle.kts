@@ -21,7 +21,8 @@ val pluginLayers = listOf(
     "kotlin-2-3-0",
     "kotlin-2-3-20",
     "kotlin-2-4-0",
-    "kotlin-2-4-10"
+    "kotlin-2-4-10",
+    "kotlin-2-5-20"
 )
 
 for (pluginLayer in pluginLayers) {

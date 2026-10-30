@@ -1,10 +1,10 @@
 package compilerPlugin.layer.buildLogic
 
+import com.gradleup.tapmoc.Severity
+import com.gradleup.tapmoc.TapmocExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.tasks.testing.Test
-import com.gradleup.tapmoc.Severity
-import com.gradleup.tapmoc.TapmocExtension
 
 /**
  * Configures the project for a compiler plugin layer compiled with [kotlinVersion].
@@ -15,7 +15,12 @@ import com.gradleup.tapmoc.TapmocExtension
  * [ZacSweers/kotlin-compile-testing](https://github.com/ZacSweers/kotlin-compile-testing/releases)
  * to be used for testing.
  */
-fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = null, kctforkVersion: String? = null) {
+fun Project.configurePluginLayer(
+    kotlinVersion: String,
+    compilerApiDependency: String = "kotlin-compiler",
+    baseLayer: String? = null,
+    kctforkVersion: String? = null
+) {
     val layerName = if (baseLayer == null) "base" else kotlinVersion
     description = "TestBalloon compiler plugin compatibility layer ($layerName)"
 
@@ -31,7 +36,7 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
     with(dependencies) {
         baseLayer?.let { add("api", "$group:$it") }
 
-        add("compileOnly", "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion")
+        add("compileOnly", "org.jetbrains.kotlin:$compilerApiDependency:$kotlinVersion")
 
         if (kctforkVersion != null) {
             add("testImplementation", "$rootGroup:base-test")

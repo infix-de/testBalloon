@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isNative
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.konan.isNative
 
 @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
 class FirDeclarationGenerationExtensionBase(session: FirSession) : FirDeclarationGenerationExtension(session) {

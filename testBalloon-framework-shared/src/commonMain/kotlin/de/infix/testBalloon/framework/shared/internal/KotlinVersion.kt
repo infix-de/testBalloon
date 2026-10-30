@@ -1,11 +1,7 @@
 package de.infix.testBalloon.framework.shared.internal
 
 /**
- * A restrictive interpretation of a Kotlin version, assuming that dev versions are always newer than EAP versions.
- *
- * NOTE: In reality, dev versions (like 2.4.20-dev1234) can be interspersed with EAP versions (like 2.4.20-Beta1),
- * leading to a precedence of 2.4.20-dev123 < 2.4.20-Beta1 < 2.4.20-dev255. We ignore this, implying that we can
- * only support dev versions which match the highest available compiler plugin adapter version.
+ * A restrictive interpretation of a Kotlin version, using heuristics to determine the order of [extension].
  */
 @TestBalloonInternalApi
 public class KotlinVersion(
@@ -15,14 +11,24 @@ public class KotlinVersion(
     private val extension: String?
 ) : Comparable<KotlinVersion> {
 
+    /**
+     * A version's maturity matching a lowercased `extension` in ascending order (later is newer).
+     */
     private enum class Maturity(lowercaseRegexText: String?) {
         // EAP versions
         ALPHA("""alpha[\d-]*"""),
         BETA("""beta[\d-]*"""),
         RC("""rc[\d-]*"""),
 
-        // dev versions
+        // Dev versions
+        // In reality, dev versions like 2.4.20-dev1234 can be interspersed with EAP versions (like 2.4.20-Beta1),
+        // leading to a precedence of 2.4.20-dev123 < 2.4.20-Beta1 < 2.4.20-dev255. We ignore this, implying that we can
+        // only support dev versions which are actually more recent than the latest EAP version.
         DEV("""dev-\d+"""),
+
+        // Special versions embedded into IntelliJ IDEA, assuming these are more recent than any other non-stable
+        // version.
+        INTELLIJ_IDEA("""ij\d+-\d+"""),
 
         // stable versions
         STABLE(null);
@@ -30,14 +36,13 @@ public class KotlinVersion(
         val lowercaseRegex by lazy { lowercaseRegexText?.let { Regex(it) } }
     }
 
-    private val maturity: Int = run {
-        val lowercaseClassifier = extension?.lowercase() ?: return@run Maturity.STABLE.ordinal
+    private val maturity: Maturity = run {
+        val lowercaseClassifier = extension?.lowercase() ?: return@run Maturity.STABLE
         for (maturity in Maturity.entries) {
-            if (maturity.lowercaseRegex?.matches(lowercaseClassifier) == true) return@run maturity.ordinal
+            if (maturity.lowercaseRegex?.matches(lowercaseClassifier) == true) return@run maturity
         }
-        throw IllegalArgumentException(
-            "Cannot determine maturity for classifier '$extension' in ${this@KotlinVersion}"
-        )
+        // If we cannot determine the maturity:
+        Maturity.INTELLIJ_IDEA
     }
 
     private val buildNumber = extension?.dropWhile { !it.isDigit() }?.takeWhile { it.isDigit() }?.toIntOrNull() ?: 0
@@ -46,7 +51,7 @@ public class KotlinVersion(
         (major - other.major).let { if (it != 0) return it }
         (minor - other.minor).let { if (it != 0) return it }
         (patch - other.patch).let { if (it != 0) return it }
-        (maturity - other.maturity).let { if (it != 0) return it }
+        (maturity.ordinal - other.maturity.ordinal).let { if (it != 0) return it }
         (buildNumber - other.buildNumber).let { if (it != 0) return it }
         return 0
     }

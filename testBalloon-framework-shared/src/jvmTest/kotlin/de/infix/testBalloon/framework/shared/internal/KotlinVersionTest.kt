@@ -12,7 +12,7 @@ class KotlinVersionTest {
     }
 
     @Test
-    fun prereleaseOrder() {
+    fun eapOrder() {
         verifyOrder(
             "1.0.0-Alpha < 1.0.0-Alpha1 < 1.0.0-Alpha2 < 1.0.0-Beta < 1.0.0-Beta2 < 1.0.0-Beta11 < 1.0.0-RC1 < 1.0.0"
         )
@@ -36,6 +36,13 @@ class KotlinVersionTest {
     fun rcDevOrder() {
         verifyOrder(
             "1.0.0-RC1 < 1.0.0-dev-234 < 1.0.0"
+        )
+    }
+
+    @Test
+    fun devIjOrder() {
+        verifyOrder(
+            "1.0.0-dev-234 < 1.0.0-ij263-18 < 1.0.0"
         )
     }
 

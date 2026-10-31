@@ -47,6 +47,8 @@ public class KotlinVersion(
 
     private val buildNumber = extension?.dropWhile { !it.isDigit() }?.takeWhile { it.isDigit() }?.toIntOrNull() ?: 0
 
+    public val isForIntelliJIdea: Boolean = maturity == Maturity.INTELLIJ_IDEA
+
     override fun compareTo(other: KotlinVersion): Int {
         (major - other.major).let { if (it != 0) return it }
         (minor - other.minor).let { if (it != 0) return it }

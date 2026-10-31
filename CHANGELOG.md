@@ -1,3 +1,9 @@
+## Unreleased
+
+### Fixes
+
+* IDE errors "Cannot determine maturity for classifier 'ij263-18' in 2.5.0-ij263-18" no longer appear when force-loading compiler plugins into IntelliJ IDEA.
+
 ## 1.2.0 (October 25, 2026)
 
 ### Compatibility

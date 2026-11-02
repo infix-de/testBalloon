@@ -6,7 +6,6 @@ import de.infix.testBalloon.compilerPlugin.layer.base.CompilerAdapter
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import java.io.File
@@ -60,7 +60,7 @@ class ModuleTransformer_2_5_20(configuration: Configuration) : ModuleTransformer
     override fun registerReference(entryPointFile: IrFile, referencedDeclaration: IrDeclarationWithName) {
         pluginContext.recordLookup(referencedDeclaration, entryPointFile)
         fileMappingTracker?.recordSourceReferencedByCompilerPlugin(
-            File(referencedDeclaration.fileParent.path)
+            File(referencedDeclaration.file.path)
         )
     }
 

@@ -10,7 +10,7 @@ plugins {
 
 configurePluginLayer(
     kotlinVersion = "2.5.20-dev-2623",
-    compilerApiDependency = "kotlin-compiler-plugin-api",
+    // compilerApiDependency = "kotlin-compiler-plugin-api",
     baseLayer = "base",
     kctforkVersion = "0.14.0"
 )

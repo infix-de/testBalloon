@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:class-naming", "ClassName")
 
-package de.infix.testBalloon.compilerPlugin.layer.kotlin2520
+package de.infix.testBalloon.compilerPlugin.layer.kotlin2520dev2623
 
 import de.infix.testBalloon.compilerPlugin.layer.base.CompilerAdapter
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.ClassId
 import java.io.File
 
 @Suppress("ClassName", "unused")
-class CompilerAdapter_2_5_20(configuration: Configuration) : CompilerAdapter(configuration) {
+class CompilerAdapter_2_5_20_dev_2623(configuration: Configuration) : CompilerAdapter(configuration) {
 
     @OptIn(ExperimentalCompilerApi::class)
     override fun ExtensionStorage.registerExtensions(compilerConfiguration: CompilerConfiguration) {

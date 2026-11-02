@@ -1,6 +1,6 @@
 @file:OptIn(TestBalloonInternalApi::class)
 
-package de.infix.testBalloon.compilerPlugin.layer.kotlin2520
+package de.infix.testBalloon.compilerPlugin.layer.kotlin2520dev2623
 
 import de.infix.testBalloon.compilerPlugin.layer.base.entryPointPackageFqName
 import de.infix.testBalloon.compilerPlugin.layer.base.mainFunctionId

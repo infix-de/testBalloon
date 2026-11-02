@@ -1,7 +1,7 @@
 @file:OptIn(TestBalloonInternalApi::class)
 @file:Suppress("DuplicatedCode")
 
-package de.infix.testBalloon.compilerPlugin.layer.kotlin2520
+package de.infix.testBalloon.compilerPlugin.layer.kotlin2520dev2623
 
 import de.infix.testBalloon.compilerPlugin.layer.base.Options
 import de.infix.testBalloon.compilerPlugin.layer.base.PLUGIN_DISPLAY_NAME

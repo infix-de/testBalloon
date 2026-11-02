@@ -21,8 +21,8 @@ In principle, this module could become a new base layer for all plugin layers in
 
 ``` 
 > Task :testBalloon-compiler-plugin:kotlin-2-5-20:compileKotlin FAILED
-e: .../testBalloon/testBalloon-compiler-plugin/layer/kotlin-2-5-20/src/main/kotlin/de/infix/testBalloon/compilerPlugin/layer/kotlin2520/CompilerAdapter_2_5_20.kt:9:37 Unresolved reference 'jvm'.
-e: .../testBalloon/testBalloon-compiler-plugin/layer/kotlin-2-5-20/src/main/kotlin/de/infix/testBalloon/compilerPlugin/layer/kotlin2520/CompilerAdapter_2_5_20.kt:63:40 Unresolved reference 'fileParent' on receiver of type 'IrDeclarationWithName'.
+e: .../testBalloon/testBalloon-compiler-plugin/layer/kotlin-2-5-20/src/main/kotlin/de/infix/testBalloon/compilerPlugin/layer/kotlin2520/CompilerAdapter_2_5_20_dev_2623.kt:9:37 Unresolved reference 'jvm'.
+e: .../testBalloon/testBalloon-compiler-plugin/layer/kotlin-2-5-20/src/main/kotlin/de/infix/testBalloon/compilerPlugin/layer/kotlin2520/CompilerAdapter_2_5_20_dev_2623.kt:63:40 Unresolved reference 'fileParent' on receiver of type 'IrDeclarationWithName'.
 e: .../testBalloon/testBalloon-compiler-plugin/layer/kotlin-2-5-20/src/main/kotlin/de/infix/testBalloon/compilerPlugin/layer/kotlin2520/FirDeclarationGenerationExtensionBase.kt:30:38 Unresolved reference 'jvm'.
 e: .../testBalloon/testBalloon-compiler-plugin/layer/kotlin-2-5-20/src/main/kotlin/de/infix/testBalloon/compilerPlugin/layer/kotlin2520/FirDeclarationGenerationExtensionBase.kt:31:38 Unresolved reference 'konan'.
 e: .../testBalloon/testBalloon-compiler-plugin/layer/kotlin-2-5-20/src/main/kotlin/de/infix/testBalloon/compilerPlugin/layer/kotlin2520/FirDeclarationGenerationExtensionBase.kt:57:22 Unresolved reference 'isJvm' on receiver of type 'TargetPlatform'.

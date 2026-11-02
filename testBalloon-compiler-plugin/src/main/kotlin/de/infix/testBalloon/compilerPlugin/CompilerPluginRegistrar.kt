@@ -64,12 +64,12 @@ class CompilerPluginRegistrar : CompilerPluginRegistrar() {
                 ?.bufferedReader()?.use { it.readText() }?.takeUnless { it.isBlank() }?.asKotlinVersion()
                 ?: throw IllegalArgumentException("$PLUGIN_DISPLAY_NAME: Could not determine the compiler version.")
 
-        for (adapterVersionString in listOf("2.4.0", "2.3.20", "2.3.0", "2.2.0")) {
+        for (adapterVersionString in listOf("2.5.20-dev-2623", "2.4.0", "2.3.20", "2.3.0", "2.2.0")) {
             val adapterVersion = adapterVersionString.asKotlinVersion()
             if (adapterVersion <= compilerVersion) {
                 val adapterConfiguration = CompilerAdapter.Configuration(pluginId, compilerVersion, adapterVersion)
-                val packageVersion = adapterVersionString.replace(".", "")
-                val classVersion = adapterVersionString.replace(".", "_")
+                val packageVersion = adapterVersionString.replace(".", "").replace("-", "")
+                val classVersion = adapterVersionString.replace(".", "_").replace("-", "_")
                 val className =
                     "${PROJECT_ROOT_GROUP}.compilerPlugin.layer.kotlin$packageVersion.CompilerAdapter_$classVersion"
                 return Class.forName(className)

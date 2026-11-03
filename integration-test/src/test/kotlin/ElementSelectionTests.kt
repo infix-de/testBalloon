@@ -43,7 +43,8 @@ private fun TestSuite.projectTestSuite(
     }
 
     class TestVariant(
-        val type: VariantType,
+        val configurationType: VariantConfigurationType,
+        val extraName: String? = null,
         val execution: suspend (taskName: String, pattern: String) -> TestProject.Execution,
         val patternMatches: Map<String, Int>
     )
@@ -59,10 +60,11 @@ private fun TestSuite.projectTestSuite(
     } else {
         emptyMap()
     }
+    val exclusionPatternMatches = mapOf("com.example.SimpleSuite*" to 2)
 
     val primaryVariants = listOf(
         TestVariant(
-            type = VariantType.CLI,
+            configurationType = VariantConfigurationType.CLI,
             execution = { taskName, pattern ->
                 project.gradleExecution(
                     ":clean${taskName.capitalizedTaskName()}",
@@ -74,7 +76,7 @@ private fun TestSuite.projectTestSuite(
             patternMatches = commonPatternMatches + extraPatternMatches
         ),
         TestVariant(
-            type = VariantType.Environment,
+            configurationType = VariantConfigurationType.Environment,
             execution = { taskName, pattern ->
                 project.gradleExecution(
                     ":clean${taskName.capitalizedTaskName()}",
@@ -85,7 +87,7 @@ private fun TestSuite.projectTestSuite(
             patternMatches = commonPatternMatches
         ),
         TestVariant(
-            type = VariantType.Buildscript,
+            configurationType = VariantConfigurationType.Buildscript,
             execution = { taskName, pattern ->
                 project.gradleExecution(
                     ":clean${taskName.capitalizedTaskName()}",
@@ -94,12 +96,36 @@ private fun TestSuite.projectTestSuite(
                 )
             },
             patternMatches = commonPatternMatches
+        ),
+        TestVariant(
+            configurationType = VariantConfigurationType.Environment,
+            extraName = "(exclusion)",
+            execution = { taskName, pattern ->
+                project.gradleExecution(
+                    ":clean${taskName.capitalizedTaskName()}",
+                    ":$taskName",
+                    environment = mapOf("TESTBALLOON_EXCLUDE_PATTERNS" to pattern)
+                )
+            },
+            patternMatches = exclusionPatternMatches
+        ),
+        TestVariant(
+            configurationType = VariantConfigurationType.Buildscript,
+            extraName = "(exclusion)",
+            execution = { taskName, pattern ->
+                project.gradleExecution(
+                    ":clean${taskName.capitalizedTaskName()}",
+                    ":$taskName",
+                    "-Plocal.excludeTestsMatching=$pattern"
+                )
+            },
+            patternMatches = exclusionPatternMatches
         )
     )
 
     val secondaryVariants = listOf(
         TestVariant(
-            type = VariantType.CLI,
+            configurationType = VariantConfigurationType.CLI,
             execution = { taskName, pattern ->
                 project.gradleExecution(
                     ":clean${taskName.capitalizedTaskName()}",
@@ -116,8 +142,9 @@ private fun TestSuite.projectTestSuite(
 
     for (variant in variants) {
         for ((pattern, expectedTestCount) in variant.patternMatches) {
+            val name = variant.configurationType.name + (variant.extraName?.let { " $it" } ?: "")
             test(
-                "${variant.type.name}: '$pattern', $expectedTestCount test(s)",
+                "$name: '$pattern', $expectedTestCount test(s)",
                 testConfig = TestConfig.skipConditionally(pattern)
             ) {
                 for (taskName in project.testTaskNames()) {
@@ -127,7 +154,7 @@ private fun TestSuite.projectTestSuite(
                         taskExecution.exitCode != 0 &&
                         (
                             taskExecution.stderr.contains("No tests found for given includes") ||
-                                variant.type == VariantType.Environment &&
+                                variant.configurationType == VariantConfigurationType.Environment &&
                                 taskExecution.stderr.contains(
                                     "There are test sources present and no filters are applied"
                                 )
@@ -156,7 +183,7 @@ private fun TestSuite.projectTestSuite(
     }
 }
 
-private enum class VariantType { CLI, Environment, Buildscript }
+private enum class VariantConfigurationType { CLI, Environment, Buildscript }
 
 private val secondarySkippingEnabled = skippingEnabled("secondary")
 

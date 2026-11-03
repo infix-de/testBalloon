@@ -147,6 +147,7 @@ internal class EnvironmentBasedElementSelection(
     excludePatterns: String? = EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.value()
 ) : ListsBasedElementSelection(includePatterns, excludePatterns) {
     companion object {
-        internal fun isAvailable(): Boolean = EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.value() != null
+        internal fun isAvailable(): Boolean = EnvironmentVariable.TESTBALLOON_INCLUDE_PATTERNS.value() != null ||
+            EnvironmentVariable.TESTBALLOON_EXCLUDE_PATTERNS.value() != null
     }
 }

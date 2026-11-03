@@ -66,16 +66,20 @@ tasks {
     }
 
     val includeTestsMatchingPattern = project.findProperty("local.includeTestsMatching") as? String
+    val excludeTestsMatchingPattern = project.findProperty("local.excludeTestsMatching") as? String
     withType<Test>().configureEach {
         if (includeTestsMatchingPattern != null) filter.includeTestsMatching(includeTestsMatchingPattern)
+        if (excludeTestsMatchingPattern != null) filter.excludeTestsMatching(excludeTestsMatchingPattern)
         testLogging { showStandardStreams = true }
     }
     withType<KotlinJsTest>().configureEach {
         if (includeTestsMatchingPattern != null) filter.includeTestsMatching(includeTestsMatchingPattern)
+        if (excludeTestsMatchingPattern != null) filter.excludeTestsMatching(excludeTestsMatchingPattern)
         testLogging { showStandardStreams = true }
     }
     withType<KotlinNativeTest>().configureEach {
         if (includeTestsMatchingPattern != null) filter.includeTestsMatching(includeTestsMatchingPattern)
+        if (excludeTestsMatchingPattern != null) filter.excludeTestsMatching(excludeTestsMatchingPattern)
         testLogging { showStandardStreams = true }
     }
 }

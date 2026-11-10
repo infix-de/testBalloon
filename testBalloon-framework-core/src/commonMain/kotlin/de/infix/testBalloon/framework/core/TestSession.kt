@@ -29,15 +29,11 @@ import kotlinx.coroutines.Dispatchers
  * ```
  */
 @TestRegistering
-public open class TestSession protected constructor(
+public open class TestSession private constructor(
     testConfig: TestConfig = DefaultConfiguration,
-    defaultCompartment: (() -> TestCompartment) = { TestCompartment.Default },
-    reportingMode: ReportingMode? = null
-) : TestSuite(
-    parent = null,
-    name = "TestSession",
-    testConfig = testConfig
-),
+    defaultCompartment: () -> TestCompartment,
+    reportingMode: ReportingMode?
+) : TestSuite(parent = null, name = "TestSession", testConfig = testConfig),
     AbstractTestSession {
 
     internal val defaultCompartment: TestCompartment by lazy { defaultCompartment() }
@@ -69,8 +65,14 @@ public open class TestSession protected constructor(
         }
     }
 
-    internal constructor(reportingMode: ReportingMode? = null) : this(
+    public constructor(
+        testConfig: TestConfig = DefaultConfiguration,
+        defaultCompartment: (() -> TestCompartment) = { TestCompartment.Default }
+    ) : this(testConfig = testConfig, defaultCompartment = defaultCompartment, reportingMode = null)
+
+    internal constructor(reportingMode: ReportingMode) : this(
         testConfig = DefaultConfiguration,
+        defaultCompartment = { TestCompartment.Default },
         reportingMode = reportingMode
     )
 

@@ -4,6 +4,7 @@
 
 * Test selection: Honor exclude patterns without include patterns. (#105)
 * IDE errors "_Cannot determine maturity for classifier 'ij263-18' in 2.5.0-ij263-18_" no longer appear when force-loading compiler plugins into IntelliJ IDEA.
+* `TestSession`: Removed the internal parameter `reportingMode` from the public API. (Since there was no meaningful opt-in free use, this fix doesn't count as a breaking change.)
 
 ## 1.2.0 (October 25, 2026)
 

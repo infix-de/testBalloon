@@ -148,7 +148,7 @@ open class de.infix.testBalloon.framework.core/TestConfig { // de.infix.testBall
 }
 
 open class de.infix.testBalloon.framework.core/TestSession : de.infix.testBalloon.framework.core/TestSuite, de.infix.testBalloon.framework.shared/AbstractTestSession { // de.infix.testBalloon.framework.core/TestSession|null[0]
-    constructor <init>(de.infix.testBalloon.framework.core/TestConfig = ..., kotlin/Function0<de.infix.testBalloon.framework.core/TestCompartment> = ..., de.infix.testBalloon.framework.shared.internal/ReportingMode? = ...) // de.infix.testBalloon.framework.core/TestSession.<init>|<init>(de.infix.testBalloon.framework.core.TestConfig;kotlin.Function0<de.infix.testBalloon.framework.core.TestCompartment>;de.infix.testBalloon.framework.shared.internal.ReportingMode?){}[0]
+    constructor <init>(de.infix.testBalloon.framework.core/TestConfig = ..., kotlin/Function0<de.infix.testBalloon.framework.core/TestCompartment> = ...) // de.infix.testBalloon.framework.core/TestSession.<init>|<init>(de.infix.testBalloon.framework.core.TestConfig;kotlin.Function0<de.infix.testBalloon.framework.core.TestCompartment>){}[0]
 
     final object Companion { // de.infix.testBalloon.framework.core/TestSession.Companion|null[0]
         final val DefaultConfiguration // de.infix.testBalloon.framework.core/TestSession.Companion.DefaultConfiguration|{}DefaultConfiguration[0]

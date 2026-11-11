@@ -1,7 +1,8 @@
 package de.infix.testBalloon.framework.core
 
-import de.infix.testBalloon.framework.core.TestCompartment.Companion.Default
 import kotlinx.coroutines.CoroutineDispatcher
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyOpen
 
 /**
  * A compartment isolating a number of tests from those belonging to other compartments.
@@ -10,6 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
  *
  * The [Companion] object provides predefined compartments for common use cases.
  */
+@IntentionallyOpen(reason = ExemptionReason.API_DESIGN)
 public open class TestCompartment(name: String, testConfig: TestConfig) :
     TestSuite(parent = TestSession.global, name = "@$name", testConfig = testConfig) {
 

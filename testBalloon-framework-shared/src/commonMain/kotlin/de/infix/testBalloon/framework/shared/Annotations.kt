@@ -48,4 +48,5 @@ public annotation class TestSuitePropertyName
  * Makes the annotated class part of the test element DSL. See the Kotlin docs on [DslMarker] for details.
  */
 @DslMarker
+@Target(AnnotationTarget.CLASS)
 public annotation class TestElementDsl

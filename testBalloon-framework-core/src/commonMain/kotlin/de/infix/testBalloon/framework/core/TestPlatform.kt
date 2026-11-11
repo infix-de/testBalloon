@@ -1,10 +1,12 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import kotlinx.coroutines.CoroutineDispatcher
 
 /**
  * The platform executing tests.
  */
+@SubclassOptInRequired(markerClass = arrayOf(TestBalloonInternalApi::class))
 public interface TestPlatform {
     public enum class Type { Jvm, Native, Js, WasmJs, WasmWasi }
 

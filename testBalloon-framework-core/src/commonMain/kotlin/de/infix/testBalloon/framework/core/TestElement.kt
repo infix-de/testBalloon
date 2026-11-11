@@ -9,11 +9,23 @@ import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import de.infix.testBalloon.framework.shared.internal.safeAsInternalId
 import de.infix.testBalloon.framework.shared.internal.safelyTransformed
 import kotlinx.atomicfu.atomic
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyOpen
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyRequiredParameterAfterOptional
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyWithoutEqualsHashCodeOrToString
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-public sealed class TestElement(
+/**
+ * An element of a test hierarchy. Can be a test or a suite.
+ */
+public sealed class TestElement
+@IntentionallyRequiredParameterAfterOptional(
+    description = "consistency with the call site's 'qualifiedPropertyName' initialized by the compiler plugin",
+    reason = ExemptionReason.INTEROP
+)
+constructor(
     parent: TestSuite?,
     name: String,
     qualifiedPropertyName: String? = null,
@@ -294,7 +306,10 @@ public sealed class TestElement(
      * }
      * ```
      */
+    @IntentionallyOpen(reason = ExemptionReason.API_DESIGN)
+    @IntentionallyWithoutEqualsHashCodeOrToString(reason = ExemptionReason.API_DESIGN)
     public abstract class KeyedParameter(internal val key: Key<*>) {
+        @IntentionallyOpen(reason = ExemptionReason.API_DESIGN)
         public interface Key<SpecificParameter : KeyedParameter>
     }
 

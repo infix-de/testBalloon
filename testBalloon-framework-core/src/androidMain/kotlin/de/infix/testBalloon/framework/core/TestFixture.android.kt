@@ -1,5 +1,8 @@
 package de.infix.testBalloon.framework.core
 
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyOpen
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyWithoutEqualsHashCodeOrToString
 import org.junit.rules.TestRule
 import org.junit.runners.model.Statement
 
@@ -24,6 +27,8 @@ import org.junit.runners.model.Statement
  * }
  * ```
  */
+@IntentionallyOpen(reason = ExemptionReason.API_DESIGN)
+@IntentionallyWithoutEqualsHashCodeOrToString(reason = ExemptionReason.API_DESIGN)
 public open class JUnit4RulesContext : TestFixture.BlockingEnvelope {
     /** Rules in reverse order of registration (LIFO). */
     private val rules = mutableListOf<TestRule>()

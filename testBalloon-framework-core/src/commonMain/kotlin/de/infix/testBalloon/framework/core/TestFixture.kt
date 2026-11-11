@@ -8,6 +8,8 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyRequiredParameterAfterOptional
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
@@ -276,6 +278,10 @@ public class TestFixture<Value : Any> internal constructor(
          */
         @TestRegistering
         @JvmName("testFixtureScoped")
+        @IntentionallyRequiredParameterAfterOptional(
+            description = "'fixtureScopedAction' is designed to be a trailing lambda",
+            reason = ExemptionReason.OTHER
+        )
         public fun test(
             @TestElementName name: String,
             testConfig: TestConfig = TestConfig,
@@ -291,6 +297,8 @@ public class TestFixture<Value : Any> internal constructor(
 
         private fun TestConfig.envelopeContext(envelopeValue: (suspend () -> Any)?): TestConfig =
             if (envelopeValue != null) coroutineContext(TestEnvelopeContext(envelopeValue)) else this
+
+        override fun toString(): String = "${this::class.simpleName}(testSuiteInScope=$testSuiteInScope)"
     }
 
     /**
@@ -428,4 +436,6 @@ public class TestFixture<Value : Any> internal constructor(
 
         if (actionException != null) throw actionException
     }
+
+    override fun toString(): String = "${this::class.simpleName}(testSuite=$testSuite, level=$level)"
 }

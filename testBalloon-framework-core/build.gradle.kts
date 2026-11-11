@@ -81,7 +81,7 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.androidx.test.core.earliest)
-                implementation(libs.junit.junit4)
+                api(libs.junit.junit4)
             }
         }
 

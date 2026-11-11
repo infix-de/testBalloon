@@ -1,8 +1,10 @@
 package de.infix.testBalloon.framework.core
 
+import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
+@SubclassOptInRequired(markerClass = arrayOf(TestBalloonInternalApi::class))
 public interface TestPlatformJsHosted : TestPlatform {
     public enum class Runtime(public val displayName: String) {
         Node("Node"),

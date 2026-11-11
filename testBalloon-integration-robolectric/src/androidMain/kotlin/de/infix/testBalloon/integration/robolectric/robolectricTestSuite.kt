@@ -10,6 +10,10 @@ import de.infix.testBalloon.framework.core.traversal
 import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
 import de.infix.testBalloon.integration.robolectric.internal.robolectricContext
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyMutableCollection
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyOpen
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyWithoutEqualsHashCodeOrToString
 import kotlin.reflect.KClass
 
 /**
@@ -34,6 +38,10 @@ import kotlin.reflect.KClass
  * ```
  */
 @TestRegistering
+@IntentionallyMutableCollection(
+    description = "'arguments' are passed to a constructor by reflection",
+    reason = ExemptionReason.INTEROP
+)
 public inline fun <reified Content : RobolectricTestSuiteContent> TestSuiteScope.robolectricTestSuite(
     @TestElementName name: String,
     arguments: Array<Any> = arrayOf(),
@@ -94,6 +102,8 @@ public fun TestSuiteScope.robolectricTestSuite(
  * ```
  */
 @TestRegistering
+@IntentionallyWithoutEqualsHashCodeOrToString(reason = ExemptionReason.API_DESIGN)
+@IntentionallyOpen(reason = ExemptionReason.API_DESIGN)
 public abstract class RobolectricTestSuiteContent protected constructor(
     private val content: TestSuiteScope.() -> Unit
 ) : TestSuiteScope {

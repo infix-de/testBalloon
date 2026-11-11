@@ -48,6 +48,8 @@ public class Test internal constructor(
         /** The test timeout if set by [TestConfig.testScope], or null. */
         @Suppress("CanBePrimaryConstructorProperty")
         public val testTimeout: Duration? = testTimeout
+
+        override fun toString(): String = "${this::class.simpleName}($test)"
     }
 
     override fun setUp(selection: Selection, report: TestSetupReport) {

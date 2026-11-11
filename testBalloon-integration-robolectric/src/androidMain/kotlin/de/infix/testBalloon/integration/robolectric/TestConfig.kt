@@ -5,6 +5,9 @@ import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestElement
 import de.infix.testBalloon.framework.core.parameter
 import de.infix.testBalloon.integration.robolectric.internal.RobolectricContext
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyMutableCollection
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyWithoutEqualsHashCodeOrToString
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.ConscryptMode
 import kotlin.reflect.KClass
@@ -34,6 +37,7 @@ public fun TestConfig.robolectric(settings: RobolectricSettings.() -> Unit): Tes
 /**
  * Settings for a Robolectric test suite.
  */
+@IntentionallyWithoutEqualsHashCodeOrToString(reason = ExemptionReason.API_DESIGN)
 public class RobolectricSettings internal constructor(
     // region – Attributes inherited via Config.Builder.overlay() from a parent's Config.
 
@@ -66,11 +70,13 @@ public class RobolectricSettings internal constructor(
     /**
      * A set of shadow classes to enable, in addition to those that are already present.
      */
+    @IntentionallyMutableCollection(reason = ExemptionReason.API_DESIGN)
     public val shadows: MutableSet<KClass<*>> = mutableSetOf(),
 
     /**
      * A set of instrumented packages to enable, in addition to those that are already present.
      */
+    @IntentionallyMutableCollection(reason = ExemptionReason.API_DESIGN)
     public val instrumentedPackages: MutableSet<String> = mutableSetOf(),
 
     // endregion
@@ -83,6 +89,7 @@ public class RobolectricSettings internal constructor(
      * Such classes will be excluded from being instrumented by Robolectric. The set includes classes inherited
      * from a parent's [RobolectricSettings]. It may be extended, or cleared and populated anew.
      */
+    @IntentionallyMutableCollection(reason = ExemptionReason.API_DESIGN)
     public val portableClasses: MutableSet<KClass<*>>,
 
     /**
@@ -91,6 +98,7 @@ public class RobolectricSettings internal constructor(
      * Such packages will be excluded from being instrumented by Robolectric. The set includes packages inherited
      * from a parent's [RobolectricSettings]. It may be extended, or cleared and populated anew.
      */
+    @IntentionallyMutableCollection(reason = ExemptionReason.API_DESIGN)
     public val portablePackages: MutableSet<String>,
 
     /**

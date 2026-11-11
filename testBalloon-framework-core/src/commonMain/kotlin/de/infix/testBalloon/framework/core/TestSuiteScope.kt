@@ -2,6 +2,8 @@ package de.infix.testBalloon.framework.core
 
 import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyOpen
 
 /**
  * A [TestSuite]-based registration scope for tests, test suites and fixtures.
@@ -9,6 +11,7 @@ import de.infix.testBalloon.framework.shared.TestRegistering
  * The most direct [TestSuiteScope] is the [TestSuite] itself. In addition, there are scopes for fixtures and
  * custom scopes. These are not test suites in their own right, but delegate to one.
  */
+@IntentionallyOpen(reason = ExemptionReason.API_DESIGN)
 public interface TestSuiteScope {
     /**
      * The closest test suite in scope. Use this to refer to the test suite when creating custom tests or test suites.

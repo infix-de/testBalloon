@@ -11,6 +11,8 @@ import de.infix.testBalloon.framework.shared.internal.EnvironmentVariable
 import de.infix.testBalloon.framework.shared.internal.ReportingMode
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyOpen
 
 /**
  * A compilation module's root test suite, holding the module-wide default configuration.
@@ -29,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
  * ```
  */
 @TestRegistering
+@IntentionallyOpen(reason = ExemptionReason.API_DESIGN)
 public open class TestSession private constructor(
     testConfig: TestConfig = DefaultConfiguration,
     defaultCompartment: () -> TestCompartment,

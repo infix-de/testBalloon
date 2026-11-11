@@ -14,6 +14,9 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyInconsistentParameterOrder
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyRequiredParameterAfterOptional
 import kotlin.collections.set
 import kotlin.coroutines.CoroutineContext
 
@@ -35,6 +38,14 @@ import kotlin.coroutines.CoroutineContext
  * property at the call site. It must not be changed except for internal testing.
  */
 @TestRegistering
+@IntentionallyInconsistentParameterOrder(
+    description = "the compiler plugin initializes 'qualifiedPropertyName'",
+    reason = ExemptionReason.INTEROP
+)
+@IntentionallyRequiredParameterAfterOptional(
+    description = "the compiler plugin initializes 'qualifiedPropertyName'",
+    reason = ExemptionReason.INTEROP
+)
 public fun testSuite(
     @TestElementName name: String? = null,
     compartment: () -> TestCompartment,

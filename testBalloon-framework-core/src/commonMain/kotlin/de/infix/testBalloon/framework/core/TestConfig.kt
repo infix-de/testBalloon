@@ -9,6 +9,11 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.withContext
+import org.jetbrains.kotlinx.library.api.watchdog.ExemptionReason
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyBooleanParameter
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyFunctionTypeAlias
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyOpen
+import org.jetbrains.kotlinx.library.api.watchdog.IntentionallyWithoutEqualsHashCodeOrToString
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration
@@ -38,6 +43,7 @@ import kotlin.time.Duration.Companion.seconds
  *     .invocation(TestConfig.Invocation.Concurrent)
  * ```
  */
+@IntentionallyWithoutEqualsHashCodeOrToString(reason = ExemptionReason.API_DESIGN)
 public open class TestConfig internal constructor(
     private val parameterizingAction: (TestElement.(TestElement.Parameters) -> TestElement.Parameters)?,
     private val executionWrappingAction: TestElementExecutionWrappingAction?,
@@ -181,6 +187,7 @@ public open class TestConfig internal constructor(
      *
      * For an example, see the implementation of [TestConfig.failFast].
      */
+    @IntentionallyOpen(reason = ExemptionReason.API_DESIGN)
     public interface ExecutionTraversal {
         /**
          * A method wrapping each [TestElement]'s cumulative [elementAction].
@@ -235,9 +242,12 @@ private typealias ExecutionReportSetupAction =
  * - [TestElementExecutionWrappingAction] should not throw to indicate a failing test or to block further tests from
  *   executing.
  */
-public typealias TestElementExecutionWrappingAction = suspend TestElement.(
-    elementAction: suspend TestElement.() -> Unit
-) -> Unit
+@IntentionallyFunctionTypeAlias(
+    description = "fun interface is incompatible with receiver",
+    reason = ExemptionReason.TODO
+)
+public typealias TestElementExecutionWrappingAction =
+    suspend TestElement.(elementAction: suspend TestElement.() -> Unit) -> Unit
 
 /**
  * Returns a test configuration which disables test execution for a [TestElement] hierarchy.
@@ -572,6 +582,7 @@ public fun TestConfig.mainDispatcher(dispatcher: CoroutineDispatcher? = null): T
  *
  * Child elements inherit this setting, unless configured otherwise.
  */
+@IntentionallyBooleanParameter(reason = ExemptionReason.API_DESIGN)
 public fun TestConfig.testScope(isEnabled: Boolean, timeout: Duration = 60.seconds): TestConfig =
     executionWrapping { elementAction ->
         if (isEnabled && TestConfig.Invocation.current() == TestConfig.Invocation.Concurrent) {

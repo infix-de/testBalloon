@@ -3,7 +3,7 @@ import buildLogic.enableAbiValidation
 
 plugins {
     id("buildLogic.kotlin-multiplatform")
-    id("de.infix.testBalloon")
+    // id("de.infix.testBalloon")
     id("buildLogic.dokka")
     id("buildLogic.publishing")
 }

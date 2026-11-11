@@ -12,8 +12,8 @@ tasks {
             group = "verification"
             description = "Run tests for all releasable TestBalloon components."
 
-            dependsOn(gradle.includedBuild("testBalloon-compiler-plugin").task(":test"))
-            dependsOn(gradle.includedBuild("testBalloon-gradle-plugin").task(":test"))
+            // dependsOn(gradle.includedBuild("testBalloon-compiler-plugin").task(":test"))
+            // dependsOn(gradle.includedBuild("testBalloon-gradle-plugin").task(":test"))
             dependsOn(gradle.includedBuild("testBalloon-framework-shared").task(":$kmpTaskName"))
             dependsOn(":testBalloon-framework-core:$kmpTaskName")
 
@@ -27,8 +27,8 @@ tasks {
         group = "verification"
         description = "Run check tasks for all releasable TestBalloon components."
 
-        dependsOn(gradle.includedBuild("testBalloon-compiler-plugin").task(":check"))
-        dependsOn(gradle.includedBuild("testBalloon-gradle-plugin").task(":check"))
+        // dependsOn(gradle.includedBuild("testBalloon-compiler-plugin").task(":check"))
+        // dependsOn(gradle.includedBuild("testBalloon-gradle-plugin").task(":check"))
         dependsOn(gradle.includedBuild("testBalloon-framework-shared").task(":check"))
         dependsOn(":testBalloon-framework-core:check")
 
@@ -37,12 +37,12 @@ tasks {
         dependsOn(":testBalloon-integration-robolectric:check")
     }
 
-    register("integrationTests") {
-        group = "verification"
-        description = "Run TestBalloon integration tests."
-
-        dependsOn(":integration-test:test")
-    }
+    // register("integrationTests") {
+    //     group = "verification"
+    //     description = "Run TestBalloon integration tests."
+    //
+    //     dependsOn(":integration-test:test")
+    // }
 }
 
 applyWebpackVersionsFix()

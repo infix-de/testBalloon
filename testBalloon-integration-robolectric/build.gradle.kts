@@ -4,7 +4,7 @@ import buildLogic.robolectricJdkVersion
 plugins {
     id("buildLogic.kotlin-multiplatform")
     id("com.android.kotlin.multiplatform.library")
-    id("de.infix.testBalloon")
+    // id("de.infix.testBalloon")
     id("buildLogic.dokka")
     id("buildLogic.publishing")
 }

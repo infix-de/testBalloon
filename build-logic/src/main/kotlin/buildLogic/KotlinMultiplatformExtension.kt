@@ -3,7 +3,7 @@ package buildLogic
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 
@@ -45,12 +45,12 @@ fun KotlinMultiplatformExtension.nativeTargets() {
     // Tier 3, planned deprecation:
     // - https://kotlinlang.org/docs/native-target-support.html#deprecated-targets
     // - https://youtrack.jetbrains.com/issue/KT-78660
-    @Suppress("DEPRECATION")
-    macosX64()
-    @Suppress("DEPRECATION")
-    watchosX64()
-    @Suppress("DEPRECATION")
-    tvosX64()
+    // @Suppress("DEPRECATION")
+    // macosX64()
+    // @Suppress("DEPRECATION")
+    // watchosX64()
+    // @Suppress("DEPRECATION")
+    // tvosX64()
 }
 
 fun KotlinMultiplatformExtension.allTargets() {
@@ -88,15 +88,13 @@ fun KotlinMultiplatformExtension.applyHierarchy(nonJvm: KotlinHierarchyBuilder.(
 }
 
 fun KotlinMultiplatformExtension.enableAbiValidation() {
-    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    extensions.configure<AbiValidationMultiplatformExtension>("abiValidation") {
-        enabled.set(true)
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation {
         filters {
-            excluded {
-                val annotationsPackage = "de.infix.testBalloon.framework.shared.internal"
-                for (annotation in listOf("TestBalloonInternalApi", "TestBalloonInternalTestingApi")) {
-                    byNames.add("$annotationsPackage.$annotation")
-                    annotatedWith.add("$annotationsPackage.$annotation")
+            exclude {
+                for (annotation in annotationsIndicatingInternalUse) {
+                    byNames.add(annotation)
+                    annotatedWith.add(annotation)
                 }
             }
         }
@@ -104,3 +102,7 @@ fun KotlinMultiplatformExtension.enableAbiValidation() {
 
     explicitApi()
 }
+
+private const val annotationsPackage = "de.infix.testBalloon.framework.shared.internal"
+val annotationsIndicatingInternalUse =
+    listOf("TestBalloonInternalApi", "TestBalloonInternalTestingApi").map { "$annotationsPackage.$it" }

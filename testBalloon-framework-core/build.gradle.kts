@@ -119,20 +119,20 @@ tasks.withType<KotlinNativeTest>().configureEach {
     }
 }
 
-afterEvaluate {
-    val publishableIncludeBuilds =
-        listOf("testBalloon-compiler-plugin", "testBalloon-framework-shared", "testBalloon-gradle-plugin")
-
-    for (taskName in listOf(
-        "publishAllPublicationsToAggregationStagingRepository",
-        "publishAllPublicationsToIntegrationTestRepository",
-        "publishAllPublicationsToLocalRepository",
-        "publishToMavenLocal"
-    )) {
-        tasks.named(taskName) {
-            dependsOn(publishableIncludeBuilds.map { gradle.includedBuild(it).task(":$taskName") })
-        }
-    }
-}
+// afterEvaluate {
+//     val publishableIncludeBuilds =
+//         listOf("testBalloon-compiler-plugin", "testBalloon-framework-shared", "testBalloon-gradle-plugin")
+//
+//     for (taskName in listOf(
+//         "publishAllPublicationsToAggregationStagingRepository",
+//         "publishAllPublicationsToIntegrationTestRepository",
+//         "publishAllPublicationsToLocalRepository",
+//         "publishToMavenLocal"
+//     )) {
+//         tasks.named(taskName) {
+//             dependsOn(publishableIncludeBuilds.map { gradle.includedBuild(it).task(":$taskName") })
+//         }
+//     }
+// }
 
 propagateLifecycleTasksToIncludedBuilds()

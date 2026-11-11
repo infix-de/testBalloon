@@ -4,6 +4,19 @@ plugins {
     id("buildLogic.common").apply(false)
     id("buildLogic.dokka")
     id("buildLogic.root-project")
+    alias(libs.plugins.org.jetbrains.kotlin.library.api.watchdog.report.aggregation)
+}
+
+dependencies {
+    apiWatchdogReports("$group:testBalloon-framework-shared")
+    listOf(
+        ":testBalloon-framework-core",
+        ":testBalloon-integration-kotest-assertions",
+        ":testBalloon-integration-blocking-detection",
+        ":testBalloon-integration-robolectric"
+    ).forEach {
+        apiWatchdogReports(project(it))
+    }
 }
 
 tasks {

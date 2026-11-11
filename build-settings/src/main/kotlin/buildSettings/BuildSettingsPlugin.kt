@@ -57,6 +57,8 @@ class BuildSettingsPlugin : Plugin<Settings> {
         // Note: The 'dev' repo is unstable, releases are deleted after (two?) weeks.
         // The stable Kotlin pre-release repo is: https://packages.jetbrains.team/maven/p/kt/bootstrap
         maven(url = uri("https://packages.jetbrains.team/maven/p/kt/bootstrap"))
+        maven(url = uri("https://packages.jetbrains.team/maven/p/kt-lib/eap"))
+        maven(url = uri("https://packages.jetbrains.team/maven/p/compiler-plugin-dev-kit/eap"))
         gradlePluginPortal()
         maven(url = uri("https://repo.gradle.org/gradle/libs-releases/"))
     }

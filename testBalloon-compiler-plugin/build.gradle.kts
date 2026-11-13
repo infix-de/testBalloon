@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
     // id("buildLogic.kotlin-multiplatform")
-    kotlin("multiplatform") version "2.4.21"
+    kotlin("multiplatform") version "2.4.0"
     // id("buildLogic.publishing")
     pluginDevKit("compiler-plugin")
 }
@@ -17,10 +17,9 @@ pluginDevKit {
     commandLineProcessor = "de.infix.testBalloon.compilerPlugin.TestBalloonCommandLineProcessor"
 
     // cliVersions(min = kotlinVersion())
-    cliVersions(min = "2.2.21")
+    cliVersions(min = "2.3.0")
 
     versionHierarchy {
-        split("2.4.20")
         split("2.4.0")
         split("2.3.20")
         split("2.3.0")

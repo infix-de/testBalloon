@@ -7,6 +7,7 @@ import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.asKotlinVersion
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.devkit.DevKitComponentRegistrar
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -62,3 +63,10 @@ class TestBalloonComponentRegistrar : DevKitComponentRegistrar {
 }
 
 expect fun CompilerPluginRegistrar.ExtensionStorage.registerFirExtensions(configuration: CompilerConfiguration)
+
+expect fun reportMessage(
+    configuration: CompilerConfiguration,
+    severity: CompilerMessageSeverity,
+    message: String,
+    sourceLocation: CompilerMessageSourceLocation?
+)

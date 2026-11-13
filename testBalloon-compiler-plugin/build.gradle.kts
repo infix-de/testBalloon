@@ -1,107 +1,94 @@
 @file:Suppress("UnstableApiUsage")
 
-import buildLogic.propagateLifecycleTasksToIncludedBuilds
-import buildLogic.rootGroup
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
-    id("buildLogic.kotlin-jvm-base")
-    id("buildLogic.publishing")
-    alias(libs.plugins.com.github.gmazzo.buildconfig)
+    // id("buildLogic.kotlin-multiplatform")
+    kotlin("multiplatform") version "2.4.21"
+    // id("buildLogic.publishing")
+    pluginDevKit("compiler-plugin")
 }
 
 description = "TestBalloon compiler plugin"
 
-/** Dependencies to be embedded into the compiler plugin artifact. */
-val embeddedCompileOnly = configurations.dependencyScope("embeddedCompileOnly")
-val embeddedDynamicallyLoaded = configurations.dependencyScope("embeddedRuntimeOnly")
+pluginDevKit {
+    componentRegistrar = "de.infix.testBalloon.compilerPlugin.TestBalloonComponentRegistrar"
+    commandLineProcessor = "de.infix.testBalloon.compilerPlugin.TestBalloonCommandLineProcessor"
 
-/** The consumable configuration containing the resulting embedded elements. */
-val embeddedResult = configurations.resolvable("embeddedResult") {
-    extendsFrom(embeddedCompileOnly)
-    extendsFrom(embeddedDynamicallyLoaded)
-    exclude(module = "kotlin-stdlib")
-}
+    // cliVersions(min = kotlinVersion())
+    cliVersions(min = "2.2.21")
 
-/** Adds a dependency to the `embedded` configuration. */
-fun DependencyHandler.embeddedCompileOnly(dependencyNotation: Any) = add(embeddedCompileOnly.name, dependencyNotation)
-fun DependencyHandler.embeddedDynamicallyLoaded(dependencyNotation: Any) =
-    add(embeddedDynamicallyLoaded.name, dependencyNotation)
-
-@Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
-dependencies {
-    embeddedCompileOnly("$rootGroup.compilerPlugin.layer:base")
-    embeddedCompileOnly("$rootGroup:testBalloon-framework-shared")
-
-    gradle.includedBuilds.filter { it.name.startsWith("kotlin-") }.forEach {
-        embeddedDynamicallyLoaded("$rootGroup.compilerPlugin.layer:${it.name}")
+    versionHierarchy {
+        split("2.4.20")
+        split("2.4.0")
+        split("2.3.20")
+        split("2.3.0")
     }
-
-    project.configurations.named("compileOnly").configure { extendsFrom(embeddedCompileOnly) }
-    compileOnly(libs.org.jetbrains.kotlin.stdlib)
-    compileOnly(libs.org.jetbrains.kotlin.compiler)
 }
+
+val Project.rootGroup: String get() = "${project.property("local.PROJECT_ROOT_GROUP")}"
 
 buildConfig {
-    packageName("$group.compilerPlugin.buildConfig")
-    useKotlinOutput { internalVisibility = true }
-
+    buildConfigField("String", "PROJECT_VERSION", "\"$version\"")
     buildConfigField("String", "PROJECT_ROOT_GROUP", "\"$rootGroup\"")
+    buildConfigField("String", "PROJECT_FRAMEWORK_CORE_ARTIFACT_ID", "\"testBalloon-framework-core\"")
+
+    // TODO: remove
+    buildConfigField(
+        "String",
+        "PROJECT_COMPILER_PLUGIN_ID",
+        "\"${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}\""
+    )
 }
 
-val integratedJar = tasks.register("integratedJar", Jar::class.java) {
-    group = "build"
-    description = "Creates the compiler plugin's integrated JAR, including embedded dependencies."
-
-    // The following is required for CC compatibility (Project.zipTree(Object) cannot be used).
-    val archiveOperations = run {
-        abstract class InjectionTarget {
-            @get:Inject
-            abstract val archiveOperations: ArchiveOperations
-        }
-        project.objects.newInstance(InjectionTarget::class.java).archiveOperations
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
     }
 
-    // Include the compiler plugin's classes.
-    from(java.sourceSets.main.map { it.output })
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("$rootGroup:testBalloon-framework-shared:$version")
+            }
+        }
+    }
+}
 
-    // Include the compiler plugin's embedded dependency classes, unzipping JARs.
-    from(
-        embeddedResult.map { embeddedResult ->
-            embeddedResult.elements.map { elements ->
-                elements.map { element ->
-                    archiveOperations.zipTree(element.asFile).matching {
-                        // Strip Kotlin metadata files to avoid compilation errors
-                        //     "Module was compiled with an incompatible version of Kotlin"
-                        // when an older compiler version encounters newer metadata in the compiler plugin JAR.
-                        exclude("META-INF/*.kotlin_module")
+configureDiagnosticsTask()
+
+@Suppress("NewApi")
+private fun Project.configureDiagnosticsTask() {
+    val taskName = "sourceSetDiagnostics"
+
+    tasks.register(taskName) {
+        group = "help"
+        description = "Shows diagnostics for the source set topology"
+
+        val testSourceSetsDiagram = provider {
+            project.extensions.findByType(KotlinProjectExtension::class.java)?.let { kotlin ->
+                val sourceSets = kotlin.sourceSets.filter { "Main" in it.name }
+
+                buildString {
+                    appendLine()
+                    appendLine("Diagram for display on https://mermaid.live/")
+                    appendLine()
+                    appendLine("classDiagram")
+                    for (sourceSet in sourceSets) {
+                        appendLine("    class ${sourceSet.name}")
+                    }
+                    for (sourceSet in sourceSets) {
+                        for (dependsOnSourceSet in sourceSet.dependsOn.map { it.name }) {
+                            appendLine("    $dependsOnSourceSet <|-- ${sourceSet.name}")
+                        }
                     }
                 }
             }
         }
-    )
 
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    archiveClassifier = "integrated"
-}
-
-// Publish the integrated JAR instead of the default one.
-// See https://github.com/vanniktech/gradle-maven-publish-plugin/issues/1123#issuecomment-3670312723
-configurations {
-    for (configurationName in listOf("runtimeElements", "apiElements")) {
-        named(configurationName) {
-            outgoing {
-                artifacts.clear()
-                artifact(integratedJar)
-            }
+        doLast {
+            testSourceSetsDiagram.orNull?.let { print(it) }
         }
     }
 }
-
-tasks.named("test") {
-    gradle.includedBuilds.filter { it.name.startsWith("kotlin-") }.forEach {
-        dependsOn(gradle.includedBuild(it.name).task(":test"))
-    }
-}
-
-propagateLifecycleTasksToIncludedBuilds()

@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.refreshVersions
+import org.jetbrains.kotlin.compiler.plugin.devkit.DevKitSettingsPlugin
 import java.net.URI
 import kotlin.io.path.Path
 import kotlin.io.path.invariantSeparatorsPathString
@@ -13,6 +14,7 @@ class BuildSettingsPlugin : Plugin<Settings> {
     override fun apply(target: Settings) = with(target) {
         pluginManager.apply("de.fayard.refreshVersions")
         pluginManager.apply("org.gradle.toolchains.foojay-resolver-convention")
+        pluginManager.apply(DevKitSettingsPlugin::class.java)
 
         dependencyResolutionManagement {
             pluginManagement {

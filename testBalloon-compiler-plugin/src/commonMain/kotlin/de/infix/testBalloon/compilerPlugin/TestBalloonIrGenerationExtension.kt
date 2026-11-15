@@ -11,6 +11,9 @@ import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.DebugLevel
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
 import de.infix.testBalloon.framework.shared.internal.TestFrameworkDiscoveryResult
+import de.infix.testBalloon.testBalloon_compiler_plugin.BuildConfig.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID
+import de.infix.testBalloon.testBalloon_compiler_plugin.BuildConfig.PROJECT_ROOT_GROUP
+import de.infix.testBalloon.testBalloon_compiler_plugin.BuildConfig.PROJECT_VERSION
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -93,9 +96,6 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
-import testBalloon_compiler_plugin.BuildConfig.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID
-import testBalloon_compiler_plugin.BuildConfig.PROJECT_ROOT_GROUP
-import testBalloon_compiler_plugin.BuildConfig.PROJECT_VERSION
 import kotlin.reflect.KClass
 
 class TestBalloonIrGenerationExtension(private val compilerConfiguration: CompilerConfiguration) :

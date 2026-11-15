@@ -1,6 +1,12 @@
 pluginManagement {
     includeBuild("../build-settings")
     includeBuild("../build-logic")
+
+    repositories {
+        mavenCentral()
+        maven(url = uri("https://packages.jetbrains.team/maven/p/compiler-plugin-dev-kit/eap"))
+        gradlePluginPortal()
+    }
 }
 
 plugins {

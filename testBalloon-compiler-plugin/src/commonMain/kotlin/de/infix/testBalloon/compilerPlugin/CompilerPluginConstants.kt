@@ -4,10 +4,10 @@ package de.infix.testBalloon.compilerPlugin
 
 import de.infix.testBalloon.framework.shared.internal.Constants
 import de.infix.testBalloon.framework.shared.internal.TestBalloonInternalApi
+import de.infix.testBalloon.testBalloon_compiler_plugin.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import testBalloon_compiler_plugin.BuildConfig.PROJECT_COMPILER_PLUGIN_ID
 
 val entryPointPackageFqName = FqName(Constants.ENTRY_POINT_PACKAGE_NAME)
 

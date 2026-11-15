@@ -79,6 +79,9 @@ org-jetbrains-kotlin-latest-release = "2.4.21"
 org-jetbrains-kotlin-latest-prerelease = "2.5.0-Beta2"
 org-jetbrains-kotlin-all-test-releases = "2.5.0-Beta2;2.4.21;2.4.0;2.3.21;2.3.0;2.2.21"
 
+# https://github.com/Kotlin/compiler-plugin-dev-kit/releases
+org-jetbrains-kotlin-compiler-plugin-devkit = "0.0.4-dev-396"
+
 # https://github.com/Kotlin/kotlinx.coroutines/releases
 org-jetbrains-kotlinx-coroutines = "1.10.2"
 
@@ -128,12 +131,6 @@ com-vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech:gradle-m
 # https://github.com/Splitties/refreshVersions/releases
 de-fayard-refreshversions-gradle-plugin = "de.fayard.refreshVersions:de.fayard.refreshVersions.gradle.plugin:0.60.6"
 
-# https://github.com/ZacSweers/kotlin-compile-testing/releases
-# This kctfork version must be compile-compatible with the minimum Kotlin version specified via "org-jetbrains-kotlin"
-# for a minimal set of declarations used in testBalloon-compiler-plugin/base-test.
-# kctfork version 0.5.1 provides declarations compatible with Kotlin 2.0.0 and above.
-dev-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.5.1"
-
 io-github-takahirom-roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "io-github-takahirom-roborazzi" }
 
 # https://github.com/kotest/kotest/releases
@@ -168,6 +165,8 @@ org-jetbrains-kotlin-atomicfu-gradle-plugin = { module = "org.jetbrains.kotlin.p
 org-jetbrains-kotlin-compose-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-sam-with-receiver-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
+
+org-jetbrains-kotlin-compiler-plugin-devkit-settings-plugin = { module = "org.jetbrains.kotlin.compiler.plugin.devkit:settings", version.ref = "org-jetbrains-kotlin-compiler-plugin-devkit" }
 
 # https://github.com/Kotlin/kotlinx-atomicfu/releases
 org-jetbrains-kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.32.1"

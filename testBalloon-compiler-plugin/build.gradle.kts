@@ -1,52 +1,54 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
-    // id("buildLogic.kotlin-multiplatform")
+    // TODO: id("buildLogic.kotlin-multiplatform")
     kotlin("multiplatform") version "2.4.21"
-    // id("buildLogic.publishing")
+    id("com.gradleup.tapmoc") version "0.5.0"
+    // TODO: id("buildLogic.publishing")
     pluginDevKit("compiler-plugin")
 }
 
+group = rootGroup
+
 description = "TestBalloon compiler plugin"
+
+tapmoc {
+    kotlin("2.4.21")
+    java(8)
+}
 
 pluginDevKit {
     componentRegistrar = "de.infix.testBalloon.compilerPlugin.TestBalloonComponentRegistrar"
     commandLineProcessor = "de.infix.testBalloon.compilerPlugin.TestBalloonCommandLineProcessor"
 
-    // cliVersions(min = kotlinVersion())
     cliVersions(min = "2.2.21")
 
     versionHierarchy {
-        split("2.4.20")
-        split("2.4.0")
-        split("2.3.20")
         split("2.3.0")
+        split("2.3.20")
+        split("2.4.0")
+        split("2.4.20")
     }
+
+    companionLibrary("$rootGroup:testBalloon-framework-shared:$version")
+
+    generateTestsEnabled = false
 }
 
 val Project.rootGroup: String get() = "${project.property("local.PROJECT_ROOT_GROUP")}"
+val Project.compilerPluginId: String get() = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}"
+val Project.frameworkCoreArtifactId: String get() = "${project.property("local.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID")}"
 
 buildConfig {
     buildConfigField("String", "PROJECT_VERSION", "\"$version\"")
     buildConfigField("String", "PROJECT_ROOT_GROUP", "\"$rootGroup\"")
-    buildConfigField("String", "PROJECT_FRAMEWORK_CORE_ARTIFACT_ID", "\"testBalloon-framework-core\"")
-
-    // TODO: remove
-    buildConfigField(
-        "String",
-        "PROJECT_COMPILER_PLUGIN_ID",
-        "\"${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}\""
-    )
+    buildConfigField("String", "PROJECT_FRAMEWORK_CORE_ARTIFACT_ID", "\"$frameworkCoreArtifactId\"")
+    buildConfigField("String", "PROJECT_COMPILER_PLUGIN_ID", "\"$compilerPluginId\"")
 }
 
 kotlin {
-    compilerOptions {
-        freeCompilerArgs.add("-Xcontext-parameters")
-    }
-
     sourceSets {
         commonMain {
             dependencies {

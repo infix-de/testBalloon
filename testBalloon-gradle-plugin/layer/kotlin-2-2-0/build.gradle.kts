@@ -6,7 +6,7 @@ import gradlePlugin.layer.buildLogic.rootGroup
 plugins {
     id("gradlePlugin.layer.buildLogic.common")
     // noinspection NewerVersionAvailable
-    id("org.jetbrains.kotlin.jvm") version "2.4.10"
+    id("org.jetbrains.kotlin.jvm") version "2.4.21"
     id("java-gradle-plugin")
     alias(libs.plugins.com.github.gmazzo.buildconfig)
 }

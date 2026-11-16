@@ -1,4 +1,4 @@
-package buildLogic
+package buildLogic.kotlin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -7,7 +7,7 @@ import org.gradle.api.Project
 class BuildLogicKotlinJvmPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         with(pluginManager) {
-            apply("buildLogic.kotlin-jvm-base")
+            apply(BuildLogicKotlinJvmBasePlugin::class.java)
         }
 
         addKotlinStdlibDependency()

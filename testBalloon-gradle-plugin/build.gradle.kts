@@ -1,16 +1,16 @@
-import buildLogic.propagateLifecycleTasksToIncludedBuilds
-import buildLogic.rootGroup
+import buildLogic.base.propagateLifecycleTasksToIncludedBuilds
+import buildLogic.base.rootGroup
 import gradlePlugin.layer.buildLogic.configureGradlePlugin
 import gradlePlugin.layer.buildLogic.gradlePluginId
 
 plugins {
-    id("gradlePlugin.layer.buildLogic.common")
+    id("gradlePlugin.layer.buildLogic")
     // noinspection NewerVersionAvailable
     id("org.jetbrains.kotlin.jvm") version "2.4.21"
     id("java-gradle-plugin")
     alias(libs.plugins.org.jetbrains.kotlin.plugin.sam.with.receiver)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.assignment)
-    id("buildLogic.publishing")
+    id("buildLogic.base.publishing")
     alias(libs.plugins.com.github.gmazzo.buildconfig)
 }
 

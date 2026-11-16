@@ -1,6 +1,6 @@
 plugins {
+    id("buildLogic.base.common")
     kotlin("jvm") version "2.4.21"
-    id("com.gradleup.tapmoc") version "0.5.0"
     pluginDevKit("gradle-plugin")
 }
 

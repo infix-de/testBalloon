@@ -1,13 +1,13 @@
-package buildLogic
+package buildLogic.base
 
+import com.gradleup.tapmoc.Severity
+import com.gradleup.tapmoc.TapmocExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.jmailen.gradle.kotlinter.KotlinterExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
-import com.gradleup.tapmoc.Severity
-import com.gradleup.tapmoc.TapmocExtension
 
 @Suppress("unused")
 class BuildLogicCommonPlugin : Plugin<Project> {

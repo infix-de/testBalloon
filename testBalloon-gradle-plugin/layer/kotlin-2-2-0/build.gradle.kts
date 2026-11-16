@@ -1,13 +1,10 @@
+import buildLogic.base.libraryFromCatalog
+import buildLogic.base.rootGroup
 import gradlePlugin.layer.buildLogic.configurePluginLayer
 import gradlePlugin.layer.buildLogic.gradlePluginId
-import gradlePlugin.layer.buildLogic.libraryFromCatalog
-import gradlePlugin.layer.buildLogic.rootGroup
 
 plugins {
-    id("gradlePlugin.layer.buildLogic.common")
-    // noinspection NewerVersionAvailable
-    id("org.jetbrains.kotlin.jvm") version "2.4.21"
-    id("java-gradle-plugin")
+    id("gradlePlugin.layer.buildLogic")
     alias(libs.plugins.com.github.gmazzo.buildconfig)
 }
 

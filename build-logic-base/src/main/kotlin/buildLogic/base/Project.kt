@@ -1,18 +1,17 @@
 @file:Suppress("UnstableApiUsage")
 
-package buildLogic
+package buildLogic.base
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.invocation.Gradle
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 
 fun Project.versionFromCatalog(alias: String): String =
     @Suppress("NewApi")
     versionCatalogs.named("libs").findVersion(alias).get().displayName
+
+fun Project.libraryFromCatalog(alias: String): String =
+    versionCatalogs.named("libs").findLibrary(alias).get().get().toString()
 
 private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogsExtension::class.java)
 
@@ -22,20 +21,6 @@ fun Project.robolectricJdkVersion() = baseJdkVersion().coerceAtLeast(versionFrom
 fun Project.kotestJdkVersion() = baseJdkVersion().coerceAtLeast(versionFromCatalog("io-kotest-jdk").toInt())
 fun Project.junitJupiterJdkVersion() =
     baseJdkVersion().coerceAtLeast(versionFromCatalog("org-junit-jupiter-jdk").toInt())
-
-fun Project.addKotlinStdlibDependency() {
-    when (val extension = extensions.getByName("kotlin")) {
-        is KotlinJvmExtension -> {
-            dependencies.add("api", "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion()}")
-        }
-
-        is KotlinMultiplatformExtension -> {
-            extension.sourceSets.getByName("commonMain").dependencies {
-                api("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion()}")
-            }
-        }
-    }
-}
 
 fun Project.propagateLifecycleTasksToIncludedBuilds() {
     afterEvaluate {
@@ -48,22 +33,6 @@ fun Project.propagateLifecycleTasksToIncludedBuilds() {
                         .map { it.task(":$taskName") }
                 )
             }
-        }
-    }
-}
-
-fun Project.applyWebpackVersionsFix() {
-    // WORKAROUND: https://youtrack.jetbrains.com/issue/KT-90417
-    //     KJS, Gradle: Two webpack versions after kotlinNpmInstall:
-    //     "TypeError: The compilation argument must be an instance of Compilation"
-
-    if (this != rootProject) {
-        throw IllegalArgumentException("The webpack versions fix must be applied to a root project")
-    }
-
-    plugins.withType(NodeJsRootPlugin::class.java) {
-        extensions.configure<NodeJsRootExtension>("kotlinNodeJs") {
-            versions.webpack.version = "5.112.0"
         }
     }
 }

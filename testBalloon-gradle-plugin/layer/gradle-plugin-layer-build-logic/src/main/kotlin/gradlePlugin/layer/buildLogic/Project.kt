@@ -2,18 +2,19 @@
 
 package gradlePlugin.layer.buildLogic
 
+import buildLogic.base.libraryFromCatalog
+import buildLogic.base.rootGroup
+import buildLogic.base.versionFromCatalog
+import com.gradleup.tapmoc.TapmocExtension
 import org.gradle.api.HasImplicitReceiver
 import org.gradle.api.Project
 import org.gradle.api.SupportsKotlinAssignmentOverloading
 import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.tasks.testing.Test
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.jetbrains.kotlin.assignment.plugin.gradle.AssignmentExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
-import com.gradleup.tapmoc.Severity
-import com.gradleup.tapmoc.TapmocExtension
 
 /**
  * Configures the project for a Gradle plugin layer compatible with Kotlin Gradle Plugin [kotlinVersion].
@@ -59,7 +60,6 @@ fun Project.configurePluginLayer(kotlinVersion: String, baseLayer: String? = nul
  */
 fun Project.configureGradlePlugin(kotlinVersion: String) {
     with(pluginManager) {
-        apply("org.jmailen.kotlinter")
         apply("org.jetbrains.kotlin.plugin.sam.with.receiver")
         apply("org.jetbrains.kotlin.plugin.assignment")
     }
@@ -67,8 +67,6 @@ fun Project.configureGradlePlugin(kotlinVersion: String) {
     extensions.configure<TapmocExtension>("tapmoc") {
         java(gradleJdkVersion())
         kotlin(kotlinVersion)
-        checkKotlinStdlibs(Severity.ERROR)
-        checkDependencies(Severity.ERROR)
     }
 
     extensions.configure<KotlinJvmExtension>("kotlin") {
@@ -97,16 +95,6 @@ fun Project.configureGradlePlugin(kotlinVersion: String) {
     )
 }
 
-fun Project.versionFromCatalog(alias: String): String =
-    versionCatalogs.named("libs").findVersion(alias).get().displayName
-
-fun Project.libraryFromCatalog(alias: String): String =
-    versionCatalogs.named("libs").findLibrary(alias).get().get().toString()
-
-private val Project.versionCatalogs get() = extensions.getByType(VersionCatalogsExtension::class.java)
-
 fun Project.gradleJdkVersion() = versionFromCatalog("gradle.jdk").toInt()
-
-val Project.rootGroup: String get() = "${project.property("local.PROJECT_ROOT_GROUP")}"
 
 val Project.gradlePluginId: String get() = "${project.property("local.PROJECT_GRADLE_PLUGIN_ID")}"

@@ -1,8 +1,8 @@
-import buildLogic.allTargets
-import buildLogic.kotestJdkVersion
+import buildLogic.base.kotestJdkVersion
+import buildLogic.kotlin.allTargets
 
 plugins {
-    id("buildLogic.kotlin-multiplatform")
+    id("buildLogic.kotlin.multiplatform")
     id("de.infix.testBalloon")
 }
 

@@ -1,12 +1,12 @@
-import buildLogic.enableAbiValidation
-import buildLogic.robolectricJdkVersion
+import buildLogic.base.robolectricJdkVersion
+import buildLogic.kotlin.enableAbiValidation
 
 plugins {
-    id("buildLogic.kotlin-multiplatform")
+    id("buildLogic.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
     id("de.infix.testBalloon")
-    id("buildLogic.dokka")
-    id("buildLogic.publishing")
+    id("buildLogic.base.dokka")
+    id("buildLogic.base.publishing")
 }
 
 description = "Library supporting Robolectric with the TestBalloon framework"

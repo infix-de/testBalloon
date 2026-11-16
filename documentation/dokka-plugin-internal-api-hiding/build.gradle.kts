@@ -1,8 +1,8 @@
-import buildLogic.rootGroup
+import buildLogic.base.rootGroup
 import com.gradleup.tapmoc.Severity
 
 plugins {
-    id("buildLogic.kotlin-jvm")
+    id("buildLogic.kotlin.jvm")
 }
 
 group = "$rootGroup.documentation"
@@ -11,7 +11,6 @@ group = "$rootGroup.documentation"
 buildLogicCommon.javaClassFilesSeverity.set(Severity.IGNORE)
 buildLogicCommon.kotlinMetadataSeverity.set(Severity.IGNORE)
 buildLogicCommon.kotlinStdlibSeverity.set(Severity.IGNORE)
-
 
 dependencies {
     implementation(libs.org.jetbrains.dokka.core)

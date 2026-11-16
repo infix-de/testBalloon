@@ -3,10 +3,9 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 plugins {
-    // TODO: id("buildLogic.kotlin-multiplatform")
     kotlin("multiplatform") version "2.4.21"
     id("com.gradleup.tapmoc") version "0.5.0"
-    // TODO: id("buildLogic.publishing")
+    id("buildLogic.base.publishing")
     pluginDevKit("compiler-plugin")
 }
 

@@ -1,11 +1,11 @@
-import buildLogic.allTargets
-import buildLogic.enableAbiValidation
+import buildLogic.kotlin.allTargets
+import buildLogic.kotlin.enableAbiValidation
 
 plugins {
-    id("buildLogic.kotlin-multiplatform")
+    id("buildLogic.kotlin.multiplatform")
     id("de.infix.testBalloon")
-    id("buildLogic.dokka")
-    id("buildLogic.publishing")
+    id("buildLogic.base.dokka")
+    id("buildLogic.base.publishing")
 }
 
 description = "Library supporting Kotest Assertions with the TestBalloon framework"

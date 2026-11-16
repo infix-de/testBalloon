@@ -1,5 +1,8 @@
-package buildLogic
+package buildLogic.kotlin
 
+import buildLogic.base.BuildLogicCommonPlugin
+import buildLogic.base.rootGroup
+import buildLogic.base.versionFromCatalog
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.util.internal.VersionNumber
@@ -12,7 +15,7 @@ class BuildLogicAndroidApplicationPlugin : Plugin<Project> {
             if (VersionNumber.parse(versionFromCatalog("android-gradle-plugin")).major < 9) {
                 apply("org.jetbrains.kotlin.android")
             }
-            apply("buildLogic.common")
+            apply(BuildLogicCommonPlugin::class.java) // order matters: this must be applied last
         }
 
         group = rootGroup

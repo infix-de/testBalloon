@@ -1,6 +1,6 @@
 pluginManagement {
-    includeBuild("build-logic")
     includeBuild("build-settings")
+    includeBuild("build-logic-kotlin")
     includeBuild("testBalloon-gradle-plugin")
 
     repositories {

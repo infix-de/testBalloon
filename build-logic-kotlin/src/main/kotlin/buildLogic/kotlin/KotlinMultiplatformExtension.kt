@@ -1,4 +1,4 @@
-package buildLogic
+package buildLogic.kotlin
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl

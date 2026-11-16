@@ -1,6 +1,6 @@
 pluginManagement {
     includeBuild("../build-settings")
-    includeBuild("../build-logic")
+    includeBuild("../build-logic-base")
     includeBuild("layer/gradle-plugin-layer-build-logic")
 
     repositories {

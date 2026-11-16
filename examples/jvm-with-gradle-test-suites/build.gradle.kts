@@ -1,5 +1,5 @@
 plugins {
-    id("buildLogic.kotlin-jvm")
+    id("buildLogic.kotlin.jvm")
     id("de.infix.testBalloon")
     java
 }

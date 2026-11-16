@@ -1,4 +1,4 @@
-package buildLogic
+package buildLogic.base
 
 import org.apache.tools.ant.taskdefs.condition.Os
 

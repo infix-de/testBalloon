@@ -1,5 +1,6 @@
-package buildLogic
+package buildLogic.kotlin
 
+import buildLogic.base.aggregationStagingRepository
 import nmcp.NmcpAggregationExtension
 import nmcp.NmcpExtension
 import org.gradle.api.Plugin

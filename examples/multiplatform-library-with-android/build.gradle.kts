@@ -1,6 +1,6 @@
-import buildLogic.junitJupiterJdkVersion
-import buildLogic.kotlinVersion
-import buildLogic.robolectricJdkVersion
+import buildLogic.base.junitJupiterJdkVersion
+import buildLogic.base.kotlinVersion
+import buildLogic.base.robolectricJdkVersion
 import com.gradleup.tapmoc.Severity
 
 plugins {

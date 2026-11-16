@@ -1,7 +1,7 @@
-import buildLogic.robolectricJdkVersion
+import buildLogic.base.robolectricJdkVersion
 
 plugins {
-    id("buildLogic.android-application")
+    id("buildLogic.kotlin.android-application")
     id("de.infix.testBalloon")
     id("org.jetbrains.kotlin.plugin.compose")
     alias(libs.plugins.io.github.takahirom.roborazzi)

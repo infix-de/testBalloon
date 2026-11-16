@@ -1,5 +1,6 @@
 pluginManagement {
     includeBuild("../build-settings")
+    includeBuild("../build-logic-base")
 
     repositories {
         mavenCentral()

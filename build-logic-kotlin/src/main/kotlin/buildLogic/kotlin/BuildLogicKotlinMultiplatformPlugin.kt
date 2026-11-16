@@ -1,5 +1,6 @@
-package buildLogic
+package buildLogic.kotlin
 
+import buildLogic.base.BuildLogicCommonPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -11,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 class BuildLogicKotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         with(pluginManager) {
-            apply("buildLogic.common")
+            apply(BuildLogicCommonPlugin::class.java)
             apply("org.jetbrains.kotlin.multiplatform")
         }
 

@@ -1,8 +1,8 @@
-import buildLogic.rootGroup
+import buildLogic.base.rootGroup
 import com.gradleup.tapmoc.Severity
 
 plugins {
-    id("buildLogic.kotlin-jvm")
+    id("buildLogic.kotlin.jvm")
 }
 
 group = "$rootGroup.documentation"

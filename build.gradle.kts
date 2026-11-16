@@ -1,9 +1,9 @@
-import buildLogic.applyWebpackVersionsFix
+import buildLogic.kotlin.applyWebpackVersionsFix
 
 plugins {
-    id("buildLogic.common").apply(false)
-    id("buildLogic.dokka")
-    id("buildLogic.root-project")
+    id("buildLogic.base.common").apply(false)
+    id("buildLogic.base.dokka")
+    id("buildLogic.kotlin.root-project")
 }
 
 tasks {

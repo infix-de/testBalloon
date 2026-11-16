@@ -1,4 +1,4 @@
-import buildLogic.rootGroup
+import buildLogic.base.rootGroup
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
@@ -22,7 +22,7 @@ import kotlin.io.path.writeText
 
 plugins {
     kotlin("jvm") apply false
-    id("buildLogic.dokka")
+    id("buildLogic.base.dokka")
 }
 
 dependencies {

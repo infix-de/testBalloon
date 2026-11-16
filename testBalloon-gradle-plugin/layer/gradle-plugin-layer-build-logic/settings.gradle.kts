@@ -17,3 +17,5 @@ dependencyResolutionManagement {
         from(files("../../../gradle/libs.versions.toml"))
     }
 }
+
+includeBuild("../../../build-logic-base")

@@ -1,7 +1,7 @@
-import buildLogic.allTargets
+import buildLogic.kotlin.allTargets
 
 plugins {
-    id("buildLogic.kotlin-multiplatform")
+    id("buildLogic.kotlin.multiplatform")
     id("de.infix.testBalloon")
     id("org.jetbrains.kotlin.plugin.atomicfu")
 }

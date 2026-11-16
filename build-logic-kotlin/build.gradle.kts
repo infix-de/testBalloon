@@ -13,19 +13,15 @@ dependencies {
     // classloaders. In this case, plugins would not be able to communicate across projects via a shared build service.
     // Cf. https://discuss.gradle.org/t/why-duplicate-plugins-in-top-level-build-scripts/49087
     implementation(libs.com.android.gradle.plugin)
-    implementation(libs.com.github.gmazzo.buildconfig.gradle.plugin)
     implementation(libs.com.gradleup.nmcp.aggregation.gradle.plugin)
     implementation(libs.com.gradleup.nmcp.gradle.plugin)
-    implementation(libs.com.gradleup.tapmoc.gradle.plugin)
-    implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
-    implementation(libs.org.jetbrains.dokka.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.android.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.assignment.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.atomicfu.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.compose.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.gradle.plugin)
     implementation(libs.org.jetbrains.kotlin.sam.with.receiver.gradle.plugin)
-    implementation(libs.org.jmailen.kotlinter.gradle.plugin)
+    implementation(":build-logic-base")
     implementation(gradleApi())
 }
 
@@ -40,20 +36,17 @@ assignment {
 gradlePlugin {
     plugins {
         val pluginMap = mapOf(
-            "common" to "BuildLogicCommonPlugin",
-            "dokka" to "BuildLogicDokkaPlugin",
-            "kotlin-jvm" to "BuildLogicKotlinJvmPlugin",
-            "kotlin-jvm-base" to "BuildLogicKotlinJvmBasePlugin",
-            "kotlin-multiplatform" to "BuildLogicKotlinMultiplatformPlugin",
+            "jvm" to "BuildLogicKotlinJvmPlugin",
+            "jvm-base" to "BuildLogicKotlinJvmBasePlugin",
+            "multiplatform" to "BuildLogicKotlinMultiplatformPlugin",
             "android-application" to "BuildLogicAndroidApplicationPlugin",
-            "publishing" to "BuildLogicPublishingPlugin",
             "root-project" to "BuildLogicRootProjectPlugin"
         )
 
         for ((id, implementationClass) in pluginMap) {
-            register("buildLogic.$id") {
-                this.id = "buildLogic.$id"
-                this.implementationClass = "buildLogic.$implementationClass"
+            register("buildLogic.kotlin.$id") {
+                this.id = "buildLogic.kotlin.$id"
+                this.implementationClass = "buildLogic.kotlin.$implementationClass"
             }
         }
     }

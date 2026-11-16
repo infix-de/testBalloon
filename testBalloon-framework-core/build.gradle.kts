@@ -1,20 +1,20 @@
-import buildLogic.allTargets
-import buildLogic.dokkaEnableNavigationNodeHiding
-import buildLogic.enableAbiValidation
-import buildLogic.propagateLifecycleTasksToIncludedBuilds
-import buildLogic.rootGroup
-import buildLogic.versionFromCatalog
+import buildLogic.base.dokkaEnableNavigationNodeHiding
+import buildLogic.base.propagateLifecycleTasksToIncludedBuilds
+import buildLogic.base.rootGroup
+import buildLogic.base.versionFromCatalog
+import buildLogic.kotlin.allTargets
+import buildLogic.kotlin.enableAbiValidation
 import com.gradleup.tapmoc.Severity
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
-    id("buildLogic.kotlin-multiplatform")
+    id("buildLogic.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
     id("org.jetbrains.kotlin.plugin.atomicfu")
-    id("buildLogic.dokka")
-    id("buildLogic.publishing")
+    id("buildLogic.base.dokka")
+    id("buildLogic.base.publishing")
 }
 
 description = "Core library for the TestBalloon framework"

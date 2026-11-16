@@ -1,12 +1,12 @@
 @file:Suppress("UnstableApiUsage")
 
-import buildLogic.gradleRunCommandLine
-import buildLogic.integrationTestRepository
-import buildLogic.versionFromCatalog
+import buildLogic.base.gradleRunCommandLine
+import buildLogic.base.integrationTestRepository
+import buildLogic.base.versionFromCatalog
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    id("buildLogic.kotlin-jvm")
+    id("buildLogic.kotlin.jvm")
     id("de.infix.testBalloon")
     id("com.github.gmazzo.buildconfig")
 }

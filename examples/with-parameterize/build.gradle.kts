@@ -1,5 +1,5 @@
 plugins {
-    id("buildLogic.kotlin-multiplatform")
+    id("buildLogic.kotlin.multiplatform")
     id("de.infix.testBalloon")
 }
 

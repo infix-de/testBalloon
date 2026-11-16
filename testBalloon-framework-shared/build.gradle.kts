@@ -1,11 +1,11 @@
-import buildLogic.allTargets
-import buildLogic.applyWebpackVersionsFix
-import buildLogic.enableAbiValidation
+import buildLogic.kotlin.allTargets
+import buildLogic.kotlin.applyWebpackVersionsFix
+import buildLogic.kotlin.enableAbiValidation
 
 plugins {
-    id("buildLogic.kotlin-multiplatform")
-    id("buildLogic.publishing")
-    id("buildLogic.dokka")
+    id("buildLogic.kotlin.multiplatform")
+    id("buildLogic.base.dokka")
+    id("buildLogic.base.publishing")
 }
 
 description = "Shared declarations for the TestBalloon framework"

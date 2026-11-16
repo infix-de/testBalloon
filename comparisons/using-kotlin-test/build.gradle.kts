@@ -1,7 +1,7 @@
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 
 plugins {
-    id("buildLogic.kotlin-multiplatform")
+    id("buildLogic.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
     id("com.gradleup.tapmoc")
 }

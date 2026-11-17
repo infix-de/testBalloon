@@ -1,3 +1,8 @@
+import buildLogic.base.compilerPluginId
+import buildLogic.base.frameworkCoreArtifactId
+import buildLogic.base.gradlePluginArtifactId
+import buildLogic.base.rootGroup
+
 plugins {
     id("buildLogic.base.common")
     kotlin("jvm") version "2.4.21"
@@ -32,11 +37,6 @@ dependencies {
     functionalTestImplementation("$rootGroup:$frameworkCoreArtifactId:$version")
     functionalTestRuntimeOnly("$rootGroup:$gradlePluginArtifactId:$version")
 }
-
-val Project.rootGroup: String get() = "${project.property("local.PROJECT_ROOT_GROUP")}"
-val Project.compilerPluginId: String get() = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}"
-val Project.frameworkCoreArtifactId: String get() = "${project.property("local.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID")}"
-val Project.gradlePluginArtifactId: String get() = "${project.property("local.PROJECT_GRADLE_PLUGIN_ARTIFACT_ID")}"
 
 tasks.withType<Test>().configureEach {
     // https://docs.gradle.org/current/userguide/java_testing.html

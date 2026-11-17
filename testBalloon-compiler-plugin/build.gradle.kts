@@ -1,5 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
+import buildLogic.base.compilerPluginId
+import buildLogic.base.frameworkCoreArtifactId
+import buildLogic.base.rootGroup
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 plugins {
@@ -36,10 +39,6 @@ pluginDevKit {
 
     generateTestsEnabled = false
 }
-
-val Project.rootGroup: String get() = "${project.property("local.PROJECT_ROOT_GROUP")}"
-val Project.compilerPluginId: String get() = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}"
-val Project.frameworkCoreArtifactId: String get() = "${project.property("local.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID")}"
 
 buildConfig {
     buildConfigField("String", "PROJECT_VERSION", "\"$version\"")

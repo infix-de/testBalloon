@@ -46,3 +46,8 @@ fun Project.aggregationStagingRepository() =
 private val Gradle.rootBuild: Gradle get() = parent.let { it?.rootBuild ?: this }
 
 val Project.rootGroup: String get() = "${project.property("local.PROJECT_ROOT_GROUP")}"
+
+val Project.compilerPluginId: String get() = "${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}"
+val Project.gradlePluginId: String get() = "${project.property("local.PROJECT_GRADLE_PLUGIN_ID")}"
+val Project.gradlePluginArtifactId: String get() = "${project.property("local.PROJECT_GRADLE_PLUGIN_ARTIFACT_ID")}"
+val Project.frameworkCoreArtifactId: String get() = "${project.property("local.PROJECT_FRAMEWORK_CORE_ARTIFACT_ID")}"

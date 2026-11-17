@@ -1,7 +1,7 @@
+import buildLogic.base.gradlePluginId
 import buildLogic.base.propagateLifecycleTasksToIncludedBuilds
 import buildLogic.base.rootGroup
 import gradlePlugin.layer.buildLogic.configureGradlePlugin
-import gradlePlugin.layer.buildLogic.gradlePluginId
 
 plugins {
     id("gradlePlugin.layer.buildLogic")

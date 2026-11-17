@@ -1,7 +1,8 @@
+import buildLogic.base.compilerPluginId
+import buildLogic.base.gradlePluginId
 import buildLogic.base.libraryFromCatalog
 import buildLogic.base.rootGroup
 import gradlePlugin.layer.buildLogic.configurePluginLayer
-import gradlePlugin.layer.buildLogic.gradlePluginId
 
 plugins {
     id("gradlePlugin.layer.buildLogic")
@@ -21,11 +22,7 @@ buildConfig {
     packageName("$group.internal.buildConfig")
     useKotlinOutput { internalVisibility = true }
 
-    buildConfigField(
-        "String",
-        "PROJECT_COMPILER_PLUGIN_ID",
-        "\"${project.property("local.PROJECT_COMPILER_PLUGIN_ID")}\""
-    )
+    buildConfigField("String", "PROJECT_COMPILER_PLUGIN_ID", "\"$compilerPluginId\"")
     buildConfigField("String", "PROJECT_GRADLE_PLUGIN_ID", "\"$gradlePluginId\"")
     buildConfigField("String", "PROJECT_VERSION", "\"$version\"")
     buildConfigField("String", "PROJECT_ROOT_GROUP", "\"$rootGroup\"")

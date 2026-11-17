@@ -2,6 +2,7 @@
 
 package gradlePlugin.layer.buildLogic
 
+import buildLogic.base.gradlePluginId
 import buildLogic.base.libraryFromCatalog
 import buildLogic.base.rootGroup
 import buildLogic.base.versionFromCatalog
@@ -96,5 +97,3 @@ fun Project.configureGradlePlugin(kotlinVersion: String) {
 }
 
 fun Project.gradleJdkVersion() = versionFromCatalog("gradle.jdk").toInt()
-
-val Project.gradlePluginId: String get() = "${project.property("local.PROJECT_GRADLE_PLUGIN_ID")}"

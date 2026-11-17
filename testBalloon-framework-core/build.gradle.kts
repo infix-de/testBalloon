@@ -15,6 +15,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.atomicfu")
     id("buildLogic.base.dokka")
     id("buildLogic.base.publishing")
+    alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
 }
 
 description = "Core library for the TestBalloon framework"

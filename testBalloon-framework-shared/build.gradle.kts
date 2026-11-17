@@ -6,6 +6,7 @@ plugins {
     id("buildLogic.kotlin.multiplatform")
     id("buildLogic.base.dokka")
     id("buildLogic.base.publishing")
+    alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
 }
 
 description = "Shared declarations for the TestBalloon framework"

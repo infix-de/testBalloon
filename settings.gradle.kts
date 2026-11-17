@@ -2,12 +2,6 @@ pluginManagement {
     includeBuild("build-settings")
     includeBuild("build-logic-kotlin")
     includeBuild("testBalloon-gradle-plugin")
-
-    repositories {
-        mavenCentral()
-        maven(url = uri("https://packages.jetbrains.team/maven/p/compiler-plugin-dev-kit/eap"))
-        gradlePluginPortal()
-    }
 }
 
 plugins {

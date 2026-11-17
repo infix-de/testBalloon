@@ -166,8 +166,6 @@ org-jetbrains-kotlin-compose-gradle-plugin = { module = "org.jetbrains.kotlin.pl
 org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-sam-with-receiver-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
 
-org-jetbrains-kotlin-compiler-plugin-devkit-settings-plugin = { module = "org.jetbrains.kotlin.compiler.plugin.devkit:settings", version.ref = "org-jetbrains-kotlin-compiler-plugin-devkit" }
-
 # https://github.com/Kotlin/kotlinx-atomicfu/releases
 org-jetbrains-kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.32.1"
 
@@ -211,6 +209,10 @@ io-github-takahirom-roborazzi = { id = "io.github.takahirom.roborazzi", version.
 org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "org-jetbrains-dokka" }
 
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin" }
+
+org-jetbrains-kotlin-compiler-plugin-devkit-functional-test-publishing = { id = "org.jetbrains.kotlin.compiler.plugin.devkit.functional-test-publishing", version.ref = "org-jetbrains-kotlin-compiler-plugin-devkit" }
+org-jetbrains-kotlin-compiler-plugin-devkit-compiler-plugin = { id = "org.jetbrains.kotlin.compiler.plugin.devkit.compiler-plugin", version.ref = "org-jetbrains-kotlin-compiler-plugin-devkit" }
+org-jetbrains-kotlin-compiler-plugin-devkit-gradle-plugin = { id = "org.jetbrains.kotlin.compiler.plugin.devkit.gradle-plugin", version.ref = "org-jetbrains-kotlin-compiler-plugin-devkit" }
 
 org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin" }
 

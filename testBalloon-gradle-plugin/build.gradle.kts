@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.org.jetbrains.kotlin.plugin.assignment)
     id("buildLogic.base.publishing")
     alias(libs.plugins.com.github.gmazzo.buildconfig)
+    alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
 }
 
 description = "TestBalloon Gradle plugin"

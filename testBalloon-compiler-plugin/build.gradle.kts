@@ -6,7 +6,8 @@ plugins {
     kotlin("multiplatform") version "2.4.21"
     id("com.gradleup.tapmoc") version "0.5.0"
     id("buildLogic.base.publishing")
-    pluginDevKit("compiler-plugin")
+    alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
+    alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.compiler.plugin)
 }
 
 group = rootGroup

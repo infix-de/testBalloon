@@ -15,7 +15,6 @@ tapmoc {
 dependencies {
     implementation(libs.de.fayard.refreshversions.gradle.plugin)
     implementation(libs.org.gradle.toolchains.foojay.resolver)
-    implementation(libs.org.jetbrains.kotlin.compiler.plugin.devkit.settings.plugin)
     implementation(gradleApi())
 }
 

@@ -1,7 +1,8 @@
 plugins {
     id("buildLogic.base.common")
     kotlin("jvm") version "2.4.21"
-    pluginDevKit("gradle-plugin")
+    alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
+    alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.gradle.plugin)
 }
 
 group = rootGroup

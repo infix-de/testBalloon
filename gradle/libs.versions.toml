@@ -72,7 +72,7 @@ org-jetbrains-dokka = "2.1.0"
 
 # https://github.com/JetBrains/kotlin/releases
 # https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-compatibility-guide.html#version-compatibility
-org-jetbrains-kotlin = "2.2.21"
+org-jetbrains-kotlin-base = "2.2.21"
 # The latest Kotlin versions used for integration tests.
 org-jetbrains-kotlin-latest-release = "2.4.21"
 # https://packages.jetbrains.team/maven/p/kt/bootstrap/org/jetbrains/kotlin/kotlin-compiler-embeddable/maven-metadata.xml
@@ -95,6 +95,7 @@ org-jmailen-kotlinter = "5.4.2"
 org-junit-jupiter = "6.0.3"
 org-junit-jupiter-jdk = "17"
 org-junit-platform = "1.13.4"
+org-junit-platform-jdk = "9"
 
 # https://github.com/robolectric/robolectric/releases
 org-robolectric = "4.17"
@@ -118,8 +119,6 @@ com-android-gradle-plugin-earliest = { module = "com.android.tools.build:gradle"
 
 # https://github.com/BenWoodworth/Parameterize/releases
 com-benwoodworth-parameterize = "com.benwoodworth.parameterize:parameterize-core:0.4.1"
-
-com-github-gmazzo-buildconfig-gradle-plugin = { module = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin", version.ref = "com-github-gmazzo-buildconfig" }
 
 com-gradleup-nmcp-aggregation-gradle-plugin = { module = "com.gradleup.nmcp.aggregation:com.gradleup.nmcp.aggregation.gradle.plugin", version.ref = "com-gradleup-nmcp" }
 com-gradleup-nmcp-gradle-plugin = { module = "com.gradleup.nmcp:com.gradleup.nmcp.gradle.plugin", version.ref = "com-gradleup-nmcp" }
@@ -154,17 +153,16 @@ org-jetbrains-dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.
 org-jetbrains-dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "org-jetbrains-dokka" }
 org-jetbrains-dokka-gradle-plugin = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version.ref = "org-jetbrains-dokka" }
 
-org-jetbrains-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "org-jetbrains-kotlin-base" }
+org-jetbrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "org-jetbrains-kotlin-base" }
+org-jetbrains-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "org-jetbrains-kotlin-base" }
 
-org-jetbrains-kotlin-android-gradle-plugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-assignment-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-atomicfu-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.atomicfu:org.jetbrains.kotlin.plugin.atomicfu.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-compose-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-sam-with-receiver-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-android-gradle-plugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "org-jetbrains-kotlin-base" }
+org-jetbrains-kotlin-assignment-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin", version.ref = "org-jetbrains-kotlin-base" }
+org-jetbrains-kotlin-atomicfu-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.atomicfu:org.jetbrains.kotlin.plugin.atomicfu.gradle.plugin", version.ref = "org-jetbrains-kotlin-base" }
+org-jetbrains-kotlin-compose-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin", version.ref = "org-jetbrains-kotlin-base" }
+org-jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin-base" }
+org-jetbrains-kotlin-sam-with-receiver-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.sam.with.receiver:org.jetbrains.kotlin.plugin.sam.with.receiver.gradle.plugin", version.ref = "org-jetbrains-kotlin-base" }
 
 # https://github.com/Kotlin/kotlinx-atomicfu/releases
 org-jetbrains-kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.32.1"
@@ -176,7 +174,6 @@ org-jetbrains-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotli
 
 # https://github.com/Kotlin/kotlinx-datetime/blob/master/CHANGELOG.md
 org-jetbrains-kotlinx-kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1"
-##                                                                           ⬆ :0.7.1-0.6.x-compat"
 
 org-jetbrains-kotlinx-kover-gradle-plugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "org-jetbrains-kotlinx-kover" }
 
@@ -190,38 +187,22 @@ org-robolectric = { module = "org.robolectric:robolectric", version.ref = "org-r
 
 [plugins]
 
-com-android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
-
-com-android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "android-gradle-plugin" }
-
 com-github-gmazzo-buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "com-github-gmazzo-buildconfig" }
-
-com-gradleup-nmcp-aggregation = { id = "com.gradleup.nmcp.aggregation", version.ref = "com-gradleup-nmcp" }
-
-com-gradleup-nmcp = { id = "com.gradleup.nmcp", version.ref = "com-gradleup-nmcp" }
 
 com-gradleup-tapmoc = { id = "com.gradleup.tapmoc", version.ref = "com-gradleup-tapmoc" }
 
-com-vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "com-vanniktech-maven-publish" }
-
 io-github-takahirom-roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "io-github-takahirom-roborazzi" }
-
-org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "org-jetbrains-dokka" }
-
-org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin" }
 
 org-jetbrains-kotlin-compiler-plugin-devkit-functional-test-publishing = { id = "org.jetbrains.kotlin.compiler.plugin.devkit.functional-test-publishing", version.ref = "org-jetbrains-kotlin-compiler-plugin-devkit" }
 org-jetbrains-kotlin-compiler-plugin-devkit-compiler-plugin = { id = "org.jetbrains.kotlin.compiler.plugin.devkit.compiler-plugin", version.ref = "org-jetbrains-kotlin-compiler-plugin-devkit" }
 org-jetbrains-kotlin-compiler-plugin-devkit-gradle-plugin = { id = "org.jetbrains.kotlin.compiler.plugin.devkit.gradle-plugin", version.ref = "org-jetbrains-kotlin-compiler-plugin-devkit" }
 
-org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-jvm-latest-release = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin-latest-release" }
 
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-multiplatform-latest-release = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "org-jetbrains-kotlin-latest-release" }
 
-org-jetbrains-kotlin-plugin-assignment = { id = "org.jetbrains.kotlin.plugin.assignment", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-plugin-assignment = { id = "org.jetbrains.kotlin.plugin.assignment", version.ref = "org-jetbrains-kotlin-base" }
+org-jetbrains-kotlin-plugin-assignment-latest-release = { id = "org.jetbrains.kotlin.plugin.assignment", version.ref = "org-jetbrains-kotlin-latest-release" }
 
-org-jetbrains-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "org-jetbrains-kotlin" }
-
-org-jetbrains-kotlin-plugin-sam-with-receiver = { id = "org.jetbrains.kotlin.plugin.sam.with.receiver", version.ref = "org-jetbrains-kotlin" }
-
-org-jmailen-kotlinter = { id = "org.jmailen.kotlinter", version.ref = "org-jmailen-kotlinter" }
+org-jetbrains-kotlin-plugin-sam-with-receiver = { id = "org.jetbrains.kotlin.plugin.sam.with.receiver", version.ref = "org-jetbrains-kotlin-base" }
+org-jetbrains-kotlin-plugin-sam-with-receiver-latest-release = { id = "org.jetbrains.kotlin.plugin.sam.with.receiver", version.ref = "org-jetbrains-kotlin-latest-release" }

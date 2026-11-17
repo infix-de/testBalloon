@@ -2,13 +2,14 @@
 
 import buildLogic.base.compilerPluginId
 import buildLogic.base.frameworkCoreArtifactId
+import buildLogic.base.kotlinBaseVersion
+import buildLogic.base.kotlinLatestReleaseVersion
 import buildLogic.base.rootGroup
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 plugins {
-    kotlin("multiplatform") version "2.4.21"
-    id("com.gradleup.tapmoc") version "0.5.0"
     id("buildLogic.base.publishing")
+    alias(libs.plugins.org.jetbrains.kotlin.multiplatform.latest.release)
     alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
     alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.compiler.plugin)
 }
@@ -18,15 +19,14 @@ group = rootGroup
 description = "TestBalloon compiler plugin"
 
 tapmoc {
-    kotlin("2.4.21")
-    java(8)
+    kotlin(kotlinLatestReleaseVersion())
 }
 
 pluginDevKit {
     componentRegistrar = "de.infix.testBalloon.compilerPlugin.TestBalloonComponentRegistrar"
     commandLineProcessor = "de.infix.testBalloon.compilerPlugin.TestBalloonCommandLineProcessor"
 
-    cliVersions(min = "2.2.21")
+    cliVersions(min = kotlinBaseVersion())
 
     versionHierarchy {
         split("2.3.0")

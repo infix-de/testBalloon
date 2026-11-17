@@ -5,14 +5,13 @@ import gradlePlugin.layer.buildLogic.configureGradlePlugin
 
 plugins {
     id("gradlePlugin.layer.buildLogic")
-    // noinspection NewerVersionAvailable
-    id("org.jetbrains.kotlin.jvm") version "2.4.21"
-    id("java-gradle-plugin")
+    id("buildLogic.base.publishing")
+    alias(libs.plugins.org.jetbrains.kotlin.jvm.latest.release)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.sam.with.receiver)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.assignment)
-    id("buildLogic.base.publishing")
     alias(libs.plugins.com.github.gmazzo.buildconfig)
     alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
+    id("java-gradle-plugin")
 }
 
 description = "TestBalloon Gradle plugin"
@@ -21,10 +20,14 @@ group = rootGroup
 configureGradlePlugin("2.2.0")
 
 /** Dependencies to be embedded into the Gradle plugin artifact. */
+@Suppress("UnstableApiUsage")
 val embeddedCompileOnly = configurations.dependencyScope("embeddedCompileOnly")
+
+@Suppress("UnstableApiUsage")
 val embeddedDynamicallyLoaded = configurations.dependencyScope("embeddedRuntimeOnly")
 
 /** The consumable configuration containing the resulting embedded elements. */
+@Suppress("UnstableApiUsage")
 val embeddedResult = configurations.resolvable("embeddedResult") {
     extendsFrom(embeddedCompileOnly)
     extendsFrom(embeddedDynamicallyLoaded)

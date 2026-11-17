@@ -1,11 +1,14 @@
 import buildLogic.base.compilerPluginId
 import buildLogic.base.frameworkCoreArtifactId
+import buildLogic.base.gradleJdkVersion
 import buildLogic.base.gradlePluginArtifactId
+import buildLogic.base.kotlinBaseVersion
+import buildLogic.base.kotlinLatestReleaseVersion
 import buildLogic.base.rootGroup
 
 plugins {
     id("buildLogic.base.common")
-    kotlin("jvm") version "2.4.21"
+    alias(libs.plugins.org.jetbrains.kotlin.jvm.latest.release)
     alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
     alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.gradle.plugin)
 }
@@ -13,14 +16,14 @@ plugins {
 group = rootGroup
 
 tapmoc {
-    kotlin("2.4.21")
-    java(24)
+    kotlin(kotlinLatestReleaseVersion())
+    java(gradleJdkVersion())
 }
 
 pluginDevKit {
     compilerPlugin("testBalloon-compiler-plugin")
 
-    cliVersions(min = "2.2.21")
+    cliVersions(min = kotlinBaseVersion())
 }
 
 buildConfig {

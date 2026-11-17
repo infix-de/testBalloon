@@ -13,7 +13,7 @@ private val earliestAgpVersion = projectCatalogVersion("android.gradle.plugin.ea
 private val latestAgpKotlinVersion = projectCatalogVersion("android.gradle.plugin.latest.kotlin")
 
 private val latestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin.latest.release")
-private val earliestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin")
+private val earliestKotlinVersion = projectCatalogVersion("org.jetbrains.kotlin.base")
 
 val AndroidTests by testSuite(
     testConfig = TestConfig

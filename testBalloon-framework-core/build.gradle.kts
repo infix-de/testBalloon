@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
+    id("buildLogic.base.dokka")
+    id("buildLogic.base.publishing")
     id("buildLogic.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
     id("org.jetbrains.kotlin.plugin.atomicfu")
-    id("buildLogic.base.dokka")
-    id("buildLogic.base.publishing")
     alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
 }
 

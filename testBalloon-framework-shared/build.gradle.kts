@@ -3,9 +3,9 @@ import buildLogic.kotlin.applyWebpackVersionsFix
 import buildLogic.kotlin.enableAbiValidation
 
 plugins {
-    id("buildLogic.kotlin.multiplatform")
     id("buildLogic.base.dokka")
     id("buildLogic.base.publishing")
+    id("buildLogic.kotlin.multiplatform")
     alias(libs.plugins.org.jetbrains.kotlin.compiler.plugin.devkit.functional.test.publishing)
 }
 

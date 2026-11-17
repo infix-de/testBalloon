@@ -1,13 +1,16 @@
+import buildConfig.BuildConfig.KOTLIN_ALL_TEST_RELEASES
 import de.infix.testBalloon.framework.core.TestConfig
 import de.infix.testBalloon.framework.core.TestSuiteScope
 import de.infix.testBalloon.framework.core.invocation
 import de.infix.testBalloon.framework.core.testSuite
 import java.util.Locale
 import kotlin.collections.listOf
+import kotlin.collections.mapOf
 
 val EnvironmentPropagationTests by testSuite(testConfig = TestConfig.invocation(TestConfig.Invocation.Sequential)) {
     val projectTestSuite = this
     val environment = mapOf("TEST_ONE" to "test one", "CUSTOM_ONE" to "custom one", "CUSTOM_TWO" to "custom two")
+    val kotlinVersion = KOTLIN_ALL_TEST_RELEASES.last()
 
     fun TestSuiteScope.projectTest(
         projectName: String,
@@ -15,11 +18,12 @@ val EnvironmentPropagationTests by testSuite(testConfig = TestConfig.invocation(
         vararg gradleArguments: String,
         expectedVariables: List<String>,
         testConfig: TestConfig = TestConfig
-    ) = test(listOfNotNull(projectName, variantName).joinToString(), testConfig = testConfig) {
+    ) = test(listOfNotNull(projectName, variantName, "Kotlin $kotlinVersion").joinToString(), testConfig = testConfig) {
         val project = TestProject(
             projectTestSuite = projectTestSuite,
             projectBaseName = "environment-propagation-$projectName",
-            baseTemplates = listOf(if (projectName == "unrestricted") "base-google" else "base")
+            baseTemplates = listOf(if (projectName == "unrestricted") "base-google" else "base"),
+            versions = mapOf("org.jetbrains.kotlin" to kotlinVersion)
         )
 
         for (taskName in project.testTaskNames()) {

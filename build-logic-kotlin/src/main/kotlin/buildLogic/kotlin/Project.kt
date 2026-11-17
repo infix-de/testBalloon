@@ -2,7 +2,7 @@
 
 package buildLogic.kotlin
 
-import buildLogic.base.kotlinVersion
+import buildLogic.base.kotlinBaseVersion
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 fun Project.addKotlinStdlibDependency() {
     when (val extension = extensions.getByName("kotlin")) {
         is KotlinJvmExtension -> {
-            dependencies.add("api", "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion()}")
+            dependencies.add("api", "org.jetbrains.kotlin:kotlin-stdlib:${kotlinBaseVersion()}")
         }
 
         is KotlinMultiplatformExtension -> {
             extension.sourceSets.getByName("commonMain").dependencies {
-                api("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion()}")
+                api("org.jetbrains.kotlin:kotlin-stdlib:${kotlinBaseVersion()}")
             }
         }
     }

@@ -8,7 +8,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 plugins {
     id("buildLogic.kotlin.jvm")
     id("de.infix.testBalloon")
-    id("com.github.gmazzo.buildconfig")
+    alias(libs.plugins.com.github.gmazzo.buildconfig)
 }
 
 dependencies {

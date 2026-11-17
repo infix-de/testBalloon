@@ -21,8 +21,8 @@ import kotlin.io.path.moveTo
 import kotlin.io.path.writeText
 
 plugins {
-    kotlin("jvm") apply false
     id("buildLogic.base.dokka")
+    kotlin("jvm") apply false
 }
 
 dependencies {
@@ -51,7 +51,7 @@ val mkdocsVersionsFile: RegularFile = distributionDirectory.file("versions.json"
 
 val previousVersions by lazy {
     if (distributionDirectory.asFile.exists()) {
-        distributionDirectory.asFile.listFiles().mapNotNull {
+        (distributionDirectory.asFile.listFiles() ?: emptyArray()).mapNotNull {
             if (it.isDirectory && it.name.first().isDigit()) VersionNumber.parse(it.name) else null
         }.sortedByDescending { it }.map { "$it" }
     } else {
@@ -236,9 +236,9 @@ tasks {
             }
 
             // Create or update the api link.
-            var linkDirectory = distributionDirectory / devVersion
+            val linkDirectory = distributionDirectory / devVersion
             if (!linkDirectory.exists()) linkDirectory.createDirectory()
-            var linkSource = linkDirectory / "api"
+            val linkSource = linkDirectory / "api"
             linkSource.deleteIfExists()
             Files.createSymbolicLink(linkSource, Path("../$apiVersionsName") / newApiVersion)
 

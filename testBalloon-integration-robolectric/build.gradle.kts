@@ -2,11 +2,11 @@ import buildLogic.base.robolectricJdkVersion
 import buildLogic.kotlin.enableAbiValidation
 
 plugins {
+    id("buildLogic.base.dokka")
+    id("buildLogic.base.publishing")
     id("buildLogic.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
     id("de.infix.testBalloon")
-    id("buildLogic.base.dokka")
-    id("buildLogic.base.publishing")
 }
 
 description = "Library supporting Robolectric with the TestBalloon framework"
@@ -20,6 +20,7 @@ kotlin {
 
     android {
         namespace = "$group.integration.robolectric"
+        //noinspection GradleDependency
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 

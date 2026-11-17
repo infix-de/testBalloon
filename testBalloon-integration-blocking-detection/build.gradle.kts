@@ -1,19 +1,20 @@
+import buildLogic.base.junitPlatformJdkVersion
 import buildLogic.base.versionFromCatalog
 import buildLogic.kotlin.allTargets
 import buildLogic.kotlin.enableAbiValidation
 
 plugins {
+    id("buildLogic.base.dokka")
+    id("buildLogic.base.publishing")
     id("buildLogic.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
     id("de.infix.testBalloon")
-    id("buildLogic.base.dokka")
-    id("buildLogic.base.publishing")
 }
 
 description = "Library supporting blocking code detection with the TestBalloon framework"
 
 tapmoc {
-    java(9) // required for JUnit Platform
+    java(junitPlatformJdkVersion())
 }
 
 kotlin {

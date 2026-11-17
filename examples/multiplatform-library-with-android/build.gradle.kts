@@ -1,5 +1,5 @@
 import buildLogic.base.junitJupiterJdkVersion
-import buildLogic.base.kotlinVersion
+import buildLogic.base.kotlinBaseVersion
 import buildLogic.base.robolectricJdkVersion
 import com.gradleup.tapmoc.Severity
 
@@ -12,7 +12,7 @@ plugins {
 
 tapmoc {
     java(junitJupiterJdkVersion().coerceAtLeast(robolectricJdkVersion()))
-    kotlin(kotlinVersion())
+    kotlin(kotlinBaseVersion())
 
     checkKotlinStdlibs(Severity.ERROR)
     checkDependencies(Severity.ERROR)
@@ -23,6 +23,7 @@ kotlin {
 
     android {
         namespace = "org.example.android.multiplatform.library"
+        //noinspection GradleDependency
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 

@@ -1,17 +1,18 @@
+import buildLogic.base.kotestJdkVersion
 import buildLogic.kotlin.allTargets
 import buildLogic.kotlin.enableAbiValidation
 
 plugins {
-    id("buildLogic.kotlin.multiplatform")
-    id("de.infix.testBalloon")
     id("buildLogic.base.dokka")
     id("buildLogic.base.publishing")
+    id("buildLogic.kotlin.multiplatform")
+    id("de.infix.testBalloon")
 }
 
 description = "Library supporting Kotest Assertions with the TestBalloon framework"
 
 tapmoc {
-    java(11) // required for Kotest >= 6.0
+    java(kotestJdkVersion())
 }
 
 kotlin {
